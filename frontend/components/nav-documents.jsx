@@ -16,14 +16,15 @@ export function NavDocuments({ groupName, items }) {
 
   // Check if a link is active
   const isActive = (url) => {
-    // Exact match for the root dashboard
-    if (url === "/dashboard/instructor" && pathname === "/dashboard/instructor") {
-      return true;
+    // Exact match for root dashboard pages (instructor, admin, student)
+    const rootDashboards = ["/dashboard/instructor", "/dashboard/admin", "/dashboard/student"];
+    if (rootDashboards.includes(url)) {
+      return pathname === url;
     }
     
     // For other routes, check if pathname starts with the url
     // This handles nested routes like /dashboard/instructor/courses/123
-    if (url !== "/dashboard/instructor" && pathname.startsWith(url)) {
+    if (pathname.startsWith(url)) {
       return true;
     }
     

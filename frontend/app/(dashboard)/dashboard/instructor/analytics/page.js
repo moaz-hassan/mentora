@@ -8,6 +8,9 @@ import {
 } from "lucide-react";
 import { getInstructorAnalytics } from "@/lib/apiCalls/instructor/getAnalytics.apiCall";
 import { getEnrollmentTrend } from "@/lib/apiCalls/analytics/getEnrollmentTrend.apiCall";
+import ExportDialog from "@/components/ExportDialog";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function InstructorAnalyticsPage() {
   const [timeRange, setTimeRange] = useState("30");
@@ -16,6 +19,7 @@ export default function InstructorAnalyticsPage() {
   const [enrollmentData, setEnrollmentData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   useEffect(() => {
     fetchAnalytics();
@@ -48,6 +52,69 @@ export default function InstructorAnalyticsPage() {
 
   const formatNumber = (num) => new Intl.NumberFormat("en-US").format(num);
   const formatCurrency = (amount) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(20);
+    doc.setTextColor(147, 51, 234);
+    doc.text("Analytics Report", 14, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 28);
+    doc.text(`Time Range: Last ${timeRange} days`, 14, 33);
+    
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Overview", 14, 45);
+    
+    doc.setFontSize(10);
+    doc.text(`Total Students: ${formatNumber(analytics.overview?.totalEnrollments || 0)}`, 14, 53);
+    doc.text(`Active Students: ${formatNumber(analytics.overview?.activeStudents || 0)}`, 14, 60);
+    doc.text(`Completion Rate: ${analytics.overview?.completionRate?.toFixed(1) || 0}%`, 14, 67);
+    doc.text(`Average Rating: ${analytics.overview?.averageRating?.toFixed(1) || "N/A"}`, 14, 74);
+    
+    doc.save(`analytics-report-${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
+  const exportToCSV = () => {
+    let csvContent = "Analytics Report\n";
+    csvContent += `Generated on: ${new Date().toLocaleDateString()}\n`;
+    csvContent += `Time Range: Last ${timeRange} days\n\n`;
+    
+    csvContent += "Overview\n";
+    csvContent += `Total Students,${analytics.overview?.totalEnrollments || 0}\n`;
+    csvContent += `Active Students,${analytics.overview?.activeStudents || 0}\n`;
+    csvContent += `Completion Rate,${analytics.overview?.completionRate?.toFixed(1) || 0}%\n`;
+    csvContent += `Average Rating,${analytics.overview?.averageRating?.toFixed(1) || "N/A"}\n\n`;
+    
+    if (analytics.courses?.length > 0) {
+      csvContent += "Course Performance\n";
+      csvContent += "Course,Enrollments,Rating,Completion Rate\n";
+      analytics.courses.forEach(course => {
+        csvContent += `"${course.title}",${course.enrollments || 0},${course.averageRating?.toFixed(1) || "N/A"},${course.completionRate?.toFixed(1) || 0}%\n`;
+      });
+    }
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `analytics-report-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExport = (format) => {
+    if (format === 'pdf') {
+      exportToPDF();
+    } else if (format === 'csv') {
+      exportToCSV();
+    }
+  };
 
   if (loading) {
     return (
@@ -95,12 +162,23 @@ export default function InstructorAnalyticsPage() {
             <option value="90">Last 90 days</option>
             <option value="365">Last year</option>
           </select>
-          <button className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+          <button 
+            onClick={() => setShowExportDialog(true)}
+            className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+          >
             <Download className="w-4 h-4 mr-2" />
             Export
           </button>
         </div>
       </div>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        isOpen={showExportDialog}
+        onClose={() => setShowExportDialog(false)}
+        onExport={handleExport}
+        title="Export Analytics Report"
+      />
 
       {/* Key Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

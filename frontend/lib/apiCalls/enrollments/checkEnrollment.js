@@ -1,27 +1,32 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api`;
 
 /**
- * Check if user is enrolled in course
+ * Check if current user is enrolled in a course
+ * @param {string} courseId - Course ID
+ * @returns {Promise<boolean>} - Enrollment status
  */
 export const checkEnrollment = async (courseId) => {
   try {
-    const token = Cookies.get('authToken');
+    const token = localStorage.getItem('token');
     
     if (!token) {
-      return { enrolled: false };
+      return false;
     }
     
     const response = await axios.get(`${API_URL}/enrollments/check/${courseId}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
       },
     });
     
-    return response.data;
+    return response.data?.isEnrolled || false;
   } catch (error) {
-    return { enrolled: false };
+    // If error (like 401), assume not enrolled
+    console.error('Error checking enrollment:', error);
+    return false;
   }
 };
+
+export default checkEnrollment;

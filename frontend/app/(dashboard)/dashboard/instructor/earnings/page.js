@@ -8,16 +8,19 @@ import {
   Download,
   CreditCard,
   ArrowUpRight,
-  
 } from "lucide-react";
 import { getRevenueAnalytics } from "@/lib/apiCalls/analytics/getRevenueAnalytics.apiCall";
 import RevenueLineChart from "@/components/charts/RevenueLineChart";
+import ExportDialog from "@/components/ExportDialog";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function InstructorEarningsPage() {
   const [timeRange, setTimeRange] = useState("30");
   const [earnings, setEarnings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   useEffect(() => {
     fetchEarnings();
@@ -103,6 +106,131 @@ export default function InstructorEarningsPage() {
     });
   };
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(20);
+    doc.setTextColor(37, 99, 235); // Blue color
+    doc.text("Earnings Report", 14, 20);
+    
+    // Add date range
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 28);
+    doc.text(`Time Range: Last ${timeRange} days`, 14, 33);
+    
+    // Add summary section
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Summary", 14, 45);
+    
+    doc.setFontSize(10);
+    doc.text(`Total Revenue: ${formatCurrency(earnings.summary.totalRevenue)}`, 14, 53);
+    doc.text(`Pending Payout: ${formatCurrency(earnings.summary.pendingPayout)}`, 14, 60);
+    doc.text(`Last Payout: ${formatCurrency(earnings.summary.lastPayout)}`, 14, 67);
+    doc.text(`Next Payout Date: ${formatDate(earnings.summary.nextPayoutDate)}`, 14, 74);
+    
+    // Add revenue by course table
+    doc.setFontSize(14);
+    doc.text("Revenue by Course", 14, 88);
+    
+    const tableData = earnings.byCourse.map(course => [
+      course.title,
+      course.enrollments.toString(),
+      formatCurrency(course.avgPrice),
+      course.refunds.toString(),
+      formatCurrency(course.revenue)
+    ]);
+    
+    autoTable(doc, {
+      startY: 93,
+      head: [['Course', 'Enrollments', 'Avg Price', 'Refunds', 'Total Revenue']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: { fillColor: [37, 99, 235] },
+      styles: { fontSize: 9 },
+      columnStyles: {
+        0: { cellWidth: 60 },
+        1: { cellWidth: 25, halign: 'center' },
+        2: { cellWidth: 25, halign: 'right' },
+        3: { cellWidth: 20, halign: 'center' },
+        4: { cellWidth: 30, halign: 'right' }
+      }
+    });
+    
+    // Add monthly trend
+    const finalY = doc.lastAutoTable.finalY || 93;
+    doc.setFontSize(14);
+    doc.text("Monthly Revenue Trend", 14, finalY + 15);
+    
+    const trendData = earnings.monthlyTrend.map(item => [
+      item.month,
+      formatCurrency(item.revenue)
+    ]);
+    
+    autoTable(doc, {
+      startY: finalY + 20,
+      head: [['Month', 'Revenue']],
+      body: trendData,
+      theme: 'striped',
+      headStyles: { fillColor: [37, 99, 235] },
+      styles: { fontSize: 9 },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 40, halign: 'right' }
+      }
+    });
+    
+    // Save the PDF
+    doc.save(`earnings-report-${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
+  const exportToCSV = () => {
+    // Create CSV content
+    let csvContent = "Earnings Report\n";
+    csvContent += `Generated on: ${new Date().toLocaleDateString()}\n`;
+    csvContent += `Time Range: Last ${timeRange} days\n\n`;
+    
+    csvContent += "Summary\n";
+    csvContent += `Total Revenue,${earnings.summary.totalRevenue}\n`;
+    csvContent += `Pending Payout,${earnings.summary.pendingPayout}\n`;
+    csvContent += `Last Payout,${earnings.summary.lastPayout}\n`;
+    csvContent += `Next Payout Date,${earnings.summary.nextPayoutDate}\n\n`;
+    
+    csvContent += "Revenue by Course\n";
+    csvContent += "Course,Enrollments,Avg Price,Refunds,Total Revenue\n";
+    earnings.byCourse.forEach(course => {
+      csvContent += `"${course.title}",${course.enrollments},${course.avgPrice},${course.refunds},${course.revenue}\n`;
+    });
+    
+    csvContent += "\nMonthly Revenue Trend\n";
+    csvContent += "Month,Revenue\n";
+    earnings.monthlyTrend.forEach(item => {
+      csvContent += `${item.month},${item.revenue}\n`;
+    });
+    
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `earnings-report-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExport = (format) => {
+    if (format === 'pdf') {
+      exportToPDF();
+    } else if (format === 'csv') {
+      exportToCSV();
+    }
+    setShowExportDialog(false);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -154,12 +282,23 @@ export default function InstructorEarningsPage() {
             <option value="365">Last year</option>
           </select>
 
-          <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button 
+            onClick={() => setShowExportDialog(true)}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
             <Download className="w-4 h-4 mr-2" />
             Export Report
           </button>
         </div>
       </div>
+
+      {/* Export Dialog */}
+      <ExportDialog
+        isOpen={showExportDialog}
+        onClose={() => setShowExportDialog(false)}
+        onExport={handleExport}
+        title="Export Earnings Report"
+      />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

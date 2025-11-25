@@ -60,6 +60,12 @@ export default function Header() {
               >
                 For Business
               </Link>
+              <Link
+                href="/help"
+                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+              >
+                Help
+              </Link>
             </nav>
           </div>
 
@@ -168,6 +174,12 @@ export default function Header() {
                 className="text-gray-600 hover:text-gray-900 font-medium px-2 py-2"
               >
                 About
+              </Link>
+              <Link
+                href="/help"
+                className="text-gray-600 hover:text-gray-900 font-medium px-2 py-2"
+              >
+                Help
               </Link>
               {!isAuthenticated ? (
                 <>

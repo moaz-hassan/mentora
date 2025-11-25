@@ -22,6 +22,15 @@ import {
   IconReport,
   IconSearch,
   IconSettings,
+  IconChartBar,
+  IconCategory,
+  IconTicket,
+  IconCash,
+  IconUsers,
+  IconBell,
+  IconFileText,
+  IconSpeakerphone,
+  IconChartPie,
 } from "@tabler/icons-react";
 
 export function AppSidebar({ user, ...props }) {
@@ -82,7 +91,7 @@ export function AppSidebar({ user, ...props }) {
       },
       {
         title: "Get Help",
-        url: "/dashboard/instructor/help",
+        url: "/help",
         icon: <IconHelp />,
       },
       {
@@ -93,10 +102,119 @@ export function AppSidebar({ user, ...props }) {
     ];
   } else if (user.role === "student") {
     groupsData = [];
-    navSecondaryData = [];
+    navSecondaryData = [
+      {
+        title: "Settings",
+        url: "/dashboard/student/settings",
+        icon: <IconSettings />,
+      },
+      {
+        title: "Get Help",
+        url: "/help",
+        icon: <IconHelp />,
+      },
+      {
+        title: "Search",
+        url: "/dashboard/student/search",
+        icon: <IconSearch />,
+      },
+    ];
   } else if (user.role === "admin") {
-    groupsData = [];
-    navSecondaryData = [];
+    groupsDataNames = ["Dashboard", "Content", "Users", "Marketing", "System"];
+    groupsData = [
+      // Dashboard
+      [
+        {
+          name: "Overview",
+          url: "/dashboard/admin",
+          icon: IconInnerShadowTop,
+        },
+        {
+          name: "Analytics",
+          url: "/dashboard/admin/analytics",
+          icon: IconChartBar,
+        },
+        {
+          name: "Platform Analytics",
+          url: "/dashboard/admin/platform-analytics",
+          icon: IconChartPie,
+        },
+      ],
+      // Content
+      [
+        {
+          name: "Courses",
+          url: "/dashboard/admin/courses",
+          icon: IconDatabase,
+        },
+        {
+          name: "Categories",
+          url: "/dashboard/admin/categories",
+          icon: IconCategory,
+        },
+        {
+          name: "Reports",
+          url: "/dashboard/admin/reports",
+          icon: IconReport,
+        },
+      ],
+      // Users
+      [
+        {
+          name: "Users",
+          url: "/dashboard/admin/users",
+          icon: IconFileWord,
+        },
+        {
+          name: "Instructors",
+          url: "/dashboard/admin/instructors",
+          icon: IconUsers,
+        },
+      ],
+      // Marketing
+      [
+        {
+          name: "Coupons",
+          url: "/dashboard/admin/coupons",
+          icon: IconTicket,
+        },
+        {
+          name: "Marketing",
+          url: "/dashboard/admin/marketing",
+          icon: IconSpeakerphone,
+        },
+        {
+          name: "Notifications",
+          url: "/dashboard/admin/notifications",
+          icon: IconBell,
+        },
+      ],
+      // System
+      [
+        {
+          name: "Financial",
+          url: "/dashboard/admin/financial",
+          icon: IconCash,
+        },
+        {
+          name: "Audit Logs",
+          url: "/dashboard/admin/logs",
+          icon: IconFileText,
+        },
+        {
+          name: "Settings",
+          url: "/dashboard/admin/settings",
+          icon: IconSettings,
+        },
+      ],
+    ];
+    navSecondaryData = [
+      {
+        title: "Get Help",
+        url: "/help",
+        icon: <IconHelp />,
+      },
+    ];
   }
 
   return (

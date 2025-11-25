@@ -383,14 +383,66 @@ export default function CoursePlayerPage() {
 
             <div className="p-4 h-48 overflow-y-auto">
               {activeTab === "resources" && (
-                <div className="space-y-2">
-                  <p className="text-gray-400 text-sm">
+                <div className="space-y-3">
+                  <p className="text-gray-400 text-sm mb-3">
                     Downloadable resources for this lesson
                   </p>
-                  {/* TODO: Add actual resources */}
-                  <div className="text-gray-500 text-sm">
-                    No resources available
-                  </div>
+                  
+                  {currentLesson?.LessonMaterials && currentLesson.LessonMaterials.length > 0 ? (
+                    <div className="space-y-2">
+                      {currentLesson.LessonMaterials.map((material) => (
+                        <a
+                          key={material.id}
+                          href={material.url}
+                          download={material.filename}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors group"
+                        >
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <div className="w-10 h-10 bg-gray-600 rounded flex items-center justify-center flex-shrink-0">
+                              {material.file_type === "pdf" && (
+                                <FileText className="w-5 h-5 text-red-400" />
+                              )}
+                              {["doc", "docx"].includes(material.file_type) && (
+                                <FileText className="w-5 h-5 text-blue-400" />
+                              )}
+                              {["ppt", "pptx"].includes(material.file_type) && (
+                                <FileText className="w-5 h-5 text-orange-400" />
+                              )}
+                              {["xls", "xlsx", "csv"].includes(material.file_type) && (
+                                <FileText className="w-5 h-5 text-green-400" />
+                              )}
+                              {material.file_type === "zip" && (
+                                <FileText className="w-5 h-5 text-purple-400" />
+                              )}
+                              {!["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx", "csv", "zip"].includes(material.file_type) && (
+                                <FileText className="w-5 h-5 text-gray-400" />
+                              )}
+                            </div>
+                            
+                            <div className="flex-1 min-w-0">
+                              <p className="text-white text-sm font-medium truncate">
+                                {material.filename}
+                              </p>
+                              <p className="text-gray-400 text-xs">
+                                {(material.file_size / 1024 / 1024).toFixed(2)} MB • {material.file_type?.toUpperCase()}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <Download className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors flex-shrink-0" />
+                        </a>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <FileText className="w-12 h-12 mx-auto mb-3 text-gray-600" />
+                      <p className="text-gray-500 text-sm">
+                        No resources available for this lesson
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 

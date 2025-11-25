@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -9,6 +9,10 @@ import {
   ChevronRight,
   Upload,
   GripVertical,
+  Paperclip,
+  Eye,
+  Download,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,10 +25,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "react-toastify";
+import materialService from "@/lib/api/materialService";
 
 export function LessonItem({ lesson, updateLesson, deleteLesson }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [uploadingMaterial, setUploadingMaterial] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const materialInputRef = useRef(null);
   
   // Check if this is a new lesson (not yet saved to backend)
   const isNewLesson = lesson.id && lesson.id.toString().startsWith("lesson-");
@@ -57,6 +66,97 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
         videoUrl: URL.createObjectURL(file),
       });
     }
+  };
+
+  const getFileIcon = (fileType) => {
+    const type = fileType?.toLowerCase();
+    if (type === "pdf") return <FileText className="w-5 h-5 text-red-600" />;
+    if (["doc", "docx"].includes(type)) return <FileText className="w-5 h-5 text-blue-600" />;
+    if (["ppt", "pptx"].includes(type)) return <FileText className="w-5 h-5 text-orange-600" />;
+    if (["xls", "xlsx", "csv"].includes(type)) return <FileText className="w-5 h-5 text-green-600" />;
+    if (type === "zip") return <FileText className="w-5 h-5 text-purple-600" />;
+    return <FileText className="w-5 h-5 text-gray-600" />;
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
+  };
+
+  const handleMaterialUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    
+    for (const file of files) {
+      // Validate file size (100MB max)
+      if (file.size > 104857600) {
+        toast.error(`${file.name} is too large (max 100MB)`);
+        continue;
+      }
+
+      // Get file extension
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+      const allowedTypes = ["pdf", "doc", "docx", "ppt", "pptx", "zip", "txt", "csv", "xlsx", "xls"];
+      
+      if (!allowedTypes.includes(fileExtension)) {
+        toast.error(`${file.name} has an unsupported file type`);
+        continue;
+      }
+
+      setUploadingMaterial(true);
+      setUploadProgress(0);
+
+      try {
+        // Upload to Cloudinary from frontend
+        const cloudinaryResult = await materialService.uploadToCloudinary(
+          file,
+          (progress) => setUploadProgress(progress)
+        );
+
+        // Create material object
+        const material = {
+          id: `material-${Date.now()}-${Math.random()}`,
+          filename: file.name,
+          url: cloudinaryResult.secure_url,
+          public_id: cloudinaryResult.public_id,
+          file_type: fileExtension,
+          file_size: file.size,
+          uploadedAt: new Date().toISOString(),
+        };
+
+        // Add to lesson materials
+        updateLesson(lesson.id, {
+          ...lesson,
+          materials: [...(lesson.materials || []), material],
+        });
+
+        toast.success(`${file.name} uploaded successfully`);
+      } catch (error) {
+        console.error("Material upload error:", error);
+        toast.error(`Failed to upload ${file.name}`);
+      } finally {
+        setUploadingMaterial(false);
+        setUploadProgress(0);
+      }
+    }
+
+    // Reset input
+    if (materialInputRef.current) {
+      materialInputRef.current.value = "";
+    }
+  };
+
+  const removeMaterial = (materialId) => {
+    const updatedMaterials = (lesson.materials || []).filter(
+      (m) => m.id !== materialId
+    );
+    updateLesson(lesson.id, {
+      ...lesson,
+      materials: updatedMaterials,
+    });
+    toast.success("Material removed");
   };
 
   return (
@@ -253,6 +353,115 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
                 </p>
               </div>
             )}
+
+            {/* Supplementary Materials Section */}
+            <div className="border-t pt-4 mt-4">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <label className="text-sm font-medium text-neutral-700 flex items-center gap-2">
+                    <Paperclip className="w-4 h-4" />
+                    Supplementary Materials
+                  </label>
+                  <p className="text-xs text-neutral-500 mt-1">
+                    Add downloadable resources (PDFs, documents, code files, etc.) - Max 100MB per file
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => materialInputRef.current?.click()}
+                  disabled={uploadingMaterial}
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  {uploadingMaterial ? `Uploading ${uploadProgress}%` : "Add Material"}
+                </Button>
+              </div>
+
+              {/* Hidden file input */}
+              <input
+                ref={materialInputRef}
+                type="file"
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.txt,.csv,.xlsx,.xls"
+                onChange={handleMaterialUpload}
+                className="hidden"
+                multiple
+              />
+
+              {/* Materials List */}
+              {lesson.materials && lesson.materials.length > 0 ? (
+                <div className="space-y-2">
+                  {lesson.materials.map((material, index) => (
+                    <div
+                      key={material.id || index}
+                      className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg border border-neutral-200 hover:border-blue-300 transition-colors"
+                    >
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        {/* File Icon */}
+                        <div className="w-10 h-10 bg-white rounded flex items-center justify-center flex-shrink-0 border">
+                          {getFileIcon(material.file_type)}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-neutral-900 truncate">
+                            {material.filename}
+                          </p>
+                          <p className="text-xs text-neutral-500">
+                            {formatFileSize(material.file_size)} • {material.file_type?.toUpperCase()}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {/* Preview button for PDFs */}
+                        {material.file_type === "pdf" && material.url && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(material.url, "_blank")}
+                            className="h-8 w-8 p-0"
+                            title="Preview PDF"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        )}
+
+                        {/* Download button */}
+                        {material.url && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(material.url, "_blank")}
+                            className="h-8 w-8 p-0"
+                            title="Download"
+                          >
+                            <Download className="w-4 h-4" />
+                          </Button>
+                        )}
+
+                        {/* Delete button */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeMaterial(material.id)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0"
+                          title="Remove"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 border-2 border-dashed border-neutral-200 rounded-lg bg-neutral-50">
+                  <Paperclip className="w-8 h-8 text-neutral-400 mx-auto mb-2" />
+                  <p className="text-sm text-neutral-500">No materials added yet</p>
+                  <p className="text-xs text-neutral-400 mt-1">
+                    Click "Add Material" to upload files
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

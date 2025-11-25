@@ -11,19 +11,19 @@ export const metadata = {
 
 export default async function InstructorLayout({ children }) {
   const response = await getUserDataOnServer();
-  
+
   // Check if there's an error in the response
   if (!response || response.error || !response.success) {
     return <NotFound />;
   }
-  
+
   const userData = response?.data;
-  
+
   // Check if user data exists and user is an instructor
   if (!userData || userData.role !== "instructor") {
     return <NotFound />;
   }
-  
+
   return (
     <SidebarProvider
       style={{

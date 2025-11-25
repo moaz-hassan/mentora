@@ -3,9 +3,6 @@ import Cookies from 'js-cookie';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api`;
 
-/**
- * Get video duration from file
- */
 const getVideoDuration = (file) => {
   return new Promise((resolve) => {
     const video = document.createElement('video');
@@ -24,12 +21,7 @@ const getVideoDuration = (file) => {
   });
 };
 
-/**
- * Upload video directly to Cloudinary with HLS transformation
- * @param {File} file - Video file to upload
- * @param {Function} onProgress - Progress callback (0-100)
- * @returns {Promise<Object>} Upload result with URLs and metadata
- */
+
 export const uploadVideoToCloudinary = async (file, onProgress) => {
   try {
     const token = Cookies.get('authToken');
