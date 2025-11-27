@@ -1,14 +1,5 @@
-/**
- * Admin Analytics Controller
- * Purpose: Handle platform analytics route handlers for admin
- */
-
 import * as analyticsService from "../../services/admin/adminAnalytics.service.js";
 
-/**
- * Get platform overview
- * GET /api/admin/analytics/overview
- */
 export const getPlatformOverview = async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
@@ -23,10 +14,6 @@ export const getPlatformOverview = async (req, res, next) => {
   }
 };
 
-/**
- * Get revenue analytics
- * GET /api/admin/analytics/revenue
- */
 export const getRevenueAnalytics = async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
@@ -41,10 +28,6 @@ export const getRevenueAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Get user growth analytics
- * GET /api/admin/analytics/users
- */
 export const getUserGrowthAnalytics = async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
@@ -59,10 +42,6 @@ export const getUserGrowthAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Get enrollment analytics
- * GET /api/admin/analytics/enrollments
- */
 export const getEnrollmentAnalytics = async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
@@ -77,10 +56,6 @@ export const getEnrollmentAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Get course performance analytics
- * GET /api/admin/analytics/courses
- */
 export const getCoursePerformanceAnalytics = async (req, res, next) => {
   try {
     const coursePerformance = await analyticsService.getCoursePerformanceAnalytics();
@@ -94,10 +69,6 @@ export const getCoursePerformanceAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Export analytics data
- * POST /api/admin/analytics/export
- */
 export const exportAnalyticsData = async (req, res, next) => {
   try {
     const { startDate, endDate } = req.body;

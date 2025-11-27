@@ -28,7 +28,7 @@ export const getAllCouponsByInstructor = async (req, res, next) => {
 
 export const createCoupon = async (req, res, next) => {
   try {
-    const coupon = await couponService.createCoupon(req.body, req.user.id);
+    const coupon = await couponService.createCoupon(req.body, req.user.id, req.user.role);
     res.status(201).json({
       success: true,
       message: "Coupon created successfully",

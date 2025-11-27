@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { MessageCircle, X, Minimize2, Maximize2, Send, Sparkles } from "lucide-react";
-import aiService from "@/lib/api/aiService";
+import chat from "@/lib/apiCalls/ai/chat.apiCall";
 
 export default function FloatingChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +41,7 @@ export default function FloatingChatWidget() {
     setLoading(true);
 
     try {
-      const data = await aiService.chat(messageText, {
+      const data = await chat(messageText, {
         page: "floating-widget",
         data: {},
       });

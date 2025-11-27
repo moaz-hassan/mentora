@@ -73,25 +73,15 @@ export default function StudentSettingsPage() {
     setSaving(true);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/users/profile`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(profileData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update profile");
+      const { updateUserProfile } = await import("@/lib/apiCalls/student/profile.apiCall");
+      const result = await updateUserProfile(profileData);
+      
+      if (result.success) {
+        updateUser(result.data);
+        alert("Profile updated successfully!");
+      } else {
+        alert(result.error || "Failed to update profile. Please try again.");
       }
-
-      const data = await response.json();
-      updateUser(data.data);
-      alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile. Please try again.");
@@ -104,23 +94,14 @@ export default function StudentSettingsPage() {
     setSaving(true);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/users/notification-preferences`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(notificationPrefs),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update notification preferences");
+      const { updateNotificationPreferences } = await import("@/lib/apiCalls/student/profile.apiCall");
+      const result = await updateNotificationPreferences(notificationPrefs);
+      
+      if (result.success) {
+        alert("Notification preferences updated successfully!");
+      } else {
+        alert(result.error || "Failed to update preferences. Please try again.");
       }
-
-      alert("Notification preferences updated successfully!");
     } catch (error) {
       console.error("Error updating notification preferences:", error);
       alert("Failed to update preferences. Please try again.");
@@ -148,32 +129,23 @@ export default function StudentSettingsPage() {
     setSaving(true);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/users/change-password`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            current_password: passwordData.current_password,
-            new_password: passwordData.new_password,
-          }),
-        }
+      const { changePassword } = await import("@/lib/apiCalls/student/profile.apiCall");
+      const result = await changePassword(
+        passwordData.current_password,
+        passwordData.new_password,
+        passwordData.confirm_password
       );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to change password");
+      
+      if (result.success) {
+        alert("Password changed successfully!");
+        setPasswordData({
+          current_password: "",
+          new_password: "",
+          confirm_password: "",
+        });
+      } else {
+        alert(result.error || "Failed to change password. Please try again.");
       }
-
-      alert("Password changed successfully!");
-      setPasswordData({
-        current_password: "",
-        new_password: "",
-        confirm_password: "",
-      });
     } catch (error) {
       console.error("Error changing password:", error);
       alert(error.message || "Failed to change password. Please try again.");

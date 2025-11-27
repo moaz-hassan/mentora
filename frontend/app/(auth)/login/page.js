@@ -38,14 +38,16 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await loginApiCall(loginData.email, loginData.password);
+      const response = await loginApiCall(loginData.email, loginData.password);      
       if (response.success) {
         Cookies.set("authToken", response.data.token);
         localStorage.getItem("forgot_password_timer")
           ? localStorage.removeItem("forgot_password_timer")
           : null;
-        toast.success(response.message);
+        toast.success(response.message || "Login successful");
         router.push("/");
+      } else {
+        toast.error(response.error || "Failed to login");
       }
     } catch (error) {
       toast.error(error.message || "Failed to login");

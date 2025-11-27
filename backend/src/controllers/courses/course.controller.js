@@ -153,7 +153,7 @@ export const submitForReview = async (req, res, next) => {
  */
 export const analyzeCourse = async (req, res, next) => {
   try {
-    const course = await courseService.getCourseById(req.params.id);
+    const course = await courseService.getCourseById(req.params.id, { includeNonApproved: true });
     
     if (!course) {
       return res.status(404).json({ success: false, message: "Course not found" });
@@ -162,7 +162,7 @@ export const analyzeCourse = async (req, res, next) => {
     const analysis = await geminiService.analyzeCourseForReview(course);
     
     // Save analysis to course
-    await course.update({ ai_analysis: analysis });
+    await courseService.saveCourseAnalysis(req.params.id, analysis);
 
     res.status(200).json({
       success: true,
@@ -227,6 +227,21 @@ export const getPendingCourses = async (req, res, next) => {
       success: true,
       count: courses.length,
       data: courses,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get course details for admin (includes pending/draft)
+ */
+export const getAdminCourseDetails = async (req, res, next) => {
+  try {
+    const course = await courseService.getCourseById(req.params.id, { includeNonApproved: true });
+    res.status(200).json({
+      success: true,
+      data: course,
     });
   } catch (error) {
     next(error);

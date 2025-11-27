@@ -51,7 +51,7 @@ import {
   DataTable,
   FilterBar,
 } from "@/components/admin/shared";
-import { notificationsAPI } from "@/lib/api/admin";
+import * as notificationsAPI from "@/lib/apiCalls/admin/notifications.apiCall";
 
 // History table columns
 const historyColumns = [
@@ -189,17 +189,21 @@ export default function NotificationManagementPage() {
   const fetchData = useCallback(async () => {
     try {
       const [statsRes, historyRes, scheduledRes] = await Promise.all([
-        notificationsAPI.getStatistics(),
-        notificationsAPI.getHistory({ limit: 50 }),
-        notificationsAPI.getScheduled(),
+        notificationsAPI.getStatistics().catch(err => ({ success: false, error: err.message })),
+        notificationsAPI.getHistory({ limit: 50 }).catch(err => ({ success: false, error: err.message })),
+        notificationsAPI.getScheduled().catch(err => ({ success: false, error: err.message })),
       ]);
 
       if (statsRes.success) setStatistics(statsRes.data);
       if (historyRes.success) setHistory(historyRes.data?.notifications || []);
       if (scheduledRes.success) setScheduled(scheduledRes.data?.notifications || []);
+      
+      // Only show error if all requests failed
+      if (!statsRes.success && !historyRes.success && !scheduledRes.success) {
+        toast.error("Failed to load notifications data");
+      }
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      toast.error("Failed to load notifications");
     } finally {
       setLoading(false);
       setRefreshing(false);

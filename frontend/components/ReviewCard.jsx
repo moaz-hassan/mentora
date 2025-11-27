@@ -75,10 +75,10 @@ export default function ReviewCard({ review }) {
   const rating = review.rating || 0;
 
   return (
-    <div className="border-b border-gray-200 pb-6 last:border-b-0 last:pb-0" role="article" aria-label={`Review by ${fullName}`}>
-      <div className="flex items-start gap-4">
+    <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow" role="article" aria-label={`Review by ${fullName}`}>
+      <div className="flex items-start gap-5">
         {/* Avatar */}
-        <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${avatarColor}`}>
+        <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${avatarColor}`}>
           {review.User?.Profile?.profile_picture_url ? (
             <img
               src={review.User.Profile.profile_picture_url}
@@ -86,35 +86,36 @@ export default function ReviewCard({ review }) {
               className="w-full h-full rounded-full object-cover"
             />
           ) : (
-            <span className="text-lg font-semibold">{initials}</span>
+            <span className="text-xl font-bold">{initials}</span>
           )}
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Header */}
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="font-semibold text-gray-900">{fullName}</h4>
-            <span className="text-sm text-gray-500 flex-shrink-0">{relativeTime}</span>
-          </div>
-
-          {/* Star Rating */}
-          <div className="flex items-center gap-1 mb-3" role="img" aria-label={`${rating} out of 5 stars`}>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className={`w-4 h-4 ${
-                  star <= rating
-                    ? "text-yellow-400 fill-yellow-400"
-                    : "text-gray-300"
-                }`}
-                aria-hidden="true"
-              />
-            ))}
+          <div className="flex items-start justify-between mb-3 gap-4">
+            <div>
+              <h4 className="font-bold text-gray-900 text-lg mb-1">{fullName}</h4>
+              {/* Star Rating */}
+              <div className="flex items-center gap-1" role="img" aria-label={`${rating} out of 5 stars`}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`w-4 h-4 ${
+                      star <= rating
+                        ? "text-blue-600 fill-blue-600"
+                        : "text-gray-300"
+                    }`}
+                    aria-hidden="true"
+                  />
+                ))}
+              </div>
+            </div>
+            <span className="text-sm text-gray-500 flex-shrink-0 font-medium">{relativeTime}</span>
           </div>
 
           {/* Review Text */}
-          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
+          <p className="text-gray-700 leading-relaxed text-base whitespace-pre-wrap break-words">
             {review.review_text}
           </p>
         </div>

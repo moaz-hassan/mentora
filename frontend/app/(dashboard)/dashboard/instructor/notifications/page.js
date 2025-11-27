@@ -1,163 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import useAuthStore from "@/store/authStore";
-import {
-  Bell,
-  Check,
-  CheckCheck,
-  Trash2,
-  Filter,
-  Search,
-} from "lucide-react";
+import { Bell, Check, CheckCheck, Trash2, Filter, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { useNotifications } from "@/hooks/notifications";
+import { useState } from "react";
 
 export default function NotificationsPage() {
-  const user = useAuthStore((state) => state.user);
-  const [notifications, setNotifications] = useState([]);
-  const [filteredNotifications, setFilteredNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all"); // all, unread, read
+  const {
+    notifications,
+    loading,
+    filter,
+    setFilter,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    loadMore,
+    hasMore,
+  } = useNotifications();
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const limit = 20;
-
-  useEffect(() => {
-    if (user?.id) {
-      fetchNotifications();
-    }
-  }, [user?.id, page]);
-
-  useEffect(() => {
-    filterNotifications();
-  }, [notifications, filter, searchQuery]);
-
-  const fetchNotifications = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications?page=${page}&limit=${limit}`,
-        {
-          credentials: "include",
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        const newNotifications = data.data || [];
-        
-        if (page === 1) {
-          setNotifications(newNotifications);
-        } else {
-          setNotifications((prev) => [...prev, ...newNotifications]);
-        }
-        
-        setHasMore(newNotifications.length === limit);
-      }
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterNotifications = () => {
-    let filtered = [...notifications];
-
-    // Filter by read status
-    if (filter === "unread") {
-      filtered = filtered.filter((n) => !n.is_read);
-    } else if (filter === "read") {
-      filtered = filtered.filter((n) => n.is_read);
-    }
-
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (n) =>
-          n.title.toLowerCase().includes(query) ||
-          n.message.toLowerCase().includes(query)
-      );
-    }
-
-    setFilteredNotifications(filtered);
-  };
-
-  const markAsRead = async (notificationId) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${notificationId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ is_read: true }),
-        }
-      );
-
-      if (response.ok) {
-        setNotifications((prev) =>
-          prev.map((notif) =>
-            notif.id === notificationId ? { ...notif, is_read: true } : notif
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-    }
-  };
-
-  const markAllAsRead = async () => {
-    if (!confirm("Mark all notifications as read?")) {
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/mark-all-read`,
-        {
-          method: "PUT",
-          credentials: "include",
-        }
-      );
-
-      if (response.ok) {
-        setNotifications((prev) =>
-          prev.map((notif) => ({ ...notif, is_read: true }))
-        );
-      }
-    } catch (error) {
-      console.error("Error marking all as read:", error);
-    }
-  };
-
-  const deleteNotification = async (notificationId) => {
-    if (!confirm("Delete this notification?")) {
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${notificationId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-
-      if (response.ok) {
-        setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
-      }
-    } catch (error) {
-      console.error("Error deleting notification:", error);
-    }
-  };
 
   const getNotificationIcon = (type) => {
     switch (type) {
@@ -190,6 +53,17 @@ export default function NotificationsPage() {
     if (diffDays < 7) return `${diffDays}d ago`;
     return date.toLocaleDateString();
   };
+
+  const filteredNotifications = notifications.filter((n) => {
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      return (
+        n.title.toLowerCase().includes(query) ||
+        n.message.toLowerCase().includes(query)
+      );
+    }
+    return true;
+  });
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
@@ -253,7 +127,7 @@ export default function NotificationsPage() {
       </Card>
 
       {/* Notifications List */}
-      {loading && page === 1 ? (
+      {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -333,7 +207,7 @@ export default function NotificationsPage() {
       {hasMore && filteredNotifications.length > 0 && (
         <div className="text-center">
           <Button
-            onClick={() => setPage((p) => p + 1)}
+            onClick={loadMore}
             disabled={loading}
             variant="outline"
           >

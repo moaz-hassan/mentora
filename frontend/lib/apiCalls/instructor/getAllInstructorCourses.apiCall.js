@@ -1,21 +1,22 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+import { 
+  getAuthHeaders, 
+  getApiBaseUrl 
+} from "@/lib/utils/apiHelpers";
+
+const API_URL = getApiBaseUrl();
+
 
 export const getAllInstructorCourses = async () => {
-  const authToken = Cookies.get("authToken");
-  if (!authToken) {
-    throw new Error("No token provided");
-  }
-
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/instructor/all-courses`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
+    const headers = getAuthHeaders();
+    
+    const response = await axios.get(`${API_URL}/api/instructor/courses/all`, {
+      headers,
     });
+    
     return response.data;
   } catch (error) {
-    console.error("Error fetching courses:", error);
-    throw error;
+    return error.response?.data || { success: false, message: error.message };
   }
 };

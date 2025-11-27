@@ -1,26 +1,42 @@
 import axios from "axios";
-import cookie from "js-cookie";
-export default async function courseSaveDraftApiCall(courseId) {
-  const authToken = cookie.get("authToken");
-  console.log(authToken);
-  if (!authToken) {
-    throw new Error("Authentication token not found");
-  }
+import { 
+  getAuthToken,
+  getAuthHeaders,
+  getApiBaseUrl 
+} from "@/lib/utils/apiHelpers";
 
+const API_URL = getApiBaseUrl();
+
+/**
+ * Save course as draft
+ * @param {string|number} courseId - Course ID
+ * @returns {Promise<Object>} Response with success flag and data
+ * 
+ * @example
+ * const result = await courseSaveDraftApiCall(123);
+ * if (result.success) {
+ *   console.log('Course saved as draft');
+ * }
+ */
+export default async function courseSaveDraftApiCall(courseId) {
   try {
+    const headers = getAuthHeaders();
+    
+    if (!getAuthToken()) {
+      return {
+        success: false,
+        error: "Authentication required"
+      };
+    }
+
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${courseId}/save-draft`,
+      `${API_URL}/api/courses/${courseId}/save-draft`,
       {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
+      { headers }
     );
+    
     return response.data;
   } catch (error) {
-    console.error("Error saving course as draft:", error);
-    throw error;
+    return error.response?.data || { success: false, message: error.message };
   }
-};
+}

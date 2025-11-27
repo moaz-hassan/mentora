@@ -72,9 +72,14 @@ export default function CoursesSearchPage() {
         limit: coursesPerPage,
       });
 
-      setCourses(result.courses);
-      setTotalPages(result.pagination.total_pages);
-      setTotalCourses(result.pagination.total);
+      if (result.success) {
+        setCourses(result.data.courses);
+        setTotalPages(result.data.pagination.total_pages);
+        setTotalCourses(result.data.pagination.total);
+      } else {
+        setError(result.error || "Failed to load courses. Please try again.");
+        setCourses([]);
+      }
     } catch (err) {
       console.error("Error fetching courses:", err);
       setError(err.message || "Failed to load courses. Please try again.");

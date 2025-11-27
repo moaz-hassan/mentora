@@ -41,7 +41,7 @@ import {
   FilterBar,
   ExportButton,
 } from "@/components/admin/shared";
-import { financialAPI } from "@/lib/api/admin";
+import * as financialAPI from "@/lib/apiCalls/admin/financial.apiCall";
 
 // Chart config
 const revenueChartConfig = {

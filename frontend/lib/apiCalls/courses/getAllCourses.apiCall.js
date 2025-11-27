@@ -1,5 +1,34 @@
 import axios from "axios";
+import { 
+  getApiBaseUrl 
+} from "@/lib/utils/apiHelpers";
 
+const API_URL = getApiBaseUrl();
+
+/**
+ * Search and filter courses
+ * @param {Object} params - Search and filter parameters
+ * @param {string} params.search - Search query
+ * @param {Array<string>} params.categories - Category filters
+ * @param {Array<string>} params.levels - Level filters
+ * @param {Array<string>} params.priceFilters - Price filters (free/paid)
+ * @param {string} params.sortBy - Sort option
+ * @param {number} params.page - Page number
+ * @param {number} params.limit - Items per page
+ * @returns {Promise<Object>} Response with courses and pagination
+ * 
+ * @example
+ * const result = await searchCourses({ 
+ *   search: 'react', 
+ *   categories: ['Web Development'],
+ *   page: 1,
+ *   limit: 10
+ * });
+ * if (result.success) {
+ *   console.log(result.data.courses);
+ *   console.log(result.data.pagination);
+ * }
+ */
 export default async function searchCourses(params = {}) {
   try {
     const {
@@ -59,7 +88,7 @@ export default async function searchCourses(params = {}) {
 
     // Make API request
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/courses?${queryParams.toString()}`
+      `${API_URL}/api/courses?${queryParams.toString()}`
     );
 
     // Extract data from response
@@ -73,7 +102,7 @@ export default async function searchCourses(params = {}) {
         ? `${course.User.first_name} ${course.User.last_name}`
         : "Unknown Instructor",
       category: course.category,
-      level: S,
+      level: course.level, // Fixed: was "S"
       price: parseFloat(course.price) || 0,
       rating: course.average_rating ? parseFloat(course.average_rating) : 0,
       students: course.enrollment_count || 0,
@@ -83,39 +112,18 @@ export default async function searchCourses(params = {}) {
     }));
 
     return {
-      courses: transformedCourses,
-      pagination: pagination || {
-        total: transformedCourses.length,
-        page: page,
-        limit: limit,
-        total_pages: 1,
-      },
+      success: true,
+      data: {
+        courses: transformedCourses,
+        pagination: pagination || {
+          total: transformedCourses.length,
+          page: page,
+          limit: limit,
+          total_pages: 1,
+        },
+      }
     };
   } catch (error) {
-    console.error("Error searching courses:", error);
-
-    // Handle different error types
-    if (error.code === "ERR_NETWORK" || error.message.includes("network")) {
-      const networkError = new Error(
-        "Network error. Please check your connection and try again."
-      );
-      networkError.isNetworkError = true;
-      throw networkError;
-    }
-
-    if (error.response) {
-      // Server responded with error
-      const statusCode = error.response.status;
-      if (statusCode >= 500) {
-        throw new Error("Server error. Please try again later.");
-      } else if (statusCode >= 400) {
-        throw new Error(
-          error.response.data?.message || "Failed to fetch courses."
-        );
-      }
-    }
-
-    // Generic error
-    throw new Error("Failed to load courses. Please try again.");
+    return error.response?.data || { success: false, message: error.message };
   }
 }

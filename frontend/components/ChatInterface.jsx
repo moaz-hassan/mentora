@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import aiService from "@/lib/api/aiService";
+import chat from "@/lib/apiCalls/ai/chat.apiCall";
+import getExamples from "@/lib/apiCalls/ai/getExamples.apiCall";
 
 export default function ChatInterface({ userRole, contextType, contextData = {} }) {
   const [messages, setMessages] = useState([]);
@@ -30,7 +31,7 @@ export default function ChatInterface({ userRole, contextType, contextData = {} 
 
   const fetchExampleQuestions = async () => {
     try {
-      const data = await aiService.getExamples();
+      const data = await getExamples();
       if (data.success) {
         setExampleQuestions(data.examples);
       }
@@ -53,7 +54,7 @@ export default function ChatInterface({ userRole, contextType, contextData = {} 
     setLoading(true);
 
     try {
-      const data = await aiService.chat(messageText, {
+      const data = await chat(messageText, {
         page: contextType,
         data: contextData,
       });

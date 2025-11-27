@@ -1,36 +1,21 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import { 
+  getAuthHeaders,
+  getApiBaseUrl 
+} from "@/lib/utils/apiHelpers";
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api`;
+const API_URL = `${getApiBaseUrl()}/api`;
 
-/**
- * Update course introduction video
- */
 export const updateCourseIntroVideo = async (courseId, videoData) => {
   try {
-    const token = Cookies.get('authToken');
-    
-    if (!token) {
-      throw new Error('Authentication required');
-    }
-    
+    const headers = getAuthHeaders();
     const response = await axios.put(
       `${API_URL}/courses/${courseId}/intro-video`,
       videoData,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      { headers }
     );
-    
     return response.data;
   } catch (error) {
-    throw new Error(
-      error.response?.data?.error?.message || 
-      error.response?.data?.message || 
-      'Failed to update introduction video'
-    );
+    return error.response?.data || { success: false, message: error.message };
   }
 };

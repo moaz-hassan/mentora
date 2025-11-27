@@ -5,7 +5,7 @@ import { Upload, Video, X, Loader2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { uploadVideoToCloudinary } from '@/lib/services/cloudinary.service';
+import { uploadVideoToCloudinary } from '@/lib/apiCalls/cloudinary/uploadVideoToCloudinary';
 
 export function IntroVideoUploader({ courseData, onVideoUploaded }) {
   const [videoFile, setVideoFile] = useState(null);

@@ -5,8 +5,8 @@ import ProfileForm from "@/components/student/ProfileForm";
 import SecuritySettings from "@/components/student/SecuritySettings";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import axios from "axios";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getUserProfile, updateUserProfile } from "@/lib/apiCalls/student/profile.apiCall";
 
 export default function ProfilePage() {
   const [profileData, setProfileData] = useState(null);
@@ -16,11 +16,15 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/profile", {
-          withCredentials: true,
-        });
-        if (response.data.success) {
-          setProfileData(response.data.data);
+        const result = await getUserProfile();
+        if (result.success) {
+          setProfileData(result.data.data || result.data);
+        } else {
+          toast({
+            title: "Error",
+            description: result.error || "Failed to load profile data.",
+            variant: "destructive",
+          });
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -39,13 +43,11 @@ export default function ProfilePage() {
 
   const handleSave = async (data) => {
     try {
-      const response = await axios.put(
-        "http://localhost:5000/api/profile",
-        data,
-        { withCredentials: true }
-      );
-      if (response.data.success) {
-        setProfileData(response.data.data);
+      const result = await updateUserProfile(data);
+      if (result.success) {
+        setProfileData(result.data.data || result.data);
+      } else {
+        throw new Error(result.error || "Failed to update profile");
       }
     } catch (error) {
       console.error("Error updating profile:", error);

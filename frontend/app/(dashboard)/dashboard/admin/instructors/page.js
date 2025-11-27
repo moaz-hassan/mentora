@@ -48,7 +48,7 @@ import {
   DataTable,
   ChartWrapper,
 } from "@/components/admin/shared";
-import { instructorsAPI } from "@/lib/api/admin";
+import { instructorsAPI } from "@/lib/apiCalls/admin/instructors.apiCall";
 
 // Chart config
 const performanceChartConfig = {

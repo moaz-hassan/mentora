@@ -53,7 +53,15 @@ import {
   AnalyticsCard,
   DataTable,
 } from "@/components/admin/shared";
-import { marketingAPI } from "@/lib/api/admin";
+import {
+  getCampaigns,
+  createCampaign,
+  updateCampaign,
+  deleteCampaign,
+  getFeaturedCourses,
+  addFeaturedCourse,
+  removeFeaturedCourse,
+} from "@/lib/apiCalls/admin/marketing.apiCall";
 
 export default function MarketingToolsPage() {
   const [loading, setLoading] = useState(true);
@@ -85,8 +93,8 @@ export default function MarketingToolsPage() {
   const fetchData = useCallback(async () => {
     try {
       const [campaignsRes, featuredRes] = await Promise.all([
-        marketingAPI.getCampaigns(),
-        marketingAPI.getFeaturedCourses(),
+        getCampaigns(),
+        getFeaturedCourses(),
       ]);
 
       if (campaignsRes.success) setCampaigns(campaignsRes.data?.campaigns || []);
@@ -119,10 +127,10 @@ export default function MarketingToolsPage() {
     setSaving(true);
     try {
       if (isEditing && selectedItem) {
-        await marketingAPI.updateCampaign(selectedItem.id, campaignForm);
+        await updateCampaign(selectedItem.id, campaignForm);
         toast.success("Campaign updated successfully");
       } else {
-        await marketingAPI.createCampaign(campaignForm);
+        await createCampaign(campaignForm);
         toast.success("Campaign created successfully");
       }
       setCampaignDialogOpen(false);
@@ -140,7 +148,7 @@ export default function MarketingToolsPage() {
 
     setSaving(true);
     try {
-      await marketingAPI.deleteCampaign(selectedItem.id);
+      await deleteCampaign(selectedItem.id);
       toast.success("Campaign deleted successfully");
       setDeleteDialogOpen(false);
       setSelectedItem(null);
@@ -160,7 +168,7 @@ export default function MarketingToolsPage() {
 
     setSaving(true);
     try {
-      await marketingAPI.addFeaturedCourse({
+      await addFeaturedCourse({
         courseId: parseInt(featuredForm.courseId),
         position: featuredForm.position ? parseInt(featuredForm.position) : null,
       });
@@ -177,7 +185,7 @@ export default function MarketingToolsPage() {
 
   const handleRemoveFeatured = async (id) => {
     try {
-      await marketingAPI.removeFeaturedCourse(id);
+      await removeFeaturedCourse(id);
       toast.success("Featured course removed");
       fetchData();
     } catch (error) {

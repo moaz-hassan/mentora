@@ -8,6 +8,9 @@ const router = express.Router();
 
 router.get("/", authenticate, validateResult, reviewController.getAllReviews);
 
+// Public route to get reviews for a course (no authentication required)
+router.get("/course/:courseId", reviewController.getCourseReviews);
+
 router.post("/", authenticate, createReviewValidator, validateResult, reviewController.createReview);
 
 router.put("/", authenticate, updateReviewValidator, validateResult, reviewController.updateReview);

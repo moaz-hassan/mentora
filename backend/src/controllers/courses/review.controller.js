@@ -54,3 +54,18 @@ export const deleteReview = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getCourseReviews = async (req, res, next) => {
+  try {
+    const { courseId } = req.params;
+    const reviews = await reviewService.getCourseReviews(courseId);
+
+    res.status(200).json({
+      success: true,
+      count: reviews.length,
+      data: reviews,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

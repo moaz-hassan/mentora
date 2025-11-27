@@ -19,6 +19,13 @@ router.get(
   enrollmentController.getAllEnrollments
 );
 
+// Check if user is enrolled in a course
+router.get(
+  "/check/:courseId",
+  authenticate,
+  enrollmentController.checkEnrollment
+);
+
 router.get(
   "/:id",
   authenticate,

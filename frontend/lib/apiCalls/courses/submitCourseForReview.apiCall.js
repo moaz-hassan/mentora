@@ -1,22 +1,32 @@
 import axios from "axios";
-import cookies from "js-cookie";
+import { 
+  getAuthHeaders,
+  getApiBaseUrl 
+} from "@/lib/utils/apiHelpers";
 
+const API_URL = getApiBaseUrl();
+
+/**
+ * Submit course for review
+ * @param {string|number} courseId - Course ID
+ * @returns {Promise<Object>} Response with success flag and data
+ * 
+ * @example
+ * const result = await submitForReview(123);
+ * if (result.success) {
+ *   console.log('Course submitted for review');
+ * }
+ */
 export const submitForReview = async (courseId) => {
-  const token = cookies.get("authToken");
   try {
+    const headers = getAuthHeaders();
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${courseId}/submit-review`,
+      `${API_URL}/api/courses/${courseId}/submit-review`,
       {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      { headers }
     );
     return response.data;
   } catch (error) {
-    console.error("Error submitting for review:", error);
-    throw error;
+    return error.response?.data || { success: false, message: error.message };
   }
 };

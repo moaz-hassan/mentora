@@ -34,7 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { settingsAPI } from "@/lib/api/admin";
+import { settingsAPI } from "@/lib/apiCalls/admin/settings.apiCall";
 
 export default function SystemSettingsPage() {
   const [loading, setLoading] = useState(true);

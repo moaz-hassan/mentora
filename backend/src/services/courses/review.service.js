@@ -96,3 +96,33 @@ export const deleteReview = async (reviewId, userId) => {
 
   return { message: "Review deleted successfully" };
 };
+
+export const getCourseReviews = async (courseId) => {
+  const course = await Course.findByPk(courseId);
+  
+  if (!course) {
+    const error = new Error("Course not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const reviews = await CourseReview.findAll({
+    where: { course_id: courseId },
+    include: [
+      { 
+        model: User, 
+        attributes: ["id", "first_name", "last_name"],
+        include: [
+          {
+            model: models.Profile,
+            as: "Profile",
+            attributes: ["avatar_url"]
+          }
+        ]
+      },
+    ],
+    order: [["created_at", "DESC"]],
+  });
+
+  return reviews;
+};

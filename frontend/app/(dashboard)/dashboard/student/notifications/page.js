@@ -38,16 +38,11 @@ export default function NotificationsPage() {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications?page=${page}&limit=${limit}`,
-        {
-          credentials: "include",
-        }
-      );
+      const { getNotifications } = await import("@/lib/apiCalls/notifications/notifications.apiCall");
+      const result = await getNotifications(page, limit);
 
-      if (response.ok) {
-        const data = await response.json();
-        const newNotifications = data.data || [];
+      if (result.success) {
+        const newNotifications = result.data.notifications || result.data || [];
         
         if (page === 1) {
           setNotifications(newNotifications);
@@ -89,19 +84,10 @@ export default function NotificationsPage() {
 
   const markAsRead = async (notificationId) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${notificationId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ is_read: true }),
-        }
-      );
+      const { markNotificationAsRead } = await import("@/lib/apiCalls/notifications/notifications.apiCall");
+      const result = await markNotificationAsRead(notificationId);
 
-      if (response.ok) {
+      if (result.success) {
         setNotifications((prev) =>
           prev.map((notif) =>
             notif.id === notificationId ? { ...notif, is_read: true } : notif
@@ -119,15 +105,10 @@ export default function NotificationsPage() {
     }
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/mark-all-read`,
-        {
-          method: "PUT",
-          credentials: "include",
-        }
-      );
+      const { markAllNotificationsAsRead } = await import("@/lib/apiCalls/notifications/notifications.apiCall");
+      const result = await markAllNotificationsAsRead();
 
-      if (response.ok) {
+      if (result.success) {
         setNotifications((prev) =>
           prev.map((notif) => ({ ...notif, is_read: true }))
         );
@@ -143,15 +124,10 @@ export default function NotificationsPage() {
     }
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${notificationId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      const { deleteNotification: deleteNotif } = await import("@/lib/apiCalls/notifications/notifications.apiCall");
+      const result = await deleteNotif(notificationId);
 
-      if (response.ok) {
+      if (result.success) {
         setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
       }
     } catch (error) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import {
   DollarSign,
   TrendingUp,
@@ -9,87 +8,16 @@ import {
   CreditCard,
   ArrowUpRight,
 } from "lucide-react";
-import { getRevenueAnalytics } from "@/lib/apiCalls/analytics/getRevenueAnalytics.apiCall";
+import { useEarnings } from "@/hooks/earnings";
 import RevenueLineChart from "@/components/charts/RevenueLineChart";
 import ExportDialog from "@/components/ExportDialog";
+import { RecentTransactionsSection } from "@/components/instructorDashboard/earnings";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import { useState } from "react";
 
 export default function InstructorEarningsPage() {
-  const [timeRange, setTimeRange] = useState("30");
-  const [earnings, setEarnings] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { earnings, loading, error, timeRange, setTimeRange, refetch } = useEarnings();
   const [showExportDialog, setShowExportDialog] = useState(false);
-
-  useEffect(() => {
-    fetchEarnings();
-  }, [timeRange]);
-
-  const fetchEarnings = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Calculate date range based on timeRange
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - parseInt(timeRange));
-
-      // Fetch revenue analytics
-      const revenueResponse = await getRevenueAnalytics(
-        startDate.toISOString(),
-        endDate.toISOString()
-      );
-      const revenueData = revenueResponse.data;
-
-      // Transform revenue data to match UI expectations
-      const transformedEarnings = {
-        summary: {
-          totalRevenue: parseFloat(revenueData.total_revenue),
-          // Note: Pending payout and last payout would need separate endpoints
-          // For now, we'll calculate based on available data
-          pendingPayout: parseFloat(revenueData.total_revenue) * 0.8, // Assuming 80% after platform fee
-          lastPayout: 0, // Would need payment history endpoint
-          lastPayoutDate: null,
-          nextPayoutDate: getNextPayoutDate(),
-        },
-        byCourse: revenueData.revenue_by_course.map((course) => ({
-          id: course.course_id,
-          title: course.course_title,
-          enrollments: course.sales, // Using sales as proxy for enrollments
-          revenue: parseFloat(course.revenue),
-          avgPrice: course.sales > 0 ? parseFloat(course.revenue) / course.sales : 0,
-          refunds: 0, // Would need refund data from backend
-        })),
-        monthlyTrend: revenueData.revenue_by_month.map((item) => ({
-          month: formatMonthLabel(item.month),
-          revenue: parseFloat(item.revenue),
-        })),
-        transactions: [], // Would need transaction history endpoint
-      };
-
-      setEarnings(transformedEarnings);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching earnings:", error);
-      setError("Failed to load earnings data. Please try again.");
-      setLoading(false);
-    }
-  };
-
-  const getNextPayoutDate = () => {
-    const now = new Date();
-    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    return nextMonth.toISOString().split('T')[0];
-  };
-
-  const formatMonthLabel = (monthString) => {
-    // Convert YYYY-MM to short month name
-    const [year, month] = monthString.split('-');
-    const date = new Date(year, parseInt(month) - 1);
-    return date.toLocaleDateString('en-US', { month: 'short' });
-  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {
@@ -99,6 +27,7 @@ export default function InstructorEarningsPage() {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -106,111 +35,37 @@ export default function InstructorEarningsPage() {
     });
   };
 
+
   const exportToPDF = () => {
     const doc = new jsPDF();
     
-    // Add title
     doc.setFontSize(20);
-    doc.setTextColor(37, 99, 235); // Blue color
+    doc.setTextColor(37, 99, 235);
     doc.text("Earnings Report", 14, 20);
     
-    // Add date range
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 28);
     doc.text(`Time Range: Last ${timeRange} days`, 14, 33);
     
-    // Add summary section
     doc.setFontSize(14);
     doc.setTextColor(0, 0, 0);
     doc.text("Summary", 14, 45);
     
     doc.setFontSize(10);
-    doc.text(`Total Revenue: ${formatCurrency(earnings.summary.totalRevenue)}`, 14, 53);
-    doc.text(`Pending Payout: ${formatCurrency(earnings.summary.pendingPayout)}`, 14, 60);
-    doc.text(`Last Payout: ${formatCurrency(earnings.summary.lastPayout)}`, 14, 67);
-    doc.text(`Next Payout Date: ${formatDate(earnings.summary.nextPayoutDate)}`, 14, 74);
+    doc.text(`Total Revenue: ${formatCurrency(earnings.total_revenue || 0)}`, 14, 53);
     
-    // Add revenue by course table
-    doc.setFontSize(14);
-    doc.text("Revenue by Course", 14, 88);
-    
-    const tableData = earnings.byCourse.map(course => [
-      course.title,
-      course.enrollments.toString(),
-      formatCurrency(course.avgPrice),
-      course.refunds.toString(),
-      formatCurrency(course.revenue)
-    ]);
-    
-    autoTable(doc, {
-      startY: 93,
-      head: [['Course', 'Enrollments', 'Avg Price', 'Refunds', 'Total Revenue']],
-      body: tableData,
-      theme: 'striped',
-      headStyles: { fillColor: [37, 99, 235] },
-      styles: { fontSize: 9 },
-      columnStyles: {
-        0: { cellWidth: 60 },
-        1: { cellWidth: 25, halign: 'center' },
-        2: { cellWidth: 25, halign: 'right' },
-        3: { cellWidth: 20, halign: 'center' },
-        4: { cellWidth: 30, halign: 'right' }
-      }
-    });
-    
-    // Add monthly trend
-    const finalY = doc.lastAutoTable.finalY || 93;
-    doc.setFontSize(14);
-    doc.text("Monthly Revenue Trend", 14, finalY + 15);
-    
-    const trendData = earnings.monthlyTrend.map(item => [
-      item.month,
-      formatCurrency(item.revenue)
-    ]);
-    
-    autoTable(doc, {
-      startY: finalY + 20,
-      head: [['Month', 'Revenue']],
-      body: trendData,
-      theme: 'striped',
-      headStyles: { fillColor: [37, 99, 235] },
-      styles: { fontSize: 9 },
-      columnStyles: {
-        0: { cellWidth: 40 },
-        1: { cellWidth: 40, halign: 'right' }
-      }
-    });
-    
-    // Save the PDF
     doc.save(`earnings-report-${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
   const exportToCSV = () => {
-    // Create CSV content
-    let csvContent = "Earnings Report\n";
-    csvContent += `Generated on: ${new Date().toLocaleDateString()}\n`;
-    csvContent += `Time Range: Last ${timeRange} days\n\n`;
+    let csvContent = "Earnings Report\\n";
+    csvContent += `Generated on: ${new Date().toLocaleDateString()}\\n`;
+    csvContent += `Time Range: Last ${timeRange} days\\n\\n`;
     
-    csvContent += "Summary\n";
-    csvContent += `Total Revenue,${earnings.summary.totalRevenue}\n`;
-    csvContent += `Pending Payout,${earnings.summary.pendingPayout}\n`;
-    csvContent += `Last Payout,${earnings.summary.lastPayout}\n`;
-    csvContent += `Next Payout Date,${earnings.summary.nextPayoutDate}\n\n`;
+    csvContent += "Summary\\n";
+    csvContent += `Total Revenue,${earnings.total_revenue || 0}\\n`;
     
-    csvContent += "Revenue by Course\n";
-    csvContent += "Course,Enrollments,Avg Price,Refunds,Total Revenue\n";
-    earnings.byCourse.forEach(course => {
-      csvContent += `"${course.title}",${course.enrollments},${course.avgPrice},${course.refunds},${course.revenue}\n`;
-    });
-    
-    csvContent += "\nMonthly Revenue Trend\n";
-    csvContent += "Month,Revenue\n";
-    earnings.monthlyTrend.forEach(item => {
-      csvContent += `${item.month},${item.revenue}\n`;
-    });
-    
-    // Create blob and download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
@@ -245,7 +100,7 @@ export default function InstructorEarningsPage() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
           <p className="text-red-800 font-medium mb-4">{error}</p>
           <button
-            onClick={fetchEarnings}
+            onClick={refetch}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             Retry
@@ -255,9 +110,15 @@ export default function InstructorEarningsPage() {
     );
   }
 
-  if (!earnings) {
-    return null;
-  }
+  if (!earnings) return null;
+
+  const totalRevenue = parseFloat(earnings.total_revenue || 0);
+  const pendingPayout = totalRevenue * 0.8;
+  const revenueByCourse = earnings.revenue_by_course || [];
+  const monthlyTrend = (earnings.revenue_by_month || []).map(item => ({
+    month: item.month,
+    revenue: parseFloat(item.revenue),
+  }));
 
   return (
     <div className="p-6 space-y-6">
@@ -276,10 +137,10 @@ export default function InstructorEarningsPage() {
             onChange={(e) => setTimeRange(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           >
-            <option value="7">Last 7 days</option>
-            <option value="30">Last 30 days</option>
-            <option value="90">Last 90 days</option>
-            <option value="365">Last year</option>
+            <option value="1month">Last month</option>
+            <option value="3months">Last 3 months</option>
+            <option value="6months">Last 6 months</option>
+            <option value="1year">Last year</option>
           </select>
 
           <button 
@@ -292,7 +153,6 @@ export default function InstructorEarningsPage() {
         </div>
       </div>
 
-      {/* Export Dialog */}
       <ExportDialog
         isOpen={showExportDialog}
         onClose={() => setShowExportDialog(false)}
@@ -308,9 +168,7 @@ export default function InstructorEarningsPage() {
             <TrendingUp className="w-5 h-5" />
           </div>
           <p className="text-sm opacity-90 mb-1">Total Revenue</p>
-          <p className="text-3xl font-bold">
-            {formatCurrency(earnings.summary.totalRevenue)}
-          </p>
+          <p className="text-3xl font-bold">{formatCurrency(totalRevenue)}</p>
           <p className="text-sm opacity-75 mt-2">All time earnings</p>
         </div>
 
@@ -322,12 +180,8 @@ export default function InstructorEarningsPage() {
             <span className="text-sm text-orange-600 font-medium">Pending</span>
           </div>
           <p className="text-sm text-gray-600 mb-1">Pending Payout</p>
-          <p className="text-3xl font-bold text-gray-900">
-            {formatCurrency(earnings.summary.pendingPayout)}
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Next payout: {formatDate(earnings.summary.nextPayoutDate)}
-          </p>
+          <p className="text-3xl font-bold text-gray-900">{formatCurrency(pendingPayout)}</p>
+          <p className="text-sm text-gray-500 mt-2">Next payout: 1st of next month</p>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -338,12 +192,8 @@ export default function InstructorEarningsPage() {
             <span className="text-sm text-green-600 font-medium">Paid</span>
           </div>
           <p className="text-sm text-gray-600 mb-1">Last Payout</p>
-          <p className="text-3xl font-bold text-gray-900">
-            {formatCurrency(earnings.summary.lastPayout)}
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            {formatDate(earnings.summary.lastPayoutDate)}
-          </p>
+          <p className="text-3xl font-bold text-gray-900">{formatCurrency(0)}</p>
+          <p className="text-sm text-gray-500 mt-2">N/A</p>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -354,163 +204,84 @@ export default function InstructorEarningsPage() {
           </div>
           <p className="text-sm text-gray-600 mb-1">Payout Schedule</p>
           <p className="text-lg font-bold text-gray-900">Monthly</p>
-          <p className="text-sm text-gray-500 mt-2">
-            Payouts on the 1st of each month
-          </p>
+          <p className="text-sm text-gray-500 mt-2">Payouts on the 1st of each month</p>
         </div>
       </div>
 
       {/* Revenue Trend Chart */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Revenue Trend
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">
-              Monthly revenue performance
-            </p>
+      {monthlyTrend.length > 0 && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Revenue Trend</h2>
+              <p className="text-sm text-gray-600 mt-1">Monthly revenue performance</p>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+              <span className="text-gray-600">Revenue</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-            <span className="text-gray-600">Revenue</span>
-          </div>
+          <RevenueLineChart data={monthlyTrend} formatCurrency={formatCurrency} />
         </div>
-        <RevenueLineChart data={earnings.monthlyTrend} formatCurrency={formatCurrency} />
-      </div>
+      )}
 
       {/* Revenue by Course */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-          Revenue by Course
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">
-                  Course
-                </th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">
-                  Enrollments
-                </th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">
-                  Avg Price
-                </th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">
-                  Refunds
-                </th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">
-                  Total Revenue
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {earnings.byCourse.map((course) => (
-                <tr key={course.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-4 px-4">
-                    <p className="font-medium text-gray-900">{course.title}</p>
-                  </td>
-                  <td className="py-4 px-4 text-gray-600">
-                    {course.enrollments.toLocaleString()}
-                  </td>
-                  <td className="py-4 px-4 text-gray-600">
-                    {formatCurrency(course.avgPrice)}
-                  </td>
-                  <td className="py-4 px-4">
-                    <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">
-                      {course.refunds}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4 font-bold text-gray-900">
-                    {formatCurrency(course.revenue)}
-                  </td>
+      {revenueByCourse.length > 0 && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Revenue by Course</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Course</th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Sales</th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Total Revenue</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {revenueByCourse.map((course, index) => (
+                  <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-4 px-4">
+                      <p className="font-medium text-gray-900">{course.course_title}</p>
+                    </td>
+                    <td className="py-4 px-4 text-gray-600">{course.sales}</td>
+                    <td className="py-4 px-4 font-bold text-gray-900">
+                      {formatCurrency(parseFloat(course.revenue))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Recent Transactions */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-          Recent Transactions
-        </h2>
-        {earnings.transactions && earnings.transactions.length > 0 ? (
-          <div className="space-y-3">
-            {earnings.transactions.map((transaction) => (
-              <div
-                key={transaction.id}
-                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900">{transaction.course}</p>
-                  <p className="text-sm text-gray-600">
-                    {transaction.student} • {formatDate(transaction.date)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span
-                    className={`px-3 py-1 text-xs font-medium rounded-full ${
-                      transaction.status === "completed"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {transaction.status === "completed" ? "Completed" : "Refunded"}
-                  </span>
-                  <span
-                    className={`text-lg font-bold ${
-                      transaction.status === "completed"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {transaction.status === "completed" ? "+" : "-"}
-                    {formatCurrency(transaction.amount)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 text-gray-500">
-            <p>No recent transactions available</p>
-            <p className="text-sm mt-2">Transaction history will appear here once you have sales</p>
-          </div>
-        )}
-      </div>
+      <RecentTransactionsSection 
+        transactions={[]} 
+        formatCurrency={formatCurrency} 
+        formatDate={formatDate} 
+      />
 
       {/* Payout Info */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-blue-900 mb-3">
-          Payout Information
-        </h3>
+        <h3 className="text-lg font-semibold text-blue-900 mb-3">Payout Information</h3>
         <ul className="space-y-2 text-sm text-blue-800">
           <li className="flex items-start">
             <span className="mr-2">•</span>
-            <span>
-              Payouts are processed monthly on the 1st of each month
-            </span>
+            <span>Payouts are processed monthly on the 1st of each month</span>
           </li>
           <li className="flex items-start">
             <span className="mr-2">•</span>
-            <span>
-              Minimum payout threshold is $50
-            </span>
+            <span>Minimum payout threshold is $50</span>
           </li>
           <li className="flex items-start">
             <span className="mr-2">•</span>
-            <span>
-              Platform fee: 20% of each transaction
-            </span>
+            <span>Platform fee: 20% of each transaction</span>
           </li>
           <li className="flex items-start">
             <span className="mr-2">•</span>
-            <span>
-              Update your payment method in settings to receive payouts
-            </span>
+            <span>Update your payment method in settings to receive payouts</span>
           </li>
         </ul>
       </div>

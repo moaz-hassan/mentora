@@ -104,11 +104,11 @@ User.hasMany(Course, { foreignKey: "instructor_id" });
 Course.belongsTo(User, { foreignKey: "instructor_id", as: "Instructor" });
 
 // CATEGORY & COURSE RELATIONSHIPS
-Category.hasMany(Course, { foreignKey: "category_id" });
-Course.belongsTo(Category, { foreignKey: "category_id" });
+Category.hasMany(Course, { foreignKey: "category" });
+Course.belongsTo(Category, { foreignKey: "category" });
 
-SubCategory.hasMany(Course, { foreignKey: "subcategory_id" });
-Course.belongsTo(SubCategory, { foreignKey: "subcategory_id" });
+SubCategory.hasMany(Course, { foreignKey: "subcategory" });
+Course.belongsTo(SubCategory, { foreignKey: "subcategory" });
 
 Course.hasMany(Chapter, { foreignKey: "course_id", onDelete: "CASCADE" });
 Chapter.belongsTo(Course, { foreignKey: "course_id" });

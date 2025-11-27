@@ -1,4 +1,9 @@
-export { CoursesHeader } from './CoursesHeader';
-export { CoursesStats } from './CoursesStats';
-export { CoursesFilter } from './CoursesFilter';
-export { CourseCard } from './CourseCard';
+export { CoursesPageHeader } from "./CoursesPageHeader";
+export { CoursesStatsGrid } from "./CoursesStatsGrid";
+export { CoursesFilterBar } from "./CoursesFilterBar";
+export { CourseListItem } from "./CourseListItem";
+export { EmptyCoursesState } from "./EmptyCoursesState";
+export { CourseCard } from "./CourseCard";
+export { CoursesFilter } from "./CoursesFilter";
+export { CoursesHeader } from "./CoursesHeader";
+export { CoursesStats } from "./CoursesStats";

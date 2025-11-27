@@ -48,7 +48,103 @@ import {
   DataTable,
   FilterBar,
 } from "@/components/admin/shared";
-import { couponsAPI } from "@/lib/api/admin";
+import {
+  getAllCoupons,
+  getCouponAnalytics,
+  createCoupon,
+  updateCoupon,
+  updateCouponStatus,
+} from "@/lib/apiCalls/admin/coupons.apiCall";
+
+// Move CouponForm outside to prevent re-creation on every render
+const CouponForm = ({ formData, setFormData, formErrors }) => (
+  <div className="space-y-4 py-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="code">Coupon Code</Label>
+        <Input
+          id="code"
+          placeholder="e.g., SUMMER20"
+          value={formData.code}
+          onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+        />
+        {formErrors.code && (
+          <p className="text-sm text-destructive">{formErrors.code}</p>
+        )}
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="discountType">Discount Type</Label>
+        <Select
+          value={formData.discountType}
+          onValueChange={(v) => setFormData({ ...formData, discountType: v })}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="percentage">Percentage</SelectItem>
+            <SelectItem value="fixed">Fixed Amount</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="discountValue">
+          Discount Value {formData.discountType === "percentage" ? "(%)" : "($)"}
+        </Label>
+        <Input
+          id="discountValue"
+          type="number"
+          placeholder={formData.discountType === "percentage" ? "1-100" : "Amount"}
+          value={formData.discountValue}
+          onChange={(e) => setFormData({ ...formData, discountValue: e.target.value })}
+        />
+        {formErrors.discountValue && (
+          <p className="text-sm text-destructive">{formErrors.discountValue}</p>
+        )}
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="usageLimit">Usage Limit (Optional)</Label>
+        <Input
+          id="usageLimit"
+          type="number"
+          placeholder="Unlimited"
+          value={formData.usageLimit}
+          onChange={(e) => setFormData({ ...formData, usageLimit: e.target.value })}
+        />
+      </div>
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="startDate">Start Date</Label>
+        <Input
+          id="startDate"
+          type="date"
+          value={formData.startDate}
+          onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+        />
+        {formErrors.startDate && (
+          <p className="text-sm text-destructive">{formErrors.startDate}</p>
+        )}
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="endDate">End Date</Label>
+        <Input
+          id="endDate"
+          type="date"
+          value={formData.endDate}
+          onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+        />
+        {formErrors.endDate && (
+          <p className="text-sm text-destructive">{formErrors.endDate}</p>
+        )}
+      </div>
+    </div>
+  </div>
+);
 
 export default function CouponManagementPage() {
   const [loading, setLoading] = useState(true);
@@ -77,8 +173,8 @@ export default function CouponManagementPage() {
   const fetchData = useCallback(async () => {
     try {
       const [couponsRes, analyticsRes] = await Promise.all([
-        couponsAPI.getAll(),
-        couponsAPI.getAnalytics(),
+        getAllCoupons(),
+        getCouponAnalytics(),
       ]);
 
       if (couponsRes.success) setCoupons(couponsRes.data?.coupons || []);
@@ -145,14 +241,15 @@ export default function CouponManagementPage() {
     try {
       const payload = {
         code: formData.code.trim().toUpperCase(),
-        discountType: formData.discountType,
-        discountValue: parseFloat(formData.discountValue),
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        usageLimit: formData.usageLimit ? parseInt(formData.usageLimit) : null,
+        discount_type: formData.discountType,
+        discount_value: parseFloat(formData.discountValue),
+        discount_start_date: formData.startDate,
+        discount_end_date: formData.endDate,
+        max_count: formData.usageLimit ? parseInt(formData.usageLimit) : null,
+        // Don't include course_id - admin coupons apply to all courses
       };
 
-      const res = await couponsAPI.create(payload);
+      const res = await createCoupon(payload);
       if (res.success) {
         toast.success("Coupon created successfully");
         setCreateDialogOpen(false);
@@ -172,15 +269,16 @@ export default function CouponManagementPage() {
     setSaving(true);
     try {
       const payload = {
-        code: formData.code.trim().toUpperCase(),
-        discountType: formData.discountType,
-        discountValue: parseFloat(formData.discountValue),
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        usageLimit: formData.usageLimit ? parseInt(formData.usageLimit) : null,
+        coupon_id: selectedCoupon.id,
+        discount_type: formData.discountType,
+        discount_value: parseFloat(formData.discountValue),
+        discount_start_date: formData.startDate,
+        discount_end_date: formData.endDate,
+        max_count: formData.usageLimit ? parseInt(formData.usageLimit) : null,
+        is_active: selectedCoupon.is_active,
       };
 
-      const res = await couponsAPI.update(selectedCoupon.id, payload);
+      const res = await updateCoupon(selectedCoupon.id, payload);
       if (res.success) {
         toast.success("Coupon updated successfully");
         setEditDialogOpen(false);
@@ -198,7 +296,7 @@ export default function CouponManagementPage() {
   const handleToggleStatus = async (coupon) => {
     try {
       const newStatus = coupon.status === "active" ? "inactive" : "active";
-      const res = await couponsAPI.updateStatus(coupon.id, newStatus);
+      const res = await updateCouponStatus(coupon.id, newStatus);
       if (res.success) {
         toast.success(`Coupon ${newStatus === "active" ? "activated" : "deactivated"}`);
         fetchData();
@@ -336,95 +434,6 @@ export default function CouponManagementPage() {
     },
   ];
 
-  const CouponForm = () => (
-    <div className="space-y-4 py-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="code">Coupon Code</Label>
-          <Input
-            id="code"
-            placeholder="e.g., SUMMER20"
-            value={formData.code}
-            onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-          />
-          {formErrors.code && (
-            <p className="text-sm text-destructive">{formErrors.code}</p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="discountType">Discount Type</Label>
-          <Select
-            value={formData.discountType}
-            onValueChange={(v) => setFormData({ ...formData, discountType: v })}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="percentage">Percentage</SelectItem>
-              <SelectItem value="fixed">Fixed Amount</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="discountValue">
-            Discount Value {formData.discountType === "percentage" ? "(%)" : "($)"}
-          </Label>
-          <Input
-            id="discountValue"
-            type="number"
-            placeholder={formData.discountType === "percentage" ? "1-100" : "Amount"}
-            value={formData.discountValue}
-            onChange={(e) => setFormData({ ...formData, discountValue: e.target.value })}
-          />
-          {formErrors.discountValue && (
-            <p className="text-sm text-destructive">{formErrors.discountValue}</p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="usageLimit">Usage Limit (Optional)</Label>
-          <Input
-            id="usageLimit"
-            type="number"
-            placeholder="Unlimited"
-            value={formData.usageLimit}
-            onChange={(e) => setFormData({ ...formData, usageLimit: e.target.value })}
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="startDate">Start Date</Label>
-          <Input
-            id="startDate"
-            type="date"
-            value={formData.startDate}
-            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-          />
-          {formErrors.startDate && (
-            <p className="text-sm text-destructive">{formErrors.startDate}</p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="endDate">End Date</Label>
-          <Input
-            id="endDate"
-            type="date"
-            value={formData.endDate}
-            onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-          />
-          {formErrors.endDate && (
-            <p className="text-sm text-destructive">{formErrors.endDate}</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -458,7 +467,11 @@ export default function CouponManagementPage() {
                   Create a new discount coupon for your courses
                 </DialogDescription>
               </DialogHeader>
-              <CouponForm />
+              <CouponForm 
+                formData={formData} 
+                setFormData={setFormData} 
+                formErrors={formErrors} 
+              />
               <DialogFooter>
                 <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
                   Cancel
@@ -542,7 +555,11 @@ export default function CouponManagementPage() {
               Update coupon details
             </DialogDescription>
           </DialogHeader>
-          <CouponForm />
+          <CouponForm 
+            formData={formData} 
+            setFormData={setFormData} 
+            formErrors={formErrors} 
+          />
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
               Cancel

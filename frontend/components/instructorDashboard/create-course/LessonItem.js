@@ -26,7 +26,8 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "react-toastify";
-import materialService from "@/lib/api/materialService";
+import { formatFileSize } from "@/lib/apiCalls/cloudinary/formatFileSize";
+import { uploadFileToCloudinary } from "@/lib/apiCalls/cloudinary/uploadFileToCloudinary";
 
 export function LessonItem({ lesson, updateLesson, deleteLesson }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -78,13 +79,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
     return <FileText className="w-5 h-5 text-gray-600" />;
   };
 
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
-  };
+
 
   const handleMaterialUpload = async (e) => {
     const files = Array.from(e.target.files);
@@ -105,41 +100,24 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
         continue;
       }
 
-      setUploadingMaterial(true);
-      setUploadProgress(0);
+      // Store file object locally - will upload when course is saved
+      const material = {
+        id: `material-${Date.now()}-${Math.random()}`,
+        filename: file.name,
+        file: file, // Store the actual File object
+        file_type: fileExtension,
+        file_size: file.size,
+        uploadedAt: new Date().toISOString(),
+        pending: true, // Mark as pending upload
+      };
 
-      try {
-        // Upload to Cloudinary from frontend
-        const cloudinaryResult = await materialService.uploadToCloudinary(
-          file,
-          (progress) => setUploadProgress(progress)
-        );
+      // Add to lesson materials
+      updateLesson(lesson.id, {
+        ...lesson,
+        materials: [...(lesson.materials || []), material],
+      });
 
-        // Create material object
-        const material = {
-          id: `material-${Date.now()}-${Math.random()}`,
-          filename: file.name,
-          url: cloudinaryResult.secure_url,
-          public_id: cloudinaryResult.public_id,
-          file_type: fileExtension,
-          file_size: file.size,
-          uploadedAt: new Date().toISOString(),
-        };
-
-        // Add to lesson materials
-        updateLesson(lesson.id, {
-          ...lesson,
-          materials: [...(lesson.materials || []), material],
-        });
-
-        toast.success(`${file.name} uploaded successfully`);
-      } catch (error) {
-        console.error("Material upload error:", error);
-        toast.error(`Failed to upload ${file.name}`);
-      } finally {
-        setUploadingMaterial(false);
-        setUploadProgress(0);
-      }
+      toast.success(`${file.name} added - will upload when you save the course`);
     }
 
     // Reset input
@@ -407,6 +385,9 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
                           </p>
                           <p className="text-xs text-neutral-500">
                             {formatFileSize(material.file_size)} • {material.file_type?.toUpperCase()}
+                            {material.pending && (
+                              <span className="ml-2 text-orange-600 font-medium">• Pending upload</span>
+                            )}
                           </p>
                         </div>
                       </div>

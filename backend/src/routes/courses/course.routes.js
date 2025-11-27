@@ -1,5 +1,6 @@
 import express from "express";
 import * as courseController from "../../controllers/courses/course.controller.js";
+import * as relatedCoursesController from "../../controllers/courses/related-courses.controller.js";
 import {
   createCourseValidator,
   updateCourseValidator,
@@ -57,6 +58,12 @@ router.post(
   courseIdValidator,
   validateResult,
   courseController.submitForReview
+);
+router.get(
+  "/:id/related",
+  courseIdValidator,
+  validateResult,
+  relatedCoursesController.getRelatedCourses
 );
 router.get(
   "/:id",

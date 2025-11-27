@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { subDays } from "date-fns";
 import {
   DollarSign,
   Users,
@@ -10,7 +8,6 @@ import {
   TrendingUp,
   RefreshCw,
 } from "lucide-react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,7 +19,7 @@ import {
   ExportButton,
   AIInsightPanel,
 } from "@/components/admin/shared";
-import { analyticsAPI } from "@/lib/api/admin";
+import { useAdminAnalytics } from "@/hooks/admin";
 
 // Chart configuration
 const revenueChartConfig = {
@@ -65,135 +62,21 @@ const courseColumns = [
 ];
 
 export default function AnalyticsDashboardPage() {
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [dateRange, setDateRange] = useState({
-    from: subDays(new Date(), 30),
-    to: new Date(),
-  });
-
-  // Data states
-  const [overview, setOverview] = useState(null);
-  const [revenueData, setRevenueData] = useState([]);
-  const [usersData, setUsersData] = useState([]);
-  const [enrollmentsData, setEnrollmentsData] = useState([]);
-  const [coursesData, setCoursesData] = useState([]);
-  const [aiInsights, setAiInsights] = useState([]);
-
-  const fetchData = useCallback(async () => {
-    try {
-      const params = {
-        startDate: dateRange.from?.toISOString(),
-        endDate: dateRange.to?.toISOString(),
-      };
-
-      const [overviewRes, revenueRes, usersRes, enrollmentsRes, coursesRes] =
-        await Promise.all([
-          analyticsAPI.getOverview(params),
-          analyticsAPI.getRevenue(params),
-          analyticsAPI.getUsers(params),
-          analyticsAPI.getEnrollments(params),
-          analyticsAPI.getCourses(),
-        ]);
-
-      if (overviewRes.success) {
-        setOverview(overviewRes.data);
-        // Generate AI insights from overview data
-        generateAIInsights(overviewRes.data);
-      }
-      if (revenueRes.success) setRevenueData(revenueRes.data?.trend || []);
-      if (usersRes.success) setUsersData(usersRes.data?.trend || []);
-      if (enrollmentsRes.success) setEnrollmentsData(enrollmentsRes.data?.trend || []);
-      if (coursesRes.success) setCoursesData(coursesRes.data?.courses || []);
-    } catch (error) {
-      console.error("Error fetching analytics:", error);
-      toast.error("Failed to load analytics data");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [dateRange]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const generateAIInsights = (data) => {
-    const insights = [];
-
-    // Revenue insight
-    if (data?.revenueChange > 10) {
-      insights.push({
-        type: "trend_up",
-        title: "Revenue Growth",
-        description: `Revenue increased by ${data.revenueChange.toFixed(1)}% compared to the previous period. Consider expanding marketing efforts.`,
-        priority: "medium",
-      });
-    } else if (data?.revenueChange < -10) {
-      insights.push({
-        type: "trend_down",
-        title: "Revenue Decline",
-        description: `Revenue decreased by ${Math.abs(data.revenueChange).toFixed(1)}%. Review pricing strategy and course offerings.`,
-        priority: "high",
-      });
-    }
-
-    // User growth insight
-    if (data?.userGrowth > 15) {
-      insights.push({
-        type: "trend_up",
-        title: "Strong User Growth",
-        description: `User base grew by ${data.userGrowth.toFixed(1)}%. Great momentum - focus on retention strategies.`,
-        priority: "low",
-      });
-    }
-
-    // Enrollment insight
-    if (data?.enrollmentRate < 5) {
-      insights.push({
-        type: "warning",
-        title: "Low Enrollment Rate",
-        description: "Enrollment rate is below average. Consider promotional campaigns or course discounts.",
-        priority: "high",
-        action: "View Marketing Tools",
-      });
-    }
-
-    // Default insight if none generated
-    if (insights.length === 0) {
-      insights.push({
-        type: "suggestion",
-        title: "Platform Performance",
-        description: "Platform metrics are stable. Continue monitoring for trends and opportunities.",
-        priority: "low",
-      });
-    }
-
-    setAiInsights(insights);
-  };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await fetchData();
-    toast.success("Analytics refreshed");
-  };
-
-  const handleDateRangeChange = (range) => {
-    setDateRange(range);
-  };
-
-  const handleExport = async (format) => {
-    try {
-      await analyticsAPI.exportData({
-        format,
-        startDate: dateRange.from?.toISOString(),
-        endDate: dateRange.to?.toISOString(),
-      });
-      toast.success(`Export started - ${format.toUpperCase()}`);
-    } catch (error) {
-      toast.error("Export failed");
-    }
-  };
+  const {
+    loading,
+    refreshing,
+    error,
+    dateRange,
+    overview,
+    revenueData,
+    usersData,
+    enrollmentsData,
+    coursesData,
+    aiInsights,
+    handleRefresh,
+    handleDateRangeChange,
+    handleExport,
+  } = useAdminAnalytics();
 
   return (
     <div className="p-6 space-y-6">

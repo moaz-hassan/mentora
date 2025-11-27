@@ -12,6 +12,7 @@ import authRoutes from "./routes/auth/auth.routes.js";
 
 // Courses
 import courseRoutes from "./routes/courses/course.routes.js";
+import instructorRoutes from "./routes/instructor.routes.js";
 import chapterRoutes from "./routes/courses/chapter.routes.js";
 import lessonRoutes from "./routes/courses/lesson.routes.js";
 import lessonMaterialRoutes from "./routes/courses/lessonMaterial.routes.js";
@@ -118,6 +119,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/subcategories", subCategoryRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api/instructor", instructorRoutes);
 app.use("/api/chapters", chapterRoutes);
 app.use("/api/lessons", lessonRoutes);
 app.use("/api/quizzes", quizRoutes);

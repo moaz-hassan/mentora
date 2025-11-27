@@ -1,18 +1,24 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+import { 
+  getAuthHeaders,
+  getApiBaseUrl 
+} from "@/lib/utils/apiHelpers";
+
+const API_URL = getApiBaseUrl();
 
 /**
  * Get revenue analytics for instructor
  * @param {string|null} startDate - Start date for filtering (ISO format)
  * @param {string|null} endDate - End date for filtering (ISO format)
- * @returns {Promise} Revenue analytics data
+ * @returns {Promise<Object>} Response with success flag and revenue analytics data
+ * 
+ * @example
+ * const result = await getRevenueAnalytics('2024-01-01', '2024-12-31');
+ * if (result.success) {
+ *   console.log(result.data.revenue_by_month);
+ * }
  */
 export const getRevenueAnalytics = async (startDate = null, endDate = null) => {
-  const authToken = Cookies.get("authToken");
-  if (!authToken) {
-    throw new Error("No token provided");
-  }
-
   try {
     // Build query parameters
     const params = new URLSearchParams();
@@ -23,20 +29,16 @@ export const getRevenueAnalytics = async (startDate = null, endDate = null) => {
       params.append("endDate", endDate);
     }
 
+    const headers = getAuthHeaders();
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/instructor/analytics/revenue${
+      `${API_URL}/api/instructor/analytics/revenue${
         params.toString() ? `?${params.toString()}` : ""
       }`,
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
+      { headers }
     );
 
     return response.data;
   } catch (error) {
-    console.error("Error fetching revenue analytics:", error);
-    throw error;
+    return error.response?.data || { success: false, message: error.message };
   }
 };

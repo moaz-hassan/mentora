@@ -2,29 +2,38 @@
 
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourseDetailsForm } from "../../../../../components/instructorDashboard/create-course/CourseDetailsForm";
-import { CourseStructureEditor } from "../../../../../components/instructorDashboard/create-course/CourseStructureEditor";
-import { CoursePreview } from "../../../../../components/instructorDashboard/create-course/CoursePreview";
-import { UploadProgressModal } from "../../../../../components/instructorDashboard/create-course/UploadProgressModal";
+import {
+  CourseDetailsForm,
+  CourseStructureEditor,
+  CoursePreview,
+  UploadProgressModal,
+  CreateCourseHeader,
+  CreateCourseActions,
+} from "@/components/instructorDashboard/create-course";
 import useCourseStore from "@/store/courseStore";
 import { toast } from "react-toastify";
-import uploadCourseContent from "@/lib/apiCalls/courses/uploadCourseContent";
-import courseSaveDraftApiCall from "@/lib/apiCalls/courses/courseSaveDraft.apiCall";
-import { validateChapterRequirement, validateCourse } from "@/lib/validation/courseValidation";
+import {
+  useCreateCourse,
+  useCourseValidation,
+  useCourseStats,
+} from "@/hooks/course";
+
 export default function CreateCoursePage() {
   const [activeTab, setActiveTab] = useState("details");
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState({});
 
   const {
     courseData,
     initializeCourse,
-    updateCourseData,
     setCourseData,
-    saveDraft,
-    publishCourse,
     clearDraft,
   } = useCourseStore();
+
+  // Custom hooks
+  const { isUploading, uploadProgress, saveDraft, submitForReview } =
+    useCreateCourse(clearDraft);
+  const { canSaveOrSubmit, validateChapters, validateFullCourse, getValidationMessage } =
+    useCourseValidation(courseData);
+  const courseStats = useCourseStats(courseData);
 
   useEffect(() => {
     if (!courseData) {
@@ -32,6 +41,45 @@ export default function CreateCoursePage() {
     }
   }, [courseData, initializeCourse]);
 
+  // Handle save draft
+  const handleSaveDraft = async () => {
+    if (!validateChapters()) {
+      toast.error(getValidationMessage);
+      return;
+    }
+
+    if (!validateFullCourse()) {
+      toast.error("Please fix validation errors before saving");
+      return;
+    }
+
+    await saveDraft(courseData, getCourseStats);
+  };
+
+  // Handle submit for review
+  const handleSubmitForReview = async () => {
+    if (!validateChapters()) {
+      toast.error(getValidationMessage);
+      return;
+    }
+
+    if (!validateFullCourse()) {
+      toast.error("Please fix validation errors before submitting");
+      return;
+    }
+
+    if (
+      !confirm(
+        "Are you sure you want to submit this course for review? You won't be able to edit it until the review is complete."
+      )
+    ) {
+      return;
+    }
+
+    await submitForReview(courseData, getCourseStats);
+  };
+
+  // Loading state
   if (!courseData) {
     return (
       <div className="container mx-auto py-8 px-4">
@@ -45,201 +93,9 @@ export default function CreateCoursePage() {
     );
   }
 
-  // Check if course can be saved or submitted
-  const canSaveOrSubmit = () => {
-    const hasTitle = courseData?.title && courseData.title.trim() !== "";
-    const hasDescription = courseData?.description && courseData.description.trim() !== "";
-    const hasChapters = courseData?.chapters && courseData.chapters.length > 0;
-
-    return hasTitle && hasDescription && hasChapters;
-  };
-
-  // Calculate course statistics
-  const getCourseStats = () => {
-    const chapters = courseData?.chapters || [];
-    let lessonsCount = 0;
-    let quizzesCount = 0;
-
-    chapters.forEach((chapter) => {
-      if (chapter.items) {
-        chapter.items.forEach((item) => {
-          if (item.type === "lesson") lessonsCount++;
-          if (item.type === "quiz") quizzesCount++;
-        });
-      }
-    });
-
-    return {
-      chaptersCount: chapters.length,
-      lessonsCount,
-      quizzesCount,
-    };
-  };
-
-  const handleSaveDraft = async () => {
-    // Validate chapter requirement
-    const chapterError = validateChapterRequirement(courseData?.chapters);
-    if (chapterError) {
-      toast.error(chapterError);
-      return;
-    }
-
-    // Validate course data
-    const validationErrors = validateCourse(courseData);
-    if (Object.keys(validationErrors).length > 0) {
-      toast.error("Please fix validation errors before saving");
-      return;
-    }
-
-    setIsUploading(true);
-    setUploadProgress({ status: "uploading", message: "Saving as draft..." });
-
-    try {
-      const { courseId } = await uploadCourseContent(courseData, (progress) => {
-        setUploadProgress(progress);
-      });
-
-      // Save as draft
-      if (courseId) {
-        try {
-          await courseSaveDraftApiCall(courseId);
-        } catch (error) {
-          toast.error(error.message || "Failed to save course as draft");
-        }
-      }
-
-      // Clear store state after successful upload
-      clearDraft();
-
-      // Get course statistics
-      const stats = getCourseStats();
-
-      setUploadProgress({
-        status: "success",
-        message: "Course saved as draft successfully!",
-        details: {
-          courseTitle: courseData.title,
-          chaptersCount: stats.chaptersCount,
-          lessonsCount: stats.lessonsCount,
-          quizzesCount: stats.quizzesCount,
-          status: "Draft",
-        },
-      });
-
-      // Success - redirect after a short delay
-      // setTimeout(() => {
-      //   window.location.href = "/dashboard/instructor/courses";
-      // }, 2000);
-    } catch (error) {
-      console.error("Upload error:", error);
-      setUploadProgress({
-        status: "error",
-        message: error.message || "Upload failed",
-      });
-
-      // Close modal after error
-      setTimeout(() => {
-        setIsUploading(false);
-      }, 3000);
-    }
-  };
-
-  const handleSubmitForReview = async () => {
-    // Validate chapter requirement
-    const chapterError = validateChapterRequirement(courseData?.chapters);
-    if (chapterError) {
-      toast.error(chapterError);
-      return;
-    }
-
-    // Validate course data
-    const validationErrors = validateCourse(courseData);
-    if (Object.keys(validationErrors).length > 0) {
-      toast.error("Please fix validation errors before submitting");
-      return;
-    }
-
-    if (
-      !confirm(
-        "Are you sure you want to submit this course for review? You won't be able to edit it until the review is complete."
-      )
-    ) {
-      return;
-    }
-
-    // Start the upload process
-    setIsUploading(true);
-    setUploadProgress({
-      status: "uploading",
-      message: "Submitting for review...",
-    });
-
-    try {
-      const { courseId } = await uploadCourseContent(courseData, (progress) => {
-        setUploadProgress(progress);
-      });
-
-      // Submit for review
-      if (courseId) {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${courseId}/submit-review`,
-          {
-            method: "POST",
-            credentials: "include",
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to submit for review");
-        }
-      }
-
-      // Clear store state after successful upload
-      clearDraft();
-
-      // Get course statistics
-      const stats = getCourseStats();
-
-      setUploadProgress({
-        status: "success",
-        message: "Course submitted for review successfully!",
-        details: {
-          courseTitle: courseData.title,
-          chaptersCount: stats.chaptersCount,
-          lessonsCount: stats.lessonsCount,
-          quizzesCount: stats.quizzesCount,
-          status: "Pending Review",
-        },
-      });
-
-      // Success - redirect after a short delay
-      // setTimeout(() => {
-      //   window.location.href = "/dashboard/instructor/courses";
-      // }, 2000);
-    } catch (error) {
-      console.error("Upload error:", error);
-      setUploadProgress({
-        status: "error",
-        message: error.message || "Upload failed",
-      });
-
-      // Close modal after error
-      setTimeout(() => {
-        setIsUploading(false);
-      }, 3000);
-    }
-  };
-
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-neutral-900">
-          Create New Course
-        </h1>
-        <p className="text-neutral-600 mt-2">
-          Fill in the details below to create your new course
-        </p>
-      </div>
+      <CreateCourseHeader />
 
       <Tabs
         value={activeTab}
@@ -264,64 +120,14 @@ export default function CreateCoursePage() {
             setCourseData={setCourseData}
           />
 
-          <div className="flex justify-end gap-4 pt-6 border-t border-neutral-200">
-            <button
-              type="button"
-              onClick={() => setActiveTab("preview")}
-              disabled={!courseData?.title}
-              className={`px-4 py-2 text-sm font-medium text-neutral-600 border border-neutral-300 rounded-md hover:bg-neutral-50 ${
-                !courseData?.title ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              Preview Course
-            </button>
-            <button
-              type="button"
-              onClick={handleSaveDraft}
-              disabled={!canSaveOrSubmit()}
-              className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
-                !canSaveOrSubmit()
-                  ? "bg-neutral-300 cursor-not-allowed"
-                  : "bg-gray-600 hover:bg-gray-700"
-              }`}
-              title={
-                !courseData?.chapters || courseData.chapters.length === 0
-                  ? "At least one chapter is required"
-                  : !courseData?.title
-                  ? "Course title is required"
-                  : !courseData?.description
-                  ? "Course description is required"
-                  : ""
-              }
-            >
-              Save as Draft
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmitForReview}
-              disabled={
-                !canSaveOrSubmit() || !courseData?.introVideoFile
-              }
-              className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
-                !canSaveOrSubmit() || !courseData?.introVideoFile
-                  ? "bg-neutral-300 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
-              }`}
-              title={
-                !courseData?.chapters || courseData.chapters.length === 0
-                  ? "At least one chapter is required"
-                  : !courseData?.title
-                  ? "Course title is required"
-                  : !courseData?.description
-                  ? "Course description is required"
-                  : !courseData?.introVideoFile
-                  ? "Please upload an introduction video to submit for review"
-                  : ""
-              }
-            >
-              Send for Review
-            </button>
-          </div>
+          <CreateCourseActions
+            canSave={canSaveOrSubmit}
+            canSubmit={canSaveOrSubmit && courseData?.introVideoFile}
+            validationMessage={getValidationMessage}
+            onSaveDraft={handleSaveDraft}
+            onSubmitForReview={handleSubmitForReview}
+            onPreview={() => setActiveTab("preview")}
+          />
         </TabsContent>
 
         <TabsContent value="preview">

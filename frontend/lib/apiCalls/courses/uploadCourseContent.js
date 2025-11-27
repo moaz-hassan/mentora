@@ -1,12 +1,18 @@
-import Cookies from "js-cookie";
+import { getAuthToken } from "@/lib/utils/apiHelpers";
 import { createCourse } from "./createCourse";
 import { createChapter } from "../chapters/createChapter";
 import { createLesson } from "../lessons/createLesson";
 import { createQuiz } from "../quizzes/createQuiz";
 
+/**
+ * Upload complete course content including chapters, lessons, and quizzes
+ * @param {Object} courseData - Complete course data
+ * @param {Function} onProgress - Progress callback function
+ * @returns {Promise<Object>} Response with success flag and course ID
+ */
 export default async function uploadCourseContent(courseData, onProgress) {
   try {
-    const token = Cookies.get("authToken");
+    const token = getAuthToken();
 
     if (!token) {
       throw new Error("Authentication required");
@@ -64,7 +70,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
       });
 
       const { uploadVideoToCloudinary } = await import(
-        "@/lib/services/cloudinary.service"
+        "@/lib/apiCalls/cloudinary/uploadVideoToCloudinary"
       );
       const { updateCourseIntroVideo } = await import(
         "@/lib/apiCalls/courses/updateIntroVideo.apiCall"
@@ -161,7 +167,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
         // Upload video directly to Cloudinary if it's a video lesson
         if (lesson.type === "video" && lesson.videoFile) {
           const { uploadVideoToCloudinary } = await import(
-            "@/lib/services/cloudinary.service"
+            "@/lib/apiCalls/cloudinary/uploadVideoToCloudinary"
           );
 
           const uploadResult = await uploadVideoToCloudinary(

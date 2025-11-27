@@ -11,7 +11,7 @@ export const metadata = {
 
 export default async function InstructorLayout({ children }) {
   const response = await getUserDataOnServer();
-
+  
   // Check if there's an error in the response
   if (!response || response.error || !response.success) {
     return <NotFound />;

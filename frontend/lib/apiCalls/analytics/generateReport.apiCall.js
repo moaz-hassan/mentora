@@ -1,5 +1,10 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+import { 
+  getAuthHeaders,
+  getApiBaseUrl 
+} from "@/lib/utils/apiHelpers";
+
+const API_URL = getApiBaseUrl();
 
 /**
  * Generate comprehensive analytics report
@@ -8,40 +13,39 @@ import Cookies from "js-cookie";
  * @param {string|null} options.endDate - End date for filtering (ISO format)
  * @param {string[]|null} options.courseIds - Array of course IDs to include (null for all)
  * @param {boolean} options.anonymizeStudents - Whether to anonymize student data (default: true)
- * @returns {Promise} Comprehensive report data
+ * @returns {Promise<Object>} Response with success flag and report data
+ * 
+ * @example
+ * const result = await generateReport({
+ *   startDate: '2024-01-01',
+ *   endDate: '2024-12-31',
+ *   courseIds: [123, 456],
+ *   anonymizeStudents: true
+ * });
  */
 export const generateReport = async (options = {}) => {
-  const authToken = Cookies.get("authToken");
-  if (!authToken) {
-    throw new Error("No token provided");
-  }
-
-  const {
-    startDate = null,
-    endDate = null,
-    courseIds = null,
-    anonymizeStudents = true,
-  } = options;
-
   try {
+    const {
+      startDate = null,
+      endDate = null,
+      courseIds = null,
+      anonymizeStudents = true,
+    } = options;
+
+    const headers = getAuthHeaders();
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/instructor/analytics/report`,
+      `${API_URL}/api/instructor/analytics/report`,
       {
         startDate,
         endDate,
         courseIds,
         anonymizeStudents,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
+      { headers }
     );
 
     return response.data;
   } catch (error) {
-    console.error("Error generating report:", error);
-    throw error;
+    return error.response?.data || { success: false, message: error.message };
   }
 };

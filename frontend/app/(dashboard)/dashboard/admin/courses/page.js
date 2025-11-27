@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie";
 import {
   CheckCircle,
   XCircle,
@@ -14,10 +13,24 @@ import {
   Filter,
   MoreVertical,
   Trash2,
+  AlertTriangle,
+  ArrowLeft,
 } from "lucide-react";
+import { 
+  getAdminCourses, 
+  getPendingCourses, 
+  approveCourse, 
+  rejectCourse, 
+  deleteCourse,
+  analyzeCourseWithAI,
+  getCourseDetails
+} from "@/lib/apiCalls/admin/courses.apiCall";
+import { AdminCourseView } from "@/components/admin/courses/AdminCourseView";
 
 export default function CoursesManagementPage() {
   const [activeTab, setActiveTab] = useState("pending");
+  const [viewMode, setViewMode] = useState("list");
+  const [previewCourse, setPreviewCourse] = useState(null);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -26,15 +39,6 @@ export default function CoursesManagementPage() {
   const [rejectionReason, setRejectionReason] = useState("");
   const [search, setSearch] = useState("");
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-
-  // Get token from cookies (authToken) or fallback to localStorage
-  const getToken = () => {
-    const cookieToken = Cookies.get("authToken");
-    if (cookieToken) return cookieToken;
-    return localStorage.getItem("token");
-  };
-
   useEffect(() => {
     fetchCourses();
   }, [activeTab]);
@@ -42,33 +46,24 @@ export default function CoursesManagementPage() {
   const fetchCourses = async () => {
     setLoading(true);
     try {
-      const token = getToken();
-      let url = `${API_URL}/api/courses`;
+      let result;
       
       if (activeTab === "pending") {
-        url = `${API_URL}/api/admin/courses/pending`;
+        result = await getPendingCourses();
+      } else {
+        result = await getAdminCourses();
       }
 
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-
-      if (data.success) {
-        setCourses(data.data);
+      if (result.success) {
+        setCourses(result.data.data || result.data || []);
       } else {
-        // If API fails (e.g. not implemented yet), use empty array or mock
+        toast.error(result.error || "Failed to fetch courses");
         setCourses([]);
-        if (activeTab === "pending") {
-           // Fallback to mock data for pending if API fails (as per previous file)
-           // Keeping it empty for now to encourage API usage, or could restore mock.
-        }
       }
     } catch (error) {
       console.error("Error fetching courses:", error);
       toast.error("Failed to fetch courses");
+      setCourses([]);
     } finally {
       setLoading(false);
     }
@@ -76,22 +71,15 @@ export default function CoursesManagementPage() {
 
   const handleApprove = async (courseId) => {
     try {
-      const token = getToken();
-      const response = await fetch(`${API_URL}/api/admin/courses/${courseId}/approve`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success("Course approved successfully");
+      const result = await approveCourse(courseId);
+      if (result.success) {
+        toast.success(result.message || "Course approved successfully");
         setCourses((prev) => prev.filter((c) => c.id !== courseId));
         setShowModal(false);
         setSelectedCourse(null);
+        if (viewMode === "preview") setViewMode("list");
       } else {
-        toast.error(data.message || "Failed to approve course");
+        toast.error(result.error || "Failed to approve course");
       }
     } catch (error) {
       console.error("Error approving course:", error);
@@ -106,25 +94,16 @@ export default function CoursesManagementPage() {
     }
 
     try {
-      const token = getToken();
-      const response = await fetch(`${API_URL}/api/admin/courses/${courseId}/reject`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ rejection_reason: rejectionReason }),
-      });
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success("Course rejected");
+      const result = await rejectCourse(courseId, rejectionReason);
+      if (result.success) {
+        toast.success(result.message || "Course rejected");
         setCourses((prev) => prev.filter((c) => c.id !== courseId));
         setShowModal(false);
         setSelectedCourse(null);
         setRejectionReason("");
+        if (viewMode === "preview") setViewMode("list");
       } else {
-        toast.error(data.message || "Failed to reject course");
+        toast.error(result.error || "Failed to reject course");
       }
     } catch (error) {
       console.error("Error rejecting course:", error);
@@ -136,26 +115,36 @@ export default function CoursesManagementPage() {
       if(!confirm("Are you sure you want to delete this course?")) return;
       
       try {
-        const token = getToken();
-        const response = await fetch(`${API_URL}/api/courses/${courseId}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        const data = await response.json();
-        
-        if(data.success) {
-            toast.success("Course deleted successfully");
+        const result = await deleteCourse(courseId);
+        if(result.success) {
+            toast.success(result.message || "Course deleted successfully");
             setCourses((prev) => prev.filter((c) => c.id !== courseId));
         } else {
-            toast.error(data.message || "Failed to delete course");
+            toast.error(result.error || "Failed to delete course");
         }
       } catch (error) {
           console.error("Error deleting course:", error);
           toast.error("Failed to delete course");
       }
   }
+
+  const handlePreview = async (courseId) => {
+    setLoading(true);
+    try {
+      const result = await getCourseDetails(courseId);
+      if (result.success) {
+        setPreviewCourse(result.data.data || result.data);
+        setViewMode("preview");
+      } else {
+        toast.error(result.error || "Failed to load course details");
+      }
+    } catch (error) {
+      console.error("Error loading course details:", error);
+      toast.error("Failed to load course details");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const openModal = (course, actionType) => {
     setSelectedCourse(course);
@@ -167,6 +156,80 @@ export default function CoursesManagementPage() {
     course.title.toLowerCase().includes(search.toLowerCase()) ||
     course.instructor?.name?.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (viewMode === "preview" && previewCourse) {
+    return (
+      <>
+        <AdminCourseView 
+          course={previewCourse}
+          onClose={() => setViewMode("list")}
+          onApprove={(c) => openModal(c, "approve")}
+          onReject={(c) => openModal(c, "reject")}
+        />
+
+        {showModal && selectedCourse && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                {action === "approve" ? "Approve Course" : "Reject Course"}
+              </h3>
+
+              <p className="text-gray-600 mb-4">
+                {action === "approve"
+                  ? `Are you sure you want to approve "${selectedCourse.title}"? This will make it available to students.`
+                  : `Are you sure you want to reject "${selectedCourse.title}"? Please provide a reason.`}
+              </p>
+
+              {action === "reject" && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Rejection Reason (minimum 10 characters)
+                  </label>
+                  <textarea
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    placeholder="Explain why this course is being rejected..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+                    rows={4}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {rejectionReason.length}/10 characters
+                  </p>
+                </div>
+              )}
+
+              <div className="flex items-center justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    setShowModal(false);
+                    setSelectedCourse(null);
+                    setRejectionReason("");
+                  }}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() =>
+                    action === "approve"
+                      ? handleApprove(selectedCourse.id)
+                      : handleReject(selectedCourse.id)
+                  }
+                  className={`px-4 py-2 rounded-lg text-white ${
+                    action === "approve"
+                      ? "bg-green-600 hover:bg-green-700"
+                      : "bg-red-600 hover:bg-red-700"
+                  }`}
+                >
+                  {action === "approve" ? "Approve" : "Reject"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
 
   return (
     <div className="space-y-6 p-6">
@@ -273,25 +336,77 @@ export default function CoursesManagementPage() {
                   {activeTab === "pending" && (
                     <div className="mb-4">
                       {course.ai_analysis ? (
-                        <div className="p-4 bg-purple-50 rounded-lg border border-purple-100">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="p-1 bg-purple-100 rounded">
-                              <svg className="w-4 h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                              </svg>
+                        <div className="p-5 bg-gradient-to-br from-purple-50 to-white rounded-xl border border-purple-100 shadow-sm">
+                          {/* Header */}
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1.5 bg-purple-100 rounded-lg">
+                                <svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                              </div>
+                              <span className="font-semibold text-purple-900">AI Analysis</span>
                             </div>
-                            <span className="text-sm font-semibold text-purple-900">AI Insight</span>
-                            <span className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full ${
+                            <span className={`px-3 py-1 text-xs font-bold tracking-wide uppercase rounded-full ${
                               course.ai_analysis.suggested_decision === "approve" 
-                                ? "bg-green-100 text-green-700" 
-                                : "bg-red-100 text-red-700"
+                                ? "bg-green-100 text-green-700 border border-green-200" 
+                                : "bg-red-100 text-red-700 border border-red-200"
                             }`}>
-                              Suggestion: {course.ai_analysis.suggested_decision?.toUpperCase()}
+                              Suggestion: {course.ai_analysis.suggested_decision}
                             </span>
                           </div>
-                          <p className="text-sm text-purple-800 mb-2">{course.ai_analysis.summary}</p>
-                          <div className="text-xs text-purple-700">
-                            <span className="font-medium">Reasoning:</span> {course.ai_analysis.reasoning}
+
+                          {/* Summary */}
+                          <div className="mb-4">
+                            <h4 className="text-xs font-semibold text-purple-900 uppercase tracking-wider mb-2">Summary</h4>
+                            <p className="text-sm text-gray-700 leading-relaxed bg-white/50 p-3 rounded-lg border border-purple-50">
+                              {course.ai_analysis.summary}
+                            </p>
+                          </div>
+
+                          {/* Strengths & Weaknesses Grid */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            {/* Strengths */}
+                            {course.ai_analysis.strengths && course.ai_analysis.strengths.length > 0 && (
+                              <div className="bg-green-50/50 rounded-lg p-3 border border-green-100">
+                                <h4 className="flex items-center gap-2 text-xs font-semibold text-green-800 uppercase tracking-wider mb-3">
+                                  <CheckCircle className="w-4 h-4" /> Strengths
+                                </h4>
+                                <ul className="space-y-2">
+                                  {course.ai_analysis.strengths.map((strength, idx) => (
+                                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                                      <span className="mt-1.5 w-1 h-1 rounded-full bg-green-500 flex-shrink-0" />
+                                      <span>{strength}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Weaknesses */}
+                            {course.ai_analysis.weaknesses && course.ai_analysis.weaknesses.length > 0 && (
+                              <div className="bg-red-50/50 rounded-lg p-3 border border-red-100">
+                                <h4 className="flex items-center gap-2 text-xs font-semibold text-red-800 uppercase tracking-wider mb-3">
+                                  <AlertTriangle className="w-4 h-4" /> Weaknesses
+                                </h4>
+                                <ul className="space-y-2">
+                                  {course.ai_analysis.weaknesses.map((weakness, idx) => (
+                                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                                      <span className="mt-1.5 w-1 h-1 rounded-full bg-red-500 flex-shrink-0" />
+                                      <span>{weakness}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Reasoning */}
+                          <div className="bg-purple-100/50 rounded-lg p-4 border border-purple-100">
+                            <h4 className="text-xs font-semibold text-purple-900 uppercase tracking-wider mb-2">Final Reasoning</h4>
+                            <p className="text-sm text-purple-900 leading-relaxed">
+                              {course.ai_analysis.reasoning}
+                            </p>
                           </div>
                         </div>
                       ) : (
@@ -304,17 +419,12 @@ export default function CoursesManagementPage() {
                             btn.disabled = true;
                             
                             try {
-                              const token = getToken();
-                              const res = await fetch(`${API_URL}/api/admin/courses/${course.id}/analyze`, {
-                                method: "POST",
-                                headers: { Authorization: `Bearer ${token}` }
-                              });
-                              const data = await res.json();
-                              if (data.success) {
-                                setCourses(prev => prev.map(c => c.id === course.id ? { ...c, ai_analysis: data.data } : c));
-                                toast.success("AI Analysis generated");
+                              const result = await analyzeCourseWithAI(course.id);
+                              if (result.success) {
+                                setCourses(prev => prev.map(c => c.id === course.id ? { ...c, ai_analysis: result.data } : c));
+                                toast.success(result.message || "AI Analysis generated");
                               } else {
-                                toast.error("Failed to generate analysis");
+                                toast.error(result.error || "Failed to generate analysis");
                               }
                             } catch (err) {
                               console.error(err);
@@ -351,7 +461,7 @@ export default function CoursesManagementPage() {
 
                   <div className="flex items-center space-x-3">
                     <button
-                      onClick={() => window.open(`/courses/${course.id}`, "_blank")}
+                      onClick={() => handlePreview(course.id)}
                       className="flex items-center px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm"
                     >
                       <Eye className="w-4 h-4 mr-2" />

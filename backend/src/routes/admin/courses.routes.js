@@ -12,6 +12,14 @@ const router = express.Router();
 // Get pending courses
 router.get("/pending", courseController.getPendingCourses);
 
+// Get course details
+router.get(
+  "/:id",
+  courseIdValidator,
+  validateResult,
+  courseController.getAdminCourseDetails
+);
+
 // Analyze course with AI
 router.post(
   "/:id/analyze",

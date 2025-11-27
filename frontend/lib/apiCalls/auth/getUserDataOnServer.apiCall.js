@@ -10,11 +10,9 @@ async function getUserDataOnServer() {
       `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
       { headers: { Authorization: `Bearer ${token?.value}` } }
     );
-
     return response.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
-    // Return a proper error object or null instead of trying to access undefined properties
     if (error.response?.data?.message) {
       return { error: error.response.data.message };
     }

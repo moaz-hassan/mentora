@@ -1,86 +1,25 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import {
-  MessageSquare,
-  Users,
-  Send,
-  Search,
-  Circle,
-  BookOpen,
-  User,
-} from "lucide-react";
-import {
-  getUserChatRooms,
-  getRoomMessages,
-  markChatAsRead,
-} from "@/lib/apiCalls/chat/chat.service";
+import { MessageSquare, Search, Users, User, Send, BookOpen } from "lucide-react";
+import { useChats } from "@/hooks/chat";
+import { useState, useRef, useEffect } from "react";
 
 export default function InstructorChatsPage() {
-  const [chatRooms, setChatRooms] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const {
+    chatRooms,
+    selectedRoom,
+    messages,
+    loading,
+    selectRoom,
+  } = useChats();
+
   const [newMessage, setNewMessage] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [loadingMessages, setLoadingMessages] = useState(false);
-  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    fetchChatRooms();
-  }, []);
-
-  useEffect(() => {
-    if (selectedRoom) {
-      fetchMessages(selectedRoom.id);
-      markRoomAsRead(selectedRoom.id);
-    }
-  }, [selectedRoom]);
-
-  useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  const fetchChatRooms = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await getUserChatRooms();
-      setChatRooms(response.data || []);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching chat rooms:", error);
-      setError("Failed to load chat rooms. Please try again.");
-      setLoading(false);
-    }
-  };
-
-  const fetchMessages = async (roomId) => {
-    try {
-      setLoadingMessages(true);
-      const response = await getRoomMessages(roomId, 50, 0);
-      setMessages(response.data || []);
-      setLoadingMessages(false);
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      setLoadingMessages(false);
-    }
-  };
-
-  const markRoomAsRead = async (roomId) => {
-    try {
-      await markChatAsRead(roomId);
-      // Update unread count in chat rooms list
-      setChatRooms((prevRooms) =>
-        prevRooms.map((room) =>
-          room.id === roomId ? { ...room, unreadCount: 0 } : room
-        )
-      );
-    } catch (error) {
-      console.error("Error marking chat as read:", error);
-    }
-  };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -89,27 +28,8 @@ export default function InstructorChatsPage() {
     const messageText = newMessage.trim();
     setNewMessage("");
 
-    // Optimistic UI update
-    const optimisticMessage = {
-      id: `temp-${Date.now()}`,
-      message: messageText,
-      created_at: new Date().toISOString(),
-      User: {
-        id: "current-user",
-        first_name: "You",
-        last_name: "",
-      },
-    };
-
-    setMessages((prev) => [...prev, optimisticMessage]);
-
-    // TODO: Implement actual message sending via socket or API
-    // For now, this is a placeholder
+    // TODO: Implement actual message sending
     console.log("Sending message:", messageText, "to room:", selectedRoom.id);
-  };
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const formatTime = (dateString) => {
@@ -149,10 +69,7 @@ export default function InstructorChatsPage() {
   };
 
   const getChatRoomSubtitle = (room) => {
-    if (room.type === "group") {
-      return "Community Chat";
-    }
-    return "Private Chat";
+    return room.type === "group" ? "Community Chat" : "Private Chat";
   };
 
   const filteredChatRooms = chatRooms.filter((room) => {
@@ -164,22 +81,6 @@ export default function InstructorChatsPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-800 font-medium mb-4">{error}</p>
-          <button
-            onClick={fetchChatRooms}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
       </div>
     );
   }
@@ -228,27 +129,22 @@ export default function InstructorChatsPage() {
               <div className="p-6 text-center text-gray-500">
                 <MessageSquare className="w-12 h-12 mx-auto mb-3 text-gray-400" />
                 <p className="text-sm">
-                  {searchQuery
-                    ? "No conversations found"
-                    : "No conversations yet"}
+                  {searchQuery ? "No conversations found" : "No conversations yet"}
                 </p>
               </div>
             ) : (
               filteredChatRooms.map((room) => (
                 <div
                   key={room.id}
-                  onClick={() => setSelectedRoom(room)}
+                  onClick={() => selectRoom(room)}
                   className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
                     selectedRoom?.id === room.id ? "bg-blue-50" : ""
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    {/* Icon */}
                     <div
                       className={`p-2 rounded-lg ${
-                        room.type === "group"
-                          ? "bg-purple-100"
-                          : "bg-blue-100"
+                        room.type === "group" ? "bg-purple-100" : "bg-blue-100"
                       }`}
                     >
                       {room.type === "group" ? (
@@ -258,7 +154,6 @@ export default function InstructorChatsPage() {
                       )}
                     </div>
 
-                    {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
                         <h3 className="font-medium text-gray-900 truncate">
@@ -286,7 +181,6 @@ export default function InstructorChatsPage() {
                     </div>
                   </div>
 
-                  {/* Course indicator for group chats */}
                   {room.type === "group" && room.Course && (
                     <div className="mt-2 ml-11 flex items-center text-xs text-gray-500">
                       <BookOpen className="w-3 h-3 mr-1" />
@@ -308,9 +202,7 @@ export default function InstructorChatsPage() {
                 <div className="flex items-center gap-3">
                   <div
                     className={`p-2 rounded-lg ${
-                      selectedRoom.type === "group"
-                        ? "bg-purple-100"
-                        : "bg-blue-100"
+                      selectedRoom.type === "group" ? "bg-purple-100" : "bg-blue-100"
                     }`}
                   >
                     {selectedRoom.type === "group" ? (
@@ -332,11 +224,7 @@ export default function InstructorChatsPage() {
 
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {loadingMessages ? (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                  </div>
-                ) : messages.length === 0 ? (
+                {messages.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-gray-500">
                     <div className="text-center">
                       <MessageSquare className="w-12 h-12 mx-auto mb-3 text-gray-400" />
@@ -352,20 +240,13 @@ export default function InstructorChatsPage() {
                     return (
                       <div
                         key={message.id}
-                        className={`flex ${
-                          isCurrentUser ? "justify-end" : "justify-start"
-                        }`}
+                        className={`flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
                       >
-                        <div
-                          className={`max-w-md ${
-                            isCurrentUser ? "order-2" : "order-1"
-                          }`}
-                        >
+                        <div className={`max-w-md ${isCurrentUser ? "order-2" : "order-1"}`}>
                           <div className="flex items-center gap-2 mb-1">
                             {!isCurrentUser && (
                               <span className="text-sm font-medium text-gray-900">
-                                {message.User?.first_name}{" "}
-                                {message.User?.last_name}
+                                {message.User?.first_name} {message.User?.last_name}
                               </span>
                             )}
                             <span className="text-xs text-gray-500">

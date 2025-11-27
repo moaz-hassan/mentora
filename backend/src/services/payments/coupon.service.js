@@ -23,21 +23,36 @@ export const getAllCouponsByInstructor = async (instructorId) => {
   return courses;
 };
 
-export const createCoupon = async (couponData, instructorId) => {
-  const course = await Course.findByPk(couponData.course_id);
+export const createCoupon = async (couponData, userId, userRole) => {
+  // If course_id is provided, validate it
+  if (couponData.course_id) {
+    const course = await Course.findByPk(couponData.course_id);
 
-  if (!course) {
-    const error = new Error("Course not found");
-    error.statusCode = 404;
-    throw error;
-  }
+    if (!course) {
+      const error = new Error("Course not found");
+      error.statusCode = 404;
+      throw error;
+    }
 
-  if (course.instructor_id !== instructorId) {
-    const error = new Error(
-      "You are not authorized to create a coupon for this course"
-    );
-    error.statusCode = 403;
-    throw error;
+    // Only instructors need to own the course, admins can create coupons for any course
+    if (userRole !== "admin" && course.instructor_id !== userId) {
+      const error = new Error(
+        "You are not authorized to create a coupon for this course"
+      );
+      error.statusCode = 403;
+      throw error;
+    }
+  } else {
+    // If no course_id provided, only admins can create global coupons
+    if (userRole !== "admin") {
+      const error = new Error(
+        "Only admins can create coupons applicable to all courses"
+      );
+      error.statusCode = 403;
+      throw error;
+    }
+    // Set course_id to null for global coupons
+    couponData.course_id = null;
   }
 
   return await Coupon.create(couponData);
@@ -115,8 +130,20 @@ export const deleteCoupon = async (coupon_id, userId, role) => {
 };
 
 export const validateCoupon = async (code, course_id) => {
+  // Try to find a coupon for the specific course first, then check for global coupons
   const coupon = await Coupon.findOne({
-    where: { code, course_id, is_active: true },
+    where: {
+      code,
+      is_active: true,
+      [Op.or]: [
+        { course_id: course_id },  // Course-specific coupon
+        { course_id: null }         // Global coupon (applies to all courses)
+      ]
+    },
+    order: [
+      // Prioritize course-specific coupons over global ones
+      [fn('COALESCE', col('course_id'), 999999), 'ASC']
+    ]
   });
 
   if (!coupon) {
@@ -125,7 +152,7 @@ export const validateCoupon = async (code, course_id) => {
     throw error;
   }
 
-  if (coupon.max_count === 0 || coupon.used_count >= coupon.max_count) {
+  if (coupon.max_count && coupon.max_count > 0 && coupon.used_count >= coupon.max_count) {
     const error = new Error("Coupon has reached its usage limit");
     error.statusCode = 400;
     throw error;

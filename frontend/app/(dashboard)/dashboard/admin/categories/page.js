@@ -57,7 +57,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { categoriesAPI, subcategoriesAPI } from "@/lib/api/admin/categories";
+import { categoriesAPI, subcategoriesAPI } from "@/lib/apiCalls/admin/categories.apiCall";
 
 export default function CategoryManagementPage() {
   const [loading, setLoading] = useState(true);
@@ -87,6 +87,7 @@ export default function CategoryManagementPage() {
   const fetchCategories = useCallback(async () => {
     try {
       const res = await categoriesAPI.getAll();
+      console.log(res);
       if (res.success) {
         setCategories(Array.isArray(res.data) ? res.data : []);
       }

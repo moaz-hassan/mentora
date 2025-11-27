@@ -15,14 +15,25 @@ export const getAllEnrollments = async (userId) => {
           "description",
           "category",
           "thumbnail_url",
-          "created_at",
+          "createdAt",
         ],
       },
     ],
-    order: [[Course, "created_at", "DESC"]],
+    order: [[Course, "createdAt", "DESC"]],
   });
 
   return enrollments;
+};
+
+export const checkEnrollment = async (courseId, studentId) => {
+  const enrollment = await Enrollment.findOne({
+    where: {
+      course_id: courseId,
+      student_id: studentId,
+    },
+  });
+
+  return !!enrollment;
 };
 
 export const getEnrollmentById = async (enrollmentId) => {
@@ -46,7 +57,7 @@ export const getEnrollmentById = async (enrollmentId) => {
           "description",
           "category",
           "thumbnail_url",
-          "created_at",
+          "createdAt",
         ],
         include: [
           {
@@ -329,7 +340,7 @@ export const getCoursePlayerData = async (enrollmentId, courseId, studentId) => 
         include: [
           {
             model: Profile,
-            attributes: ["bio", "profile_picture_url", "headline"],
+            attributes: ["bio", "avatar_url", "headline"],
           },
         ],
       },

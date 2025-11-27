@@ -32,7 +32,10 @@ export default function PendingReviewsPage() {
 
       // Filter for pending and under_review courses
       const pending = allCourses.filter(
-        (course) => course.status === "pending" || course.status === "under_review"
+        (course) => 
+          course.status === "pending" || 
+          course.status === "pending_review" || 
+          course.status === "under_review"
       );
 
       setPendingCourses(pending);
@@ -47,6 +50,14 @@ export default function PendingReviewsPage() {
   const getStatusConfig = (status) => {
     const configs = {
       pending: {
+        icon: Clock,
+        color: "text-yellow-600",
+        bgColor: "bg-yellow-100",
+        borderColor: "border-yellow-200",
+        label: "Pending Review",
+        description: "Your course is in the queue for admin review",
+      },
+      pending_review: {
         icon: Clock,
         color: "text-yellow-600",
         bgColor: "bg-yellow-100",
@@ -201,7 +212,7 @@ export default function PendingReviewsPage() {
                 <div>
                   <p className="text-sm text-gray-600 mb-1">In Queue</p>
                   <p className="text-3xl font-bold text-gray-900">
-                    {pendingCourses.filter((c) => c.status === "pending").length}
+                    {pendingCourses.filter((c) => c.status === "pending" || c.status === "pending_review").length}
                   </p>
                 </div>
                 <div className="p-3 bg-gray-100 rounded-lg">
@@ -265,7 +276,7 @@ export default function PendingReviewsPage() {
                         <div>
                           <p className="text-xs text-gray-500 mb-1">Category</p>
                           <p className="text-sm font-medium text-gray-900">
-                            {course.category || "N/A"}
+                            {course.Category.name || "N/A"}
                           </p>
                         </div>
                         <div>

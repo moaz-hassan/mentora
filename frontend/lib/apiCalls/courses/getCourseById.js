@@ -1,16 +1,26 @@
 import axios from "axios";
+import { 
+  getApiBaseUrl 
+} from "@/lib/utils/apiHelpers";
 
+const API_URL = getApiBaseUrl();
+
+/**
+ * Get course details by ID
+ * @param {string|number} courseId - Course ID
+ * @returns {Promise<Object>} Response with success flag and course data
+ * 
+ * @example
+ * const result = await getCourseById(123);
+ * if (result.success) {
+ *   console.log(result.data);
+ * }
+ */
 export default async function getCourseById(courseId) {
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${courseId}`
-    );
+    const response = await axios.get(`${API_URL}/api/courses/${courseId}`);
     return response.data;
   } catch (error) {
-    return (
-      error.response.data.message ||
-      error.response.message ||
-      "Failed to fetch course"
-    );
+    return error.response?.data || { success: false, message: error.message };
   }
 }

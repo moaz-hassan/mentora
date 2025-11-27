@@ -18,6 +18,8 @@ const {
   ChatMessage,
   ChatRoom,
   Chapter,
+  Category,
+  SubCategory,
 } = models;
 
 export const getComprehensiveAnalytics = async (instructorId, courseId = null, days = 30) => {
@@ -592,19 +594,27 @@ export const exportAnalyticsData = async (instructorId, courseId = null, days = 
 export const getAllCoursesService = async (instructorId) => {
   const courses = await Course.findAll({
     where: { instructor_id: instructorId },
+    include: [
+      {
+        model: Category,
+        attributes: ["name"],
+      },
+      {
+        model: SubCategory,
+        attributes: ["name"],
+      },
+    ],
     attributes: [
       "id",
       "title",
       "subtitle",
       "description",
-      "category",
-      "subcategory",
       "level",
       "price",
       "thumbnail_url",
       "status",
       "createdAt",
-      "updatedAt",
+      "updatedAt",  
     ],
     order: [["createdAt", "DESC"]],
   });

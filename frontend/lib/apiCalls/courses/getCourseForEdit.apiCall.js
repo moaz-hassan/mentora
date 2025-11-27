@@ -1,25 +1,26 @@
 import axios from "axios";
+import { 
+  getApiBaseUrl 
+} from "@/lib/utils/apiHelpers";
 
+const API_URL = getApiBaseUrl();
+
+/**
+ * Get course data for editing
+ * @param {string|number} courseId - Course ID
+ * @returns {Promise<Object>} Response with success flag and course data
+ * 
+ * @example
+ * const result = await getCourseForEdit(123);
+ * if (result.success) {
+ *   console.log(result.data);
+ * }
+ */
 export const getCourseForEdit = async (courseId) => {
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${courseId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );    
-
-    if (!response.data.success) {
-      const errorData = response.data;
-      throw new Error(errorData.message || "Failed to fetch course data");
-    }
-
-    const data = response.data;
-    return data;
+    const response = await axios.get(`${API_URL}/api/courses/${courseId}`);
+    return response.data;
   } catch (error) {
-    console.error("Error fetching course for edit:", error);
-    throw error;
+    return error.response?.data || { success: false, message: error.message };
   }
 };

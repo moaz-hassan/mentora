@@ -38,10 +38,12 @@ export default function RegisterPage() {
         registerData.confirmPassword
       );
       if (response.success) {
-        toast.success(response.message);
+        toast.success(response.message || "Registration successful");
+      } else {
+        toast.error(response.error || "Registration failed");
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || "Registration failed");
     } finally {
       setLoading(false);
     }

@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import EnrollmentCard from "@/components/student/EnrollmentCard";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, BookOpen, Search } from "lucide-react";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import getUserEnrollments from "@/lib/apiCalls/enrollments/enrollments.apiCall";
 
 export default function EnrollmentsPage() {
   const [enrollments, setEnrollments] = useState([]);
@@ -21,12 +21,17 @@ export default function EnrollmentsPage() {
   useEffect(() => {
     const fetchEnrollments = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/enrollments", {
-          withCredentials: true,
-        });
-        if (response.data.success) {
-          setEnrollments(response.data.data);
-          setFilteredEnrollments(response.data.data);
+        const result = await getUserEnrollments();
+        if (result.success) {
+          const enrollmentData = result.data.data || result.data || [];
+          setEnrollments(enrollmentData);
+          setFilteredEnrollments(enrollmentData);
+        } else {
+          toast({
+            title: "Error",
+            description: result.error || "Failed to load enrollments.",
+            variant: "destructive",
+          });
         }
       } catch (error) {
         console.error("Error fetching enrollments:", error);

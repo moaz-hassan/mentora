@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+import { 
+  getReportById, 
+  getReportAISummary, 
+  updateReportStatus 
+} from "@/lib/apiCalls/admin/reports.apiCall";
 
 export default function ReportDetailPage() {
   const [report, setReport] = useState(null);
@@ -13,14 +18,6 @@ export default function ReportDetailPage() {
   const router = useRouter();
   const params = useParams();
   const reportId = params.id;
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-
-  // Get token from cookies (authToken) or fallback to localStorage
-  const getToken = () => {
-    const cookieToken = Cookies.get("authToken");
-    if (cookieToken) return cookieToken;
-    return localStorage.getItem("token");
-  };
 
   useEffect(() => {
     if (reportId) {
@@ -30,17 +27,15 @@ export default function ReportDetailPage() {
 
   const fetchReport = async () => {
     try {
-      const token = getToken();
-      const response = await fetch(`${API_URL}/api/reports/${reportId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setReport(data.report);
+      const result = await getReportById(reportId);
+      if (result.success) {
+        setReport(result.data.report || result.data);
+      } else {
+        toast.error(result.error || "Failed to load report");
       }
     } catch (error) {
       console.error("Error fetching report:", error);
+      toast.error("Failed to load report");
     } finally {
       setLoading(false);
     }
@@ -48,40 +43,35 @@ export default function ReportDetailPage() {
 
   const fetchAISummary = async () => {
     try {
-      const token = getToken();
-      const response = await fetch(`${API_URL}/api/reports/${reportId}/ai-summary`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setAiSummary({ summary: data.summary, recommendations: data.recommendations });
+      const result = await getReportAISummary(reportId);
+      if (result.success) {
+        setAiSummary({ 
+          summary: result.data.summary, 
+          recommendations: result.data.recommendations 
+        });
+        toast.success("AI insights generated");
+      } else {
+        toast.error(result.error || "Failed to generate AI insights");
       }
     } catch (error) {
       console.error("Error fetching AI summary:", error);
+      toast.error("Failed to generate AI insights");
     }
   };
 
   const updateStatus = async (newStatus) => {
     setUpdating(true);
     try {
-      const token = getToken();
-
-      const response = await fetch(`${API_URL}/api/reports/${reportId}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setReport(data.report);
+      const result = await updateReportStatus(reportId, newStatus);
+      if (result.success) {
+        setReport(result.data.report || { ...report, status: newStatus });
+        toast.success(result.message || "Status updated successfully");
+      } else {
+        toast.error(result.error || "Failed to update status");
       }
     } catch (error) {
       console.error("Error updating status:", error);
+      toast.error("Failed to update status");
     } finally {
       setUpdating(false);
     }

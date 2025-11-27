@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
-import Cookies from "js-cookie";
 import {
   AlertCircle,
   CheckCircle,
@@ -54,6 +53,13 @@ import {
   DataTable,
   FilterBar,
 } from "@/components/admin/shared";
+import { 
+  getReports, 
+  getReportsStats, 
+  updateReportStatus, 
+  addReportNotes, 
+  resolveReport 
+} from "@/lib/apiCalls/admin/reports.apiCall";
 
 export default function ReportsManagementPage() {
   const [loading, setLoading] = useState(true);
@@ -73,35 +79,30 @@ export default function ReportsManagementPage() {
   const [resolutionDetails, setResolutionDetails] = useState("");
   const [updating, setUpdating] = useState(false);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-
-  // Get token from cookies (authToken) or fallback to localStorage
-  const getToken = () => {
-    const cookieToken = Cookies.get("authToken");
-    if (cookieToken) return cookieToken;
-    return localStorage.getItem("token");
-  };
-
   const fetchData = useCallback(async () => {
     try {
-      const token = getToken();
-      const headers = { Authorization: `Bearer ${token}` };
+      const filterParams = {};
+      if (filters.reporterType !== "all") filterParams.type = filters.reporterType;
+      if (filters.status !== "all") filterParams.status = filters.status;
+      if (filters.priority !== "all") filterParams.priority = filters.priority;
 
-      const queryParams = new URLSearchParams();
-      if (filters.reporterType !== "all") queryParams.append("reporterType", filters.reporterType);
-      if (filters.status !== "all") queryParams.append("status", filters.status);
-      if (filters.priority !== "all") queryParams.append("priority", filters.priority);
-
-      const [reportsRes, statsRes] = await Promise.all([
-        fetch(`${API_URL}/api/reports?${queryParams}`, { headers }),
-        fetch(`${API_URL}/api/reports/stats`, { headers }),
+      const [reportsResult, statsResult] = await Promise.all([
+        getReports(filterParams),
+        getReportsStats(),
       ]);
 
-      const reportsData = await reportsRes.json();
-      const statsData = await statsRes.json();
+      if (reportsResult.success && reportsResult.data) {
+        setReports(reportsResult.data.reports || reportsResult.data || []);
+      } else {
+        toast.error(reportsResult.error || "Failed to load reports");
+        setReports([]);
+      }
 
-      if (reportsData.success) setReports(reportsData.reports || []);
-      if (statsData.success) setStats(statsData.stats);
+      if (statsResult.success && statsResult.data) {
+        setStats(statsResult.data.stats || statsResult.data);
+      } else {
+        setStats(null);
+      }
     } catch (error) {
       console.error("Error fetching reports:", error);
       toast.error("Failed to load reports");
@@ -109,7 +110,7 @@ export default function ReportsManagementPage() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [API_URL, filters]);
+  }, [filters]);
 
   useEffect(() => {
     fetchData();
@@ -133,21 +134,13 @@ export default function ReportsManagementPage() {
 
     setUpdating(true);
     try {
-      const token = getToken();
-      const response = await fetch(`${API_URL}/api/reports/${selectedReport.id}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Status updated");
+      const result = await updateReportStatus(selectedReport.id, newStatus);
+      if (result.success) {
+        toast.success(result.message || "Status updated");
         fetchData();
         setSelectedReport({ ...selectedReport, status: newStatus });
+      } else {
+        toast.error(result.error || "Failed to update status");
       }
     } catch (error) {
       toast.error("Failed to update status");
@@ -161,21 +154,13 @@ export default function ReportsManagementPage() {
 
     setUpdating(true);
     try {
-      const token = getToken();
-      const response = await fetch(`${API_URL}/api/reports/${selectedReport.id}/notes`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ note: internalNote }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Note added");
+      const result = await addReportNotes(selectedReport.id, internalNote);
+      if (result.success) {
+        toast.success(result.message || "Note added");
         setInternalNote("");
         fetchData();
+      } else {
+        toast.error(result.error || "Failed to add note");
       }
     } catch (error) {
       toast.error("Failed to add note");
@@ -192,21 +177,13 @@ export default function ReportsManagementPage() {
 
     setUpdating(true);
     try {
-      const token = getToken();
-      const response = await fetch(`${API_URL}/api/reports/${selectedReport.id}/resolve`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ resolutionDetails }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Report resolved");
+      const result = await resolveReport(selectedReport.id, resolutionDetails);
+      if (result.success) {
+        toast.success(result.message || "Report resolved");
         setDetailDialogOpen(false);
         fetchData();
+      } else {
+        toast.error(result.error || "Failed to resolve report");
       }
     } catch (error) {
       toast.error("Failed to resolve report");

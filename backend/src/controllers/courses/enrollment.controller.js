@@ -14,6 +14,22 @@ export const getAllEnrollments = async (req, res, next) => {
   }
 };
 
+export const checkEnrollment = async (req, res, next) => {
+  try {
+    const { courseId } = req.params;
+    const studentId = req.user.id;
+    
+    const isEnrolled = await enrollmentService.checkEnrollment(courseId, studentId);
+    
+    res.status(200).json({
+      success: true,
+      isEnrolled,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getEnrollmentById = async (req, res, next) => {
   try {
     const enrollment = await enrollmentService.getEnrollmentById(req.params.id);

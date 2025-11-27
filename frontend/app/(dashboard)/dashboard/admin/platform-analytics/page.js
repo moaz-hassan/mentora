@@ -30,7 +30,14 @@ import {
   FilterBar,
   ExportButton,
 } from "@/components/admin/shared";
-import { platformAnalyticsAPI } from "@/lib/api/admin";
+import {
+  getPlatformOverview,
+  getAdminRevenueAnalytics,
+  getUserGrowthAnalytics,
+  getEnrollmentAnalytics,
+  getCoursePerformanceAnalytics,
+  exportAnalyticsData
+} from "@/lib/apiCalls/admin/analytics.apiCall";
 
 // Chart configs
 const enrollmentChartConfig = {
@@ -75,10 +82,10 @@ export default function PlatformAnalyticsPage() {
       };
 
       const [enrollmentsRes, paymentsRes, usersRes, coursesRes] = await Promise.all([
-        platformAnalyticsAPI.getEnrollments(params),
-        platformAnalyticsAPI.getPayments(params),
-        platformAnalyticsAPI.getUsers(params),
-        platformAnalyticsAPI.getCourses(params),
+        getEnrollmentAnalytics(params),
+        getAdminRevenueAnalytics(params),
+        getUserGrowthAnalytics(params),
+        getCoursePerformanceAnalytics(params),
       ]);
 
       if (enrollmentsRes.success) setEnrollmentData(enrollmentsRes.data);
@@ -110,7 +117,7 @@ export default function PlatformAnalyticsPage() {
 
   const handleExport = async (format) => {
     try {
-      await platformAnalyticsAPI.export({
+      await exportAnalyticsData({
         format,
         startDate: dateRange.from?.toISOString(),
         endDate: dateRange.to?.toISOString(),

@@ -1,32 +1,33 @@
+import axios from "axios";
+import { 
+  getAuthHeaders,
+  getApiBaseUrl 
+} from "@/lib/utils/apiHelpers";
+
+const API_URL = getApiBaseUrl();
+
 /**
  * Update course general information
- * @param {string} courseId - The course ID
+ * @param {string|number} courseId - The course ID
  * @param {Object} updateData - The data to update
- * @returns {Promise<Object>} Response with updated course data
+ * @returns {Promise<Object>} Response with success flag and updated course data
+ * 
+ * @example
+ * const result = await updateCourseInfo(123, { title: 'New Title' });
+ * if (result.success) {
+ *   console.log(result.data);
+ * }
  */
 export const updateCourseInfo = async (courseId, updateData) => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${courseId}`,
-      {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updateData),
-      }
+    const headers = getAuthHeaders();
+    const response = await axios.put(
+      `${API_URL}/api/courses/${courseId}`,
+      updateData,
+      { headers }
     );
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || "Failed to update course");
-    }
-
-    const data = await response.json();
-    return data;
+    return response.data;
   } catch (error) {
-    console.error("Error updating course info:", error);
-    throw error;
+    return error.response?.data || { success: false, message: error.message };
   }
 };
