@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Loader2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
-import createReport from "@/lib/apiCalls/reports/createReport";
+import createReport from "@/lib/apiCalls/reports/createReport.apiCall";
 
 const REPORT_REASONS = [
   "Inappropriate Content",

@@ -164,55 +164,6 @@ export const getCourseById = async (courseId, options = {}) => {
     throw error;
   }
 
-  const filteredCourse = course.toJSON();
-
-  let totalResources = 0;
-  if (filteredCourse.Chapters) {
-    filteredCourse.Chapters = filteredCourse.Chapters.map((chapter) => {
-      if (chapter.Lessons) {
-        chapter.Lessons = chapter.Lessons.map((lesson) => {
-          if (lesson.materials) {
-            totalResources += lesson.materials.length;
-          }
-
-          if (lesson.is_preview) {
-            return {
-              id: lesson.id,
-              title: lesson.title,
-              lesson_type: lesson.lesson_type,
-              video_url: lesson.video_url,
-              video_public_id: lesson.video_public_id,
-              hls_url: lesson.hls_url,
-              content: lesson.content,
-              duration: lesson.duration,
-              order_number: lesson.order_number,
-              is_preview: lesson.is_preview,
-              LessonMaterials: lesson.materials,
-            };
-          }
-          return {
-            id: lesson.id,
-            title: lesson.title,
-            lesson_type: lesson.lesson_type,
-            duration: lesson.duration,
-            order_number: lesson.order_number,
-            is_preview: lesson.is_preview,
-            LessonMaterials: lesson.materials,
-          };
-        });
-      }
-      if (chapter.Quizzes) {
-        chapter.Quizzes = chapter.Quizzes.map((quiz) => ({
-          id: quiz.id,
-          title: quiz.title,
-          order_number: quiz.order_number,
-          questions_length: quiz.questions.length,
-        }));
-      }
-      return chapter;
-    });
-  }
-
   const enrollmentsCount = await models.Enrollment.count({
     where: { course_id: courseId },
   });
@@ -226,28 +177,8 @@ export const getCourseById = async (courseId, options = {}) => {
     raw: true,
   });
 
-  const averageRating = reviewStats.averageRating
-    ? parseFloat(reviewStats.averageRating).toFixed(1)
-    : null;
-  const totalReviews = parseInt(reviewStats.totalReviews) || 0;
-
-  filteredCourse.total_resources = totalResources;
-  filteredCourse.enrollments_count = enrollmentsCount;
-  filteredCourse.average_rating = averageRating
-    ? parseFloat(averageRating)
-    : null;
-  filteredCourse.total_reviews = totalReviews;
-
-  if (filteredCourse.Category) {
-    filteredCourse.category_name = filteredCourse.Category.name;
-    filteredCourse.category_id = filteredCourse.Category.id;
-  }
-  if (filteredCourse.SubCategory) {
-    filteredCourse.subcategory_name = filteredCourse.SubCategory.name;
-    filteredCourse.subcategory_id = filteredCourse.SubCategory.id;
-  }
-
-  return filteredCourse;
+  const { formatCourseResponse } = await import("../../utils/formatters/course.formatter.js");
+  return formatCourseResponse(course.toJSON(), enrollmentsCount, reviewStats);
 };
 
 export const createCourse = async (courseData, thumbnailFile, instructorId) => {

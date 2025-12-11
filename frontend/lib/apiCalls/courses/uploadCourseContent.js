@@ -1,5 +1,5 @@
 import { getAuthToken } from "@/lib/utils/apiHelpers";
-import { createCourse } from "./createCourse";
+import { createCourse } from "./createCourse.apiCall";
 import { createChapter } from "../chapters/createChapter";
 import { createLesson } from "../lessons/createLesson";
 import { createQuiz } from "../quizzes/createQuiz";
