@@ -1,13 +1,8 @@
 import models from "../../models/index.js";
 import { fn, col } from "sequelize";
 
-const { Course, Enrollment, CourseReview, User } = models;
+const { Course, Enrollment, Ratings, User } = models;
 
-/**
- * Get aggregated statistics for an instructor
- * @param {string} instructorId - The instructor's user ID
- * @returns {Promise<Object>} Instructor statistics
- */
 export const getInstructorStats = async (instructorId) => {
   // Check if instructor exists
   const instructor = await User.findByPk(instructorId);
@@ -49,7 +44,7 @@ export const getInstructorStats = async (instructorId) => {
   const totalCourses = courseIds.length;
 
   // Get average rating and total reviews
-  const reviewStats = await CourseReview.findOne({
+  const reviewStats = await Ratings.findOne({
     where: {
       course_id: courseIds,
     },

@@ -98,4 +98,22 @@ export const deleteFromCloudinary = async (publicId, resourceType = 'image') => 
   }
 };
 
+
+/**
+ * Generate a signed URL for a private resource
+ * @param {string} publicId - The public ID of the resource
+ * @param {string} resourceType - The resource type ('image', 'video', 'raw')
+ * @param {string} type - The delivery type ('upload', 'private', 'authenticated')
+ * @returns {string} - Signed URL
+ */
+export const getSignedUrl = (publicId, resourceType = 'image', type = 'upload') => {
+  return cloudinary.url(publicId, {
+    resource_type: resourceType,
+    type: type,
+    sign_url: true,
+    secure: true,
+    expires_at: Math.floor(Date.now() / 1000) + 3600, // 1 hour expiration
+  });
+};
+
 export default cloudinary;

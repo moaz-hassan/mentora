@@ -1,9 +1,5 @@
 import { getInstructorStats as getInstructorStatsService } from "../../services/instructor/instructor-stats.service.js";
 
-/**
- * Get instructor statistics
- * @route GET /api/instructor/:instructorId/stats
- */
 export const getInstructorStats = async (req, res) => {
   try {
     const { instructorId } = req.params;

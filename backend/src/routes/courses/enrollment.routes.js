@@ -8,6 +8,7 @@ import {
 } from "../../validators/courses/enrollment.validator.js";
 import { validateResult } from "../../middlewares/validateResult.middleware.js";
 import { authenticate, authorize } from "../../middlewares/auth.middleware.js";
+import cachingMiddleware from "../../middlewares/caching.middleware.js";
 
 const router = express.Router();
 
@@ -19,7 +20,6 @@ router.get(
   enrollmentController.getAllEnrollments
 );
 
-// Check if user is enrolled in a course
 router.get(
   "/check/:courseId",
   authenticate,
@@ -63,66 +63,54 @@ router.put(
   enrollmentController.updateCurrentPosition
 );
 
-export default router;
-
-// Course player access routes
 router.get(
   "/:enrollmentId/course/:courseId/access",
   authenticate,
-  authorize("student"),
   enrollmentController.verifyAccess
 );
 
 router.get(
   "/:enrollmentId/course/:courseId/player",
   authenticate,
-  authorize("student"),
   enrollmentController.getCoursePlayerData
 );
 
-// Progress tracking routes
 router.get(
   "/:enrollmentId/progress",
   authenticate,
-  authorize("student"),
   enrollmentController.getProgress
 );
 
 router.put(
   "/:enrollmentId/progress",
   authenticate,
-  authorize("student"),
   enrollmentController.updateProgress
+);
+
+router.get(
+  "/:enrollmentId/lessons/:lessonId",
+  authenticate,
+  enrollmentController.getLessonDetail
 );
 
 router.post(
   "/:enrollmentId/lessons/:lessonId/complete",
   authenticate,
-  authorize("student"),
   enrollmentController.markLessonComplete
 );
 
-// Course player access routes
 router.get(
-  "/:enrollmentId/course/:courseId/access",
+  "/:enrollmentId/quizzes/:quizId",
   authenticate,
-  enrollmentController.verifyAccess
+  enrollmentController.getQuizDetail
 );
 
-router.get(
-  "/:enrollmentId/course/:courseId/player",
+router.post(
+  "/:enrollmentId/quizzes/:quizId/submit",
   authenticate,
-  enrollmentController.getCoursePlayerData
+  enrollmentController.submitQuiz
 );
 
-router.get(
-  "/:enrollmentId/progress",
-  authenticate,
-  enrollmentController.getProgress
-);
+router.post("/gift", authenticate, enrollmentController.giftCourse);
 
-router.put(
-  "/:enrollmentId/progress",
-  authenticate,
-  enrollmentController.updateProgress
-);
+export default router;

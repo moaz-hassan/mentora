@@ -21,4 +21,8 @@ router.put("/:id", authenticate, authorize("admin"), updateUserValidator, valida
 // DELETE /api/users/:id - Delete user (admin only)
 router.delete("/:id", authenticate, authorize("admin"), userIdValidator, validateResult, userController.deleteUser);
 
+// POST /api/users/become-instructor - Convert student to instructor (students only)
+router.post("/become-instructor", authenticate, authorize("student"), userController.becomeInstructor);
+
 export default router;
+

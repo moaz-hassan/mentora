@@ -5,9 +5,7 @@ export const createReviewValidator = [
     .notEmpty()
     .withMessage("Course ID is required"),
   
-  body("student_id")
-    .notEmpty()
-    .withMessage("Student ID is required"),
+
   
   body("rating")
     .notEmpty()

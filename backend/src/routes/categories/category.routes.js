@@ -8,11 +8,12 @@ import {
 } from "../../validators/categories/category.validator.js";
 import { validateResult } from "../../middlewares/validateResult.middleware.js";
 import { authenticate, authorize } from "../../middlewares/auth.middleware.js";
+import cachingMiddleware from "../../middlewares/caching.middleware.js";
 
 const router = express.Router();
 
 // Public routes - no authentication required
-router.get("/", categoryController.getAllCategories);
+router.get("/", cachingMiddleware, categoryController.getAllCategories);
 
 router.get(
   "/:id",

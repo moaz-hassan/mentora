@@ -1,17 +1,13 @@
 import models from "../../models/index.js";
-import { v2 as cloudinary } from "cloudinary";
+import { 
+  deleteMaterialFromSupabase,
+  isSupabaseConfigured 
+} from "../../utils/supabaseStorage.util.js";
 
 const { LessonMaterial, Lesson } = models;
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
 /**
- * Save material metadata (file already uploaded to Cloudinary from frontend)
+ * Save material metadata (file already uploaded to Supabase from backend upload route)
  */
 export const saveMaterial = async (req, res) => {
   try {
@@ -124,14 +120,14 @@ export const deleteMaterial = async (req, res) => {
       });
     }
 
-    // Delete from Cloudinary
-    try {
-      await cloudinary.uploader.destroy(material.public_id, {
-        resource_type: "raw",
-      });
-    } catch (cloudinaryError) {
-      console.error("Cloudinary deletion error:", cloudinaryError);
-      // Continue even if Cloudinary deletion fails
+    // Delete from Supabase Storage
+    if (isSupabaseConfigured() && material.public_id) {
+      try {
+        await deleteMaterialFromSupabase(material.public_id);
+      } catch (supabaseError) {
+        console.error("Supabase deletion error:", supabaseError);
+        // Continue even if Supabase deletion fails
+      }
     }
 
     // Delete from database

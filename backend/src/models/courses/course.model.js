@@ -41,6 +41,8 @@ const Course = sequelize.define(
     discount_start_date: { type: DataTypes.DATE },
     discount_end_date: { type: DataTypes.DATE },
 
+    is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
+
     badge: { type: DataTypes.STRING(50) },
 
     // Review system fields
@@ -54,7 +56,33 @@ const Course = sequelize.define(
     rejection_reason: { type: DataTypes.TEXT, allowNull: true },
     ai_analysis: { type: DataTypes.JSON, allowNull: true },
   },
-  { tableName: "courses", timestamps: true }
+  { 
+    tableName: "courses", 
+    timestamps: true,
+    indexes: [
+      // Fulltext search index
+      {
+        type: "FULLTEXT",
+        name: "course_search_idx",
+        fields: ["title", "description"],
+      },
+      // Composite index for filtering
+      {
+        name: "idx_course_filtering",
+        fields: ["category", "price"],
+      },
+      // Sorting index
+      {
+        name: "idx_course_created_at",
+        fields: [{ name: "createdAt", order: "DESC" }],
+      },
+      // Instructor lookup
+      {
+        name: "idx_course_instructor",
+        fields: ["instructor_id"],
+      }
+    ]
+  }
 );
 
 export default Course;

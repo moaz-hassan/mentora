@@ -124,12 +124,6 @@ export const forgotPassword = async (email) => {
   }
 
   const resetToken = await generateVerificationToken(email, "reset-password");
-  await Token.create({
-    email,
-    token: resetToken,
-    purpose: "reset-password",
-    expires_at: new Date(Date.now() + 10 * 60 * 1000),
-  });
 
   await sendPasswordResetEmail(email, resetToken);
  } catch (error) {
@@ -166,8 +160,10 @@ export const resetPassword = async (email, token, newPassword) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
     await user.save();
-
+    
     await tokenRecord.destroy();
+    
+
   } catch (error) {
     throw error;
   }

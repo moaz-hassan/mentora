@@ -1,25 +1,42 @@
-/**
- * Certificate Controller
- * Purpose: Handle certificate route handlers
- * Routes: /api/certificates
- */
-
 import * as certificateService from "../../services/courses/certificate.service.js";
 
 /**
- * Get all certificates
- * GET /api/certificates
+ * Generate a certificate for a completed course
+ * POST /api/certificates/generate
  */
-export const getAllCertificates = async (req, res, next) => {
+export const generateCertificate = async (req, res, next) => {
   try {
-    const filters = {
-      student_id: req.query.student_id,
-      course_id: req.query.course_id,
-      verified: req.query.verified,
-    };
-    
-    const certificates = await certificateService.getAllCertificates(filters);
-    
+    const { courseId } = req.body;
+    const studentId = req.user.id;
+
+    if (!courseId) {
+      return res.status(400).json({
+        success: false,
+        message: "Course ID is required",
+      });
+    }
+
+    const certificate = await certificateService.generateCertificate(studentId, courseId);
+
+    res.status(201).json({
+      success: true,
+      message: "Certificate generated successfully",
+      data: certificate,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get all certificates for the authenticated user
+ * GET /api/certificates/my
+ */
+export const getMyCertificates = async (req, res, next) => {
+  try {
+    const studentId = req.user.id;
+    const certificates = await certificateService.getStudentCertificates(studentId);
+
     res.status(200).json({
       success: true,
       count: certificates.length,
@@ -31,13 +48,17 @@ export const getAllCertificates = async (req, res, next) => {
 };
 
 /**
- * Get certificate by ID
+ * Get certificate by ID with authorization check
  * GET /api/certificates/:id
  */
 export const getCertificateById = async (req, res, next) => {
   try {
-    const certificate = await certificateService.getCertificateById(req.params.id);
-    
+    const { id } = req.params;
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    const certificate = await certificateService.getCertificateWithAuth(id, userId, userRole);
+
     res.status(200).json({
       success: true,
       data: certificate,
@@ -48,35 +69,23 @@ export const getCertificateById = async (req, res, next) => {
 };
 
 /**
- * Create a new certificate
- * POST /api/certificates
+ * Get all certificates (admin only)
+ * GET /api/certificates
  */
-export const createCertificate = async (req, res, next) => {
+export const getAllCertificates = async (req, res, next) => {
   try {
-    const certificate = await certificateService.createCertificate(req.body);
-    
-    res.status(201).json({
-      success: true,
-      message: "Certificate created successfully",
-      data: certificate,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    const filters = {
+      student_id: req.query.student_id,
+      course_id: req.query.course_id,
+      verified: req.query.verified,
+    };
 
-/**
- * Update certificate
- * PUT /api/certificates/:id
- */
-export const updateCertificate = async (req, res, next) => {
-  try {
-    const certificate = await certificateService.updateCertificate(req.params.id, req.body);
-    
+    const certificates = await certificateService.getAllCertificates(filters);
+
     res.status(200).json({
       success: true,
-      message: "Certificate updated successfully",
-      data: certificate,
+      count: certificates.length,
+      data: certificates,
     });
   } catch (error) {
     next(error);
@@ -84,16 +93,25 @@ export const updateCertificate = async (req, res, next) => {
 };
 
 /**
- * Delete certificate
- * DELETE /api/certificates/:id
+ * Verify a certificate
+ * GET /api/certificates/:id/verify
  */
-export const deleteCertificate = async (req, res, next) => {
+export const verifyCertificate = async (req, res, next) => {
   try {
-    const result = await certificateService.deleteCertificate(req.params.id);
-    
+    const { id } = req.params;
+    const result = await certificateService.verifyCertificate(id);
+
     res.status(200).json({
-      success: true,
-      message: result.message,
+      success: result.valid,
+      message: result.valid ? "Certificate is valid" : "Certificate not found",
+      data: result.valid ? {
+        verified: result.verified,
+        certificate: {
+          id: result.certificate.id,
+          issued_at: result.certificate.issued_at,
+          metadata: result.certificate.metadata,
+        },
+      } : null,
     });
   } catch (error) {
     next(error);
@@ -101,23 +119,20 @@ export const deleteCertificate = async (req, res, next) => {
 };
 
 /**
- * Generate certificate
- * POST /api/certificates/generate
+ * Check if certificate exists for a course (for the authenticated user)
+ * GET /api/certificates/check/:courseId
  */
-export const generateCertificate = async (req, res, next) => {
+export const checkCertificateExists = async (req, res, next) => {
   try {
-    const { courseId } = req.body;
+    const { courseId } = req.params;
     const studentId = req.user.id;
 
-    const certificate = await certificateService.generateCertificate(
-      studentId,
-      courseId
-    );
+    const certificate = await certificateService.getCertificateByStudentAndCourse(studentId, courseId);
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
-      message: "Certificate generated successfully",
-      data: certificate,
+      exists: !!certificate,
+      data: certificate || null,
     });
   } catch (error) {
     next(error);
@@ -131,62 +146,19 @@ export const generateCertificate = async (req, res, next) => {
 export const downloadCertificate = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
+    const userRole = req.user.role;
 
-    const pdfData = await certificateService.generateCertificatePDF(id);
+    const downloadUrl = await certificateService.getCertificateDownloadUrl(id, userId, userRole);
 
+    // Return the signed Cloudinary URL
     res.status(200).json({
       success: true,
-      message: "Certificate PDF data",
-      data: pdfData,
+      downloadUrl,
     });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * Verify certificate
- * GET /api/certificates/verify/:certificateId
- */
-export const verifyCertificate = async (req, res, next) => {
-  try {
-    const { certificateId } = req.params;
 
-    const result = await certificateService.verifyCertificate(certificateId);
-
-    res.status(200).json({
-      success: result.valid,
-      message: result.message || "Certificate verified",
-      data: result.certificate || null,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * Get student certificates
- * GET /api/students/:studentId/certificates
- */
-export const getStudentCertificates = async (req, res, next) => {
-  try {
-    const { studentId } = req.params;
-
-    // Verify user is requesting their own certificates or is admin
-    if (req.user.id !== studentId && req.user.role !== "admin") {
-      const error = new Error("You do not have permission to view these certificates");
-      error.statusCode = 403;
-      throw error;
-    }
-
-    const certificates = await certificateService.getStudentCertificates(studentId);
-
-    res.status(200).json({
-      success: true,
-      count: certificates.length,
-      data: certificates,
-    });
-  } catch (error) {
-    next(error);
-  }
-};

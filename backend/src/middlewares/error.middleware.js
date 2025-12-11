@@ -10,11 +10,9 @@ export const errorHandler = (err, req, res, next) => {
     
     return res.status(400).json({
       success: false,
-      error: {
-        message: "Validation error",
-        code: "VALIDATION_ERROR",
-        errors,
-      },
+      message: "Validation error",
+      code: "VALIDATION_ERROR",
+      errors,
     });
   }
 
@@ -23,11 +21,9 @@ export const errorHandler = (err, req, res, next) => {
     const field = err.errors[0]?.path || "field";
     return res.status(400).json({
       success: false,
-      error: {
-        message: `${field} already exists`,
-        code: "DUPLICATE_ENTRY",
-        field,
-      },
+      message: `${field} already exists`,
+      code: "DUPLICATE_ENTRY",
+      field,
     });
   }
 
@@ -35,10 +31,8 @@ export const errorHandler = (err, req, res, next) => {
   if (err.name === "SequelizeForeignKeyConstraintError") {
     return res.status(400).json({
       success: false,
-      error: {
-        message: "Invalid reference. Related record does not exist.",
-        code: "INVALID_REFERENCE",
-      },
+      message: "Invalid reference. Related record does not exist.",
+      code: "INVALID_REFERENCE",
     });
   }
 
@@ -46,10 +40,8 @@ export const errorHandler = (err, req, res, next) => {
   if (err.name === "SequelizeConnectionError") {
     return res.status(503).json({
       success: false,
-      error: {
-        message: "Database connection error. Please try again later.",
-        code: "DATABASE_ERROR",
-      },
+      message: "Database connection error. Please try again later.",
+      code: "DATABASE_ERROR",
     });
   }
 
@@ -57,20 +49,16 @@ export const errorHandler = (err, req, res, next) => {
   if (err.name === "JsonWebTokenError") {
     return res.status(401).json({
       success: false,
-      error: {
-        message: "Invalid token",
-        code: "INVALID_TOKEN",
-      },
+      message: "Invalid token",
+      code: "INVALID_TOKEN",
     });
   }
 
   if (err.name === "TokenExpiredError") {
     return res.status(401).json({
       success: false,
-      error: {
-        message: "Token expired",
-        code: "TOKEN_EXPIRED",
-      },
+      message: "Token expired",
+      code: "TOKEN_EXPIRED",
     });
   }
 
@@ -78,21 +66,17 @@ export const errorHandler = (err, req, res, next) => {
   if (err.statusCode) {
     return res.status(err.statusCode).json({
       success: false,
-      error: {
-        message: err.message,
-        code: err.code || "ERROR",
-      },
+      message: err.message,
+      code: err.code || "ERROR",
     });
   }
 
   // Generic server errors (sanitized)
   res.status(500).json({
     success: false,
-    error: {
-      message: "An unexpected error occurred. Please try again later.",
-      code: "INTERNAL_ERROR",
-      ...(process.env.NODE_ENV === "development" && { details: err.message }),
-    },
+    message: "An unexpected error occurred. Please try again later.",
+    code: "INTERNAL_ERROR",
+    ...(process.env.NODE_ENV === "development" && { details: err.message }),
   });
 };
 

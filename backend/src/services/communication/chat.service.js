@@ -291,6 +291,30 @@ export const addStudentToGroupChat = async (courseId, studentId) => {
   return participant;
 };
 
+
+export const checkChatMembership = async (courseId, userId) => {
+  const { ChatParticipant } = models;
+
+  // Find group chat for course
+  const chatRoom = await ChatRoom.findOne({
+    where: { course_id: courseId, type: "group" },
+  });
+
+  if (!chatRoom) {
+    return { isMember: false, roomId: null };
+  }
+
+  // Check if user is a participant
+  const participant = await ChatParticipant.findOne({
+    where: { room_id: chatRoom.id, user_id: userId, is_active: true },
+  });
+
+  return {
+    isMember: !!participant,
+    roomId: participant ? chatRoom.id : null,
+  };
+};
+
 /**
  * Create private chat room between student and instructor
  * @param {string} studentId - Student ID
@@ -511,6 +535,7 @@ export const getRoomMessages = async (roomId, userId, limit = 50, offset = 0) =>
       {
         model: User,
         attributes: ["id", "first_name", "last_name", "email", "role"],
+        include: [{ model: models.Profile, attributes: ["avatar_url"] }],
       },
     ],
     order: [["created_at", "DESC"]],
@@ -518,5 +543,182 @@ export const getRoomMessages = async (roomId, userId, limit = 50, offset = 0) =>
     offset,
   });
 
-  return messages.reverse(); // Return in chronological order
+  return {
+    messages: messages.reverse(),
+    lastReadAt: participant.last_read_at
+  };
+};
+
+// ============ CURSOR-BASED PAGINATION WITH REDIS CACHING ============
+
+/**
+ * Get messages with cursor-based pagination for infinite scroll
+ * First tries Redis cache, then falls back to MySQL
+ * @param {string} roomId - Chat room ID
+ * @param {string} userId - User ID
+ * @param {string} cursor - ISO timestamp cursor (messages before this timestamp)
+ * @param {number} limit - Number of messages to fetch
+ * @returns {Object} { messages, hasMore, nextCursor, fromCache }
+ */
+export const getRoomMessagesWithCursor = async (roomId, userId, cursor = null, limit = 20) => {
+  const { ChatParticipant } = models;
+
+  // Verify user is a participant
+  const participant = await ChatParticipant.findOne({
+    where: { room_id: roomId, user_id: userId },
+  });
+
+  if (!participant) {
+    const error = new Error("User is not a participant of this chat room");
+    error.statusCode = 403;
+    throw error;
+  }
+
+  // If no cursor (initial load), try Redis cache first
+  if (!cursor) {
+    try {
+      const { getCachedMessages, isRedisAvailable } = await import('../../utils/redis.util.js');
+      if (isRedisAvailable()) {
+        const cachedMessages = await getCachedMessages(roomId, limit + 1);
+        if (cachedMessages && cachedMessages.length > 0) {
+          const hasMore = cachedMessages.length > limit;
+          const messages = hasMore ? cachedMessages.slice(0, limit) : cachedMessages;
+          const nextCursor = hasMore ? cachedMessages[limit - 1].created_at : null;
+          
+          return {
+            messages: messages.reverse(), // Oldest first for display
+            hasMore,
+            nextCursor,
+            lastReadAt: participant.last_read_at,
+            fromCache: true,
+          };
+        }
+      }
+    } catch (error) {
+      // Redis unavailable, continue with MySQL
+      console.warn('Redis cache miss or unavailable:', error.message);
+    }
+  }
+
+  // Build where clause with cursor
+  const where = { room_id: roomId };
+  if (cursor) {
+    where.created_at = { [Op.lt]: new Date(cursor) };
+  }
+
+  // Fetch from MySQL (get one extra to check if there are more)
+  const messages = await ChatMessage.findAll({
+    where,
+    include: [
+      {
+        model: User,
+        attributes: ["id", "first_name", "last_name", "email", "role"],
+        include: [{ model: models.Profile, attributes: ["avatar_url"] }],
+      },
+    ],
+    order: [["created_at", "DESC"]],
+    limit: limit + 1,
+  });
+
+  const hasMore = messages.length > limit;
+  const resultMessages = hasMore ? messages.slice(0, limit) : messages;
+  const nextCursor = hasMore && resultMessages.length > 0 
+    ? resultMessages[resultMessages.length - 1].created_at.toISOString()
+    : null;
+
+  // If this is initial load and we got results, populate cache
+  if (!cursor && resultMessages.length > 0) {
+    try {
+      const { addMessageToCache, isRedisAvailable } = await import('../../utils/redis.util.js');
+      if (isRedisAvailable()) {
+        // Add messages to cache (newest first in Redis)
+        for (const msg of resultMessages) {
+          await addMessageToCache(roomId, formatMessageForCache(msg));
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to populate Redis cache:', error.message);
+    }
+  }
+
+  return {
+    messages: resultMessages.reverse(), // Oldest first for display
+    hasMore,
+    nextCursor,
+    lastReadAt: participant.last_read_at,
+    fromCache: false,
+  };
+};
+
+/**
+ * Format message for Redis cache
+ */
+const formatMessageForCache = (msg) => ({
+  id: msg.id,
+  room_id: msg.room_id,
+  sender_id: msg.sender_id,
+  message: msg.message,
+  message_type: msg.message_type,
+  file_url: msg.file_url,
+  created_at: msg.created_at?.toISOString() || msg.created_at,
+  User: msg.User ? {
+    id: msg.User.id,
+    first_name: msg.User.first_name,
+    last_name: msg.User.last_name,
+    email: msg.User.email,
+    role: msg.User.role,
+    Profile: msg.User.Profile ? {
+      avatar_url: msg.User.Profile.avatar_url,
+    } : null,
+  } : null,
+});
+
+/**
+ * Create message and update Redis cache
+ * @param {Object} messageData - Message data
+ * @param {string} senderId - Sender user ID
+ * @returns {Object} Created message
+ */
+export const createMessageWithCache = async (messageData, senderId) => {
+  const { room_id, message, message_type = 'text', file_url = null } = messageData;
+
+  // Verify chat room exists
+  const chatRoom = await ChatRoom.findByPk(room_id);
+  if (!chatRoom) {
+    const error = new Error("Chat room not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  // Create message in MySQL
+  const chatMessage = await ChatMessage.create({
+    room_id,
+    sender_id: senderId,
+    message,
+    message_type,
+    file_url,
+  });
+
+  // Fetch the complete message with user info
+  const fullMessage = await ChatMessage.findByPk(chatMessage.id, {
+    include: [
+      {
+        model: User,
+        attributes: ["id", "first_name", "last_name", "email", "role"],
+        include: [{ model: models.Profile, attributes: ["avatar_url"] }],
+      },
+    ],
+  });
+
+  // Add to Redis cache
+  try {
+    const { addMessageToCache, isRedisAvailable } = await import('../../utils/redis.util.js');
+    if (isRedisAvailable()) {
+      await addMessageToCache(room_id, formatMessageForCache(fullMessage));
+    }
+  } catch (error) {
+    console.warn('Failed to add message to Redis cache:', error.message);
+  }
+
+  return fullMessage;
 };

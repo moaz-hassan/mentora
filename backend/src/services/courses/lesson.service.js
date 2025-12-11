@@ -1,5 +1,5 @@
 import models from "../../models/index.js";
-const { Lesson, Course, Chapter } = models;
+const { Lesson, Course, Chapter, LessonMaterial } = models;
 
 export const getLessonById = async (lessonId) => {
   const lesson = await Lesson.findByPk(lessonId, {
@@ -93,7 +93,31 @@ export const createLesson = async (lessonData, instructorId) => {
     order_number: lessonData.order_number,
   });
 
-  return lesson;
+  // Create materials if provided
+  if (lessonData.materials && Array.isArray(lessonData.materials) && lessonData.materials.length > 0) {
+    const materialsToCreate = lessonData.materials.map((material, index) => ({
+      lesson_id: lesson.id,
+      filename: material.filename,
+      url: material.url,
+      public_id: material.public_id,
+      file_type: material.file_type,
+      file_size: material.file_size,
+      order_number: index,
+    }));
+
+    await LessonMaterial.bulkCreate(materialsToCreate);
+  }
+
+  // Reload lesson with materials
+  const lessonWithMaterials = await Lesson.findByPk(lesson.id, {
+    include: [{
+      model: LessonMaterial,
+      as: 'materials',
+      attributes: ['id', 'filename', 'url', 'file_type', 'file_size', 'order_number'],
+    }],
+  });
+
+  return lessonWithMaterials;
 };
 
 export const updateLesson = async (lessonId, updateData, instructorId) => {

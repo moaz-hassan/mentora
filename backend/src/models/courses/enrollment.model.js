@@ -32,7 +32,10 @@ const Enrollment = sequelize.define(
   {
     tableName: "enrollments",
     timestamps: false,
-    indexes: [{ unique: true, fields: ["student_id", "course_id"] }],
+    indexes: [
+      { unique: true, fields: ["student_id", "course_id"] },
+      { name: "idx_enrollment_course_user", fields: ["course_id", "student_id"] }
+    ],
   }
 );
 

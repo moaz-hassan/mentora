@@ -10,7 +10,7 @@ import Lesson from "./courses/lesson.model.js";
 import LessonMaterial from "./courses/lessonMaterial.model.js";
 import Quiz from "./courses/quiz.model.js";
 import QuizResult from "./courses/quizResult.model.js";
-import CourseReview from "./courses/courseReview.model.js";
+import Ratings from "./courses/Ratings.model.js";
 import Enrollment from "./courses/enrollment.model.js";
 import Certificate from "./courses/certificate.model.js";
 
@@ -56,7 +56,7 @@ const models = {
   LessonMaterial,
   Quiz,
   QuizResult,
-  CourseReview,
+  Ratings,
   Enrollment,
   Certificate,
   // Categories
@@ -84,7 +84,6 @@ const models = {
   FeaturedCourse,
   BatchUploadSession,
 };
-
 
 // Define associations
 
@@ -117,7 +116,11 @@ Chapter.hasMany(Lesson, { foreignKey: "chapter_id", onDelete: "CASCADE" });
 Lesson.belongsTo(Chapter, { foreignKey: "chapter_id" });
 
 // LESSON MATERIALS
-Lesson.hasMany(LessonMaterial, { foreignKey: "lesson_id", as: "materials", onDelete: "CASCADE" });
+Lesson.hasMany(LessonMaterial, {
+  foreignKey: "lesson_id",
+  as: "materials",
+  onDelete: "CASCADE",
+});
 LessonMaterial.belongsTo(Lesson, { foreignKey: "lesson_id" });
 
 Chapter.hasMany(Quiz, { foreignKey: "chapter_id", onDelete: "CASCADE" });
@@ -162,15 +165,15 @@ User.hasMany(ChatMessage, { foreignKey: "sender_id" });
 ChatMessage.belongsTo(User, { foreignKey: "sender_id" });
 
 // COURSE REVIEWS
-User.hasMany(CourseReview, { foreignKey: "student_id" });
-CourseReview.belongsTo(User, { foreignKey: "student_id" });
+User.hasMany(Ratings, { foreignKey: "student_id" });
+Ratings.belongsTo(User, { foreignKey: "student_id" });
 
-Course.hasMany(CourseReview, { foreignKey: "course_id", onDelete: "CASCADE" });
-CourseReview.belongsTo(Course, { foreignKey: "course_id" });
+Course.hasMany(Ratings, { foreignKey: "course_id", onDelete: "CASCADE" });
+Ratings.belongsTo(Course, { foreignKey: "course_id" });
 
 // CERTIFICATES
 User.hasMany(Certificate, { foreignKey: "student_id" });
-Certificate.belongsTo(User, { foreignKey: "student_id" });
+Certificate.belongsTo(User, { foreignKey: "student_id", as: "student" });
 
 Course.hasMany(Certificate, { foreignKey: "course_id", onDelete: "CASCADE" });
 Certificate.belongsTo(Course, { foreignKey: "course_id" });

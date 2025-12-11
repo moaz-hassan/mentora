@@ -16,12 +16,10 @@ export const registerValidator = [
     .withMessage("Last name must be between 2 and 255 characters"),
 
   body("email")
-    .trim()
     .notEmpty()
     .withMessage("Email is required")
     .isEmail()
-    .withMessage("Please provide a valid email")
-    .normalizeEmail(),
+    .withMessage("Please provide a valid email"),
 
   body("password")
     .notEmpty()
@@ -42,12 +40,10 @@ export const registerValidator = [
 
 export const loginValidator = [
   body("email")
-    .trim()
     .notEmpty()
     .withMessage("Email is required")
     .isEmail()
-    .withMessage("Please provide a valid email")
-    .normalizeEmail(),
+    .withMessage("Please provide a valid email"),
 
   body("password").notEmpty().withMessage("Password is required"),
 ];

@@ -67,8 +67,8 @@ export const deleteCoupon = async (req, res, next) => {
 
 export const validateCoupon = async (req, res, next) => {
   try {
-    const { code, course_id } = req.body;
-    const coupon = await couponService.validateCoupon(code, course_id);
+    const { coupon_code, course_id } = req.body;
+    const coupon = await couponService.validateCoupon(coupon_code, course_id);
     res.status(200).json({
       success: true,
       message: "Coupon is valid",

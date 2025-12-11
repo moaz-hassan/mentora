@@ -2,9 +2,7 @@ import models from "../../models/index.js";
 
 const { Category, SubCategory, Course } = models;
 
-/**
- * Get all categories with their subcategories and course counts
- */
+
 export const getAllCategories = async () => {
   const categories = await Category.findAll({
     include: [
@@ -19,13 +17,13 @@ export const getAllCategories = async () => {
   // Add course count for each category
   const categoriesWithCounts = await Promise.all(
     categories.map(async (category) => {
-      const courseCount = await Course.count({
-        where: { category_id: category.id },
+      const coursesCount = await Course.count({
+        where: { category: category.id },
       });
       
       return {
         ...category.toJSON(),
-        courseCount
+        coursesCount
       };
     })
   );
@@ -33,9 +31,6 @@ export const getAllCategories = async () => {
   return categoriesWithCounts;
 };
 
-/**
- * Get single category by ID with subcategories
- */
 export const getCategoryById = async (categoryId) => {
   const category = await Category.findByPk(categoryId, {
     include: [
@@ -55,9 +50,7 @@ export const getCategoryById = async (categoryId) => {
   return category;
 };
 
-/**
- * Create a new category
- */
+
 export const createCategory = async (categoryData) => {
   // Check for duplicate name (case-insensitive)
   const existingCategory = await Category.findOne({

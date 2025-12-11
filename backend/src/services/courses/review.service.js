@@ -1,9 +1,9 @@
 import models from "../../models/index.js";
 
-const { CourseReview, Course, User, Enrollment } = models;
+const { Ratings, Course, User, Enrollment } = models;
 
 export const getAllReviews = async (studentId) => {
-  const reviews = await CourseReview.findAll({
+  const reviews = await Ratings.findAll({
     where: { student_id: studentId },
     include: [
       { model: User, attributes: ["id", "first_name", "last_name"] },
@@ -35,7 +35,7 @@ export const createReview = async (reviewData, studentId) => {
     throw error;
   }
 
-  const existingReview = await CourseReview.findOne({
+  const existingReview = await Ratings.findOne({
     where: { student_id: studentId, course_id },
   });
 
@@ -45,20 +45,20 @@ export const createReview = async (reviewData, studentId) => {
     throw error;
   }
 
-  const courseReview = await CourseReview.create({
+  const ratings = await Ratings.create({
     student_id: studentId,
     course_id,
     rating,
     review,
   });
 
-  return courseReview;
+  return ratings;
 };
 
 export const updateReview = async (updateData, userId) => {
   const { review_id, rating, new_review } = updateData;
 
-  const review = await CourseReview.findByPk(review_id);
+  const review = await Ratings.findByPk(review_id);
   
   if (!review) {
     const error = new Error("Review not found");
@@ -78,7 +78,7 @@ export const updateReview = async (updateData, userId) => {
 };
 
 export const deleteReview = async (reviewId, userId) => {
-  const review = await CourseReview.findByPk(reviewId);
+  const review = await Ratings.findByPk(reviewId);
 
   if (!review) {
     const error = new Error("Review not found");
@@ -106,7 +106,7 @@ export const getCourseReviews = async (courseId) => {
     throw error;
   }
 
-  const reviews = await CourseReview.findAll({
+  const reviews = await Ratings.findAll({
     where: { course_id: courseId },
     include: [
       { 

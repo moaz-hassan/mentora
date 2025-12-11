@@ -15,6 +15,11 @@ const Category = sequelize.define(
       allowNull: false,
       unique: true,
     },
+    is_featured: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   },
   {
     tableName: "categories",

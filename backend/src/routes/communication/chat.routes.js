@@ -54,4 +54,18 @@ router.get("/unread-count", authenticate, chatController.getUnreadCount);
 // GET /api/chat/rooms/:roomId/messages/paginated - Get messages with pagination
 router.get("/rooms/:roomId/messages/paginated", authenticate, chatController.getRoomMessagesPaginated);
 
+// POST /api/chat/join - Join group chat
+router.post("/join", authenticate, chatController.joinGroupChat);
+
+// GET /api/chat/membership/:courseId - Check if user is member of course chat
+router.get("/membership/:courseId", authenticate, chatController.checkChatMembership);
+
+// ============ INFINITE SCROLL WITH REDIS CACHING ============
+
+// GET /api/chat/:roomId/messages/cursor - Get messages with cursor pagination (infinite scroll)
+router.get("/:roomId/messages/cursor", authenticate, chatController.getRoomMessagesWithCursor);
+
+// POST /api/chat/:roomId/message - Send message with Redis cache update
+router.post("/:roomId/message", authenticate, chatController.sendMessageWithCache);
+
 export default router;

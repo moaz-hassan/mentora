@@ -117,3 +117,22 @@ export const toggleUserStatus = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Convert student to instructor
+ * POST /api/users/become-instructor
+ */
+export const becomeInstructor = async (req, res, next) => {
+  try {
+    const user = await userService.becomeInstructor(req.user.id);
+
+    res.status(200).json({
+      success: true,
+      message: "Congratulations! You are now an instructor. You can start creating courses.",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

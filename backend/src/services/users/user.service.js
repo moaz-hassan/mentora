@@ -164,3 +164,63 @@ export const deleteUser = async (userId) => {
 
   return { message: "User deleted successfully" };
 };
+
+/**
+ * Convert student to instructor
+ * Only students with no enrollments can become instructors
+ * @param {string} userId - User ID
+ * @returns {Object} Updated user
+ */
+export const becomeInstructor = async (userId) => {
+  const { Enrollment } = models;
+
+  const user = await User.findByPk(userId);
+
+  if (!user) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  // Check if user is already an instructor or admin
+  if (user.role === "instructor") {
+    const error = new Error("You are already an instructor");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (user.role === "admin") {
+    const error = new Error("Admins cannot become instructors");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (user.role !== "student") {
+    const error = new Error("Only students can become instructors");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // Check if student has any enrollments
+  const enrollmentCount = await Enrollment.count({
+    where: { student_id: userId },
+  });
+
+  if (enrollmentCount > 0) {
+    const error = new Error(
+      "You cannot become an instructor because you are enrolled in courses. Students with active enrollments cannot switch to instructor role."
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // Update user role to instructor
+  await user.update({ role: "instructor" });
+
+  // Remove password from response
+  const userResponse = user.toJSON();
+  delete userResponse.password;
+
+  return userResponse;
+};
+

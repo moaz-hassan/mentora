@@ -23,6 +23,12 @@ const ChatMessage = sequelize.define(
   {
     tableName: "chat_messages",
     timestamps: false,
+    indexes: [
+      {
+        name: "idx_chat_messages_cursor",
+        fields: ["room_id", { name: "created_at", order: "DESC" }],
+      }
+    ]
   }
 );
 

@@ -5,55 +5,57 @@
 
 import express from "express";
 import * as certificateController from "../../controllers/users/certificate.controller.js";
-import { createCertificateValidator, updateCertificateValidator, certificateIdValidator, certificateQueryValidator } from "../../validators/courses/certificate.validator.js";
-import { validateResult } from "../../middlewares/validateResult.middleware.js";
 import { authenticate, authorize } from "../../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// GET /api/certificates - Get all certificates
-router.get("/", authenticate, certificateQueryValidator, validateResult, certificateController.getAllCertificates);
-
-// GET /api/certificates/:id - Get certificate by ID
-router.get("/:id", authenticate, certificateIdValidator, validateResult, certificateController.getCertificateById);
-
-// POST /api/certificates - Create a new certificate (instructor/admin only)
-router.post("/", authenticate, authorize("instructor", "admin"), createCertificateValidator, validateResult, certificateController.createCertificate);
-
-// PUT /api/certificates/:id - Update certificate (admin only)
-router.put("/:id", authenticate, authorize("admin"), updateCertificateValidator, validateResult, certificateController.updateCertificate);
-
-// DELETE /api/certificates/:id - Delete certificate (admin only)
-router.delete("/:id", authenticate, authorize("admin"), certificateIdValidator, validateResult, certificateController.deleteCertificate);
-
-export default router;
-
-// Generate certificate
+// POST /api/certificates/generate - Generate certificate for completed course
 router.post(
   "/generate",
   authenticate,
-  authorize("student"),
   certificateController.generateCertificate
 );
 
-// Download certificate PDF
+// GET /api/certificates/my - Get all certificates for authenticated user
 router.get(
-  "/:id/download",
+  "/my",
   authenticate,
-  certificateIdValidator,
-  validateResult,
-  certificateController.downloadCertificate
+  certificateController.getMyCertificates
 );
 
-// Verify certificate (public route)
+// GET /api/certificates/check/:courseId - Check if certificate exists for a course
 router.get(
-  "/verify/:certificateId",
+  "/check/:courseId",
+  authenticate,
+  certificateController.checkCertificateExists
+);
+
+// GET /api/certificates/:id/verify - Verify a certificate (public route)
+router.get(
+  "/:id/verify",
   certificateController.verifyCertificate
 );
 
-// Get student certificates
+// GET /api/certificates/:id/download - Download certificate PDF
 router.get(
-  "/students/:studentId",
+  "/:id/download",
   authenticate,
-  certificateController.getStudentCertificates
+  certificateController.downloadCertificate
 );
+
+// GET /api/certificates/:id - Get certificate by ID (with auth check)
+router.get(
+  "/:id",
+  authenticate,
+  certificateController.getCertificateById
+);
+
+// GET /api/certificates - Get all certificates (admin only)
+router.get(
+  "/",
+  authenticate,
+  authorize("admin"),
+  certificateController.getAllCertificates
+);
+
+export default router;

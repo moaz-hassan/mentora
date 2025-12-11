@@ -353,3 +353,206 @@ export const sendPasswordResetEmail = async (email, token) => {
   const html = resetPasswordTemplate.replace("{{resetLink}}", resetLink);
   await sendMail(email, "Password Reset Request", html);
 };
+
+const giftCourseEmailTemplate = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You've Received a Gift!</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333333;
+      background-color: #f4f4f4;
+    }
+    .email-wrapper {
+      width: 100%;
+      background-color: #f4f4f4;
+      padding: 40px 20px;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .email-header {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .email-header h1 {
+      color: #ffffff;
+      font-size: 28px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .email-body {
+      padding: 40px 30px;
+    }
+    .email-body h2 {
+      color: #333333;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .email-body p {
+      color: #666666;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .course-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 25px 0;
+    }
+    .course-card h3 {
+      color: #1e293b;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .course-card p {
+      color: #64748b;
+      font-size: 14px;
+      margin: 0;
+    }
+    .message-box {
+      background-color: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 4px;
+    }
+    .message-box h4 {
+      color: #92400e;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .message-box p {
+      color: #78350f;
+      font-size: 15px;
+      font-style: italic;
+      margin: 0;
+    }
+    .button-container {
+      text-align: center;
+      margin: 35px 0;
+    }
+    .button {
+      display: inline-block;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: #ffffff;
+      padding: 16px 40px;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+    .email-footer {
+      background-color: #f8f9fa;
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #e0e0e0;
+    }
+    .email-footer p {
+      color: #999999;
+      font-size: 14px;
+      margin: 5px 0;
+    }
+    @media only screen and (max-width: 600px) {
+      .email-wrapper {
+        padding: 20px 10px;
+      }
+      .email-header {
+        padding: 30px 20px;
+      }
+      .email-body {
+        padding: 30px 20px;
+      }
+      .button {
+        padding: 14px 30px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-container">
+      <div class="email-header">
+        <h1>🎁 You've Received a Gift!</h1>
+      </div>
+      
+      <div class="email-body">
+        <h2>A Course Has Been Gifted to You</h2>
+        <p>Hello {{recipientName}},</p>
+        <p><strong>{{senderName}}</strong> has gifted you a course! You now have full access to start learning.</p>
+        
+        <div class="course-card">
+          <h3>{{courseTitle}}</h3>
+          <p>{{courseDescription}}</p>
+        </div>
+
+        {{personalMessage}}
+        
+        <div class="button-container">
+          <a href="{{courseLink}}" class="button">Start Learning</a>
+        </div>
+        
+        <p style="font-size: 14px; color: #777777;">You've been automatically enrolled in this course. Click the button above to begin your learning journey!</p>
+      </div>
+      
+      <div class="email-footer">
+        <p><strong>Happy Learning!</strong></p>
+        <p>&copy; 2024 Mentora. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+export const sendGiftCourseEmail = async ({
+  recipientEmail,
+  recipientName,
+  senderName,
+  courseTitle,
+  courseDescription,
+  courseId,
+  personalMessage = "",
+}) => {
+  const courseLink = `${process.env.CLIENT_URL}/enrollments`;
+  
+  let html = giftCourseEmailTemplate
+    .replace("{{recipientName}}", recipientName)
+    .replace("{{senderName}}", senderName)
+    .replace("{{courseTitle}}", courseTitle)
+    .replace("{{courseDescription}}", courseDescription || "Start your learning journey with this amazing course!")
+    .replace("{{courseLink}}", courseLink);
+  
+  // Add personal message if provided
+  if (personalMessage && personalMessage.trim()) {
+    const messageHtml = `
+        <div class="message-box">
+          <h4>Message from ${senderName}:</h4>
+          <p>"${personalMessage}"</p>
+        </div>`;
+    html = html.replace("{{personalMessage}}", messageHtml);
+  } else {
+    html = html.replace("{{personalMessage}}", "");
+  }
+  
+  await sendMail(recipientEmail, `🎁 ${senderName} has gifted you a course!`, html);
+};
+

@@ -52,3 +52,7 @@ coverage/
 .cache/
 .temp/
 .tmp/
+
+# Google Service Account Key
+google-service-account.json
+backend/google-service-account.json

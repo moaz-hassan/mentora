@@ -8,20 +8,33 @@ import {
   courseQueryValidator,
 } from "../../validators/courses/course.validator.js";
 import { validateResult } from "../../middlewares/validateResult.middleware.js";
-import { authenticate, authorize } from "../../middlewares/auth.middleware.js";
+import { authenticate, authorize, optionalAuth } from "../../middlewares/auth.middleware.js";
 import {
   uploadThumbnail,
   handleMulterError,
 } from "../../middlewares/upload.middleware.js";
+import cachingMiddleware from "../../middlewares/caching.middleware.js";
 
 const router = express.Router();
 
 router.get(
   "/",
+  cachingMiddleware,
   courseQueryValidator,
   validateResult,
   courseController.getAllCourses
 );
+router.get(
+  "/featured",
+  cachingMiddleware,
+  courseQueryValidator,
+  validateResult,
+  courseController.getAllFeaturedCourses
+);
+
+// Search and filter courses with enhanced fuzzy search
+router.get("/search", cachingMiddleware, courseController.searchCourses);
+
 router.post(
   "/",
   authenticate,
@@ -67,6 +80,7 @@ router.get(
 );
 router.get(
   "/:id",
+  optionalAuth,
   courseIdValidator,
   validateResult,
   courseController.getCourseById

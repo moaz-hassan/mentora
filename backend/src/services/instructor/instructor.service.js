@@ -1,17 +1,10 @@
-/**
- * Instructor Service
- * Purpose: Handle instructor-specific operations including analytics
- */
-
 import models from "../../models/index.js";
-import { Op, fn, col, literal } from "sequelize";
-import { sequelize } from "../../config/db.js";
-
+import { Op, fn, col } from "sequelize";
 const {
   Course,
   Enrollment,
   Payment,
-  CourseReview,
+  Ratings,
   Lesson,
   Quiz,
   QuizResult,
@@ -148,7 +141,7 @@ const getOverviewStats = async (courseIds) => {
       : 0;
 
   // Average rating
-  const ratingResult = await CourseReview.findOne({
+  const ratingResult = await Ratings.findOne({
     where: { course_id: courseIds },
     attributes: [
       [fn("AVG", col("rating")), "avgRating"],
@@ -226,7 +219,7 @@ const getCoursesPerformance = async (courses) => {
           : 0;
 
       // Average rating
-      const ratingResult = await CourseReview.findOne({
+      const ratingResult = await Ratings.findOne({
         where: { course_id: course.id },
         attributes: [
           [

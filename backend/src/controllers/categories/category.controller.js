@@ -1,27 +1,23 @@
 import * as categoryService from "../../services/categories/category.service.js";
+import { setToCache } from "../../caching/cache.manager.js";
 
-/**
- * Get all categories
- * GET /api/categories
- */
 export const getAllCategories = async (req, res, next) => {
   try {
     const categories = await categoryService.getAllCategories();
-
-    res.status(200).json({
+    const response = {
       success: true,
       count: categories.length,
       data: categories,
-    });
+    };
+
+    await setToCache(req, response);
+
+    res.status(200).json(response);
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * Get single category by ID
- * GET /api/categories/:id
- */
 export const getCategoryById = async (req, res, next) => {
   try {
     const category = await categoryService.getCategoryById(req.params.id);
@@ -35,10 +31,6 @@ export const getCategoryById = async (req, res, next) => {
   }
 };
 
-/**
- * Create a new category
- * POST /api/categories
- */
 export const createCategory = async (req, res, next) => {
   try {
     const category = await categoryService.createCategory(req.body);
@@ -98,11 +90,11 @@ export const deleteCategory = async (req, res, next) => {
 export const searchCategories = async (req, res, next) => {
   try {
     const { q } = req.query;
-    
+
     if (!q || q.trim().length < 2) {
       return res.status(400).json({
         success: false,
-        message: "Search term must be at least 2 characters"
+        message: "Search term must be at least 2 characters",
       });
     }
 
