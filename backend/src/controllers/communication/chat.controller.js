@@ -217,10 +217,7 @@ export const getRoomMessagesPaginated = async (req, res, next) => {
   }
 };
 
-/**
- * Join group chat for a course
- * POST /api/chat/join
- */
+
 export const joinGroupChat = async (req, res, next) => {
   try {
     const { courseId } = req.body;
@@ -238,10 +235,7 @@ export const joinGroupChat = async (req, res, next) => {
   }
 };
 
-/**
- * Check if user is a member of course chat
- * GET /api/chat/membership/:courseId
- */
+
 export const checkChatMembership = async (req, res, next) => {
   try {
     const { courseId } = req.params;
@@ -258,11 +252,7 @@ export const checkChatMembership = async (req, res, next) => {
   }
 };
 
-/**
- * Get messages with cursor-based pagination for infinite scroll
- * GET /api/chat/:roomId/messages/cursor
- * Query params: cursor (ISO timestamp), limit (number)
- */
+
 export const getRoomMessagesWithCursor = async (req, res, next) => {
   try {
     const { roomId } = req.params;
@@ -289,10 +279,7 @@ export const getRoomMessagesWithCursor = async (req, res, next) => {
   }
 };
 
-/**
- * Send message with Redis cache update
- * POST /api/chat/:roomId/message
- */
+
 export const sendMessageWithCache = async (req, res, next) => {
   try {
     const { roomId } = req.params;

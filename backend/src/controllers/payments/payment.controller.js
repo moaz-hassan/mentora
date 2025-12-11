@@ -1,15 +1,8 @@
-/**
- * Payment Controller
- * Purpose: Handle payment route handlers
- * Routes: /api/payments
- */
+
 
 import * as paymentService from "../../services/payments/payment.service.js";
 
-/**
- * Get all payments
- * GET /api/payments
- */
+
 export const getAllPayments = async (req, res, next) => {
   try {
     const filters = {
@@ -30,10 +23,7 @@ export const getAllPayments = async (req, res, next) => {
   }
 };
 
-/**
- * Get payment by ID
- * GET /api/payments/:id
- */
+
 export const getPaymentById = async (req, res, next) => {
   try {
     const payment = await paymentService.getPaymentById(req.params.id);
@@ -47,10 +37,7 @@ export const getPaymentById = async (req, res, next) => {
   }
 };
 
-/**
- * Create a new payment
- * POST /api/payments
- */
+
 export const createPayment = async (req, res, next) => {
   try {
     const payment = await paymentService.createPayment(req.body, req.user.id);
@@ -65,10 +52,7 @@ export const createPayment = async (req, res, next) => {
   }
 };
 
-/**
- * Update payment
- * PUT /api/payments/:id
- */
+
 export const updatePayment = async (req, res, next) => {
   try {
     const payment = await paymentService.updatePayment(req.params.id, req.body);
@@ -83,10 +67,7 @@ export const updatePayment = async (req, res, next) => {
   }
 };
 
-/**
- * Delete payment
- * DELETE /api/payments/:id
- */
+
 export const deletePayment = async (req, res, next) => {
   try {
     const result = await paymentService.deletePayment(req.params.id);

@@ -12,7 +12,7 @@ import cachingMiddleware from "../../middlewares/caching.middleware.js";
 
 const router = express.Router();
 
-// Public routes - no authentication required
+
 router.get("/", cachingMiddleware, categoryController.getAllCategories);
 
 router.get(
@@ -29,7 +29,7 @@ router.get(
   subCategoryController.getSubCategoriesByCategory
 );
 
-// Admin-only routes - authentication and authorization required
+
 router.post(
   "/",
   authenticate,

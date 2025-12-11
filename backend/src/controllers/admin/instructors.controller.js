@@ -1,14 +1,8 @@
-/**
- * Instructor Management Controller
- * Purpose: Handle instructor management route handlers for admin
- */
+
 
 import * as instructorService from "../../services/admin/instructorManagement.service.js";
 
-/**
- * Get all instructors
- * GET /api/admin/instructors
- */
+
 export const getAllInstructors = async (req, res, next) => {
   try {
     const filters = {
@@ -28,10 +22,7 @@ export const getAllInstructors = async (req, res, next) => {
   }
 };
 
-/**
- * Get instructor details
- * GET /api/admin/instructors/:id
- */
+
 export const getInstructorDetails = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -46,10 +37,7 @@ export const getInstructorDetails = async (req, res, next) => {
   }
 };
 
-/**
- * Get instructor analytics
- * GET /api/admin/instructors/:id/analytics
- */
+
 export const getInstructorAnalytics = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -64,10 +52,7 @@ export const getInstructorAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Update instructor status
- * PATCH /api/admin/instructors/:id/status
- */
+
 export const updateInstructorStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -92,10 +77,7 @@ export const updateInstructorStatus = async (req, res, next) => {
   }
 };
 
-/**
- * Get instructor payout history
- * GET /api/admin/instructors/:id/payouts
- */
+
 export const getInstructorPayouts = async (req, res, next) => {
   try {
     const { id } = req.params;

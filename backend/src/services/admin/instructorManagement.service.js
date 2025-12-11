@@ -1,16 +1,11 @@
-/**
- * Instructor Management Service
- * Purpose: Handle instructor oversight and analytics for admin
- */
+
 
 import models from "../../models/index.js";
 import { Op, fn, col, literal } from "sequelize";
 
 const { User, Course, Enrollment, Payment, CourseReview } = models;
 
-/**
- * Get all instructors with metrics
- */
+
 export const getAllInstructors = async (filters = {}) => {
   const whereClause = { role: "instructor" };
   
@@ -32,7 +27,7 @@ export const getAllInstructors = async (filters = {}) => {
     order: [["createdAt", "DESC"]]
   });
 
-  // Add metrics for each instructor
+  
   const instructorsWithMetrics = await Promise.all(
     instructors.map(async (instructor) => {
       const metrics = await getInstructorMetrics(instructor.id);
@@ -50,11 +45,9 @@ export const getAllInstructors = async (filters = {}) => {
   return instructorsWithMetrics;
 };
 
-/**
- * Get instructor metrics
- */
+
 export const getInstructorMetrics = async (instructorId) => {
-  // Get courses
+  
   const courses = await Course.findAll({
     where: { instructor_id: instructorId },
     attributes: ["id"]
@@ -63,14 +56,14 @@ export const getInstructorMetrics = async (instructorId) => {
   const courseIds = courses.map(c => c.id);
   const courseCount = courses.length;
 
-  // Get total students
+  
   const totalStudents = await Enrollment.count({
     where: { course_id: courseIds },
     distinct: true,
     col: "student_id"
   });
 
-  // Get total revenue
+  
   const totalRevenue = await Payment.sum("amount", {
     where: {
       course_id: courseIds,
@@ -78,11 +71,11 @@ export const getInstructorMetrics = async (instructorId) => {
     }
   });
 
-  // Calculate instructor earnings (80% of revenue)
+  
   const commissionRate = 0.20;
   const earnings = (totalRevenue || 0) * (1 - commissionRate);
 
-  // Get average rating
+  
   const ratingResult = await CourseReview.findOne({
     where: { course_id: courseIds },
     attributes: [
@@ -104,9 +97,7 @@ export const getInstructorMetrics = async (instructorId) => {
   };
 };
 
-/**
- * Get instructor details with full analytics
- */
+
 export const getInstructorDetails = async (instructorId) => {
   const instructor = await User.findByPk(instructorId, {
     attributes: ["id", "first_name", "last_name", "email", "is_active", "createdAt"]
@@ -118,7 +109,7 @@ export const getInstructorDetails = async (instructorId) => {
     throw error;
   }
 
-  // Get courses with details
+  
   const courses = await Course.findAll({
     where: { instructor_id: instructorId },
     attributes: ["id", "title", "status", "price", "createdAt"],
@@ -129,10 +120,10 @@ export const getInstructorDetails = async (instructorId) => {
     group: ["Course.id"]
   });
 
-  // Get detailed metrics
+  
   const metrics = await getInstructorMetrics(instructorId);
 
-  // Get performance data
+  
   const performance = await getInstructorPerformance(instructorId);
 
   return {
@@ -153,9 +144,7 @@ export const getInstructorDetails = async (instructorId) => {
   };
 };
 
-/**
- * Get instructor performance analytics
- */
+
 export const getInstructorPerformance = async (instructorId) => {
   const courses = await Course.findAll({
     where: { instructor_id: instructorId },
@@ -164,13 +153,13 @@ export const getInstructorPerformance = async (instructorId) => {
 
   const courseIds = courses.map(c => c.id);
 
-  // Get enrollments
+  
   const enrollments = await Enrollment.findAll({
     where: { course_id: courseIds },
     attributes: ["id", "progress", "enrolled_at"]
   });
 
-  // Calculate completion rate
+  
   let completedCount = 0;
   let totalProgress = 0;
 
@@ -189,7 +178,7 @@ export const getInstructorPerformance = async (instructorId) => {
     ? (totalProgress / enrollments.length).toFixed(1)
     : 0;
 
-  // Get student satisfaction (reviews)
+  
   const reviews = await CourseReview.findAll({
     where: { course_id: courseIds },
     attributes: ["rating"]
@@ -199,7 +188,7 @@ export const getInstructorPerformance = async (instructorId) => {
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
     : null;
 
-  // Get engagement (enrollment trend)
+  
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -220,9 +209,7 @@ export const getInstructorPerformance = async (instructorId) => {
   };
 };
 
-/**
- * Update instructor status (suspend/activate)
- */
+
 export const updateInstructorStatus = async (instructorId, isActive) => {
   const instructor = await User.findByPk(instructorId);
 
@@ -235,7 +222,7 @@ export const updateInstructorStatus = async (instructorId, isActive) => {
   instructor.is_active = isActive;
   await instructor.save();
 
-  // If suspending, also unpublish their courses
+  
   if (!isActive) {
     await Course.update(
       { is_published: false },
@@ -246,9 +233,7 @@ export const updateInstructorStatus = async (instructorId, isActive) => {
   return instructor;
 };
 
-/**
- * Get instructor payout history
- */
+
 export const getInstructorPayoutHistory = async (instructorId) => {
   const courses = await Course.findAll({
     where: { instructor_id: instructorId },
@@ -277,6 +262,6 @@ export const getInstructorPayoutHistory = async (instructorId) => {
     instructorEarning: parseFloat(payment.amount * (1 - commissionRate)).toFixed(2),
     courseTitle: payment.Course.title,
     date: payment.created_at,
-    status: "pending" // Would track actual payout status
+    status: "pending" 
   }));
 };

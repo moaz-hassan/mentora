@@ -16,7 +16,7 @@ export const generateCertificatePDF = async (data) => {
     completionDate,
   } = data;
 
-  // Generate QR code as data URL (for verification link)
+  
   const verificationUrl = `${process.env.FRONTEND_URL || 'https://mentora.com'}/certificates/${certificateId}/verify`;
   const qrCodeDataUrl = await QRCode.toDataURL(verificationUrl, {
     width: 150,
@@ -29,7 +29,7 @@ export const generateCertificatePDF = async (data) => {
 
   return new Promise((resolve, reject) => {
     try {
-      // Create PDF document (landscape A4) - single page
+      
       const doc = new PDFDocument({
         size: "A4",
         layout: "landscape",
@@ -38,7 +38,7 @@ export const generateCertificatePDF = async (data) => {
         bufferPages: true,
       });
 
-      // Register Arabic font
+      
       const fontPath = path.join(__dirname, '../assets/fonts/Cairo-Regular.ttf');
       try {
         doc.registerFont('Cairo', fontPath);
@@ -54,14 +54,14 @@ export const generateCertificatePDF = async (data) => {
       const pageWidth = doc.page.width;
       const pageHeight = doc.page.height;
 
-      // White background
+      
       doc.rect(0, 0, pageWidth, pageHeight).fill("#ffffff");
 
-      // Corner decorations (blue/purple curved corners)
+      
       const cornerSize = 70;
       const cornerColor = "#4F46E5";
 
-      // Top-left corner
+      
       doc.save();
       doc.moveTo(0, cornerSize);
       doc.lineTo(0, 15);
@@ -72,7 +72,7 @@ export const generateCertificatePDF = async (data) => {
       doc.stroke();
       doc.restore();
 
-      // Top-right corner
+      
       doc.save();
       doc.moveTo(pageWidth - cornerSize, 0);
       doc.lineTo(pageWidth - 15, 0);
@@ -83,7 +83,7 @@ export const generateCertificatePDF = async (data) => {
       doc.stroke();
       doc.restore();
 
-      // Bottom-left corner
+      
       doc.save();
       doc.moveTo(0, pageHeight - cornerSize);
       doc.lineTo(0, pageHeight - 15);
@@ -94,7 +94,7 @@ export const generateCertificatePDF = async (data) => {
       doc.stroke();
       doc.restore();
 
-      // Bottom-right corner
+      
       doc.save();
       doc.moveTo(pageWidth - cornerSize, pageHeight);
       doc.lineTo(pageWidth - 15, pageHeight);
@@ -105,7 +105,7 @@ export const generateCertificatePDF = async (data) => {
       doc.stroke();
       doc.restore();
 
-      // "CERTIFICATE OF COMPLETION" badge
+      
       const badgeWidth = 200;
       const badgeHeight = 26;
       const badgeX = (pageWidth - badgeWidth) / 2;
@@ -124,7 +124,7 @@ export const generateCertificatePDF = async (data) => {
           align: "center",
         });
 
-      // "This certificate is proudly presented to"
+      
       doc
         .fillColor("#64748b")
         .fontSize(12)
@@ -134,10 +134,10 @@ export const generateCertificatePDF = async (data) => {
           width: pageWidth,
         });
 
-      // Student name - use Cairo font for Arabic support
+      
       const fontToUse = doc._registeredFonts['Cairo'] ? 'Cairo' : 'Helvetica-Bold';
       
-      // Calculate font size based on name length
+      
       let nameFontSize = 32;
       if (studentName.length > 20) nameFontSize = 26;
       if (studentName.length > 30) nameFontSize = 22;
@@ -150,11 +150,11 @@ export const generateCertificatePDF = async (data) => {
           align: "center",
           width: pageWidth - 100,
           lineGap: 0,
-          features: ['rtla'], // Enable Right-to-Left Alternates for Arabic
+          features: ['rtla'], 
         });
 
-      // "for successfully completing the Mentora course"
-      // Moved down significantly to avoid overlap with large Arabic text
+      
+      
       doc
         .fillColor("#64748b")
         .fontSize(11)
@@ -164,10 +164,10 @@ export const generateCertificatePDF = async (data) => {
           width: pageWidth,
         });
 
-      // Course title (teal color) - use Cairo font for Arabic support
+      
       doc
         .fillColor("#0D9488")
-        .fontSize(20) // Slightly smaller
+        .fontSize(20) 
         .font(fontToUse)
         .text(courseTitle, 50, 190, {
           align: "center",
@@ -176,13 +176,13 @@ export const generateCertificatePDF = async (data) => {
           features: ['rtla'],
         });
 
-      // Footer section - positioned higher to fit on one page
-      const footerY = pageHeight - 120; // Moved up
+      
+      const footerY = pageHeight - 120; 
 
-      // Left side - Instructor
+      
       const leftX = 80;
       
-      // Instructor signature line
+      
       doc
         .moveTo(leftX, footerY + 25)
         .lineTo(leftX + 140, footerY + 25)
@@ -190,7 +190,7 @@ export const generateCertificatePDF = async (data) => {
         .strokeColor("#cbd5e1")
         .stroke();
 
-      // Instructor name
+      
       doc
         .fillColor("#1e293b")
         .fontSize(14)
@@ -209,10 +209,10 @@ export const generateCertificatePDF = async (data) => {
           align: "center",
         });
 
-      // Center - QR Code (Moved up)
+      
       const qrSize = 80;
       const qrX = (pageWidth - qrSize) / 2;
-      const qrY = footerY - 25; // Moved up relative to footer line
+      const qrY = footerY - 25; 
 
       const qrImageData = qrCodeDataUrl.replace(/^data:image\/png;base64,/, '');
       const qrBuffer = Buffer.from(qrImageData, 'base64');
@@ -222,7 +222,7 @@ export const generateCertificatePDF = async (data) => {
         height: qrSize,
       });
 
-      // Certificate ID - Directly under QR code
+      
       const idY = qrY + qrSize + 5;
       
       doc
@@ -244,10 +244,10 @@ export const generateCertificatePDF = async (data) => {
           width: pageWidth,
         });
 
-      // Right side - Date
+      
       const rightX = pageWidth - 220;
       
-      // Format completion date
+      
       const formattedDate = new Date(completionDate).toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
@@ -272,7 +272,7 @@ export const generateCertificatePDF = async (data) => {
           align: "center",
         });
 
-      // Finalize PDF - ensure single page
+      
       doc.flushPages();
       doc.end();
     } catch (error) {

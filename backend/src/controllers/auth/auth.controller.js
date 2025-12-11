@@ -80,13 +80,10 @@ export const getMe = async (req, res, next) => {
   }
 };
 
-/**
- * Update current user's profile (first_name and last_name only)
- * PUT /api/auth/update-profile
- */
+
 export const updateProfile = async (req, res, next) => {
   try {
-    // Import the user service here to avoid circular dependencies
+    
     const userService = await import("../../services/users/user.service.js");
     
     const user = await userService.updateUserProfile(req.user.id, req.body);

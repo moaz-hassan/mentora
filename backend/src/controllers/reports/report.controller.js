@@ -44,8 +44,8 @@ export const getReports = async (req, res) => {
       severity: req.query.severity,
       dateRange: req.query.dateRange,
       search: req.query.search,
-      reporterType: req.query.reporterType, // NEW: Filter by reporter type
-      priority: req.query.priority, // NEW: Filter by priority
+      reporterType: req.query.reporterType, 
+      priority: req.query.priority, 
     };
 
     const reports = await reportService.getReports(filters);
@@ -180,10 +180,7 @@ export const getReportStats = async (req, res) => {
   }
 };
 
-/**
- * Add internal notes to a report
- * POST /api/admin/reports/:id/notes
- */
+
 export const addInternalNote = async (req, res) => {
   try {
     const { note } = req.body;
@@ -215,10 +212,7 @@ export const addInternalNote = async (req, res) => {
   }
 };
 
-/**
- * Add resolution details to a report
- * POST /api/admin/reports/:id/resolve
- */
+
 export const resolveReport = async (req, res) => {
   try {
     const { resolutionDetails, notifyReporter } = req.body;
@@ -234,7 +228,7 @@ export const resolveReport = async (req, res) => {
       req.params.id,
       resolutionDetails,
       req.user.id,
-      notifyReporter !== false // Default to true
+      notifyReporter !== false 
     );
 
     res.json({
@@ -251,10 +245,7 @@ export const resolveReport = async (req, res) => {
   }
 };
 
-/**
- * Upload attachment for a report
- * POST /api/reports/:id/attachments
- */
+
 export const uploadAttachment = async (req, res) => {
   try {
     if (!req.file) {
@@ -284,10 +275,7 @@ export const uploadAttachment = async (req, res) => {
   }
 };
 
-/**
- * Get report analytics
- * GET /api/admin/reports/analytics
- */
+
 export const getReportAnalytics = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;

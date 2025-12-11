@@ -1,16 +1,11 @@
-/**
- * Financial Service
- * Purpose: Handle financial operations for admin dashboard
- */
+
 
 import models from "../../models/index.js";
 import { Op, fn, col, literal } from "sequelize";
 
 const { Payment, Course, User, Enrollment } = models;
 
-/**
- * Get financial overview
- */
+
 export const getFinancialOverview = async (dateRange = {}) => {
   const { startDate, endDate } = dateRange;
   
@@ -23,24 +18,24 @@ export const getFinancialOverview = async (dateRange = {}) => {
     ...(Object.keys(dateFilter).length > 0 && { created_at: dateFilter })
   };
 
-  // Total revenue
+  
   const totalRevenue = await Payment.sum("amount", { where: whereClause });
 
-  // Platform commission (assuming 20% commission)
+  
   const commissionRate = 0.20;
   const platformCommission = totalRevenue * commissionRate;
   const instructorEarnings = totalRevenue * (1 - commissionRate);
 
-  // Pending payouts (not yet processed)
-  const pendingPayouts = instructorEarnings; // Simplified
+  
+  const pendingPayouts = instructorEarnings; 
 
-  // Completed payouts (would need payout tracking table)
-  const completedPayouts = 0; // Placeholder
+  
+  const completedPayouts = 0; 
 
-  // Transaction count
+  
   const transactionCount = await Payment.count({ where: whereClause });
 
-  // Average transaction value
+  
   const avgTransactionValue = transactionCount > 0 
     ? (totalRevenue / transactionCount).toFixed(2)
     : 0;
@@ -56,9 +51,7 @@ export const getFinancialOverview = async (dateRange = {}) => {
   };
 };
 
-/**
- * Get revenue breakdown by course, instructor, time period
- */
+
 export const getRevenueBreakdown = async (dateRange = {}) => {
   const { startDate, endDate } = dateRange;
   
@@ -71,7 +64,7 @@ export const getRevenueBreakdown = async (dateRange = {}) => {
     ...(Object.keys(dateFilter).length > 0 && { created_at: dateFilter })
   };
 
-  // Revenue by course
+  
   const revenueByCourse = await Payment.findAll({
     where: whereClause,
     attributes: [
@@ -88,7 +81,7 @@ export const getRevenueBreakdown = async (dateRange = {}) => {
     raw: true
   });
 
-  // Revenue by instructor
+  
   const revenueByInstructor = await Payment.findAll({
     where: whereClause,
     attributes: [
@@ -127,9 +120,7 @@ export const getRevenueBreakdown = async (dateRange = {}) => {
   };
 };
 
-/**
- * Get instructor payout information
- */
+
 export const getInstructorPayouts = async (instructorId = null) => {
   const whereClause = { status: "completed" };
   
@@ -154,7 +145,7 @@ export const getInstructorPayouts = async (instructorId = null) => {
     }]
   });
 
-  // Group by instructor
+  
   const payoutsByInstructor = {};
   
   payments.forEach(payment => {
@@ -187,9 +178,7 @@ export const getInstructorPayouts = async (instructorId = null) => {
   }));
 };
 
-/**
- * Get transaction history
- */
+
 export const getTransactionHistory = async (filters = {}) => {
   const whereClause = {};
   
@@ -232,9 +221,7 @@ export const getTransactionHistory = async (filters = {}) => {
   }));
 };
 
-/**
- * Export financial data
- */
+
 export const exportFinancialData = async (dateRange = {}) => {
   const overview = await getFinancialOverview(dateRange);
   const breakdown = await getRevenueBreakdown(dateRange);

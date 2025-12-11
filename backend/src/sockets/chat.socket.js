@@ -8,22 +8,22 @@ export const setupChatSocket = (io) => {
   const connectedUsers = new Map();
 
   io.on("connection", (socket) => {
-    // Authenticate
+    
     socket.on("authenticate", authenticateHandler(io, socket, connectedUsers));
 
-    // Room events
+    
     socket.on("join_room", joinRoomHandler(io, socket));
     socket.on("leave_room", leaveRoomHandler(io, socket));
 
-    // Message events
+    
     socket.on("send_message", sendMessageHandler(io, socket, connectedUsers));
     socket.on("typing", typingHandler(io, socket));
     socket.on("mark_read", markReadHandler(io, socket));
 
-    // Status events
+    
     socket.on("check_online_status", checkOnlineStatusHandler(io, socket, connectedUsers));
 
-    // Disconnect
+    
     socket.on("disconnect", disconnectHandler(io, socket, connectedUsers));
 
     socket.on("error", (error) => {

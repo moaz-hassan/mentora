@@ -1,14 +1,8 @@
-/**
- * Marketing Controller
- * Purpose: Handle marketing campaign and featured course route handlers
- */
+
 
 import * as marketingService from "../../services/admin/marketing.service.js";
 
-/**
- * Get all campaigns
- * GET /api/admin/marketing/campaigns
- */
+
 export const getAllCampaigns = async (req, res, next) => {
   try {
     const filters = {
@@ -31,10 +25,7 @@ export const getAllCampaigns = async (req, res, next) => {
   }
 };
 
-/**
- * Get campaign by ID
- * GET /api/admin/marketing/campaigns/:id
- */
+
 export const getCampaignById = async (req, res, next) => {
   try {
     const campaign = await marketingService.getCampaignById(req.params.id);
@@ -48,10 +39,7 @@ export const getCampaignById = async (req, res, next) => {
   }
 };
 
-/**
- * Create new campaign
- * POST /api/admin/marketing/campaigns
- */
+
 export const createCampaign = async (req, res, next) => {
   try {
     const adminId = req.user.id;
@@ -67,10 +55,7 @@ export const createCampaign = async (req, res, next) => {
   }
 };
 
-/**
- * Update campaign
- * PUT /api/admin/marketing/campaigns/:id
- */
+
 export const updateCampaign = async (req, res, next) => {
   try {
     const campaign = await marketingService.updateCampaign(req.params.id, req.body);
@@ -85,10 +70,7 @@ export const updateCampaign = async (req, res, next) => {
   }
 };
 
-/**
- * Delete campaign
- * DELETE /api/admin/marketing/campaigns/:id
- */
+
 export const deleteCampaign = async (req, res, next) => {
   try {
     const result = await marketingService.deleteCampaign(req.params.id);
@@ -102,10 +84,7 @@ export const deleteCampaign = async (req, res, next) => {
   }
 };
 
-/**
- * Get campaign analytics
- * GET /api/admin/marketing/campaigns/:id/analytics
- */
+
 export const getCampaignAnalytics = async (req, res, next) => {
   try {
     const analytics = await marketingService.getCampaignAnalytics(req.params.id);
@@ -119,10 +98,7 @@ export const getCampaignAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Get all featured courses
- * GET /api/admin/marketing/featured-courses
- */
+
 export const getAllFeaturedCourses = async (req, res, next) => {
   try {
     const filters = {
@@ -142,10 +118,7 @@ export const getAllFeaturedCourses = async (req, res, next) => {
   }
 };
 
-/**
- * Add featured course
- * POST /api/admin/marketing/featured-courses
- */
+
 export const addFeaturedCourse = async (req, res, next) => {
   try {
     const featuredCourse = await marketingService.addFeaturedCourse(req.body);
@@ -160,10 +133,7 @@ export const addFeaturedCourse = async (req, res, next) => {
   }
 };
 
-/**
- * Update featured course
- * PUT /api/admin/marketing/featured-courses/:id
- */
+
 export const updateFeaturedCourse = async (req, res, next) => {
   try {
     const featuredCourse = await marketingService.updateFeaturedCourse(req.params.id, req.body);
@@ -178,10 +148,7 @@ export const updateFeaturedCourse = async (req, res, next) => {
   }
 };
 
-/**
- * Remove featured course
- * DELETE /api/admin/marketing/featured-courses/:id
- */
+
 export const removeFeaturedCourse = async (req, res, next) => {
   try {
     const result = await marketingService.removeFeaturedCourse(req.params.id);
@@ -195,10 +162,7 @@ export const removeFeaturedCourse = async (req, res, next) => {
   }
 };
 
-/**
- * Update campaign metrics
- * PATCH /api/admin/marketing/campaigns/:id/metrics
- */
+
 export const updateCampaignMetrics = async (req, res, next) => {
   try {
     const campaign = await marketingService.updateCampaignMetrics(req.params.id, req.body);

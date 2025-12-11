@@ -730,8 +730,8 @@ export const searchCourses = async (filters = {}) => {
     level,
     minPrice,
     maxPrice,
-    priceType, // 'free' | 'paid'
-    rating, // minimum rating (1-5)
+    priceType, 
+    rating, 
     sortBy = "relevance",
     page = 1,
     limit = 12,
@@ -901,7 +901,7 @@ export const searchCourses = async (filters = {}) => {
       break;
     case "relevance":
     default:
-      // If searching, prioritize title matches
+      
       if (searchTerm) {
         order = [
           [literal(`CASE WHEN title LIKE '%${searchTerm}%' THEN 0 ELSE 1 END`), "ASC"],

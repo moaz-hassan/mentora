@@ -45,10 +45,7 @@ export const createCategory = async (req, res, next) => {
   }
 };
 
-/**
- * Update a category
- * PUT /api/categories/:id
- */
+
 export const updateCategory = async (req, res, next) => {
   try {
     const category = await categoryService.updateCategory(
@@ -66,10 +63,7 @@ export const updateCategory = async (req, res, next) => {
   }
 };
 
-/**
- * Delete a category
- * DELETE /api/categories/:id
- */
+
 export const deleteCategory = async (req, res, next) => {
   try {
     const result = await categoryService.deleteCategory(req.params.id);
@@ -83,10 +77,7 @@ export const deleteCategory = async (req, res, next) => {
   }
 };
 
-/**
- * Search categories
- * GET /api/categories/search?q=searchTerm
- */
+
 export const searchCategories = async (req, res, next) => {
   try {
     const { q } = req.query;

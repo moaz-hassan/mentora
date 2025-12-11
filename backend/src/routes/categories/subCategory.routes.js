@@ -10,7 +10,7 @@ import { authenticate, authorize } from "../../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// Public routes - no authentication required
+
 router.get("/", subCategoryController.getAllSubCategories);
 
 router.get(
@@ -20,7 +20,7 @@ router.get(
   subCategoryController.getSubCategoryById
 );
 
-// Admin-only routes - authentication and authorization required
+
 router.post(
   "/",
   authenticate,

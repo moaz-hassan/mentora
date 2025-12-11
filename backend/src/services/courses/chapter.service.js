@@ -70,9 +70,7 @@ export const deleteChapter = async (chapterId, instructorId) => {
   return { message: "Chapter deleted successfully" };
 };
 
-/**
- * Submit chapter for review (when adding to published course)
- */
+
 export const submitChapterForReview = async (chapterId, instructorId) => {
   const chapter = await Chapter.findByPk(chapterId, {
     include: [{ model: Course }],
@@ -90,13 +88,13 @@ export const submitChapterForReview = async (chapterId, instructorId) => {
     throw error;
   }
 
-  // Update chapter status to pending review
+  
   await chapter.update({
     status: "pending_review",
     submitted_for_review_at: new Date(),
   });
 
-  // Notify all admins
+  
   const { User, Notification } = models;
   const admins = await User.findAll({ where: { role: "admin" } });
 
@@ -115,9 +113,7 @@ export const submitChapterForReview = async (chapterId, instructorId) => {
   return chapter;
 };
 
-/**
- * Approve chapter (Admin only)
- */
+
 export const approveChapter = async (chapterId, adminId) => {
   const chapter = await Chapter.findByPk(chapterId, {
     include: [{ model: Course }],
@@ -135,7 +131,7 @@ export const approveChapter = async (chapterId, adminId) => {
     throw error;
   }
 
-  // Update chapter status to approved
+  
   await chapter.update({
     status: "approved",
     reviewed_at: new Date(),
@@ -143,7 +139,7 @@ export const approveChapter = async (chapterId, adminId) => {
     rejection_reason: null,
   });
 
-  // Notify instructor
+  
   const { Notification } = models;
   await Notification.create({
     user_id: chapter.Course.instructor_id,
@@ -158,9 +154,7 @@ export const approveChapter = async (chapterId, adminId) => {
   return chapter;
 };
 
-/**
- * Reject chapter (Admin only)
- */
+
 export const rejectChapter = async (chapterId, adminId, rejectionReason) => {
   const chapter = await Chapter.findByPk(chapterId, {
     include: [{ model: Course }],
@@ -178,7 +172,7 @@ export const rejectChapter = async (chapterId, adminId, rejectionReason) => {
     throw error;
   }
 
-  // Validate rejection reason
+  
   if (!rejectionReason || rejectionReason.trim().length < 10) {
     const error = new Error(
       "Rejection reason must be at least 10 characters long"
@@ -187,7 +181,7 @@ export const rejectChapter = async (chapterId, adminId, rejectionReason) => {
     throw error;
   }
 
-  // Update chapter status to rejected
+  
   await chapter.update({
     status: "rejected",
     reviewed_at: new Date(),
@@ -195,7 +189,7 @@ export const rejectChapter = async (chapterId, adminId, rejectionReason) => {
     rejection_reason: rejectionReason,
   });
 
-  // Notify instructor
+  
   const { Notification } = models;
   await Notification.create({
     user_id: chapter.Course.instructor_id,
@@ -210,9 +204,7 @@ export const rejectChapter = async (chapterId, adminId, rejectionReason) => {
   return chapter;
 };
 
-/**
- * Get all pending chapters for admin review
- */
+
 export const getPendingChapters = async () => {
   const chapters = await Chapter.findAll({
     where: { status: "pending_review" },
@@ -230,7 +222,7 @@ export const getPendingChapters = async () => {
     order: [["submitted_for_review_at", "ASC"]],
   });
 
-  // Group chapters by course
+  
   const groupedChapters = chapters.reduce((acc, chapter) => {
     const courseId = chapter.course_id;
     if (!acc[courseId]) {
@@ -246,9 +238,7 @@ export const getPendingChapters = async () => {
   return Object.values(groupedChapters);
 };
 
-/**
- * Get approved chapters for a course (student view)
- */
+
 export const getApprovedChapters = async (courseId) => {
   const chapters = await Chapter.findAll({
     where: {
@@ -265,9 +255,7 @@ export const getApprovedChapters = async (courseId) => {
   return chapters;
 };
 
-/**
- * Update createChapter to handle published courses
- */
+
 export const createChapterWithReview = async (chapterData, instructorId) => {
   const course = await Course.findByPk(chapterData.course_id, {
     include: [{ model: Chapter }],
@@ -287,14 +275,14 @@ export const createChapterWithReview = async (chapterData, instructorId) => {
 
   chapterData.order_number = course.Chapters.length + 1;
 
-  // If course is published, set chapter to pending review
+  
   if (course.is_published && course.status === "approved") {
     chapterData.status = "pending_review";
     chapterData.submitted_for_review_at = new Date();
 
     const chapter = await Chapter.create(chapterData);
 
-    // Notify admins
+    
     const { User, Notification } = models;
     const admins = await User.findAll({ where: { role: "admin" } });
 
@@ -313,7 +301,7 @@ export const createChapterWithReview = async (chapterData, instructorId) => {
     return chapter;
   }
 
-  // For draft or non-published courses, create chapter as approved
+  
   chapterData.status = "approved";
   const chapter = await Chapter.create(chapterData);
 

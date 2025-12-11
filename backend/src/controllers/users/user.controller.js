@@ -1,15 +1,8 @@
-/**
- * User Controller
- * Purpose: Handle user route handlers
- * Routes: /api/users
- */
+
 
 import * as userService from "../../services/users/user.service.js";
 
-/**
- * Get all users
- * GET /api/users
- */
+
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await userService.getAllUsers();
@@ -24,10 +17,7 @@ export const getAllUsers = async (req, res, next) => {
   }
 };
 
-/**
- * Get user by ID
- * GET /api/users/:id
- */
+
 export const getUserById = async (req, res, next) => {
   try {
     const user = await userService.getUserById(req.params.id);
@@ -41,10 +31,7 @@ export const getUserById = async (req, res, next) => {
   }
 };
 
-/**
- * Create a new user
- * POST /api/users
- */
+
 export const createUser = async (req, res, next) => {
   try {
     const user = await userService.createUser(req.body);
@@ -59,10 +46,7 @@ export const createUser = async (req, res, next) => {
   }
 };
 
-/**
- * Update user
- * PUT /api/users/:id
- */
+
 export const updateUser = async (req, res, next) => {
   try {
     const user = await userService.updateUser(req.params.id, req.body);
@@ -77,10 +61,7 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
-/**
- * Delete user
- * DELETE /api/users/:id
- */
+
 export const deleteUser = async (req, res, next) => {
   try {
     const result = await userService.deleteUser(req.params.id);
@@ -94,10 +75,7 @@ export const deleteUser = async (req, res, next) => {
   }
 };
 
-/**
- * Toggle user status (active/inactive)
- * PATCH /api/users/:id/status
- */
+
 export const toggleUserStatus = async (req, res, next) => {
   try {
     const user = await userService.getUserById(req.params.id);
@@ -118,10 +96,7 @@ export const toggleUserStatus = async (req, res, next) => {
   }
 };
 
-/**
- * Convert student to instructor
- * POST /api/users/become-instructor
- */
+
 export const becomeInstructor = async (req, res, next) => {
   try {
     const user = await userService.becomeInstructor(req.user.id);

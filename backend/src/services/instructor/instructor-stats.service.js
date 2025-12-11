@@ -4,7 +4,7 @@ import { fn, col } from "sequelize";
 const { Course, Enrollment, Ratings, User } = models;
 
 export const getInstructorStats = async (instructorId) => {
-  // Check if instructor exists
+  
   const instructor = await User.findByPk(instructorId);
   if (!instructor) {
     const error = new Error("Instructor not found");
@@ -12,7 +12,7 @@ export const getInstructorStats = async (instructorId) => {
     throw error;
   }
 
-  // Get all published courses by this instructor
+  
   const courses = await Course.findAll({
     where: {
       instructor_id: instructorId,
@@ -23,7 +23,7 @@ export const getInstructorStats = async (instructorId) => {
 
   const courseIds = courses.map((course) => course.id);
 
-  // If instructor has no published courses, return zeros
+  
   if (courseIds.length === 0) {
     return {
       totalStudents: 0,
@@ -33,17 +33,17 @@ export const getInstructorStats = async (instructorId) => {
     };
   }
 
-  // Get total students (enrollments across all courses)
+  
   const totalStudents = await Enrollment.count({
     where: {
       course_id: courseIds,
     },
   });
 
-  // Get total published courses
+  
   const totalCourses = courseIds.length;
 
-  // Get average rating and total reviews
+  
   const reviewStats = await Ratings.findOne({
     where: {
       course_id: courseIds,

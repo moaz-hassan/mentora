@@ -3,7 +3,7 @@ import aiSecurity from "./aiSecurity.service.js";
 
 class GeminiService {
   constructor() {
-    // The client gets the API key from the environment variable `GEMINI_API_KEY`
+    
     try {
       this.ai = new GoogleGenAI({});
       this.model = "gemini-2.5-flash";
@@ -15,44 +15,40 @@ class GeminiService {
     }
   }
 
-  /**
-   * Check if AI is properly initialized
-   */
+  
   isInitialized() {
     return this.initialized && this.ai !== null;
   }
 
-  /**
-   * Generate AI response with security boundaries
-   */
+  
   async generateResponse(userMessage, context) {
     if (!this.isInitialized()) {
       throw new Error("AI service is not configured. Please check GEMINI_API_KEY.");
     }
 
     try {
-      // Step 1: Sanitize input
+      
       const sanitizedMessage = aiSecurity.sanitizeInput(userMessage);
 
-      // Step 2: Build secure system prompt
+      
       const systemPrompt = aiSecurity.buildSecureSystemPrompt(context.role || "guest");
 
-      // Step 3: Build context-aware prompt
+      
       const contextInfo = this.buildContextInfo(context);
 
-      // Step 4: Build full prompt with boundaries
+      
       const fullPrompt = `${systemPrompt}\n\n${contextInfo}\n\nUser Question: ${sanitizedMessage}`;
 
-      // Step 5: Generate response using the new API
+      
       const response = await this.ai.models.generateContent({
         model: this.model,
         contents: fullPrompt,
       });
 
-      // Step 6: Get text from response
+      
       const text = response.text;
 
-      // Step 7: Sanitize output
+      
       const sanitizedResponse = aiSecurity.sanitizeOutput(text);
 
       return sanitizedResponse;
@@ -65,15 +61,13 @@ class GeminiService {
     }
   }
 
-  /**
-   * Build context information for the AI
-   */
+  
   buildContextInfo(context) {
     const { role, page, data } = context;
 
     let contextInfo = "";
 
-    // Add role-specific context
+    
     switch (role) {
       case "student":
         contextInfo = "Context: You are helping a student who is taking courses on the platform.";
@@ -88,12 +82,12 @@ class GeminiService {
         contextInfo = "Context: You are helping a visitor learn about the platform features.";
     }
 
-    // Add page-specific context
+    
     if (page) {
       contextInfo += `\nCurrent Page: ${page}`;
     }
 
-    // Add additional data context if provided
+    
     if (data && Object.keys(data).length > 0) {
       contextInfo += `\nAdditional Context: ${JSON.stringify(data)}`;
     }
@@ -101,9 +95,7 @@ class GeminiService {
     return contextInfo;
   }
 
-  /**
-   * Analyze content with AI
-   */
+  
   async analyzeContent(content, analysisType) {
     if (!this.isInitialized()) {
       throw new Error("AI service is not configured");
@@ -124,10 +116,10 @@ class GeminiService {
 
       const text = response.text;
 
-      // For categorization, try to parse JSON
+      
       if (analysisType === "categorization") {
         try {
-          // Extract JSON from response (handle markdown code blocks)
+          
           const jsonMatch = text.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             return JSON.parse(jsonMatch[0]);
@@ -144,9 +136,7 @@ class GeminiService {
     }
   }
 
-  /**
-   * Generate suggestions based on context
-   */
+  
   async generateSuggestions(context) {
     if (!this.isInitialized()) {
       throw new Error("AI service is not configured");
@@ -167,9 +157,7 @@ class GeminiService {
     }
   }
 
-  /**
-   * Analyze report and provide action recommendations
-   */
+  
   async analyzeReportForActions(report) {
     if (!this.isInitialized()) {
       throw new Error("AI service is not configured");
@@ -204,12 +192,12 @@ Provide your response in JSON format with this structure:
 
       const text = response.text;
 
-      // Extract JSON from response
+      
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const analysis = JSON.parse(jsonMatch[0]);
 
-        // Validate that suggested actions are safe
+        
         for (const actionItem of analysis.actions) {
           aiSecurity.validateAction(actionItem.action);
         }
@@ -224,9 +212,7 @@ Provide your response in JSON format with this structure:
     }
   }
 
-  /**
-   * Get example questions based on user role
-   */
+  
   getExampleQuestions(userRole) {
     const examples = {
       guest: [
@@ -257,9 +243,7 @@ Provide your response in JSON format with this structure:
 
     return examples[userRole] || examples.guest;
   }
-  /**
-   * Analyze course for review
-   */
+  
   async analyzeCourseForReview(courseData) {
     if (!this.isInitialized()) {
       throw new Error("AI service is not configured");
@@ -299,7 +283,7 @@ Provide your response in JSON format with this structure:
       throw new Error("Failed to parse AI response");
     } catch (error) {
       console.error("Course analysis error:", error);
-      // Return a fallback structure so the flow doesn't break
+      
       return {
         summary: "AI Analysis failed to generate.",
         strengths: [],

@@ -106,10 +106,7 @@ export const updateCurrentPosition = async (req, res, next) => {
   }
 };
 
-/**
- * Verify enrollment access
- * GET /api/enrollments/:enrollmentId/course/:courseId/access
- */
+
 export const verifyAccess = async (req, res, next) => {
   try {
     const { enrollmentId, courseId } = req.params;
@@ -131,10 +128,7 @@ export const verifyAccess = async (req, res, next) => {
   }
 };
 
-/**
- * Get course player data
- * GET /api/enrollments/:enrollmentId/course/:courseId/player
- */
+
 export const getCoursePlayerData = async (req, res, next) => {
   try {
     const { enrollmentId, courseId } = req.params;
@@ -155,10 +149,7 @@ export const getCoursePlayerData = async (req, res, next) => {
   }
 };
 
-/**
- * Get student progress
- * GET /api/enrollments/:enrollmentId/progress
- */
+
 export const getProgress = async (req, res, next) => {
   try {
     const { enrollmentId } = req.params;
@@ -178,10 +169,7 @@ export const getProgress = async (req, res, next) => {
   }
 };
 
-/**
- * Update student progress
- * PUT /api/enrollments/:enrollmentId/progress
- */
+
 export const updateProgress = async (req, res, next) => {
   try {
     const { enrollmentId } = req.params;
@@ -204,10 +192,7 @@ export const updateProgress = async (req, res, next) => {
   }
 };
 
-/**
- * Mark lesson as completed
- * POST /api/enrollments/:enrollmentId/lessons/:lessonId/complete
- */
+
 export const markLessonComplete = async (req, res, next) => {
   try {
     const { enrollmentId, lessonId } = req.params;
@@ -229,23 +214,20 @@ export const markLessonComplete = async (req, res, next) => {
   }
 };
 
-/**
- * Get lesson detail (lazy loading)
- * GET /api/enrollments/:enrollmentId/lessons/:lessonId
- */
+
 export const getLessonDetail = async (req, res, next) => {
   try {
     const { enrollmentId, lessonId } = req.params;
     const studentId = req.user.id;
 
-    // Step 1: Verify access and update progress (Uncached)
+    
     await enrollmentService.verifyEnrollmentAndUpdateProgress(
       enrollmentId,
       lessonId,
       studentId
     );
 
-    // Step 2: Try to get content from cache
+    
     let lesson = null;
     const cacheKey = `lesson:${lessonId}:content`;
 
@@ -257,13 +239,13 @@ export const getLessonDetail = async (req, res, next) => {
       }
     }
 
-    // Step 3: If not in cache, get from DB and cache it
+    
     if (!lesson) {
       lesson = await enrollmentService.getLessonContent(lessonId);
       
       if (lesson && isRedisAvailable()) {
         const redis = getRedisClient();
-        // Cache for 1 hour
+        
         await redis.setex(cacheKey, 3600, JSON.stringify(lesson));
       }
     }
@@ -277,10 +259,7 @@ export const getLessonDetail = async (req, res, next) => {
   }
 };
 
-/**
- * Get quiz detail (lazy loading)
- * GET /api/enrollments/:enrollmentId/quizzes/:quizId
- */
+
 export const getQuizDetail = async (req, res, next) => {
   try {
     const { enrollmentId, quizId } = req.params;
@@ -301,10 +280,7 @@ export const getQuizDetail = async (req, res, next) => {
   }
 };
 
-/**
- * Submit quiz answers
- * POST /api/enrollments/:enrollmentId/quizzes/:quizId/submit
- */
+
 export const submitQuiz = async (req, res, next) => {
   try {
     const { enrollmentId, quizId } = req.params;
@@ -328,10 +304,7 @@ export const submitQuiz = async (req, res, next) => {
   }
 };
 
-/**
- * Gift a course to another user
- * POST /api/enrollments/gift
- */
+
 export const giftCourse = async (req, res, next) => {
   try {
     const { courseId, recipientEmail, personalMessage } = req.body;

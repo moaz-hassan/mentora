@@ -1,14 +1,8 @@
-/**
- * Notification Controller
- * Purpose: Handle HTTP requests for notification operations
- */
+
 
 import * as notificationService from "../../services/communication/notification.service.js";
 
-/**
- * Broadcast notification to target audience
- * POST /api/admin/notifications/broadcast
- */
+
 export const broadcastNotification = async (req, res, next) => {
   try {
     const { title, message, targetAudience, scheduledAt, type } = req.body;
@@ -31,10 +25,7 @@ export const broadcastNotification = async (req, res, next) => {
   }
 };
 
-/**
- * Get notification history
- * GET /api/admin/notifications/history
- */
+
 export const getNotificationHistory = async (req, res, next) => {
   try {
     const { startDate, endDate, status, targetAudience, limit, offset } = req.query;
@@ -57,10 +48,7 @@ export const getNotificationHistory = async (req, res, next) => {
   }
 };
 
-/**
- * Get notification metrics
- * GET /api/admin/notifications/:id/metrics
- */
+
 export const getNotificationMetrics = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -76,10 +64,7 @@ export const getNotificationMetrics = async (req, res, next) => {
   }
 };
 
-/**
- * Get scheduled notifications ready to send
- * GET /api/admin/notifications/scheduled
- */
+
 export const getScheduledNotifications = async (req, res, next) => {
   try {
     const notifications = await notificationService.getScheduledNotificationsToSend();
@@ -93,10 +78,7 @@ export const getScheduledNotifications = async (req, res, next) => {
   }
 };
 
-/**
- * Send a scheduled notification
- * POST /api/admin/notifications/:id/send
- */
+
 export const sendScheduledNotification = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -113,10 +95,7 @@ export const sendScheduledNotification = async (req, res, next) => {
   }
 };
 
-/**
- * Cancel a scheduled notification
- * DELETE /api/admin/notifications/:id/cancel
- */
+
 export const cancelScheduledNotification = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -134,10 +113,7 @@ export const cancelScheduledNotification = async (req, res, next) => {
   }
 };
 
-/**
- * Get delivery statistics
- * GET /api/admin/notifications/statistics
- */
+
 export const getDeliveryStatistics = async (req, res, next) => {
   try {
     const { startDate, endDate, targetAudience } = req.query;
@@ -158,10 +134,7 @@ export const getDeliveryStatistics = async (req, res, next) => {
 };
 
 
-/**
- * Get all notifications for current user
- * GET /api/notifications
- */
+
 export const getNotifications = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -182,10 +155,7 @@ export const getNotifications = async (req, res, next) => {
   }
 };
 
-/**
- * Mark all notifications as read
- * PUT /api/notifications/mark-all-read
- */
+
 export const markAllAsRead = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -202,10 +172,7 @@ export const markAllAsRead = async (req, res, next) => {
   }
 };
 
-/**
- * Get unread notification count
- * GET /api/notifications/unread-count
- */
+
 export const getUnreadCount = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -221,10 +188,7 @@ export const getUnreadCount = async (req, res, next) => {
   }
 };
 
-/**
- * Get notification by ID
- * GET /api/notifications/:id
- */
+
 export const getNotificationById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -248,10 +212,7 @@ export const getNotificationById = async (req, res, next) => {
   }
 };
 
-/**
- * Create a new notification (admin only)
- * POST /api/notifications
- */
+
 export const createNotification = async (req, res, next) => {
   try {
     const { title, message, userId, type } = req.body;
@@ -275,10 +236,7 @@ export const createNotification = async (req, res, next) => {
   }
 };
 
-/**
- * Update notification (mark as read)
- * PUT /api/notifications/:id
- */
+
 export const updateNotification = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -304,10 +262,7 @@ export const updateNotification = async (req, res, next) => {
   }
 };
 
-/**
- * Delete notification
- * DELETE /api/notifications/:id
- */
+
 export const deleteNotification = async (req, res, next) => {
   try {
     const { id } = req.params;

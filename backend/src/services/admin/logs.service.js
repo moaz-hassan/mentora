@@ -1,19 +1,11 @@
-/**
- * Logs Retrieval Service
- * Purpose: Handle log querying, filtering, search, export, and analytics
- * Includes: Audit logs, payment logs, enrollment logs, error logs
- */
+
 
 import models from "../../models/index.js";
 import { Op, fn, col, literal } from "sequelize";
 
 const { AuditLog, PaymentLog, EnrollmentLog, ErrorLog, ModerationLog, NotificationLog, User, Course } = models;
 
-/**
- * Get audit logs with filtering and pagination
- * @param {Object} filters - Filter options
- * @returns {Object} Paginated audit logs
- */
+
 export const getAuditLogs = async (filters = {}) => {
   const {
     adminId,
@@ -32,14 +24,14 @@ export const getAuditLogs = async (filters = {}) => {
   if (actionType) whereClause.action_type = actionType;
   if (resourceType) whereClause.resource_type = resourceType;
 
-  // Date range filter
+  
   if (startDate || endDate) {
     whereClause.created_at = {};
     if (startDate) whereClause.created_at[Op.gte] = new Date(startDate);
     if (endDate) whereClause.created_at[Op.lte] = new Date(endDate);
   }
 
-  // Full-text search
+  
   if (search) {
     whereClause[Op.or] = [
       { action_type: { [Op.like]: `%${search}%` } },
@@ -92,11 +84,7 @@ export const getAuditLogs = async (filters = {}) => {
   };
 };
 
-/**
- * Get payment logs with filtering and pagination
- * @param {Object} filters - Filter options
- * @returns {Object} Paginated payment logs
- */
+
 export const getPaymentLogs = async (filters = {}) => {
   const {
     userId,
@@ -119,21 +107,21 @@ export const getPaymentLogs = async (filters = {}) => {
   if (status) whereClause.payment_status = status;
   if (paymentMethod) whereClause.payment_method = paymentMethod;
 
-  // Date range filter
+  
   if (startDate || endDate) {
     whereClause.created_at = {};
     if (startDate) whereClause.created_at[Op.gte] = new Date(startDate);
     if (endDate) whereClause.created_at[Op.lte] = new Date(endDate);
   }
 
-  // Amount range filter
+  
   if (minAmount || maxAmount) {
     whereClause.amount = {};
     if (minAmount) whereClause.amount[Op.gte] = parseFloat(minAmount);
     if (maxAmount) whereClause.amount[Op.lte] = parseFloat(maxAmount);
   }
 
-  // Full-text search
+  
   if (search) {
     whereClause[Op.or] = [
       { transaction_id: { [Op.like]: `%${search}%` } },
@@ -192,11 +180,7 @@ export const getPaymentLogs = async (filters = {}) => {
   };
 };
 
-/**
- * Get enrollment logs with filtering and pagination
- * @param {Object} filters - Filter options
- * @returns {Object} Paginated enrollment logs
- */
+
 export const getEnrollmentLogs = async (filters = {}) => {
   const {
     userId,
@@ -217,14 +201,14 @@ export const getEnrollmentLogs = async (filters = {}) => {
   if (status) whereClause.action = status;
   if (source) whereClause.enrollment_source = source;
 
-  // Date range filter
+  
   if (startDate || endDate) {
     whereClause.created_at = {};
     if (startDate) whereClause.created_at[Op.gte] = new Date(startDate);
     if (endDate) whereClause.created_at[Op.lte] = new Date(endDate);
   }
 
-  // Full-text search
+  
   if (search) {
     whereClause[Op.or] = [
       { enrollment_id: { [Op.like]: `%${search}%` } },
@@ -281,11 +265,7 @@ export const getEnrollmentLogs = async (filters = {}) => {
   };
 };
 
-/**
- * Get error logs with filtering and pagination
- * @param {Object} filters - Filter options
- * @returns {Object} Paginated error logs
- */
+
 export const getErrorLogs = async (filters = {}) => {
   const {
     severity,
@@ -304,14 +284,14 @@ export const getErrorLogs = async (filters = {}) => {
   if (errorType) whereClause.error_type = errorType;
   if (userId) whereClause.user_id = userId;
 
-  // Date range filter
+  
   if (startDate || endDate) {
     whereClause.created_at = {};
     if (startDate) whereClause.created_at[Op.gte] = new Date(startDate);
     if (endDate) whereClause.created_at[Op.lte] = new Date(endDate);
   }
 
-  // Full-text search
+  
   if (search) {
     whereClause[Op.or] = [
       { error_type: { [Op.like]: `%${search}%` } },
@@ -364,17 +344,12 @@ export const getErrorLogs = async (filters = {}) => {
   };
 };
 
-/**
- * Export logs to CSV format
- * @param {string} logType - Type of log (audit, payment, enrollment, error)
- * @param {Object} filters - Filter options
- * @returns {string} CSV formatted data
- */
+
 export const exportLogs = async (logType, filters = {}) => {
   let logs = [];
   let headers = [];
 
-  // Remove pagination for export
+  
   const exportFilters = { ...filters, limit: 10000, page: 1 };
 
   switch (logType) {
@@ -408,7 +383,7 @@ export const exportLogs = async (logType, filters = {}) => {
       throw error;
   }
 
-  // Convert to CSV
+  
   const csvRows = [headers.join(",")];
 
   logs.forEach(log => {
@@ -475,11 +450,7 @@ export const exportLogs = async (logType, filters = {}) => {
   return csvRows.join("\n");
 };
 
-/**
- * Get log analytics and statistics
- * @param {Object} filters - Filter options (startDate, endDate)
- * @returns {Object} Analytics data
- */
+
 export const getLogAnalytics = async (filters = {}) => {
   const { startDate, endDate } = filters;
 
@@ -490,7 +461,7 @@ export const getLogAnalytics = async (filters = {}) => {
     if (endDate) dateFilter.created_at[Op.lte] = new Date(endDate);
   }
 
-  // Audit log analytics
+  
   const auditStats = await AuditLog.findAll({
     where: dateFilter,
     attributes: [
@@ -501,7 +472,7 @@ export const getLogAnalytics = async (filters = {}) => {
     raw: true
   });
 
-  // Payment log analytics
+  
   const paymentStats = await PaymentLog.findAll({
     where: dateFilter,
     attributes: [
@@ -513,7 +484,7 @@ export const getLogAnalytics = async (filters = {}) => {
     raw: true
   });
 
-  // Enrollment log analytics
+  
   const enrollmentStats = await EnrollmentLog.findAll({
     where: dateFilter,
     attributes: [
@@ -524,7 +495,7 @@ export const getLogAnalytics = async (filters = {}) => {
     raw: true
   });
 
-  // Error log analytics
+  
   const errorStats = await ErrorLog.findAll({
     where: dateFilter,
     attributes: [
@@ -535,7 +506,7 @@ export const getLogAnalytics = async (filters = {}) => {
     raw: true
   });
 
-  // Most active admins
+  
   const activeAdmins = await AuditLog.findAll({
     where: dateFilter,
     attributes: [
@@ -555,7 +526,7 @@ export const getLogAnalytics = async (filters = {}) => {
     raw: false
   });
 
-  // Error rate over time (daily)
+  
   const errorTrends = await ErrorLog.findAll({
     where: dateFilter,
     attributes: [
@@ -615,12 +586,7 @@ export const getLogAnalytics = async (filters = {}) => {
   };
 };
 
-/**
- * Search across all log types
- * @param {string} searchTerm - Search term
- * @param {Object} options - Search options
- * @returns {Object} Search results from all log types
- */
+
 export const searchAllLogs = async (searchTerm, options = {}) => {
   const { limit = 10, startDate, endDate } = options;
 
@@ -631,7 +597,7 @@ export const searchAllLogs = async (searchTerm, options = {}) => {
     if (endDate) dateFilter.created_at[Op.lte] = new Date(endDate);
   }
 
-  // Search audit logs
+  
   const auditResults = await getAuditLogs({
     search: searchTerm,
     startDate,
@@ -639,7 +605,7 @@ export const searchAllLogs = async (searchTerm, options = {}) => {
     limit
   });
 
-  // Search payment logs
+  
   const paymentResults = await getPaymentLogs({
     search: searchTerm,
     startDate,
@@ -647,7 +613,7 @@ export const searchAllLogs = async (searchTerm, options = {}) => {
     limit
   });
 
-  // Search enrollment logs
+  
   const enrollmentResults = await getEnrollmentLogs({
     search: searchTerm,
     startDate,
@@ -655,7 +621,7 @@ export const searchAllLogs = async (searchTerm, options = {}) => {
     limit
   });
 
-  // Search error logs
+  
   const errorResults = await getErrorLogs({
     search: searchTerm,
     startDate,

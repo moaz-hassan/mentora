@@ -1,20 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 
-/**
- * Supabase Storage utility for file storage (certificates and materials)
- * Simple, reliable, and free tier available
- */
+
 
 let supabaseClient = null;
 
-// Bucket names
+
 const CERTIFICATES_BUCKET = process.env.SUPABASE_CERTIFICATES_BUCKET || 'certificates';
 const MATERIALS_BUCKET = process.env.SUPABASE_MATERIALS_BUCKET || 'materials';
 
-/**
- * Get Supabase client
- */
+
 const getSupabase = () => {
   if (supabaseClient) return supabaseClient;
 
@@ -31,13 +26,7 @@ const getSupabase = () => {
   return supabaseClient;
 };
 
-/**
- * Upload a file to Supabase Storage (certificates bucket)
- * @param {Buffer} fileBuffer - The file buffer to upload
- * @param {string} filename - The filename
- * @param {string} mimeType - The MIME type (e.g., 'application/pdf')
- * @returns {Promise<Object>} - Upload result with filePath and publicUrl
- */
+
 export const uploadToSupabase = async (
   fileBuffer,
   filename,
@@ -48,7 +37,7 @@ export const uploadToSupabase = async (
     const fileId = uuidv4();
     const filePath = `${fileId}-${filename}`;
 
-    // Upload the file
+    
     const { data, error } = await supabase.storage
       .from(CERTIFICATES_BUCKET)
       .upload(filePath, fileBuffer, {
@@ -60,12 +49,12 @@ export const uploadToSupabase = async (
       throw error;
     }
 
-    // Get public URL
+    
     const { data: urlData } = supabase.storage
       .from(CERTIFICATES_BUCKET)
       .getPublicUrl(filePath);
 
-    // Add download parameter for direct download
+    
     const directDownloadUrl = `${urlData.publicUrl}?download=${encodeURIComponent(filename)}`;
 
     return {
@@ -81,13 +70,7 @@ export const uploadToSupabase = async (
   }
 };
 
-/**
- * Upload a material file to Supabase Storage (materials bucket)
- * @param {Buffer} fileBuffer - The file buffer to upload
- * @param {string} filename - The filename
- * @param {string} mimeType - The MIME type
- * @returns {Promise<Object>} - Upload result with filePath and publicUrl
- */
+
 export const uploadMaterialToSupabase = async (
   fileBuffer,
   filename,
@@ -98,7 +81,7 @@ export const uploadMaterialToSupabase = async (
     const fileId = uuidv4();
     const filePath = `${fileId}-${filename}`;
 
-    // Upload the file to materials bucket
+    
     const { data, error } = await supabase.storage
       .from(MATERIALS_BUCKET)
       .upload(filePath, fileBuffer, {
@@ -110,12 +93,12 @@ export const uploadMaterialToSupabase = async (
       throw error;
     }
 
-    // Get public URL
+    
     const { data: urlData } = supabase.storage
       .from(MATERIALS_BUCKET)
       .getPublicUrl(filePath);
 
-    // Add download parameter for direct download
+    
     const directDownloadUrl = `${urlData.publicUrl}?download=${encodeURIComponent(filename)}`;
 
     return {
@@ -131,11 +114,7 @@ export const uploadMaterialToSupabase = async (
   }
 };
 
-/**
- * Get public URL for a Supabase Storage file (certificates bucket)
- * @param {string} filePath - The file path in storage
- * @returns {string} - Public URL
- */
+
 export const getSupabasePublicUrl = (filePath) => {
   const supabase = getSupabase();
   
@@ -146,11 +125,7 @@ export const getSupabasePublicUrl = (filePath) => {
   return data.publicUrl;
 };
 
-/**
- * Get public URL for a material file (materials bucket)
- * @param {string} filePath - The file path in storage
- * @returns {string} - Public URL
- */
+
 export const getMaterialPublicUrl = (filePath) => {
   const supabase = getSupabase();
   
@@ -161,11 +136,7 @@ export const getMaterialPublicUrl = (filePath) => {
   return data.publicUrl;
 };
 
-/**
- * Delete a file from Supabase Storage (certificates bucket)
- * @param {string} filePath - The file path to delete
- * @returns {Promise<boolean>} - True if deleted successfully
- */
+
 export const deleteFromSupabase = async (filePath) => {
   try {
     const supabase = getSupabase();
@@ -185,11 +156,7 @@ export const deleteFromSupabase = async (filePath) => {
   }
 };
 
-/**
- * Delete a material from Supabase Storage (materials bucket)
- * @param {string} filePath - The file path to delete
- * @returns {Promise<boolean>} - True if deleted successfully
- */
+
 export const deleteMaterialFromSupabase = async (filePath) => {
   try {
     const supabase = getSupabase();
@@ -209,10 +176,7 @@ export const deleteMaterialFromSupabase = async (filePath) => {
   }
 };
 
-/**
- * Check if Supabase Storage is properly configured
- * @returns {boolean} - True if all required env vars are set
- */
+
 export const isSupabaseConfigured = () => {
   return !!(
     process.env.SUPABASE_URL &&

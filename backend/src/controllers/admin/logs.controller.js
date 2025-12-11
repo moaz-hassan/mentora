@@ -1,14 +1,8 @@
-/**
- * Logs Controller
- * Purpose: Handle HTTP requests for log retrieval and analytics
- */
+
 
 import * as logsService from "../../services/admin/logs.service.js";
 
-/**
- * Get audit logs
- * GET /api/admin/logs/audit
- */
+
 export const getAuditLogs = async (req, res, next) => {
   try {
     const filters = {
@@ -33,10 +27,7 @@ export const getAuditLogs = async (req, res, next) => {
   }
 };
 
-/**
- * Get payment logs
- * GET /api/admin/logs/payments
- */
+
 export const getPaymentLogs = async (req, res, next) => {
   try {
     const filters = {
@@ -64,10 +55,7 @@ export const getPaymentLogs = async (req, res, next) => {
   }
 };
 
-/**
- * Get enrollment logs
- * GET /api/admin/logs/enrollments
- */
+
 export const getEnrollmentLogs = async (req, res, next) => {
   try {
     const filters = {
@@ -93,10 +81,7 @@ export const getEnrollmentLogs = async (req, res, next) => {
   }
 };
 
-/**
- * Get error logs
- * GET /api/admin/logs/errors
- */
+
 export const getErrorLogs = async (req, res, next) => {
   try {
     const filters = {
@@ -121,10 +106,7 @@ export const getErrorLogs = async (req, res, next) => {
   }
 };
 
-/**
- * Export logs
- * POST /api/admin/logs/export
- */
+
 export const exportLogs = async (req, res, next) => {
   try {
     const { logType, filters } = req.body;
@@ -139,10 +121,7 @@ export const exportLogs = async (req, res, next) => {
   }
 };
 
-/**
- * Get log analytics
- * GET /api/admin/logs/analytics
- */
+
 export const getLogAnalytics = async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
@@ -161,10 +140,7 @@ export const getLogAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Search all logs
- * GET /api/admin/logs/search
- */
+
 export const searchAllLogs = async (req, res, next) => {
   try {
     const { q, limit, startDate, endDate } = req.query;

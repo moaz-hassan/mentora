@@ -1,16 +1,11 @@
-/**
- * Admin Analytics Service
- * Purpose: Handle platform-wide analytics for administrators
- */
+
 
 import models from "../../models/index.js";
 import { Op, fn, col, literal } from "sequelize";
 
 const { Course, Enrollment, Payment, User, CourseReview } = models;
 
-/**
- * Get platform overview analytics
- */
+
 export const getPlatformOverview = async (dateRange = {}) => {
   const { startDate, endDate } = dateRange;
   
@@ -82,9 +77,7 @@ export const getPlatformOverview = async (dateRange = {}) => {
   };
 };
 
-/**
- * Get revenue analytics
- */
+
 export const getRevenueAnalytics = async (dateRange = {}) => {
   const { startDate, endDate } = dateRange;
   
@@ -138,9 +131,7 @@ export const getRevenueAnalytics = async (dateRange = {}) => {
   };
 };
 
-/**
- * Get user growth analytics
- */
+
 export const getUserGrowthAnalytics = async (dateRange = {}) => {
   const { startDate, endDate } = dateRange;
   
@@ -183,9 +174,7 @@ export const getUserGrowthAnalytics = async (dateRange = {}) => {
   };
 };
 
-/**
- * Get enrollment analytics
- */
+
 export const getEnrollmentAnalytics = async (dateRange = {}) => {
   const { startDate, endDate } = dateRange;
   
@@ -234,9 +223,7 @@ export const getEnrollmentAnalytics = async (dateRange = {}) => {
   };
 };
 
-/**
- * Get course performance analytics
- */
+
 export const getCoursePerformanceAnalytics = async () => {
   const topByEnrollments = await Enrollment.findAll({
     attributes: [
@@ -283,9 +270,7 @@ export const getCoursePerformanceAnalytics = async () => {
   };
 };
 
-/**
- * Export analytics data
- */
+
 export const exportAnalyticsData = async (dateRange = {}) => {
   const overview = await getPlatformOverview(dateRange);
   const revenue = await getRevenueAnalytics(dateRange);

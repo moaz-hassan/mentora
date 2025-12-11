@@ -211,7 +211,7 @@ export const resendVerificationEmail = async (userId) => {
       throw error;
     }
 
-    // Check if a token already exists and delete it (optional, or just create a new one)
+    
     await Token.destroy({ where: { email: user.email, purpose: "verify-email" } });
 
     const verificationToken = await generateVerificationToken(

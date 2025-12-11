@@ -4,9 +4,7 @@ import {
   exportAnalyticsData,
 } from "../../services/instructor/instructor.service.js";
 
-/**
- * Get all courses for instructor
- */
+
 export const getAllCourses = async (req, res) => {
   try {
     const courses = await getAllCoursesService(req.user.id);
@@ -23,16 +21,13 @@ export const getAllCourses = async (req, res) => {
   }
 };
 
-/**
- * Get comprehensive analytics for instructor
- * GET /api/instructor/analytics?courseId={optional}&days={optional}
- */
+
 export const getAnalytics = async (req, res, next) => {
   try {
     const { courseId, days } = req.query;
     const instructorId = req.user.id;
 
-    // Get analytics data
+    
     const analytics = await getComprehensiveAnalytics(
       instructorId,
       courseId || null,
@@ -48,16 +43,13 @@ export const getAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Export analytics data
- * GET /api/instructor/analytics/export?courseId={optional}&days={optional}
- */
+
 export const exportAnalytics = async (req, res, next) => {
   try {
     const { courseId, days } = req.query;
     const instructorId = req.user.id;
 
-    // Get export data
+    
     const exportData = await exportAnalyticsData(
       instructorId,
       courseId || null,

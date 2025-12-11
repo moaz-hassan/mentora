@@ -1,7 +1,4 @@
-/**
- * Chat Validators
- * Purpose: Validate chat room and message-related requests
- */
+
 
 import { body, param } from "express-validator";
 

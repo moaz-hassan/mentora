@@ -1,8 +1,6 @@
 import geminiService from "../../services/ai/gemini.service.js";
 
-/**
- * Handle chat messages
- */
+
 export const chat = async (req, res) => {
   try {
     const { message, context } = req.body;
@@ -14,7 +12,7 @@ export const chat = async (req, res) => {
       });
     }
 
-    // Build context from user session and request
+    
     const userContext = {
       role: req.user?.role || "guest",
       page: context?.page || "unknown",
@@ -50,9 +48,7 @@ export const chat = async (req, res) => {
   }
 };
 
-/**
- * Analyze content with AI
- */
+
 export const analyze = async (req, res) => {
   try {
     const { content, analysisType } = req.body;
@@ -87,9 +83,7 @@ export const analyze = async (req, res) => {
   }
 };
 
-/**
- * Get AI suggestions
- */
+
 export const suggest = async (req, res) => {
   try {
     const { context } = req.body;
@@ -117,9 +111,7 @@ export const suggest = async (req, res) => {
   }
 };
 
-/**
- * Get example questions based on user role
- */
+
 export const getExamples = async (req, res) => {
   try {
     const userRole = req.user?.role || "guest";

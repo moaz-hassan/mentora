@@ -1,7 +1,4 @@
-/**
- * Certificate Validators
- * Purpose: Validate certificate-related requests
- */
+
 
 import { body, param, query } from "express-validator";
 

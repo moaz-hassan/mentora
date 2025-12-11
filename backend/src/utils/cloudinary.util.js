@@ -2,19 +2,15 @@ import { v2 as cloudinary } from 'cloudinary';
 import streamifier from 'streamifier';
 import crypto from 'crypto';
 
-// Configure Cloudinary with security settings
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true, // Force HTTPS
+  secure: true, 
 });
 
-/**
- * Generate a unique filename to prevent overwrites and enhance security
- * @param {string} originalName - Original filename
- * @returns {string} - Unique filename
- */
+
 const generateUniqueFilename = (originalName) => {
   const timestamp = Date.now();
   const randomString = crypto.randomBytes(8).toString('hex');
@@ -22,28 +18,21 @@ const generateUniqueFilename = (originalName) => {
   return `${timestamp}-${randomString}${extension ? '.' + extension : ''}`;
 };
 
-/**
- * Upload a file to Cloudinary with security enhancements
- * @param {Buffer} fileBuffer - The file buffer to upload
- * @param {string} folder - The Cloudinary folder path
- * @param {string} resourceType - The resource type ('image', 'video', 'raw', 'auto')
- * @param {Object} options - Additional upload options
- * @returns {Promise<Object>} - Upload result with secure_url and public_id
- */
+
 export const uploadToCloudinary = (fileBuffer, folder, resourceType = 'image', options = {}) => {
   return new Promise((resolve, reject) => {
-    // Security configurations
+    
     const uploadOptions = {
       folder: folder,
       resource_type: resourceType,
-      // Generate unique public_id to prevent overwrites
+      
       public_id: generateUniqueFilename(options.originalName),
-      // Security settings
-      invalidate: true, // Invalidate CDN cache
-      overwrite: false, // Prevent overwriting existing files
-      unique_filename: true, // Ensure unique filenames
-      use_filename: false, // Don't use original filename
-      // Quality and optimization
+      
+      invalidate: true, 
+      overwrite: false, 
+      unique_filename: true, 
+      use_filename: false, 
+      
       ...(resourceType === 'image' && {
         quality: 'auto:good',
         fetch_format: 'auto',
@@ -52,7 +41,7 @@ export const uploadToCloudinary = (fileBuffer, folder, resourceType = 'image', o
         quality: 'auto',
         resource_type: 'video',
       }),
-      // Additional options
+      
       ...options,
     };
 
@@ -66,7 +55,7 @@ export const uploadToCloudinary = (fileBuffer, folder, resourceType = 'image', o
           resolve({
             secure_url: result.secure_url,
             public_id: result.public_id,
-            duration: result.duration, // For videos
+            duration: result.duration, 
             format: result.format,
             resource_type: result.resource_type,
             bytes: result.bytes,
@@ -81,12 +70,7 @@ export const uploadToCloudinary = (fileBuffer, folder, resourceType = 'image', o
   });
 };
 
-/**
- * Delete a file from Cloudinary
- * @param {string} publicId - The public ID of the file to delete
- * @param {string} resourceType - The resource type ('image', 'video', 'raw')
- * @returns {Promise<Object>} - Deletion result
- */
+
 export const deleteFromCloudinary = async (publicId, resourceType = 'image') => {
   try {
     const result = await cloudinary.uploader.destroy(publicId, {
@@ -99,20 +83,14 @@ export const deleteFromCloudinary = async (publicId, resourceType = 'image') => 
 };
 
 
-/**
- * Generate a signed URL for a private resource
- * @param {string} publicId - The public ID of the resource
- * @param {string} resourceType - The resource type ('image', 'video', 'raw')
- * @param {string} type - The delivery type ('upload', 'private', 'authenticated')
- * @returns {string} - Signed URL
- */
+
 export const getSignedUrl = (publicId, resourceType = 'image', type = 'upload') => {
   return cloudinary.url(publicId, {
     resource_type: resourceType,
     type: type,
     sign_url: true,
     secure: true,
-    expires_at: Math.floor(Date.now() / 1000) + 3600, // 1 hour expiration
+    expires_at: Math.floor(Date.now() / 1000) + 3600, 
   });
 };
 

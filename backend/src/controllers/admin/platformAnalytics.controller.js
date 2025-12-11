@@ -1,14 +1,8 @@
-/**
- * Platform Analytics Controller
- * Purpose: Handle HTTP requests for platform analytics
- */
+
 
 import * as platformAnalyticsService from "../../services/admin/platformAnalytics.service.js";
 
-/**
- * Get enrollment analytics
- * GET /api/admin/platform-analytics/enrollments
- */
+
 export const getEnrollmentAnalytics = async (req, res, next) => {
   try {
     const { startDate, endDate, courseId, groupBy } = req.query;
@@ -29,10 +23,7 @@ export const getEnrollmentAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Get payment analytics
- * GET /api/admin/platform-analytics/payments
- */
+
 export const getPaymentAnalytics = async (req, res, next) => {
   try {
     const { startDate, endDate, status, groupBy } = req.query;
@@ -53,10 +44,7 @@ export const getPaymentAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Get user activity analytics
- * GET /api/admin/platform-analytics/users
- */
+
 export const getUserActivityAnalytics = async (req, res, next) => {
   try {
     const { startDate, endDate, role, groupBy } = req.query;
@@ -77,10 +65,7 @@ export const getUserActivityAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Get course performance analytics
- * GET /api/admin/platform-analytics/courses
- */
+
 export const getCoursePerformanceAnalytics = async (req, res, next) => {
   try {
     const { startDate, endDate, instructorId, limit } = req.query;
@@ -101,10 +86,7 @@ export const getCoursePerformanceAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Generate custom analytics report
- * POST /api/admin/platform-analytics/custom
- */
+
 export const generateCustomReport = async (req, res, next) => {
   try {
     const reportConfig = req.body;
@@ -120,10 +102,7 @@ export const generateCustomReport = async (req, res, next) => {
   }
 };
 
-/**
- * Export analytics data
- * POST /api/admin/platform-analytics/export
- */
+
 export const exportAnalytics = async (req, res, next) => {
   try {
     const { reportType, data } = req.body;
@@ -145,10 +124,7 @@ export const exportAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Schedule a report
- * POST /api/admin/platform-analytics/schedule
- */
+
 export const scheduleReport = async (req, res, next) => {
   try {
     const scheduleConfig = req.body;

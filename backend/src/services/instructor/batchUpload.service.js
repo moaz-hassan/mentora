@@ -1,20 +1,13 @@
-/**
- * Batch Upload Service
- * Purpose: Handle batch video upload sessions for course lessons
- * Includes: Session management, sequential upload processing, retry logic
- */
+
 
 import models from "../../models/index.js";
 import { uploadToCloudinary, deleteFromCloudinary } from "../../utils/cloudinary.util.js";
 
 const { BatchUploadSession, Course, Lesson } = models;
 
-/**
- * Initialize batch upload session
- * Creates a session to track multiple video uploads
- */
+
 export const initBatchUpload = async (courseId, instructorId, lessonIds) => {
-  // Verify course exists and instructor owns it
+  
   const course = await Course.findByPk(courseId);
   
   if (!course) {
@@ -29,7 +22,7 @@ export const initBatchUpload = async (courseId, instructorId, lessonIds) => {
     throw error;
   }
 
-  // Verify all lessons exist and belong to this course
+  
   const lessons = await Lesson.findAll({
     where: { id: lessonIds },
     include: [
@@ -47,7 +40,7 @@ export const initBatchUpload = async (courseId, instructorId, lessonIds) => {
     throw error;
   }
 
-  // Create upload session
+  
   const session = await BatchUploadSession.create({
     course_id: courseId,
     instructor_id: instructorId,
@@ -68,17 +61,14 @@ export const initBatchUpload = async (courseId, instructorId, lessonIds) => {
   return session;
 };
 
-/**
- * Upload single video in batch
- * Processes one video upload with retry logic
- */
+
 export const uploadVideoInBatch = async (
   sessionId,
   lessonId,
   videoFile,
   instructorId
 ) => {
-  // Get session
+  
   const session = await BatchUploadSession.findByPk(sessionId);
 
   if (!session) {
@@ -87,21 +77,21 @@ export const uploadVideoInBatch = async (
     throw error;
   }
 
-  // Verify instructor owns the session
+  
   if (session.instructor_id !== instructorId) {
     const error = new Error("You do not have permission to access this upload session");
     error.statusCode = 403;
     throw error;
   }
 
-  // Check session is still in progress
+  
   if (session.status !== "in_progress") {
     const error = new Error("Upload session is not active");
     error.statusCode = 400;
     throw error;
   }
 
-  // Find lesson in upload data
+  
   const uploadData = session.upload_data;
   const lessonIndex = uploadData.findIndex((item) => item.lessonId === lessonId);
 
@@ -113,7 +103,7 @@ export const uploadVideoInBatch = async (
 
   const lessonUploadData = uploadData[lessonIndex];
 
-  // Check if already uploaded
+  
   if (lessonUploadData.status === "completed") {
     return {
       success: true,
@@ -122,7 +112,7 @@ export const uploadVideoInBatch = async (
     };
   }
 
-  // Attempt upload with retry logic
+  
   const maxRetries = 3;
   let uploadSuccess = false;
   let uploadResult = null;
@@ -130,7 +120,7 @@ export const uploadVideoInBatch = async (
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      // Upload to Cloudinary
+      
       uploadResult = await uploadToCloudinary(
         videoFile.buffer,
         `courses/${session.course_id}/lessons`,
@@ -145,15 +135,15 @@ export const uploadVideoInBatch = async (
       
       console.error(`Upload attempt ${attempt + 1} failed for lesson ${lessonId}:`, error.message);
 
-      // If not the last attempt, wait before retrying
+      
       if (attempt < maxRetries) {
-        await new Promise((resolve) => setTimeout(resolve, 2000 * (attempt + 1))); // Exponential backoff
+        await new Promise((resolve) => setTimeout(resolve, 2000 * (attempt + 1))); 
       }
     }
   }
 
   if (uploadSuccess && uploadResult) {
-    // Update lesson with video URL
+    
     await Lesson.update(
       {
         video_url: uploadResult.secure_url,
@@ -164,13 +154,13 @@ export const uploadVideoInBatch = async (
       { where: { id: lessonId } }
     );
 
-    // Update upload data
+    
     lessonUploadData.status = "completed";
     lessonUploadData.videoUrl = uploadResult.secure_url;
     lessonUploadData.publicId = uploadResult.public_id;
     lessonUploadData.error = null;
 
-    // Update session
+    
     await session.update({
       uploaded_count: session.uploaded_count + 1,
       upload_data: uploadData,
@@ -182,11 +172,11 @@ export const uploadVideoInBatch = async (
       data: lessonUploadData,
     };
   } else {
-    // Upload failed after all retries
+    
     lessonUploadData.status = "failed";
     lessonUploadData.error = lastError ? lastError.message : "Upload failed";
 
-    // Update session
+    
     await session.update({
       failed_count: session.failed_count + 1,
       upload_data: uploadData,
@@ -201,10 +191,7 @@ export const uploadVideoInBatch = async (
   }
 };
 
-/**
- * Complete batch upload session
- * Finalizes the session and returns summary
- */
+
 export const completeBatchUpload = async (sessionId, instructorId) => {
   const session = await BatchUploadSession.findByPk(sessionId);
 
@@ -220,17 +207,17 @@ export const completeBatchUpload = async (sessionId, instructorId) => {
     throw error;
   }
 
-  // Calculate processing time
+  
   const processingTime = new Date() - new Date(session.started_at);
   const processingTimeSeconds = Math.round(processingTime / 1000);
 
-  // Update session status
+  
   await session.update({
     status: "completed",
     completed_at: new Date(),
   });
 
-  // Build summary
+  
   const summary = {
     session_id: session.id,
     total_videos: session.total_videos,
@@ -245,10 +232,7 @@ export const completeBatchUpload = async (sessionId, instructorId) => {
   return summary;
 };
 
-/**
- * Cancel batch upload session
- * Stops the session and saves current state
- */
+
 export const cancelBatchUpload = async (sessionId, instructorId) => {
   const session = await BatchUploadSession.findByPk(sessionId);
 
@@ -264,7 +248,7 @@ export const cancelBatchUpload = async (sessionId, instructorId) => {
     throw error;
   }
 
-  // Update session status
+  
   await session.update({
     status: "cancelled",
     completed_at: new Date(),
@@ -278,9 +262,7 @@ export const cancelBatchUpload = async (sessionId, instructorId) => {
   };
 };
 
-/**
- * Get batch upload session status
- */
+
 export const getSessionStatus = async (sessionId, instructorId) => {
   const session = await BatchUploadSession.findByPk(sessionId);
 

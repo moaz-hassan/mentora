@@ -16,7 +16,7 @@ export const getLessonById = async (req, res, next) => {
 
 export const createLesson = async (req, res, next) => {
   try {
-    // Create lesson with video URL (video already uploaded to Cloudinary from frontend)
+    
     const lesson = await lessonService.createLesson(
       req.body,
       req.user.id

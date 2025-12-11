@@ -1,18 +1,11 @@
-/**
- * Marketing Service
- * Purpose: Handle marketing campaigns, featured courses, and promotional activities
- */
+
 
 import models from "../../models/index.js";
 import { Op } from "sequelize";
 
 const { Campaign, FeaturedCourse, Course, User, Enrollment, Payment } = models;
 
-/**
- * Get all campaigns with filtering
- * @param {Object} filters - Filter options
- * @returns {Array} List of campaigns
- */
+
 export const getAllCampaigns = async (filters = {}) => {
   const whereClause = {};
 
@@ -20,7 +13,7 @@ export const getAllCampaigns = async (filters = {}) => {
   if (filters.campaignType) whereClause.campaign_type = filters.campaignType;
   if (filters.targetAudience) whereClause.target_audience = filters.targetAudience;
 
-  // Date range filter
+  
   if (filters.startDate || filters.endDate) {
     whereClause.start_date = {};
     if (filters.startDate) whereClause.start_date[Op.gte] = new Date(filters.startDate);
@@ -71,11 +64,7 @@ export const getAllCampaigns = async (filters = {}) => {
   }));
 };
 
-/**
- * Get campaign by ID
- * @param {string} campaignId - Campaign ID
- * @returns {Object} Campaign details
- */
+
 export const getCampaignById = async (campaignId) => {
   const campaign = await Campaign.findByPk(campaignId, {
     include: [
@@ -144,14 +133,9 @@ export const getCampaignById = async (campaignId) => {
   };
 };
 
-/**
- * Create new campaign
- * @param {Object} campaignData - Campaign data
- * @param {string} adminId - Admin ID creating the campaign
- * @returns {Object} Created campaign
- */
+
 export const createCampaign = async (campaignData, adminId) => {
-  // Validate dates
+  
   if (campaignData.startDate && campaignData.endDate) {
     if (new Date(campaignData.startDate) > new Date(campaignData.endDate)) {
       const error = new Error("Start date must be before end date");
@@ -176,12 +160,7 @@ export const createCampaign = async (campaignData, adminId) => {
   return campaign;
 };
 
-/**
- * Update campaign
- * @param {string} campaignId - Campaign ID
- * @param {Object} updateData - Update data
- * @returns {Object} Updated campaign
- */
+
 export const updateCampaign = async (campaignId, updateData) => {
   const campaign = await Campaign.findByPk(campaignId);
 
@@ -191,7 +170,7 @@ export const updateCampaign = async (campaignId, updateData) => {
     throw error;
   }
 
-  // Validate dates if provided
+  
   const startDate = updateData.startDate || campaign.start_date;
   const endDate = updateData.endDate || campaign.end_date;
 
@@ -216,11 +195,7 @@ export const updateCampaign = async (campaignId, updateData) => {
   return campaign;
 };
 
-/**
- * Delete campaign
- * @param {string} campaignId - Campaign ID
- * @returns {Object} Success message
- */
+
 export const deleteCampaign = async (campaignId) => {
   const campaign = await Campaign.findByPk(campaignId);
 
@@ -230,7 +205,7 @@ export const deleteCampaign = async (campaignId) => {
     throw error;
   }
 
-  // Delete associated featured courses
+  
   await FeaturedCourse.destroy({ where: { campaign_id: campaignId } });
 
   await campaign.destroy();
@@ -238,11 +213,7 @@ export const deleteCampaign = async (campaignId) => {
   return { message: "Campaign deleted successfully" };
 };
 
-/**
- * Get campaign analytics
- * @param {string} campaignId - Campaign ID
- * @returns {Object} Campaign analytics
- */
+
 export const getCampaignAnalytics = async (campaignId) => {
   const campaign = await Campaign.findByPk(campaignId);
 
@@ -252,7 +223,7 @@ export const getCampaignAnalytics = async (campaignId) => {
     throw error;
   }
 
-  // Get featured courses for this campaign
+  
   const featuredCourses = await FeaturedCourse.findAll({
     where: { campaign_id: campaignId },
     include: [
@@ -265,7 +236,7 @@ export const getCampaignAnalytics = async (campaignId) => {
 
   const courseIds = featuredCourses.map(fc => fc.course_id);
 
-  // Get enrollments during campaign period
+  
   const enrollmentWhere = { course_id: courseIds };
   if (campaign.start_date) {
     enrollmentWhere.enrolled_at = { [Op.gte]: campaign.start_date };
@@ -280,7 +251,7 @@ export const getCampaignAnalytics = async (campaignId) => {
 
   const enrollments = await Enrollment.count({ where: enrollmentWhere });
 
-  // Get revenue during campaign period
+  
   const paymentWhere = { 
     course_id: courseIds,
     status: "completed"
@@ -298,7 +269,7 @@ export const getCampaignAnalytics = async (campaignId) => {
 
   const revenue = await Payment.sum("amount", { where: paymentWhere });
 
-  // Performance by course
+  
   const coursePerformance = await Promise.all(
     featuredCourses.map(async (fc) => {
       const courseEnrollments = await Enrollment.count({
@@ -355,11 +326,7 @@ export const getCampaignAnalytics = async (campaignId) => {
   };
 };
 
-/**
- * Get all featured courses
- * @param {Object} filters - Filter options
- * @returns {Array} List of featured courses
- */
+
 export const getAllFeaturedCourses = async (filters = {}) => {
   const whereClause = {};
 
@@ -410,13 +377,9 @@ export const getAllFeaturedCourses = async (filters = {}) => {
   }));
 };
 
-/**
- * Add featured course
- * @param {Object} featuredData - Featured course data
- * @returns {Object} Created featured course
- */
+
 export const addFeaturedCourse = async (featuredData) => {
-  // Verify course exists
+  
   const course = await Course.findByPk(featuredData.courseId);
   if (!course) {
     const error = new Error("Course not found");
@@ -424,7 +387,7 @@ export const addFeaturedCourse = async (featuredData) => {
     throw error;
   }
 
-  // Check if course is already featured
+  
   const existing = await FeaturedCourse.findOne({
     where: {
       course_id: featuredData.courseId,
@@ -449,12 +412,7 @@ export const addFeaturedCourse = async (featuredData) => {
   return featuredCourse;
 };
 
-/**
- * Update featured course
- * @param {string} featuredCourseId - Featured course ID
- * @param {Object} updateData - Update data
- * @returns {Object} Updated featured course
- */
+
 export const updateFeaturedCourse = async (featuredCourseId, updateData) => {
   const featuredCourse = await FeaturedCourse.findByPk(featuredCourseId);
 
@@ -473,11 +431,7 @@ export const updateFeaturedCourse = async (featuredCourseId, updateData) => {
   return featuredCourse;
 };
 
-/**
- * Remove featured course
- * @param {string} featuredCourseId - Featured course ID
- * @returns {Object} Success message
- */
+
 export const removeFeaturedCourse = async (featuredCourseId) => {
   const featuredCourse = await FeaturedCourse.findByPk(featuredCourseId);
 
@@ -492,12 +446,7 @@ export const removeFeaturedCourse = async (featuredCourseId) => {
   return { message: "Featured course removed successfully" };
 };
 
-/**
- * Update campaign metrics (impressions, clicks, conversions)
- * @param {string} campaignId - Campaign ID
- * @param {Object} metrics - Metrics to update
- * @returns {Object} Updated campaign
- */
+
 export const updateCampaignMetrics = async (campaignId, metrics) => {
   const campaign = await Campaign.findByPk(campaignId);
 

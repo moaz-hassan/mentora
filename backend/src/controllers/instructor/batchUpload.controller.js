@@ -1,15 +1,8 @@
-/**
- * Batch Upload Controller
- * Purpose: Handle batch video upload route handlers
- * Routes: /api/courses/:courseId/batch-upload
- */
+
 
 import * as batchUploadService from "../../services/instructor/batchUpload.service.js";
 
-/**
- * Initialize batch upload session
- * POST /api/courses/:courseId/batch-upload/init
- */
+
 export const initBatchUpload = async (req, res, next) => {
   try {
     const { courseId } = req.params;
@@ -38,10 +31,7 @@ export const initBatchUpload = async (req, res, next) => {
   }
 };
 
-/**
- * Upload single video in batch
- * POST /api/courses/:courseId/batch-upload/video
- */
+
 export const uploadVideo = async (req, res, next) => {
   try {
     const { sessionId, lessonId } = req.body;
@@ -77,10 +67,7 @@ export const uploadVideo = async (req, res, next) => {
   }
 };
 
-/**
- * Complete batch upload session
- * POST /api/courses/:courseId/batch-upload/complete
- */
+
 export const completeBatchUpload = async (req, res, next) => {
   try {
     const { sessionId } = req.body;
@@ -107,10 +94,7 @@ export const completeBatchUpload = async (req, res, next) => {
   }
 };
 
-/**
- * Cancel batch upload session
- * DELETE /api/courses/:courseId/batch-upload/cancel
- */
+
 export const cancelBatchUpload = async (req, res, next) => {
   try {
     const { sessionId } = req.body;
@@ -137,10 +121,7 @@ export const cancelBatchUpload = async (req, res, next) => {
   }
 };
 
-/**
- * Get session status
- * GET /api/courses/:courseId/batch-upload/status/:sessionId
- */
+
 export const getSessionStatus = async (req, res, next) => {
   try {
     const { sessionId } = req.params;

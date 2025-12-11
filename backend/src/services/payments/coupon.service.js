@@ -24,7 +24,7 @@ export const getAllCouponsByInstructor = async (instructorId) => {
 };
 
 export const createCoupon = async (couponData, userId, userRole) => {
-  // If course_id is provided, validate it
+  
   if (couponData.course_id) {
     const course = await Course.findByPk(couponData.course_id);
 
@@ -34,7 +34,7 @@ export const createCoupon = async (couponData, userId, userRole) => {
       throw error;
     }
 
-    // Only instructors need to own the course, admins can create coupons for any course
+    
     if (userRole !== "admin" && course.instructor_id !== userId) {
       const error = new Error(
         "You are not authorized to create a coupon for this course"
@@ -43,7 +43,7 @@ export const createCoupon = async (couponData, userId, userRole) => {
       throw error;
     }
   } else {
-    // If no course_id provided, only admins can create global coupons
+    
     if (userRole !== "admin") {
       const error = new Error(
         "Only admins can create coupons applicable to all courses"
@@ -51,7 +51,7 @@ export const createCoupon = async (couponData, userId, userRole) => {
       error.statusCode = 403;
       throw error;
     }
-    // Set course_id to null for global coupons
+    
     couponData.course_id = null;
   }
 
@@ -130,18 +130,18 @@ export const deleteCoupon = async (coupon_id, userId, role) => {
 };
 
 export const validateCoupon = async (code, course_id) => {
-  // Try to find a coupon for the specific course first, then check for global coupons
+  
   const coupon = await Coupon.findOne({
     where: {
       code,
       is_active: true,
       [Op.or]: [
-        { course_id: course_id },  // Course-specific coupon
-        { course_id: null }         // Global coupon (applies to all courses)
+        { course_id: course_id },  
+        { course_id: null }         
       ]
     },
     order: [
-      // Prioritize course-specific coupons over global ones
+      
       [fn('COALESCE', col('course_id'), 999999), 'ASC']
     ]
   });
@@ -168,9 +168,7 @@ export const validateCoupon = async (code, course_id) => {
   return coupon;
 };
 
-/**
- * Get coupon analytics
- */
+
 export const getCouponAnalytics = async (couponId = null) => {
   const { Op, Sequelize } = await import("sequelize");
   const { Payment } = models;
@@ -187,7 +185,7 @@ export const getCouponAnalytics = async (couponId = null) => {
 
   const analytics = await Promise.all(
     coupons.map(async (coupon) => {
-      // Calculate revenue impact
+      
       const payments = await Payment.findAll({
         where: {
           course_id: coupon.course_id,
@@ -204,7 +202,7 @@ export const getCouponAnalytics = async (couponId = null) => {
       const totalRevenue = payments[0]?.totalRevenue || 0;
       const totalUsage = payments[0]?.totalUsage || 0;
       
-      // Calculate discount amount given
+      
       const course = await Course.findByPk(coupon.course_id);
       let discountGiven = 0;
       
@@ -214,7 +212,7 @@ export const getCouponAnalytics = async (couponId = null) => {
         discountGiven = coupon.discount_value * totalUsage;
       }
 
-      // Calculate conversion rate (usage vs max_count)
+      
       const conversionRate = coupon.max_count > 0 
         ? ((totalUsage / coupon.max_count) * 100).toFixed(1)
         : 0;
@@ -240,9 +238,7 @@ export const getCouponAnalytics = async (couponId = null) => {
   return analytics;
 };
 
-/**
- * Search coupons
- */
+
 export const searchCoupons = async (searchTerm, filters = {}) => {
   const { Op } = await import("sequelize");
   
@@ -274,9 +270,7 @@ export const searchCoupons = async (searchTerm, filters = {}) => {
   return coupons;
 };
 
-/**
- * Check and deactivate expired coupons
- */
+
 export const deactivateExpiredCoupons = async () => {
   const { Op } = await import("sequelize");
   

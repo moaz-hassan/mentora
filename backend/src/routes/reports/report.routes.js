@@ -12,7 +12,7 @@ import { authenticate, authorize } from "../../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// Protected routes - require authentication
+
 router.post("/", authenticate, createReport);
 router.get("/", authenticate, authorize("admin"), getReports);
 router.get("/stats", authenticate, authorize("admin"), getReportStats);

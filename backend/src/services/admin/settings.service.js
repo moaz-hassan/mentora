@@ -1,21 +1,16 @@
-/**
- * Settings Service
- * Purpose: Handle system settings management
- */
+
 
 import models from "../../models/index.js";
 
 const { Settings } = models;
 
-/**
- * Get all settings
- */
+
 export const getAllSettings = async () => {
   const settings = await Settings.findAll({
     order: [["category", "ASC"], ["key", "ASC"]]
   });
 
-  // Group by category
+  
   const grouped = {};
   settings.forEach(setting => {
     if (!grouped[setting.category]) {
@@ -33,9 +28,7 @@ export const getAllSettings = async () => {
   return grouped;
 };
 
-/**
- * Get settings by category
- */
+
 export const getSettingsByCategory = async (category) => {
   const settings = await Settings.findAll({
     where: { category },
@@ -51,9 +44,7 @@ export const getSettingsByCategory = async (category) => {
   }));
 };
 
-/**
- * Get single setting by key
- */
+
 export const getSettingByKey = async (key) => {
   const setting = await Settings.findOne({ where: { key } });
   
@@ -66,9 +57,7 @@ export const getSettingByKey = async (key) => {
   return setting;
 };
 
-/**
- * Update setting
- */
+
 export const updateSetting = async (key, value, adminId) => {
   const setting = await Settings.findOne({ where: { key } });
   
@@ -78,21 +67,19 @@ export const updateSetting = async (key, value, adminId) => {
     throw error;
   }
 
-  // Validate value based on data type
+  
   const validatedValue = validateSettingValue(value, setting.data_type);
   
   setting.value = validatedValue;
   await setting.save();
 
-  // Log the change (would integrate with audit logging)
+  
   console.log(`Setting ${key} updated by admin ${adminId}`);
 
   return setting;
 };
 
-/**
- * Bulk update settings
- */
+
 export const bulkUpdateSettings = async (updates, adminId) => {
   const results = [];
   
@@ -116,11 +103,9 @@ export const bulkUpdateSettings = async (updates, adminId) => {
   return results;
 };
 
-/**
- * Create new setting
- */
+
 export const createSetting = async (settingData) => {
-  // Check if setting already exists
+  
   const existing = await Settings.findOne({ where: { key: settingData.key } });
   
   if (existing) {
@@ -133,9 +118,7 @@ export const createSetting = async (settingData) => {
   return setting;
 };
 
-/**
- * Validate setting value based on data type
- */
+
 function validateSettingValue(value, dataType) {
   switch (dataType) {
     case "number":
@@ -164,9 +147,7 @@ function validateSettingValue(value, dataType) {
   }
 }
 
-/**
- * Get public settings (for frontend)
- */
+
 export const getPublicSettings = async () => {
   const settings = await Settings.findAll({
     where: { is_public: true }

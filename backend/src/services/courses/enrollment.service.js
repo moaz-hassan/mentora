@@ -93,7 +93,7 @@ export const getEnrollmentById = async (enrollmentId) => {
     throw error;
   }
 
-  // Get chat membership for this course
+  
   const courseId = enrollment.Course?.id;
   const studentId = enrollment.student_id;
   let chatMembership = { isMember: false, roomId: null };
@@ -114,7 +114,7 @@ export const getEnrollmentById = async (enrollmentId) => {
     }
   }
 
-  // Add chatMembership to enrollment response
+  
   const enrollmentData = enrollment.toJSON();
   enrollmentData.chatMembership = chatMembership;
 
@@ -139,7 +139,7 @@ export const createEnrollment = async (course_id, studentId) => {
     throw error;
   }
 
-  // Allow enrollment regardless of price (Payment logic removed)
+  
   const enrollment = await Enrollment.create({
     student_id: studentId,
     course_id,
@@ -152,9 +152,7 @@ import { updateProgress, completeLesson } from "./progress.service.js";
 export { updateProgress, completeLesson };
 
 
-/**
- * Get student progress for an enrollment
- */
+
 export const getProgress = async (enrollmentId, studentId) => {
   const enrollment = await Enrollment.findOne({
     where: {
@@ -172,15 +170,10 @@ export const getProgress = async (enrollmentId, studentId) => {
   return enrollment.progress;
 };
 
-/**
- * Get lesson detail for enrolled student (lazy loading)
- * Returns full lesson content including video URLs and materials
- */
-/**
- * Step 1: Verify access and update progress (Uncached)
- */
+
+
 export const verifyEnrollmentAndUpdateProgress = async (enrollmentId, lessonId, studentId) => {
-  // Verify enrollment exists and belongs to student
+  
   const enrollment = await Enrollment.findOne({
     where: {
       id: enrollmentId,
@@ -194,7 +187,7 @@ export const verifyEnrollmentAndUpdateProgress = async (enrollmentId, lessonId, 
     throw error;
   }
 
-  // Get lightweight lesson data to verify course relation
+  
   const lesson = await Lesson.findByPk(lessonId, {
     attributes: ["id", "chapter_id"],
   });
@@ -205,7 +198,7 @@ export const verifyEnrollmentAndUpdateProgress = async (enrollmentId, lessonId, 
     throw error;
   }
 
-  // Verify lesson belongs to enrolled course
+  
   const chapter = await Chapter.findByPk(lesson.chapter_id, {
     attributes: ["id", "course_id"],
   });
@@ -216,7 +209,7 @@ export const verifyEnrollmentAndUpdateProgress = async (enrollmentId, lessonId, 
     throw error;
   }
 
-  // Update current position
+  
   const progress = enrollment.progress || {};
   progress.currentLessonId = lessonId;
   progress.currentChapterId = lesson.chapter_id;
@@ -226,9 +219,7 @@ export const verifyEnrollmentAndUpdateProgress = async (enrollmentId, lessonId, 
   return { hasAccess: true };
 };
 
-/**
- * Step 2: Get heavy lesson content (Cached)
- */
+
 export const getLessonContent = async (lessonId) => {
   const lesson = await Lesson.findByPk(lessonId, {
     include: [
@@ -258,12 +249,9 @@ export const getLessonContent = async (lessonId) => {
   };
 };
 
-/**
- * Get quiz detail for enrolled student (lazy loading)
- * Returns full quiz content including questions
- */
+
 export const getQuizDetail = async (enrollmentId, quizId, studentId) => {
-  // Verify enrollment exists and belongs to student
+  
   const enrollment = await Enrollment.findOne({
     where: {
       id: enrollmentId,
@@ -277,7 +265,7 @@ export const getQuizDetail = async (enrollmentId, quizId, studentId) => {
     throw error;
   }
 
-  // Get quiz with questions
+  
   const quiz = await Quiz.findByPk(quizId);
 
   if (!quiz) {
@@ -286,7 +274,7 @@ export const getQuizDetail = async (enrollmentId, quizId, studentId) => {
     throw error;
   }
 
-  // Verify quiz belongs to enrolled course
+  
   const chapter = await Chapter.findByPk(quiz.chapter_id);
   if (!chapter || chapter.course_id !== enrollment.course_id) {
     const error = new Error("Quiz does not belong to enrolled course");
@@ -294,7 +282,7 @@ export const getQuizDetail = async (enrollmentId, quizId, studentId) => {
     throw error;
   }
 
-  // Strip correct answers from questions
+  
   const sanitizedQuestions = (quiz.questions || []).map(q => {
     const { correctAnswer, ...rest } = q;
     return rest;
@@ -310,12 +298,9 @@ export const getQuizDetail = async (enrollmentId, quizId, studentId) => {
   };
 };
 
-/**
- * Submit quiz answers and get results
- * POST /api/enrollments/:enrollmentId/quizzes/:quizId/submit
- */
+
 export const submitQuiz = async (enrollmentId, quizId, studentId, answers) => {
-  // Verify enrollment exists and belongs to student
+  
   const enrollment = await Enrollment.findOne({
     where: {
       id: enrollmentId,
@@ -329,7 +314,7 @@ export const submitQuiz = async (enrollmentId, quizId, studentId, answers) => {
     throw error;
   }
 
-  // Get quiz with questions and correct answers
+  
   const quiz = await Quiz.findByPk(quizId);
 
   if (!quiz) {
@@ -338,19 +323,19 @@ export const submitQuiz = async (enrollmentId, quizId, studentId, answers) => {
     throw error;
   }
 
-  // Calculate score
+  
   const questions = quiz.questions || [];
   let correctCount = 0;
   const results = {};
 
   questions.forEach((question, index) => {
-    // Handle answers object with string or number keys
+    
     const rawUserAnswer = answers[index] || answers[String(index)];
     
-    // Normalize answers for comparison (trim whitespace)
+    
     const userAnswer = rawUserAnswer ? String(rawUserAnswer).trim() : null;
     
-    // Check both correctAnswer (standard) and answer (legacy/frontend creation)
+    
     const correctVal = question.correctAnswer || question.answer;
     const correctAnswer = correctVal ? String(correctVal).trim() : null;
     
@@ -362,16 +347,16 @@ export const submitQuiz = async (enrollmentId, quizId, studentId, answers) => {
 
     results[index] = {
       isCorrect,
-      correctAnswer: question.correctAnswer // Return raw correct answer for feedback
+      correctAnswer: question.correctAnswer 
     };
     
     console.log(`Question ${index}: User Answer "${userAnswer}" vs Correct "${correctAnswer}" -> ${isCorrect}`);
   });
 
   const score = Math.round((correctCount / questions.length) * 100);
-  const passed = score >= 70; // 70% passing grade
+  const passed = score >= 70; 
 
-  // Update progress if passed
+  
   let updatedProgress = null;
   if (passed) {
     const updatedEnrollment = await updateProgress(enrollmentId, studentId, {
@@ -386,24 +371,17 @@ export const submitQuiz = async (enrollmentId, quizId, studentId, answers) => {
     passed,
     correctCount,
     totalQuestions: questions.length,
-    results, // Detailed results for frontend feedback
+    results, 
     progress: updatedProgress
   };
 };
 
-/**
- * Gift a course to another user (free courses only)
- * @param {string} courseId - Course ID to gift
- * @param {string} senderId - User ID of the sender
- * @param {string} recipientEmail - Email of the recipient
- * @param {string} personalMessage - Optional personal message
- * @returns {Object} Gift enrollment data
- */
+
 export const giftCourse = async (courseId, senderId, recipientEmail, personalMessage = "") => {
-  // Import email service here to avoid circular dependency
+  
   const { sendGiftCourseEmail } = await import("../auth/email.service.js");
 
-  // Find the course
+  
   const course = await Course.findByPk(courseId);
   if (!course) {
     const error = new Error("Course not found");
@@ -413,7 +391,7 @@ export const giftCourse = async (courseId, senderId, recipientEmail, personalMes
 
 
 
-  // Find the recipient user by email
+  
   const recipient = await User.findOne({ where: { email: recipientEmail } });
   if (!recipient) {
     const error = new Error("Recipient not found. They must be a registered user.");
@@ -421,14 +399,14 @@ export const giftCourse = async (courseId, senderId, recipientEmail, personalMes
     throw error;
   }
 
-  // Check if sender is trying to gift to themselves
+  
   if (recipient.id === senderId) {
     const error = new Error("You cannot gift a course to yourself");
     error.statusCode = 400;
     throw error;
   }
 
-  // Check if recipient is already enrolled
+  
   const existingEnrollment = await Enrollment.findOne({
     where: { student_id: recipient.id, course_id: courseId },
   });
@@ -439,7 +417,7 @@ export const giftCourse = async (courseId, senderId, recipientEmail, personalMes
     throw error;
   }
 
-  // Get sender info
+  
   const sender = await User.findByPk(senderId);
   if (!sender) {
     const error = new Error("Sender not found");
@@ -447,14 +425,14 @@ export const giftCourse = async (courseId, senderId, recipientEmail, personalMes
     throw error;
   }
 
-  // Create enrollment for recipient
+  
   const enrollment = await Enrollment.create({
     student_id: recipient.id,
     course_id: courseId,
     gifted_by: senderId,
   });
 
-  // Send gift email to recipient
+  
   await sendGiftCourseEmail({
     recipientEmail: recipient.email,
     recipientName: `${recipient.first_name} ${recipient.last_name}`,

@@ -1,9 +1,6 @@
 import * as relatedCoursesService from "../../services/courses/related-courses.service.js";
 
-/**
- * Get related courses by category
- * GET /api/courses/:courseId/related
- */
+
 export const getRelatedCourses = async (req, res, next) => {
   try {
     const { id } = req.params;

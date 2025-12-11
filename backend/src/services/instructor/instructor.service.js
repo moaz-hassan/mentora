@@ -17,7 +17,7 @@ const {
 
 export const getComprehensiveAnalytics = async (instructorId, courseId = null, days = 30) => {
   try {
-    // Get approved courses for instructor
+    
     const courseFilter = {
       instructor_id: instructorId,
       status: "approved",
@@ -61,7 +61,7 @@ export const getComprehensiveAnalytics = async (instructorId, courseId = null, d
 
   const courseIds = courses.map((c) => c.id);
 
-  // Get all analytics data in parallel
+  
   const [
     overview,
     coursesPerformance,
@@ -94,7 +94,7 @@ export const getComprehensiveAnalytics = async (instructorId, courseId = null, d
 
 
 const getOverviewStats = async (courseIds) => {
-  // Get all enrollments
+  
   const enrollments = await Enrollment.findAll({
     where: { course_id: courseIds },
     attributes: ["id", "progress"],
@@ -102,7 +102,7 @@ const getOverviewStats = async (courseIds) => {
 
   const totalEnrollments = enrollments.length;
 
-  // Calculate active students (last 30 days)
+  
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -114,7 +114,7 @@ const getOverviewStats = async (courseIds) => {
   enrollments.forEach((enrollment) => {
     const progress = enrollment.progress || {};
 
-    // Active students
+    
     const lastAccessed = progress.lastAccessed
       ? new Date(progress.lastAccessed)
       : null;
@@ -122,25 +122,25 @@ const getOverviewStats = async (courseIds) => {
       activeStudents++;
     }
 
-    // Completed courses
+    
     if (progress.completionPercentage === 100) {
       completedCount++;
     }
 
-    // Watch time
+    
     if (progress.totalWatchTime && progress.totalWatchTime > 0) {
       totalWatchTime += progress.totalWatchTime;
       studentsWithWatchTime++;
     }
   });
 
-  // Completion rate
+  
   const completionRate =
     totalEnrollments > 0
       ? parseFloat(((completedCount / totalEnrollments) * 100).toFixed(1))
       : 0;
 
-  // Average rating
+  
   const ratingResult = await Ratings.findOne({
     where: { course_id: courseIds },
     attributes: [
@@ -153,7 +153,7 @@ const getOverviewStats = async (courseIds) => {
     ? parseFloat(parseFloat(ratingResult.avgRating).toFixed(1))
     : 0;
 
-  // Total revenue
+  
   const totalRevenue = await Payment.sum("amount", {
     where: {
       course_id: courseIds,
@@ -161,7 +161,7 @@ const getOverviewStats = async (courseIds) => {
     },
   });
 
-  // Average watch time in hours
+  
   const averageWatchTime =
     studentsWithWatchTime > 0
       ? parseFloat((totalWatchTime / studentsWithWatchTime / 3600).toFixed(1))
@@ -177,13 +177,11 @@ const getOverviewStats = async (courseIds) => {
   };
 };
 
-/**
- * Get performance data for each course
- */
+
 const getCoursesPerformance = async (courses) => {
   const coursesPerformance = await Promise.all(
     courses.map(async (course) => {
-      // Get enrollments for this course
+      
       const enrollments = await Enrollment.findAll({
         where: { course_id: course.id },
         attributes: ["id", "progress"],
@@ -191,7 +189,7 @@ const getCoursesPerformance = async (courses) => {
 
       const totalEnrollments = enrollments.length;
 
-      // Calculate metrics
+      
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -218,7 +216,7 @@ const getCoursesPerformance = async (courses) => {
           ? parseFloat(((completedCount / totalEnrollments) * 100).toFixed(1))
           : 0;
 
-      // Average rating
+      
       const ratingResult = await Ratings.findOne({
         where: { course_id: course.id },
         attributes: [
@@ -234,7 +232,7 @@ const getCoursesPerformance = async (courses) => {
         ? parseFloat(parseFloat(ratingResult.avgRating).toFixed(1))
         : 0;
 
-      // Revenue
+      
       const revenue = await Payment.sum("amount", {
         where: {
           course_id: course.id,
@@ -257,9 +255,7 @@ const getCoursesPerformance = async (courses) => {
   return coursesPerformance;
 };
 
-/**
- * Get enrollment trend over time
- */
+
 const getEnrollmentTrend = async (courseIds, days) => {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
@@ -273,7 +269,7 @@ const getEnrollmentTrend = async (courseIds, days) => {
     order: [["enrolled_at", "ASC"]],
   });
 
-  // Group by week
+  
   const weeklyData = {};
   const msPerWeek = 7 * 24 * 60 * 60 * 1000;
 
@@ -285,7 +281,7 @@ const getEnrollmentTrend = async (courseIds, days) => {
     weeklyData[weekKey] = (weeklyData[weekKey] || 0) + 1;
   });
 
-  // Convert to array format
+  
   const trend = Object.entries(weeklyData).map(([date, enrollments]) => ({
     date,
     enrollments,
@@ -294,11 +290,9 @@ const getEnrollmentTrend = async (courseIds, days) => {
   return trend;
 };
 
-/**
- * Get lesson-level analytics
- */
+
 const getLessonAnalytics = async (courseIds) => {
-  // Get all lessons for the courses
+  
   const lessons = await Lesson.findAll({
     include: [
       {
@@ -315,7 +309,7 @@ const getLessonAnalytics = async (courseIds) => {
     return [];
   }
 
-  // Get all enrollments
+  
   const enrollments = await Enrollment.findAll({
     where: { course_id: courseIds },
     attributes: ["progress"],
@@ -323,7 +317,7 @@ const getLessonAnalytics = async (courseIds) => {
 
   const totalEnrollments = enrollments.length;
 
-  // Calculate analytics for each lesson
+  
   const lessonAnalytics = lessons.map((lesson) => {
     let views = 0;
     let totalWatchTime = 0;
@@ -332,12 +326,12 @@ const getLessonAnalytics = async (courseIds) => {
     enrollments.forEach((enrollment) => {
       const progress = enrollment.progress || {};
 
-      // Check if lesson was completed (viewed)
+      
       if (progress.completedLessons?.includes(lesson.id)) {
         views++;
       }
 
-      // Get watch time for this lesson
+      
       const lessonWatchTime = progress.lessonWatchTime?.[lesson.id];
       if (lessonWatchTime && lessonWatchTime > 0) {
         totalWatchTime += lessonWatchTime;
@@ -370,11 +364,9 @@ const getLessonAnalytics = async (courseIds) => {
   return lessonAnalytics;
 };
 
-/**
- * Get quiz analytics
- */
+
 const getQuizAnalytics = async (courseIds) => {
-  // Get all quizzes for the courses
+  
   const quizzes = await Quiz.findAll({
     include: [
       {
@@ -398,7 +390,7 @@ const getQuizAnalytics = async (courseIds) => {
 
   const quizIds = quizzes.map((q) => q.id);
 
-  // Get all quiz results
+  
   const quizResults = await QuizResult.findAll({
     where: { quiz_id: quizIds },
     attributes: ["score", "answers", "quiz_id"],
@@ -415,18 +407,18 @@ const getQuizAnalytics = async (courseIds) => {
     };
   }
 
-  // Calculate average score
+  
   const totalScore = quizResults.reduce((sum, result) => sum + result.score, 0);
   const averageScore = parseFloat((totalScore / totalAttempts).toFixed(1));
 
-  // Calculate pass rate (assuming 60% is passing)
+  
   const passCount = quizResults.filter((result) => result.score >= 60).length;
   const passRate = parseFloat(((passCount / totalAttempts) * 100).toFixed(1));
 
-  // Analyze most missed questions
+  
   const questionStats = {};
 
-  // Initialize question stats
+  
   quizzes.forEach((quiz) => {
     if (quiz.questions && Array.isArray(quiz.questions)) {
       quiz.questions.forEach((q) => {
@@ -441,7 +433,7 @@ const getQuizAnalytics = async (courseIds) => {
     }
   });
 
-  // Count correct and incorrect answers
+  
   quizResults.forEach((result) => {
     if (result.answers && Array.isArray(result.answers)) {
       result.answers.forEach((answer) => {
@@ -455,7 +447,7 @@ const getQuizAnalytics = async (courseIds) => {
     }
   });
 
-  // Calculate miss rates and get top 5
+  
   const mostMissedQuestions = Object.values(questionStats)
     .filter((stat) => stat.total > 0)
     .map((stat) => ({
@@ -473,14 +465,12 @@ const getQuizAnalytics = async (courseIds) => {
   };
 };
 
-/**
- * Get student engagement metrics
- */
+
 const getEngagementMetrics = async (courseIds, days) => {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
 
-  // Get all enrollments
+  
   const enrollments = await Enrollment.findAll({
     where: { course_id: courseIds },
     attributes: ["progress"],
@@ -488,7 +478,7 @@ const getEngagementMetrics = async (courseIds, days) => {
 
   const totalEnrollments = enrollments.length;
 
-  // Calculate average session duration
+  
   let totalWatchTime = 0;
   let studentsWithWatchTime = 0;
 
@@ -505,7 +495,7 @@ const getEngagementMetrics = async (courseIds, days) => {
       ? Math.round(totalWatchTime / studentsWithWatchTime / 60)
       : 0;
 
-  // Get chat participation
+  
   const chatRooms = await ChatRoom.findAll({
     where: { course_id: courseIds, type: "group" },
     attributes: ["id"],
@@ -527,7 +517,7 @@ const getEngagementMetrics = async (courseIds, days) => {
         : 0;
   }
 
-  // Active students by day of week
+  
   const dayOfWeekMap = {
     0: "Sun",
     1: "Mon",
@@ -566,9 +556,7 @@ const getEngagementMetrics = async (courseIds, days) => {
   };
 };
 
-/**
- * Export analytics data
- */
+
 export const exportAnalyticsData = async (instructorId, courseId = null, days = 30) => {
   const analytics = await getComprehensiveAnalytics(instructorId, courseId, days);
 
@@ -581,9 +569,7 @@ export const exportAnalyticsData = async (instructorId, courseId = null, days = 
   };
 };
 
-/**
- * Get all courses for instructor
- */
+
 export const getAllCoursesService = async (instructorId) => {
   const courses = await Course.findAll({
     where: { instructor_id: instructorId },

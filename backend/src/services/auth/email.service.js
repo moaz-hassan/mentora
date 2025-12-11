@@ -541,7 +541,7 @@ export const sendGiftCourseEmail = async ({
     .replace("{{courseDescription}}", courseDescription || "Start your learning journey with this amazing course!")
     .replace("{{courseLink}}", courseLink);
   
-  // Add personal message if provided
+  
   if (personalMessage && personalMessage.trim()) {
     const messageHtml = `
         <div class="message-box">

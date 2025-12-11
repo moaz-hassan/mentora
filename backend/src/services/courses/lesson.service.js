@@ -46,7 +46,7 @@ export const createLesson = async (lessonData, instructorId) => {
 
   const lessonType = lessonData.lesson_type || 'video';
 
-  // Validate lesson type requirements
+  
   if (lessonType === 'video' && !lessonData.video_url) {
     const error = new Error('Video URL is required for video lessons');
     error.statusCode = 400;
@@ -59,7 +59,7 @@ export const createLesson = async (lessonData, instructorId) => {
     throw error;
   }
 
-  // Validate Cloudinary URL if video lesson
+  
   if (lessonType === 'video' && lessonData.video_url) {
     const { validateCloudinaryUrl } = await import('../../controllers/media/cloudinary.controller.js');
     const isValid = validateCloudinaryUrl(lessonData.video_url, lessonData.video_public_id);
@@ -71,13 +71,13 @@ export const createLesson = async (lessonData, instructorId) => {
     }
   }
 
-  // Sanitize HTML content if lesson type is text
+  
   if (lessonType === 'text' && lessonData.content) {
     const { sanitizeLessonContent } = await import('../../utils/sanitize.util.js');
     lessonData.content = sanitizeLessonContent(lessonData.content);
   }
 
-  // Create lesson record with video URL from frontend
+  
   lessonData.order_number = chapter.Lessons.length + 1;
 
   const lesson = await Lesson.create({
@@ -93,7 +93,7 @@ export const createLesson = async (lessonData, instructorId) => {
     order_number: lessonData.order_number,
   });
 
-  // Create materials if provided
+  
   if (lessonData.materials && Array.isArray(lessonData.materials) && lessonData.materials.length > 0) {
     const materialsToCreate = lessonData.materials.map((material, index) => ({
       lesson_id: lesson.id,
@@ -108,7 +108,7 @@ export const createLesson = async (lessonData, instructorId) => {
     await LessonMaterial.bulkCreate(materialsToCreate);
   }
 
-  // Reload lesson with materials
+  
   const lessonWithMaterials = await Lesson.findByPk(lesson.id, {
     include: [{
       model: LessonMaterial,

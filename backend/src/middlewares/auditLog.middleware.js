@@ -1,13 +1,8 @@
-/**
- * Audit Logging Middleware
- * Purpose: Capture admin actions and log them asynchronously
- */
+
 
 import { logAudit } from "../services/admin/logs.service.js";
 
-/**
- * Extract action type from request
- */
+
 const getActionType = (method, path) => {
   const methodMap = {
     POST: 'create',
@@ -20,11 +15,9 @@ const getActionType = (method, path) => {
   return methodMap[method] || 'action';
 };
 
-/**
- * Extract resource type from path
- */
+
 const getResourceType = (path) => {
-  // Extract resource from path like /api/admin/courses/:id
+  
   const match = path.match(/\/api\/admin\/([^\/]+)/);
   if (match) {
     return match[1];
@@ -32,16 +25,12 @@ const getResourceType = (path) => {
   return 'unknown';
 };
 
-/**
- * Extract resource ID from params
- */
+
 const getResourceId = (params) => {
   return params.id || params.courseId || params.userId || null;
 };
 
-/**
- * Generate description from request
- */
+
 const generateDescription = (method, resourceType, resourceId, body) => {
   const action = getActionType(method);
   const resource = resourceType.replace(/-/g, ' ');
@@ -53,27 +42,24 @@ const generateDescription = (method, resourceType, resourceId, body) => {
   return `${action} ${resource}`;
 };
 
-/**
- * Audit logging middleware
- * Logs all admin actions asynchronously
- */
+
 export const auditLogMiddleware = async (req, res, next) => {
-  // Only log for admin routes
+  
   if (!req.path.startsWith('/api/admin')) {
     return next();
   }
 
-  // Skip logging for GET requests (too verbose)
+  
   if (req.method === 'GET') {
     return next();
   }
 
-  // Skip if no authenticated user
+  
   if (!req.user || req.user.role !== 'admin') {
     return next();
   }
 
-  // Capture response
+  
   const originalSend = res.send;
   let responseBody;
 
@@ -82,7 +68,7 @@ export const auditLogMiddleware = async (req, res, next) => {
     originalSend.call(this, data);
   };
 
-  // Continue with request
+  
   res.on('finish', async () => {
     try {
       const actionType = getActionType(req.method, req.path);
@@ -90,10 +76,10 @@ export const auditLogMiddleware = async (req, res, next) => {
       const resourceId = getResourceId(req.params);
       const description = generateDescription(req.method, resourceType, resourceId, req.body);
 
-      // Determine status from response
+      
       const status = res.statusCode >= 200 && res.statusCode < 300 ? 'success' : 'failed';
 
-      // Log the action
+      
       await logAudit({
         adminId: req.user.id,
         actionType,
@@ -112,7 +98,7 @@ export const auditLogMiddleware = async (req, res, next) => {
         }
       });
     } catch (error) {
-      // Don't fail the request if logging fails
+      
       console.error('Audit logging error:', error);
     }
   });
@@ -120,10 +106,7 @@ export const auditLogMiddleware = async (req, res, next) => {
   next();
 };
 
-/**
- * Manual audit log helper
- * For logging specific actions that need custom descriptions
- */
+
 export const logAdminAction = async (req, actionType, resourceType, resourceId, description, metadata = {}) => {
   if (!req.user || req.user.role !== 'admin') {
     return;

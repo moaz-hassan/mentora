@@ -176,7 +176,7 @@ export const analyzeCourse = async (req, res, next) => {
 
     const analysis = await geminiService.analyzeCourseForReview(course);
     
-    // Save analysis to course
+    
     await courseService.saveCourseAnalysis(req.params.id, analysis);
 
     res.status(200).json({
@@ -293,8 +293,8 @@ export const searchCourses = async (req, res, next) => {
       level: req.query.level,
       minPrice: req.query.minPrice,
       maxPrice: req.query.maxPrice,
-      priceType: req.query.priceType, // 'free' | 'paid'
-      rating: req.query.rating, // minimum rating
+      priceType: req.query.priceType, 
+      rating: req.query.rating, 
       language: req.query.language,
       sortBy: req.query.sortBy,
       page: req.query.page || 1,

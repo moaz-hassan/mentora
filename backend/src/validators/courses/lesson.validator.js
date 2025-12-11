@@ -18,8 +18,8 @@ export const createLessonValidator = [
     .isIn(["video", "text"])
     .withMessage("Lesson type must be either 'video' or 'text'"),
   
-  // Video URL is now handled by multer middleware and service
-  // It will be set after upload
+  
+  
   
   body("content")
     .optional()

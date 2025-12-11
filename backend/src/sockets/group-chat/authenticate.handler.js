@@ -10,11 +10,11 @@ export const authenticateHandler = (io, socket, connectedUsers) => {
         return;
       }
 
-      // Store user connection
+      
       connectedUsers.set(userId, socket.id);
       socket.userId = userId;
 
-      // Join all user's chat rooms
+      
       const participants = await ChatParticipant.findAll({
         where: { user_id: userId, is_active: true },
         include: [{ model: ChatRoom }],

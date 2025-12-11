@@ -191,7 +191,7 @@ export const deleteQuiz = async (quizId, instructorId) => {
 export const submitQuizResult = async (resultData, studentId) => {
   const { quiz_id, score } = resultData;
 
-  // Verify quiz exists
+  
   const quiz = await Quiz.findByPk(quiz_id);
   if (!quiz) {
     const error = new Error("Quiz not found");

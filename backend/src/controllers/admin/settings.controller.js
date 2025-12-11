@@ -1,14 +1,8 @@
-/**
- * Settings Controller
- * Purpose: Handle settings route handlers for admin
- */
+
 
 import * as settingsService from "../../services/admin/settings.service.js";
 
-/**
- * Get all settings
- * GET /api/admin/settings
- */
+
 export const getAllSettings = async (req, res, next) => {
   try {
     const settings = await settingsService.getAllSettings();
@@ -22,10 +16,7 @@ export const getAllSettings = async (req, res, next) => {
   }
 };
 
-/**
- * Get settings by category
- * GET /api/admin/settings/:category
- */
+
 export const getSettingsByCategory = async (req, res, next) => {
   try {
     const { category } = req.params;
@@ -40,10 +31,7 @@ export const getSettingsByCategory = async (req, res, next) => {
   }
 };
 
-/**
- * Update single setting
- * PUT /api/admin/settings/:key
- */
+
 export const updateSetting = async (req, res, next) => {
   try {
     const { key } = req.params;
@@ -62,10 +50,7 @@ export const updateSetting = async (req, res, next) => {
   }
 };
 
-/**
- * Bulk update settings
- * POST /api/admin/settings/bulk
- */
+
 export const bulkUpdateSettings = async (req, res, next) => {
   try {
     const { updates } = req.body;
@@ -93,10 +78,7 @@ export const bulkUpdateSettings = async (req, res, next) => {
   }
 };
 
-/**
- * Create new setting
- * POST /api/admin/settings
- */
+
 export const createSetting = async (req, res, next) => {
   try {
     const setting = await settingsService.createSetting(req.body);
@@ -111,10 +93,7 @@ export const createSetting = async (req, res, next) => {
   }
 };
 
-/**
- * Get public settings
- * GET /api/settings/public
- */
+
 export const getPublicSettings = async (req, res, next) => {
   try {
     const settings = await settingsService.getPublicSettings();

@@ -1,7 +1,4 @@
-/**
- * Payment Validators
- * Purpose: Validate payment-related requests
- */
+
 
 import { body, param, query } from "express-validator";
 

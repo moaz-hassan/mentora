@@ -1,9 +1,6 @@
 import * as certificateService from "../../services/courses/certificate.service.js";
 
-/**
- * Generate a certificate for a completed course
- * POST /api/certificates/generate
- */
+
 export const generateCertificate = async (req, res, next) => {
   try {
     const { courseId } = req.body;
@@ -28,10 +25,7 @@ export const generateCertificate = async (req, res, next) => {
   }
 };
 
-/**
- * Get all certificates for the authenticated user
- * GET /api/certificates/my
- */
+
 export const getMyCertificates = async (req, res, next) => {
   try {
     const studentId = req.user.id;
@@ -47,10 +41,7 @@ export const getMyCertificates = async (req, res, next) => {
   }
 };
 
-/**
- * Get certificate by ID with authorization check
- * GET /api/certificates/:id
- */
+
 export const getCertificateById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -68,10 +59,7 @@ export const getCertificateById = async (req, res, next) => {
   }
 };
 
-/**
- * Get all certificates (admin only)
- * GET /api/certificates
- */
+
 export const getAllCertificates = async (req, res, next) => {
   try {
     const filters = {
@@ -92,10 +80,7 @@ export const getAllCertificates = async (req, res, next) => {
   }
 };
 
-/**
- * Verify a certificate
- * GET /api/certificates/:id/verify
- */
+
 export const verifyCertificate = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -118,10 +103,7 @@ export const verifyCertificate = async (req, res, next) => {
   }
 };
 
-/**
- * Check if certificate exists for a course (for the authenticated user)
- * GET /api/certificates/check/:courseId
- */
+
 export const checkCertificateExists = async (req, res, next) => {
   try {
     const { courseId } = req.params;
@@ -139,10 +121,7 @@ export const checkCertificateExists = async (req, res, next) => {
   }
 };
 
-/**
- * Download certificate PDF
- * GET /api/certificates/:id/download
- */
+
 export const downloadCertificate = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -151,7 +130,7 @@ export const downloadCertificate = async (req, res, next) => {
 
     const downloadUrl = await certificateService.getCertificateDownloadUrl(id, userId, userRole);
 
-    // Return the signed Cloudinary URL
+    
     res.status(200).json({
       success: true,
       downloadUrl,

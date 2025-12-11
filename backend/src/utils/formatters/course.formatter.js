@@ -1,11 +1,5 @@
 
-/**
- * Format course data for response
- * @param {Object} course - The course object (from Sequelize toJSON())
- * @param {number} enrollmentsCount - Total enrollments
- * @param {Object} reviewStats - Rating statistics { averageRating, totalReviews }
- * @returns {Object} Formatted course object
- */
+
 export const formatCourseResponse = (course, enrollmentsCount, reviewStats) => {
   const filteredCourse = { ...course };
 

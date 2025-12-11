@@ -1,7 +1,4 @@
-/**
- * User Validators
- * Purpose: Validate user-related requests
- */
+
 
 import { body, param } from "express-validator";
 

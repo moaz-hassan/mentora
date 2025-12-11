@@ -1,7 +1,7 @@
 export const errorHandler = (err, req, res, next) => {
   console.error("Error:", err);
 
-  // Validation errors from express-validator
+  
   if (err.name === "SequelizeValidationError") {
     const errors = err.errors.map((e) => ({
       field: e.path,
@@ -16,7 +16,7 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Unique constraint errors
+  
   if (err.name === "SequelizeUniqueConstraintError") {
     const field = err.errors[0]?.path || "field";
     return res.status(400).json({
@@ -27,7 +27,7 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Foreign key constraint errors (referential integrity)
+  
   if (err.name === "SequelizeForeignKeyConstraintError") {
     return res.status(400).json({
       success: false,
@@ -36,7 +36,7 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Database connection errors
+  
   if (err.name === "SequelizeConnectionError") {
     return res.status(503).json({
       success: false,
@@ -45,7 +45,7 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // JWT errors
+  
   if (err.name === "JsonWebTokenError") {
     return res.status(401).json({
       success: false,
@@ -62,7 +62,7 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Custom errors with statusCode
+  
   if (err.statusCode) {
     return res.status(err.statusCode).json({
       success: false,
@@ -71,7 +71,7 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Generic server errors (sanitized)
+  
   res.status(500).json({
     success: false,
     message: "An unexpected error occurred. Please try again later.",

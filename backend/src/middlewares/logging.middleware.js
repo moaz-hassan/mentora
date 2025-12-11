@@ -1,27 +1,21 @@
-/**
- * Logging Middleware
- * Purpose: Capture admin actions and queue them for async logging
- */
+
 
 import { addLoggingJob } from "../config/queue.js";
 
-/**
- * Log admin action middleware
- * Captures admin actions and queues them for async processing
- */
+
 export const logAdminAction = (actionType, resourceType) => {
   return async (req, res, next) => {
-    // Store original send function
+    
     const originalSend = res.send;
 
-    // Override send function to capture response
+    
     res.send = function (data) {
-      // Restore original send
+      
       res.send = originalSend;
 
-      // Only log if request was successful (2xx status)
+      
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        // Queue logging job asynchronously (don't wait)
+        
         addLoggingJob({
           type: "audit",
           data: {
@@ -45,7 +39,7 @@ export const logAdminAction = (actionType, resourceType) => {
         });
       }
 
-      // Send response
+      
       return originalSend.call(this, data);
     };
 
@@ -53,9 +47,7 @@ export const logAdminAction = (actionType, resourceType) => {
   };
 };
 
-/**
- * Log payment action
- */
+
 export const logPaymentAction = async (paymentData) => {
   try {
     await addLoggingJob({
@@ -76,9 +68,7 @@ export const logPaymentAction = async (paymentData) => {
   }
 };
 
-/**
- * Log enrollment action
- */
+
 export const logEnrollmentAction = async (enrollmentData) => {
   try {
     await addLoggingJob({
@@ -98,9 +88,7 @@ export const logEnrollmentAction = async (enrollmentData) => {
   }
 };
 
-/**
- * Log error
- */
+
 export const logError = async (errorData) => {
   try {
     await addLoggingJob({
@@ -123,9 +111,7 @@ export const logError = async (errorData) => {
   }
 };
 
-/**
- * Log moderation action
- */
+
 export const logModerationAction = async (moderationData) => {
   try {
     await addLoggingJob({
@@ -145,9 +131,7 @@ export const logModerationAction = async (moderationData) => {
   }
 };
 
-/**
- * Sanitize request body for logging (remove sensitive data)
- */
+
 const sanitizeBody = (body) => {
   if (!body) return {};
 
@@ -163,11 +147,9 @@ const sanitizeBody = (body) => {
   return sanitized;
 };
 
-/**
- * Error logging middleware
- */
+
 export const errorLoggingMiddleware = (err, req, res, next) => {
-  // Log error asynchronously
+  
   logError({
     type: err.name || "Error",
     message: err.message,
@@ -185,7 +167,7 @@ export const errorLoggingMiddleware = (err, req, res, next) => {
     }
   }).catch(console.error);
 
-  // Pass to next error handler
+  
   next(err);
 };
 

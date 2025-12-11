@@ -1,19 +1,11 @@
-/**
- * Platform Analytics Service
- * Purpose: Comprehensive platform analytics including enrollments, payments, user activity, and course performance
- * Includes: Custom report generation and scheduled reports
- */
+
 
 import models from "../../models/index.js";
 import { Op, fn, col, literal } from "sequelize";
 
 const { Enrollment, Payment, User, Course, Progress, CourseReview: Review, EnrollmentLog, PaymentLog } = models;
 
-/**
- * Get enrollment analytics
- * @param {Object} filters - Filter options (startDate, endDate, courseId, groupBy)
- * @returns {Object} Enrollment analytics data
- */
+
 export const getEnrollmentAnalytics = async (filters = {}) => {
   const { startDate, endDate, courseId, groupBy = "day" } = filters;
 
@@ -27,10 +19,10 @@ export const getEnrollmentAnalytics = async (filters = {}) => {
 
   if (courseId) whereClause.course_id = courseId;
 
-  // Total enrollments
+  
   const totalEnrollments = await Enrollment.count({ where: whereClause });
 
-  // New enrollments (within date range)
+  
   const newEnrollments = await Enrollment.count({
     where: {
       ...whereClause,
@@ -40,7 +32,7 @@ export const getEnrollmentAnalytics = async (filters = {}) => {
     }
   });
 
-  // Completion rate - check progress.completionPercentage = 100
+  
   const allEnrollments = await Enrollment.findAll({
     where: whereClause,
     attributes: ['id', 'progress'],
@@ -54,7 +46,7 @@ export const getEnrollmentAnalytics = async (filters = {}) => {
     ? ((completedEnrollments / totalEnrollments) * 100).toFixed(1)
     : 0;
 
-  // Drop-off analysis (enrollments that haven't been accessed in 30 days)
+  
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
   const inactiveEnrollments = allEnrollments.filter(e => {
     const progress = typeof e.progress === 'string' ? JSON.parse(e.progress) : e.progress;
@@ -62,7 +54,7 @@ export const getEnrollmentAnalytics = async (filters = {}) => {
     return new Date(progress.lastAccessed) < thirtyDaysAgo;
   }).length;
 
-  // Enrollment trends over time
+  
   let dateFormat;
   switch (groupBy) {
     case "hour":
@@ -92,7 +84,7 @@ export const getEnrollmentAnalytics = async (filters = {}) => {
     raw: true
   });
 
-  // Enrollments by course
+  
   const byCourse = await Enrollment.findAll({
     where: whereClause,
     attributes: [
@@ -139,11 +131,7 @@ export const getEnrollmentAnalytics = async (filters = {}) => {
   };
 };
 
-/**
- * Get payment analytics
- * @param {Object} filters - Filter options (startDate, endDate, status, groupBy)
- * @returns {Object} Payment analytics data
- */
+
 export const getPaymentAnalytics = async (filters = {}) => {
   const { startDate, endDate, status, groupBy = "day" } = filters;
 
@@ -157,7 +145,7 @@ export const getPaymentAnalytics = async (filters = {}) => {
 
   if (status) whereClause.status = status;
 
-  // Total revenue
+  
   const revenueData = await Payment.findAll({
     where: { ...whereClause, status: "completed" },
     attributes: [
@@ -170,7 +158,7 @@ export const getPaymentAnalytics = async (filters = {}) => {
   const totalRevenue = parseFloat(revenueData[0]?.totalRevenue || 0);
   const totalPayments = parseInt(revenueData[0]?.totalPayments || 0);
 
-  // Payment success rate
+  
   const totalAttempts = await Payment.count({ where: whereClause });
   const successfulPayments = await Payment.count({
     where: { ...whereClause, status: "completed" }
@@ -179,7 +167,7 @@ export const getPaymentAnalytics = async (filters = {}) => {
     ? ((successfulPayments / totalAttempts) * 100).toFixed(1)
     : 0;
 
-  // Refund statistics
+  
   const refundData = await Payment.findAll({
     where: { ...whereClause, status: "refunded" },
     attributes: [
@@ -195,7 +183,7 @@ export const getPaymentAnalytics = async (filters = {}) => {
     ? ((refundCount / totalPayments) * 100).toFixed(1)
     : 0;
 
-  // Payment method distribution
+  
   const byPaymentMethod = await Payment.findAll({
     where: { ...whereClause, status: "completed" },
     attributes: [
@@ -207,7 +195,7 @@ export const getPaymentAnalytics = async (filters = {}) => {
     raw: true
   });
 
-  // Revenue trends over time
+  
   let dateFormat;
   switch (groupBy) {
     case "hour":
@@ -269,11 +257,7 @@ export const getPaymentAnalytics = async (filters = {}) => {
   };
 };
 
-/**
- * Get user activity analytics
- * @param {Object} filters - Filter options (startDate, endDate, role, groupBy)
- * @returns {Object} User activity analytics data
- */
+
 export const getUserActivityAnalytics = async (filters = {}) => {
   const { startDate, endDate, role, groupBy = "day" } = filters;
 
@@ -281,10 +265,10 @@ export const getUserActivityAnalytics = async (filters = {}) => {
 
   if (role) whereClause.role = role;
 
-  // Total active users
+  
   const totalActiveUsers = await User.count({ where: whereClause });
 
-  // Registration trends
+  
   const registrationWhere = { ...whereClause };
   if (startDate || endDate) {
     registrationWhere.createdAt = {};
@@ -294,7 +278,7 @@ export const getUserActivityAnalytics = async (filters = {}) => {
 
   const newRegistrations = await User.count({ where: registrationWhere });
 
-  // User engagement metrics (users with recent activity based on updatedAt)
+  
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
@@ -312,12 +296,12 @@ export const getUserActivityAnalytics = async (filters = {}) => {
     }
   });
 
-  // Retention rate (users active within 30 days)
+  
   const retentionRate = totalActiveUsers > 0 
     ? ((activeLastMonth / totalActiveUsers) * 100).toFixed(1)
     : 0;
 
-  // Registration trends over time
+  
   let dateFormat;
   switch (groupBy) {
     case "hour":
@@ -347,7 +331,7 @@ export const getUserActivityAnalytics = async (filters = {}) => {
     raw: true
   });
 
-  // Users by role
+  
   const byRole = await User.findAll({
     where: whereClause,
     attributes: [
@@ -388,11 +372,7 @@ export const getUserActivityAnalytics = async (filters = {}) => {
   };
 };
 
-/**
- * Get course performance analytics
- * @param {Object} filters - Filter options (startDate, endDate, instructorId, limit)
- * @returns {Object} Course performance analytics data
- */
+
 export const getCoursePerformanceAnalytics = async (filters = {}) => {
   const { startDate, endDate, instructorId, limit = 20 } = filters;
 
@@ -400,7 +380,7 @@ export const getCoursePerformanceAnalytics = async (filters = {}) => {
 
   if (instructorId) whereClause.instructor_id = instructorId;
 
-  // Get courses with their metrics
+  
   const courses = await Course.findAll({
     where: whereClause,
     include: [
@@ -449,12 +429,12 @@ export const getCoursePerformanceAnalytics = async (filters = {}) => {
     subQuery: false
   });
 
-  // Calculate completion rates for each course
+  
   const coursePerformance = await Promise.all(
     courses.map(async (course) => {
       const totalEnrollments = parseInt(course.dataValues.enrollmentCount || 0);
       
-      // Get completed enrollments by checking progress.completionPercentage
+      
       const courseEnrollments = await Enrollment.findAll({
         where: {
           course_id: course.id,
@@ -499,7 +479,7 @@ export const getCoursePerformanceAnalytics = async (filters = {}) => {
     })
   );
 
-  // Overall statistics
+  
   const totalCourses = await Course.count({ where: whereClause });
   const totalEnrollments = coursePerformance.reduce((sum, c) => sum + c.enrollmentCount, 0);
   const totalRevenue = coursePerformance.reduce((sum, c) => sum + c.totalRevenue, 0);
@@ -523,17 +503,13 @@ export const getCoursePerformanceAnalytics = async (filters = {}) => {
   };
 };
 
-/**
- * Generate custom analytics report
- * @param {Object} reportConfig - Report configuration
- * @returns {Object} Custom report data
- */
+
 export const generateCustomReport = async (reportConfig) => {
   const { metrics, filters, groupBy } = reportConfig;
 
   const results = {};
 
-  // Generate requested metrics
+  
   if (metrics.includes("enrollments")) {
     results.enrollments = await getEnrollmentAnalytics({ ...filters, groupBy });
   }
@@ -558,32 +534,27 @@ export const generateCustomReport = async (reportConfig) => {
   };
 };
 
-/**
- * Schedule a report for automated generation
- * @param {Object} scheduleConfig - Schedule configuration
- * @param {string} adminId - Admin ID creating the schedule
- * @returns {Object} Scheduled report details
- */
+
 export const scheduleReport = async (scheduleConfig, adminId) => {
   const {
     name,
     metrics,
     filters,
     groupBy,
-    frequency, // daily, weekly, monthly
-    recipients, // email addresses
-    format // csv, pdf, json
+    frequency, 
+    recipients, 
+    format 
   } = scheduleConfig;
 
-  // Validate configuration
+  
   if (!name || !metrics || !frequency || !recipients) {
     const error = new Error("Missing required schedule configuration");
     error.statusCode = 400;
     throw error;
   }
 
-  // In a real implementation, this would store the schedule in a database
-  // and use a job scheduler (like node-cron or Bull) to execute it
+  
+  
   
   const schedule = {
     id: `schedule_${Date.now()}`,
@@ -607,11 +578,7 @@ export const scheduleReport = async (scheduleConfig, adminId) => {
   };
 };
 
-/**
- * Calculate next run time based on frequency
- * @param {string} frequency - Frequency (daily, weekly, monthly)
- * @returns {Date} Next run date
- */
+
 function calculateNextRun(frequency) {
   const now = new Date();
   
@@ -629,12 +596,7 @@ function calculateNextRun(frequency) {
   }
 }
 
-/**
- * Export analytics data to CSV format
- * @param {string} reportType - Type of report (enrollments, payments, users, courses)
- * @param {Object} data - Analytics data to export
- * @returns {string} CSV formatted data
- */
+
 export const exportAnalyticsToCSV = async (reportType, data) => {
   let csvContent = "";
 

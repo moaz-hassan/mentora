@@ -3,33 +3,28 @@ import { Op } from "sequelize";
 
 const { Course, User } = models;
 
-/**
- * Get related courses by category
- * @param {string} courseId - Current course ID
- * @param {number} limit - Maximum number of courses to return
- * @returns {Promise<Array>} Array of related courses
- */
+
 export const getRelatedCourses = async (courseId, limit = 4) => {
-  // Validate courseId
+  
   if (!courseId) {
     return [];
   }
 
-  // First, get the current course to find its category
+  
   const currentCourse = await Course.findByPk(courseId, {
     attributes: ["id", "category"],
   });
 
   if (!currentCourse || !currentCourse.category) {
-    // Return empty array if course not found or has no category
+    
     return [];
   }
 
-  // Find other approved courses in the same category
+  
   const relatedCourses = await Course.findAll({
     where: {
       category: currentCourse.category,
-      id: { [Op.ne]: courseId }, // Exclude current course
+      id: { [Op.ne]: courseId }, 
       status: "approved",
     },
     attributes: [
@@ -54,12 +49,12 @@ export const getRelatedCourses = async (courseId, limit = 4) => {
     order: [["createdAt", "DESC"]],
   });
 
-  // Calculate average rating and total reviews for each course
+  
   const coursesWithStats = await Promise.all(
     relatedCourses.map(async (course) => {
       const courseData = course.toJSON();
 
-      // Get rating stats
+      
       const ratingStats = await models.CourseReview.findOne({
         where: { course_id: course.id },
         attributes: [

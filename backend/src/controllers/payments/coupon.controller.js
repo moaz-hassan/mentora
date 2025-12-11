@@ -79,11 +79,7 @@ export const validateCoupon = async (req, res, next) => {
   }
 };
 
-/**
- * Get coupon analytics
- * GET /api/admin/coupons/analytics
- * GET /api/admin/coupons/:id/analytics
- */
+
 export const getCouponAnalytics = async (req, res, next) => {
   try {
     const couponId = req.params.id || null;
@@ -98,10 +94,7 @@ export const getCouponAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Search coupons
- * GET /api/admin/coupons/search?q=searchTerm&status=active&courseId=123
- */
+
 export const searchCoupons = async (req, res, next) => {
   try {
     const { q, status, courseId } = req.query;
@@ -122,10 +115,7 @@ export const searchCoupons = async (req, res, next) => {
   }
 };
 
-/**
- * Deactivate expired coupons
- * POST /api/admin/coupons/deactivate-expired
- */
+
 export const deactivateExpiredCoupons = async (req, res, next) => {
   try {
     const result = await couponService.deactivateExpiredCoupons();

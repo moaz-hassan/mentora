@@ -1,14 +1,8 @@
-/**
- * Financial Controller
- * Purpose: Handle financial route handlers for admin
- */
+
 
 import * as financialService from "../../services/admin/financial.service.js";
 
-/**
- * Get financial overview
- * GET /api/admin/financial/overview
- */
+
 export const getFinancialOverview = async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
@@ -23,10 +17,7 @@ export const getFinancialOverview = async (req, res, next) => {
   }
 };
 
-/**
- * Get revenue breakdown
- * GET /api/admin/financial/revenue
- */
+
 export const getRevenueBreakdown = async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
@@ -41,11 +32,7 @@ export const getRevenueBreakdown = async (req, res, next) => {
   }
 };
 
-/**
- * Get instructor payouts
- * GET /api/admin/financial/payouts
- * GET /api/admin/financial/payouts/:instructorId
- */
+
 export const getInstructorPayouts = async (req, res, next) => {
   try {
     const instructorId = req.params.instructorId || null;
@@ -60,10 +47,7 @@ export const getInstructorPayouts = async (req, res, next) => {
   }
 };
 
-/**
- * Get transaction history
- * GET /api/admin/financial/transactions
- */
+
 export const getTransactionHistory = async (req, res, next) => {
   try {
     const filters = {
@@ -87,10 +71,7 @@ export const getTransactionHistory = async (req, res, next) => {
   }
 };
 
-/**
- * Export financial data
- * POST /api/admin/financial/export
- */
+
 export const exportFinancialData = async (req, res, next) => {
   try {
     const { startDate, endDate } = req.body;
@@ -106,14 +87,11 @@ export const exportFinancialData = async (req, res, next) => {
   }
 };
 
-/**
- * Process payout request
- * POST /api/admin/financial/payouts/:id/process
- */
+
 export const processPayoutRequest = async (req, res, next) => {
   try {
     const { id } = req.params;
-    // Placeholder - would need payout tracking implementation
+    
     res.status(200).json({
       success: true,
       message: "Payout request processed successfully",

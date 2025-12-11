@@ -1,8 +1,4 @@
-/**
- * Analytics Service
- * Purpose: Handle analytics and reporting for instructors
- * Includes: Dashboard stats, course analytics, revenue analytics, engagement metrics
- */
+
 
 import models from "../../models/index.js";
 import { Op, fn, col, literal } from "sequelize";
@@ -20,11 +16,9 @@ const {
   Chapter,
 } = models;
 
-/**
- * Get instructor dashboard overview statistics
- */
+
 export const getInstructorOverview = async (instructorId) => {
-  // Get all instructor courses
+  
   const courses = await Course.findAll({
     where: { instructor_id: instructorId },
     attributes: ["id"],
@@ -32,14 +26,14 @@ export const getInstructorOverview = async (instructorId) => {
 
   const courseIds = courses.map((c) => c.id);
 
-  // Total students (unique enrollments across all courses)
+  
   const totalStudents = await Enrollment.count({
     where: { course_id: courseIds },
     distinct: true,
     col: "student_id",
   });
 
-  // Total earnings
+  
   const earningsResult = await Payment.sum("amount", {
     where: {
       course_id: courseIds,
@@ -48,10 +42,10 @@ export const getInstructorOverview = async (instructorId) => {
   });
   const totalEarnings = earningsResult || 0;
 
-  // Number of courses
+  
   const courseCount = courses.length;
 
-  // Average rating across all courses
+  
   const ratingResult = await CourseReview.findOne({
     where: { course_id: courseIds },
     attributes: [
@@ -63,7 +57,7 @@ export const getInstructorOverview = async (instructorId) => {
     ? parseFloat(ratingResult.avgRating).toFixed(1)
     : null;
 
-  // Recent enrollments (last 30 days)
+  
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -83,11 +77,9 @@ export const getInstructorOverview = async (instructorId) => {
   };
 };
 
-/**
- * Get course-specific analytics
- */
+
 export const getCourseAnalytics = async (courseId, instructorId) => {
-  // Verify instructor owns the course
+  
   const course = await Course.findByPk(courseId);
 
   if (!course) {
@@ -102,12 +94,12 @@ export const getCourseAnalytics = async (courseId, instructorId) => {
     throw error;
   }
 
-  // Total enrollments
+  
   const totalEnrollments = await Enrollment.count({
     where: { course_id: courseId },
   });
 
-  // Active students (accessed in last 30 days)
+  
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -147,7 +139,7 @@ export const getCourseAnalytics = async (courseId, instructorId) => {
       ? ((completedCourses / totalEnrollments) * 100).toFixed(1)
       : 0;
 
-  // Average quiz scores
+  
   const quizResults = await QuizResult.findAll({
     include: [
       {
@@ -173,7 +165,7 @@ export const getCourseAnalytics = async (courseId, instructorId) => {
         ).toFixed(1)
       : null;
 
-  // Student engagement (chat participation)
+  
   const chatRooms = await models.ChatRoom.findAll({
     where: { course_id: courseId, type: "group" },
     attributes: ["id"],
@@ -211,11 +203,9 @@ export const getCourseAnalytics = async (courseId, instructorId) => {
   };
 };
 
-/**
- * Get revenue analytics for instructor
- */
+
 export const getRevenueAnalytics = async (instructorId, startDate, endDate) => {
-  // Get all instructor courses
+  
   const courses = await Course.findAll({
     where: { instructor_id: instructorId },
     attributes: ["id", "title"],
@@ -223,7 +213,7 @@ export const getRevenueAnalytics = async (instructorId, startDate, endDate) => {
 
   const courseIds = courses.map((c) => c.id);
 
-  // Build date filter
+  
   const dateFilter = {};
   if (startDate) {
     dateFilter[Op.gte] = new Date(startDate);
@@ -241,10 +231,10 @@ export const getRevenueAnalytics = async (instructorId, startDate, endDate) => {
     whereClause.created_at = dateFilter;
   }
 
-  // Total revenue
+  
   const totalRevenue = await Payment.sum("amount", { where: whereClause });
 
-  // Revenue by course
+  
   const revenueByCourse = await Payment.findAll({
     where: whereClause,
     attributes: [
@@ -262,7 +252,7 @@ export const getRevenueAnalytics = async (instructorId, startDate, endDate) => {
     raw: true,
   });
 
-  // Revenue by month
+  
   const revenueByMonth = await Payment.findAll({
     where: whereClause,
     attributes: [
@@ -288,7 +278,7 @@ export const getRevenueAnalytics = async (instructorId, startDate, endDate) => {
     raw: true,
   });
 
-  // Refund rate
+  
   const totalPayments = await Payment.count({
     where: { course_id: courseIds },
   });
@@ -300,7 +290,7 @@ export const getRevenueAnalytics = async (instructorId, startDate, endDate) => {
   const refundRate =
     totalPayments > 0 ? ((refundedPayments / totalPayments) * 100).toFixed(1) : 0;
 
-  // Average transaction value
+  
   const averageTransactionValue =
     totalPayments > 0 ? (totalRevenue / totalPayments).toFixed(2) : 0;
 
@@ -322,11 +312,9 @@ export const getRevenueAnalytics = async (instructorId, startDate, endDate) => {
   };
 };
 
-/**
- * Get student engagement metrics
- */
+
 export const getEngagementMetrics = async (instructorId, days = 30) => {
-  // Get all instructor courses
+  
   const courses = await Course.findAll({
     where: { instructor_id: instructorId },
     attributes: ["id"],
@@ -337,7 +325,7 @@ export const getEngagementMetrics = async (instructorId, days = 30) => {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
 
-  // Active students per day
+  
   const enrollments = await Enrollment.findAll({
     where: { course_id: courseIds },
     attributes: ["id", "progress"],
@@ -356,7 +344,7 @@ export const getEngagementMetrics = async (instructorId, days = 30) => {
     }
   });
 
-  // Chat participation rate
+  
   const chatRooms = await models.ChatRoom.findAll({
     where: { course_id: courseIds, type: "group" },
     attributes: ["id"],
@@ -379,7 +367,7 @@ export const getEngagementMetrics = async (instructorId, days = 30) => {
       ? ((uniqueMessageSenders / totalStudents) * 100).toFixed(1)
       : 0;
 
-  // Average session duration (based on watch time)
+  
   let totalWatchTime = 0;
   let studentsWithWatchTime = 0;
 
@@ -393,7 +381,7 @@ export const getEngagementMetrics = async (instructorId, days = 30) => {
 
   const averageSessionDuration =
     studentsWithWatchTime > 0
-      ? Math.round(totalWatchTime / studentsWithWatchTime / 60) // Convert to minutes
+      ? Math.round(totalWatchTime / studentsWithWatchTime / 60) 
       : 0;
 
   return {
@@ -410,15 +398,13 @@ export const getEngagementMetrics = async (instructorId, days = 30) => {
   };
 };
 
-/**
- * Export analytics data as CSV
- */
+
 export const exportAnalyticsData = async (instructorId, startDate, endDate) => {
   const overview = await getInstructorOverview(instructorId);
   const revenue = await getRevenueAnalytics(instructorId, startDate, endDate);
   const engagement = await getEngagementMetrics(instructorId, 30);
 
-  // Build CSV data
+  
   const csvData = {
     overview,
     revenue,
@@ -430,11 +416,9 @@ export const exportAnalyticsData = async (instructorId, startDate, endDate) => {
 };
 
 
-/**
- * Get enrollment trend with flexible grouping
- */
+
 export const getEnrollmentTrendWithGrouping = async (instructorId, days = 30, groupBy = 'day') => {
-  // Get all instructor courses
+  
   const courses = await Course.findAll({
     where: { instructor_id: instructorId },
     attributes: ["id"],
@@ -458,7 +442,7 @@ export const getEnrollmentTrendWithGrouping = async (instructorId, days = 30, gr
     order: [["enrolled_at", "ASC"]],
   });
 
-  // Group enrollments based on groupBy parameter
+  
   const groupedData = {};
 
   enrollments.forEach((enrollment) => {
@@ -466,25 +450,25 @@ export const getEnrollmentTrendWithGrouping = async (instructorId, days = 30, gr
     let key;
 
     if (groupBy === 'day') {
-      // Group by day: YYYY-MM-DD
+      
       key = enrollDate.toISOString().split('T')[0];
     } else if (groupBy === 'week') {
-      // Group by week number
+      
       const msPerWeek = 7 * 24 * 60 * 60 * 1000;
       const weeksDiff = Math.floor((enrollDate - startDate) / msPerWeek);
       key = `Week ${weeksDiff + 1}`;
     } else if (groupBy === 'month') {
-      // Group by month: YYYY-MM
+      
       key = `${enrollDate.getFullYear()}-${String(enrollDate.getMonth() + 1).padStart(2, '0')}`;
     } else {
-      // Default to day
+      
       key = enrollDate.toISOString().split('T')[0];
     }
 
     groupedData[key] = (groupedData[key] || 0) + 1;
   });
 
-  // Convert to array format
+  
   const trend = Object.entries(groupedData).map(([date, count]) => ({
     date,
     enrollments: count,
@@ -494,13 +478,11 @@ export const getEnrollmentTrendWithGrouping = async (instructorId, days = 30, gr
 };
 
 
-/**
- * Anonymize student data for privacy
- */
+
 const anonymizeStudentData = (data, anonymize) => {
   if (!anonymize) return data;
 
-  // Helper function to anonymize a single student object
+  
   const anonymizeStudent = (student, index) => {
     if (!student) return student;
     return {
@@ -512,10 +494,10 @@ const anonymizeStudentData = (data, anonymize) => {
     };
   };
 
-  // Create a deep copy to avoid mutating original data
+  
   const anonymizedData = JSON.parse(JSON.stringify(data));
 
-  // Anonymize any student references in the data
+  
   if (anonymizedData.students && Array.isArray(anonymizedData.students)) {
     anonymizedData.students = anonymizedData.students.map((student, index) =>
       anonymizeStudent(student, index)
@@ -525,9 +507,7 @@ const anonymizeStudentData = (data, anonymize) => {
   return anonymizedData;
 };
 
-/**
- * Generate comprehensive analytics report
- */
+
 export const generateComprehensiveReport = async (
   instructorId,
   startDate,
@@ -535,7 +515,7 @@ export const generateComprehensiveReport = async (
   courseIds = null,
   anonymizeStudents = true
 ) => {
-  // Get instructor courses
+  
   const courseFilter = {
     instructor_id: instructorId,
     status: "approved",
@@ -563,7 +543,7 @@ export const generateComprehensiveReport = async (
 
   const courseIdsArray = courses.map((c) => c.id);
 
-  // Build date filter
+  
   const dateFilter = {};
   if (startDate) {
     dateFilter[Op.gte] = new Date(startDate);
@@ -572,7 +552,7 @@ export const generateComprehensiveReport = async (
     dateFilter[Op.lte] = new Date(endDate);
   }
 
-  // Get overview statistics
+  
   const enrollments = await Enrollment.findAll({
     where: {
       course_id: courseIdsArray,
@@ -589,7 +569,7 @@ export const generateComprehensiveReport = async (
 
   const totalEnrollments = enrollments.length;
 
-  // Calculate active students
+  
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -616,7 +596,7 @@ export const generateComprehensiveReport = async (
       ? parseFloat(((completedCount / totalEnrollments) * 100).toFixed(1))
       : 0;
 
-  // Get average rating
+  
   const ratingResult = await CourseReview.findOne({
     where: { course_id: courseIdsArray },
     attributes: [
@@ -629,7 +609,7 @@ export const generateComprehensiveReport = async (
     ? parseFloat(parseFloat(ratingResult.avgRating).toFixed(1))
     : 0;
 
-  // Get revenue data
+  
   const revenueWhereClause = {
     course_id: courseIdsArray,
     status: "completed",
@@ -643,7 +623,7 @@ export const generateComprehensiveReport = async (
     where: revenueWhereClause,
   });
 
-  // Revenue by course
+  
   const revenueByCourse = await Payment.findAll({
     where: revenueWhereClause,
     attributes: [
@@ -661,7 +641,7 @@ export const generateComprehensiveReport = async (
     raw: true,
   });
 
-  // Revenue by month
+  
   const revenueByMonth = await Payment.findAll({
     where: revenueWhereClause,
     attributes: [
@@ -687,7 +667,7 @@ export const generateComprehensiveReport = async (
     raw: true,
   });
 
-  // Get enrollment trend
+  
   const enrollmentTrendData = await getEnrollmentTrendWithGrouping(
     instructorId,
     endDate && startDate
@@ -696,7 +676,7 @@ export const generateComprehensiveReport = async (
     'day'
   );
 
-  // Get engagement metrics
+  
   const chatRooms = await models.ChatRoom.findAll({
     where: { course_id: courseIdsArray, type: "group" },
     attributes: ["id"],
@@ -718,7 +698,7 @@ export const generateComprehensiveReport = async (
         : 0;
   }
 
-  // Get quiz analytics
+  
   const quizzes = await Quiz.findAll({
     include: [
       {
@@ -761,7 +741,7 @@ export const generateComprehensiveReport = async (
     }
   }
 
-  // Compile report data
+  
   let reportData = {
     overview: {
       totalEnrollments,
@@ -820,7 +800,7 @@ export const generateComprehensiveReport = async (
     instructor_id: instructorId,
   };
 
-  // Anonymize student data if requested
+  
   if (anonymizeStudents) {
     reportData = anonymizeStudentData(reportData, true);
   }

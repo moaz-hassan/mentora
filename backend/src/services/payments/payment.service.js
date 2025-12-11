@@ -1,18 +1,10 @@
-/**
- * Payment Service
- * Purpose: Handle payment-related business logic
- * Includes: CRUD operations for payments
- */
+
 
 import models from "../../models/index.js";
 
 const { Payment, User, Course } = models;
 
-/**
- * Get all payments with optional filters
- * @param {Object} filters - Query filters (user_id, course_id, status)
- * @returns {Array} List of payments
- */
+
 export const getAllPayments = async (filters = {}) => {
   const where = {};
 
@@ -32,11 +24,7 @@ export const getAllPayments = async (filters = {}) => {
   return payments;
 };
 
-/**
- * Get payment by ID
- * @param {string} paymentId - Payment ID
- * @returns {Object} Payment object
- */
+
 export const getPaymentById = async (paymentId) => {
   const payment = await Payment.findByPk(paymentId, {
     include: [
@@ -54,16 +42,11 @@ export const getPaymentById = async (paymentId) => {
   return payment;
 };
 
-/**
- * Create a new payment
- * @param {Object} paymentData - Payment data
- * @param {string} userId - User ID making the payment
- * @returns {Object} Created payment
- */
+
 export const createPayment = async (paymentData, userId) => {
   const { course_id, amount, currency, payment_method } = paymentData;
 
-  // Verify course exists
+  
   const course = await Course.findByPk(course_id);
   if (!course) {
     const error = new Error("Course not found");
@@ -83,12 +66,7 @@ export const createPayment = async (paymentData, userId) => {
   return payment;
 };
 
-/**
- * Update payment
- * @param {string} paymentId - Payment ID
- * @param {Object} updateData - Data to update
- * @returns {Object} Updated payment
- */
+
 export const updatePayment = async (paymentId, updateData) => {
   const payment = await Payment.findByPk(paymentId);
 
@@ -103,11 +81,7 @@ export const updatePayment = async (paymentId, updateData) => {
   return payment;
 };
 
-/**
- * Delete payment
- * @param {string} paymentId - Payment ID
- * @returns {Object} Success message
- */
+
 export const deletePayment = async (paymentId) => {
   const payment = await Payment.findByPk(paymentId);
 

@@ -32,7 +32,7 @@ router.get(
   courseController.getAllFeaturedCourses
 );
 
-// Search and filter courses with enhanced fuzzy search
+
 router.get("/search", cachingMiddleware, courseController.searchCourses);
 
 router.post(

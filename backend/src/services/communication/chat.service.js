@@ -1,20 +1,13 @@
-/**
- * Chat Service
- * Purpose: Handle chat room and message-related business logic
- * Includes: CRUD operations for chat rooms and messages
- */
+
 
 import models from "../../models/index.js";
 import { Op } from "sequelize";
 
 const { ChatRoom, ChatMessage, Course, User } = models;
 
-// ============ CHAT ROOM OPERATIONS ============
 
-/**
- * Get all chat rooms
- * @returns {Array} List of chat rooms
- */
+
+
 export const getAllChatRooms = async () => {
   const chatRooms = await ChatRoom.findAll({
     include: [{ model: Course, attributes: ["id", "title"] }],
@@ -23,11 +16,7 @@ export const getAllChatRooms = async () => {
   return chatRooms;
 };
 
-/**
- * Get chat room by ID
- * @param {string} roomId - Chat room ID
- * @returns {Object} Chat room object
- */
+
 export const getChatRoomById = async (roomId) => {
   const chatRoom = await ChatRoom.findByPk(roomId, {
     include: [{ model: Course, attributes: ["id", "title"] }],
@@ -42,11 +31,7 @@ export const getChatRoomById = async (roomId) => {
   return chatRoom;
 };
 
-/**
- * Get chat room by course ID
- * @param {string} courseId - Course ID
- * @returns {Object} Chat room object
- */
+
 export const getChatRoomByCourseId = async (courseId) => {
   const chatRoom = await ChatRoom.findOne({
     where: { course_id: courseId },
@@ -62,15 +47,11 @@ export const getChatRoomByCourseId = async (courseId) => {
   return chatRoom;
 };
 
-/**
- * Create a new chat room
- * @param {Object} roomData - Chat room data
- * @returns {Object} Created chat room
- */
+
 export const createChatRoom = async (roomData) => {
   const { course_id } = roomData;
 
-  // Verify course exists
+  
   const course = await Course.findByPk(course_id);
   if (!course) {
     const error = new Error("Course not found");
@@ -78,7 +59,7 @@ export const createChatRoom = async (roomData) => {
     throw error;
   }
 
-  // Check if chat room already exists for this course
+  
   const existingRoom = await ChatRoom.findOne({ where: { course_id } });
   if (existingRoom) {
     const error = new Error("Chat room already exists for this course");
@@ -91,11 +72,7 @@ export const createChatRoom = async (roomData) => {
   return chatRoom;
 };
 
-/**
- * Delete chat room
- * @param {string} roomId - Chat room ID
- * @returns {Object} Success message
- */
+
 export const deleteChatRoom = async (roomId) => {
   const chatRoom = await ChatRoom.findByPk(roomId);
 
@@ -110,13 +87,9 @@ export const deleteChatRoom = async (roomId) => {
   return { message: "Chat room deleted successfully" };
 };
 
-// ============ CHAT MESSAGE OPERATIONS ============
 
-/**
- * Get all messages for a chat room
- * @param {string} roomId - Chat room ID
- * @returns {Array} List of messages
- */
+
+
 export const getMessagesByRoomId = async (roomId) => {
   const messages = await ChatMessage.findAll({
     where: { room_id: roomId },
@@ -127,11 +100,7 @@ export const getMessagesByRoomId = async (roomId) => {
   return messages;
 };
 
-/**
- * Get message by ID
- * @param {string} messageId - Message ID
- * @returns {Object} Message object
- */
+
 export const getMessageById = async (messageId) => {
   const message = await ChatMessage.findByPk(messageId, {
     include: [{ model: User, attributes: ["id", "full_name"] }],
@@ -146,16 +115,11 @@ export const getMessageById = async (messageId) => {
   return message;
 };
 
-/**
- * Create a new message
- * @param {Object} messageData - Message data
- * @param {string} senderId - Sender user ID
- * @returns {Object} Created message
- */
+
 export const createMessage = async (messageData, senderId) => {
   const { room_id, message } = messageData;
 
-  // Verify chat room exists
+  
   const chatRoom = await ChatRoom.findByPk(room_id);
   if (!chatRoom) {
     const error = new Error("Chat room not found");
@@ -172,13 +136,7 @@ export const createMessage = async (messageData, senderId) => {
   return chatMessage;
 };
 
-/**
- * Delete message
- * @param {string} messageId - Message ID
- * @param {string} userId - User ID making the request
- * @param {string} userRole - Role of the user
- * @returns {Object} Success message
- */
+
 export const deleteMessage = async (messageId, userId, userRole) => {
   const message = await ChatMessage.findByPk(messageId);
 
@@ -188,7 +146,7 @@ export const deleteMessage = async (messageId, userId, userRole) => {
     throw error;
   }
 
-  // Check if user is the sender or admin
+  
   if (message.sender_id !== userId && userRole !== "admin") {
     const error = new Error("Not authorized to delete this message");
     error.statusCode = 403;
@@ -200,18 +158,13 @@ export const deleteMessage = async (messageId, userId, userRole) => {
   return { message: "Message deleted successfully" };
 };
 
-// ============ ENHANCED CHAT ROOM MANAGEMENT ============
 
-/**
- * Auto-create group chat room for course
- * @param {string} courseId - Course ID
- * @param {string} instructorId - Instructor ID
- * @returns {Object} Created chat room
- */
+
+
 export const autoCreateGroupChat = async (courseId, instructorId) => {
   const { ChatParticipant } = models;
 
-  // Check if chat room already exists
+  
   const existingRoom = await ChatRoom.findOne({
     where: { course_id: courseId, type: "group" },
   });
@@ -220,7 +173,7 @@ export const autoCreateGroupChat = async (courseId, instructorId) => {
     return existingRoom;
   }
 
-  // Get course details
+  
   const course = await Course.findByPk(courseId);
   if (!course) {
     const error = new Error("Course not found");
@@ -228,7 +181,7 @@ export const autoCreateGroupChat = async (courseId, instructorId) => {
     throw error;
   }
 
-  // Create group chat room
+  
   const chatRoom = await ChatRoom.create({
     type: "group",
     course_id: courseId,
@@ -236,7 +189,7 @@ export const autoCreateGroupChat = async (courseId, instructorId) => {
     created_by: instructorId,
   });
 
-  // Add instructor as admin participant
+  
   await ChatParticipant.create({
     room_id: chatRoom.id,
     user_id: instructorId,
@@ -247,16 +200,11 @@ export const autoCreateGroupChat = async (courseId, instructorId) => {
   return chatRoom;
 };
 
-/**
- * Add student to group chat on enrollment
- * @param {string} courseId - Course ID
- * @param {string} studentId - Student ID
- * @returns {Object} Chat participant record
- */
+
 export const addStudentToGroupChat = async (courseId, studentId) => {
   const { ChatParticipant } = models;
 
-  // Find group chat for course
+  
   const chatRoom = await ChatRoom.findOne({
     where: { course_id: courseId, type: "group" },
   });
@@ -267,20 +215,20 @@ export const addStudentToGroupChat = async (courseId, studentId) => {
     throw error;
   }
 
-  // Check if student is already a participant
+  
   const existingParticipant = await ChatParticipant.findOne({
     where: { room_id: chatRoom.id, user_id: studentId },
   });
 
   if (existingParticipant) {
-    // Reactivate if inactive
+    
     if (!existingParticipant.is_active) {
       await existingParticipant.update({ is_active: true });
     }
     return existingParticipant;
   }
 
-  // Add student as participant
+  
   const participant = await ChatParticipant.create({
     room_id: chatRoom.id,
     user_id: studentId,
@@ -295,7 +243,7 @@ export const addStudentToGroupChat = async (courseId, studentId) => {
 export const checkChatMembership = async (courseId, userId) => {
   const { ChatParticipant } = models;
 
-  // Find group chat for course
+  
   const chatRoom = await ChatRoom.findOne({
     where: { course_id: courseId, type: "group" },
   });
@@ -304,7 +252,7 @@ export const checkChatMembership = async (courseId, userId) => {
     return { isMember: false, roomId: null };
   }
 
-  // Check if user is a participant
+  
   const participant = await ChatParticipant.findOne({
     where: { room_id: chatRoom.id, user_id: userId, is_active: true },
   });
@@ -315,17 +263,11 @@ export const checkChatMembership = async (courseId, userId) => {
   };
 };
 
-/**
- * Create private chat room between student and instructor
- * @param {string} studentId - Student ID
- * @param {string} instructorId - Instructor ID
- * @param {string} courseId - Course ID (optional, for context)
- * @returns {Object} Created or existing chat room
- */
+
 export const createPrivateChat = async (studentId, instructorId, courseId = null) => {
   const { ChatParticipant } = models;
 
-  // Check if private chat already exists between these users
+  
   const existingRooms = await ChatRoom.findAll({
     where: { type: "private" },
     include: [
@@ -337,7 +279,7 @@ export const createPrivateChat = async (studentId, instructorId, courseId = null
     ],
   });
 
-  // Find room where both users are participants
+  
   for (const room of existingRooms) {
     const participantIds = room.ChatParticipants.map((p) => p.user_id);
     if (
@@ -348,7 +290,7 @@ export const createPrivateChat = async (studentId, instructorId, courseId = null
     }
   }
 
-  // Create new private chat room
+  
   const student = await User.findByPk(studentId);
   const instructor = await User.findByPk(instructorId);
 
@@ -365,7 +307,7 @@ export const createPrivateChat = async (studentId, instructorId, courseId = null
     created_by: studentId,
   });
 
-  // Add both users as participants
+  
   await ChatParticipant.bulkCreate([
     {
       room_id: chatRoom.id,
@@ -384,11 +326,7 @@ export const createPrivateChat = async (studentId, instructorId, courseId = null
   return chatRoom;
 };
 
-/**
- * Get user's chat rooms (both group and private)
- * @param {string} userId - User ID
- * @returns {Array} List of chat rooms
- */
+
 export const getUserChatRooms = async (userId) => {
   const { ChatParticipant } = models;
 
@@ -418,7 +356,7 @@ export const getUserChatRooms = async (userId) => {
 
   const chatRooms = participants.map((p) => p.ChatRoom);
 
-  // Get last message for each room
+  
   for (const room of chatRooms) {
     const lastMessage = await ChatMessage.findOne({
       where: { room_id: room.id },
@@ -432,7 +370,7 @@ export const getUserChatRooms = async (userId) => {
     });
     room.dataValues.lastMessage = lastMessage;
 
-    // Get unread count for user
+    
     const participant = await ChatParticipant.findOne({
       where: { room_id: room.id, user_id: userId },
     });
@@ -453,12 +391,7 @@ export const getUserChatRooms = async (userId) => {
   return chatRooms;
 };
 
-/**
- * Mark chat room as read for user
- * @param {string} roomId - Chat room ID
- * @param {string} userId - User ID
- * @returns {Object} Updated participant record
- */
+
 export const markChatAsRead = async (roomId, userId) => {
   const { ChatParticipant } = models;
 
@@ -477,11 +410,7 @@ export const markChatAsRead = async (roomId, userId) => {
   return participant;
 };
 
-/**
- * Get unread message count for user
- * @param {string} userId - User ID
- * @returns {number} Total unread count
- */
+
 export const getUnreadCount = async (userId) => {
   const { ChatParticipant } = models;
 
@@ -507,18 +436,11 @@ export const getUnreadCount = async (userId) => {
   return totalUnread;
 };
 
-/**
- * Get messages for a room with pagination
- * @param {string} roomId - Chat room ID
- * @param {string} userId - User ID
- * @param {number} limit - Number of messages to fetch
- * @param {number} offset - Offset for pagination
- * @returns {Array} List of messages
- */
+
 export const getRoomMessages = async (roomId, userId, limit = 50, offset = 0) => {
   const { ChatParticipant } = models;
 
-  // Verify user is a participant
+  
   const participant = await ChatParticipant.findOne({
     where: { room_id: roomId, user_id: userId },
   });
@@ -549,21 +471,13 @@ export const getRoomMessages = async (roomId, userId, limit = 50, offset = 0) =>
   };
 };
 
-// ============ CURSOR-BASED PAGINATION WITH REDIS CACHING ============
 
-/**
- * Get messages with cursor-based pagination for infinite scroll
- * First tries Redis cache, then falls back to MySQL
- * @param {string} roomId - Chat room ID
- * @param {string} userId - User ID
- * @param {string} cursor - ISO timestamp cursor (messages before this timestamp)
- * @param {number} limit - Number of messages to fetch
- * @returns {Object} { messages, hasMore, nextCursor, fromCache }
- */
+
+
 export const getRoomMessagesWithCursor = async (roomId, userId, cursor = null, limit = 20) => {
   const { ChatParticipant } = models;
 
-  // Verify user is a participant
+  
   const participant = await ChatParticipant.findOne({
     where: { room_id: roomId, user_id: userId },
   });
@@ -574,7 +488,7 @@ export const getRoomMessagesWithCursor = async (roomId, userId, cursor = null, l
     throw error;
   }
 
-  // If no cursor (initial load), try Redis cache first
+  
   if (!cursor) {
     try {
       const { getCachedMessages, isRedisAvailable } = await import('../../utils/redis.util.js');
@@ -586,7 +500,7 @@ export const getRoomMessagesWithCursor = async (roomId, userId, cursor = null, l
           const nextCursor = hasMore ? cachedMessages[limit - 1].created_at : null;
           
           return {
-            messages: messages.reverse(), // Oldest first for display
+            messages: messages.reverse(), 
             hasMore,
             nextCursor,
             lastReadAt: participant.last_read_at,
@@ -595,18 +509,18 @@ export const getRoomMessagesWithCursor = async (roomId, userId, cursor = null, l
         }
       }
     } catch (error) {
-      // Redis unavailable, continue with MySQL
+      
       console.warn('Redis cache miss or unavailable:', error.message);
     }
   }
 
-  // Build where clause with cursor
+  
   const where = { room_id: roomId };
   if (cursor) {
     where.created_at = { [Op.lt]: new Date(cursor) };
   }
 
-  // Fetch from MySQL (get one extra to check if there are more)
+  
   const messages = await ChatMessage.findAll({
     where,
     include: [
@@ -626,12 +540,12 @@ export const getRoomMessagesWithCursor = async (roomId, userId, cursor = null, l
     ? resultMessages[resultMessages.length - 1].created_at.toISOString()
     : null;
 
-  // If this is initial load and we got results, populate cache
+  
   if (!cursor && resultMessages.length > 0) {
     try {
       const { addMessageToCache, isRedisAvailable } = await import('../../utils/redis.util.js');
       if (isRedisAvailable()) {
-        // Add messages to cache (newest first in Redis)
+        
         for (const msg of resultMessages) {
           await addMessageToCache(roomId, formatMessageForCache(msg));
         }
@@ -642,7 +556,7 @@ export const getRoomMessagesWithCursor = async (roomId, userId, cursor = null, l
   }
 
   return {
-    messages: resultMessages.reverse(), // Oldest first for display
+    messages: resultMessages.reverse(), 
     hasMore,
     nextCursor,
     lastReadAt: participant.last_read_at,
@@ -650,9 +564,7 @@ export const getRoomMessagesWithCursor = async (roomId, userId, cursor = null, l
   };
 };
 
-/**
- * Format message for Redis cache
- */
+
 const formatMessageForCache = (msg) => ({
   id: msg.id,
   room_id: msg.room_id,
@@ -673,16 +585,11 @@ const formatMessageForCache = (msg) => ({
   } : null,
 });
 
-/**
- * Create message and update Redis cache
- * @param {Object} messageData - Message data
- * @param {string} senderId - Sender user ID
- * @returns {Object} Created message
- */
+
 export const createMessageWithCache = async (messageData, senderId) => {
   const { room_id, message, message_type = 'text', file_url = null } = messageData;
 
-  // Verify chat room exists
+  
   const chatRoom = await ChatRoom.findByPk(room_id);
   if (!chatRoom) {
     const error = new Error("Chat room not found");
@@ -690,7 +597,7 @@ export const createMessageWithCache = async (messageData, senderId) => {
     throw error;
   }
 
-  // Create message in MySQL
+  
   const chatMessage = await ChatMessage.create({
     room_id,
     sender_id: senderId,
@@ -699,7 +606,7 @@ export const createMessageWithCache = async (messageData, senderId) => {
     file_url,
   });
 
-  // Fetch the complete message with user info
+  
   const fullMessage = await ChatMessage.findByPk(chatMessage.id, {
     include: [
       {
@@ -710,7 +617,7 @@ export const createMessageWithCache = async (messageData, senderId) => {
     ],
   });
 
-  // Add to Redis cache
+  
   try {
     const { addMessageToCache, isRedisAvailable } = await import('../../utils/redis.util.js');
     if (isRedisAvailable()) {

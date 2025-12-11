@@ -31,8 +31,8 @@ export const createCourseValidator = [
     .isFloat({ min: 0 })
     .withMessage("Price must be a positive number"),
   
-  // Thumbnail is now handled by multer middleware, not as URL
-  // thumbnail_url will be set by the service after upload
+  
+  
   
   body("is_published")
     .optional()

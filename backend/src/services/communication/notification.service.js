@@ -1,19 +1,11 @@
-/**
- * Notification Service
- * Purpose: Handle notification-related business logic
- * Includes: CRUD operations for notifications, broadcast messaging, scheduling, and engagement tracking
- */
+
 
 import models from "../../models/index.js";
 import { Op, fn, col } from "sequelize";
 
 const { Notification, User, NotificationLog } = models;
 
-/**
- * Get all notifications for a user
- * @param {string} userId - User ID
- * @returns {Array} List of notifications
- */
+
 export const getNotificationsByUser = async (userId) => {
   const notifications = await Notification.findAll({
     where: { user_id: userId },
@@ -23,12 +15,7 @@ export const getNotificationsByUser = async (userId) => {
   return notifications;
 };
 
-/**
- * Get user notifications with pagination
- * @param {string} userId - User ID
- * @param {Object} options - Query options
- * @returns {Object} Notifications with pagination info
- */
+
 export const getUserNotifications = async (userId, options = {}) => {
   const { limit = 50, offset = 0, unreadOnly = false } = options;
   
@@ -52,11 +39,7 @@ export const getUserNotifications = async (userId, options = {}) => {
   };
 };
 
-/**
- * Get notification by ID
- * @param {string} notificationId - Notification ID
- * @returns {Object} Notification object
- */
+
 export const getNotificationById = async (notificationId) => {
   const notification = await Notification.findByPk(notificationId);
 
@@ -69,15 +52,11 @@ export const getNotificationById = async (notificationId) => {
   return notification;
 };
 
-/**
- * Create a new notification
- * @param {Object} notificationData - Notification data
- * @returns {Object} Created notification
- */
+
 export const createNotification = async (notificationData) => {
   const { user_id, message, type, title, related_id, related_type } = notificationData;
 
-  // Verify user exists
+  
   const user = await User.findByPk(user_id);
   if (!user) {
     const error = new Error("User not found");
@@ -97,13 +76,7 @@ export const createNotification = async (notificationData) => {
   return notification;
 };
 
-/**
- * Update notification (mark as read)
- * @param {string} notificationId - Notification ID
- * @param {Object} updateData - Data to update
- * @param {string} userId - User ID making the request
- * @returns {Object} Updated notification
- */
+
 export const updateNotification = async (notificationId, updateData, userId) => {
   const notification = await Notification.findByPk(notificationId);
 
@@ -113,7 +86,7 @@ export const updateNotification = async (notificationId, updateData, userId) => 
     throw error;
   }
 
-  // Check if user owns the notification
+  
   if (notification.user_id !== userId) {
     const error = new Error("Not authorized to update this notification");
     error.statusCode = 403;
@@ -125,12 +98,7 @@ export const updateNotification = async (notificationId, updateData, userId) => 
   return notification;
 };
 
-/**
- * Delete notification
- * @param {string} notificationId - Notification ID
- * @param {string} userId - User ID making the request
- * @returns {Object} Success message
- */
+
 export const deleteNotification = async (notificationId, userId) => {
   const notification = await Notification.findByPk(notificationId);
 
@@ -140,7 +108,7 @@ export const deleteNotification = async (notificationId, userId) => {
     throw error;
   }
 
-  // Check if user owns the notification
+  
   if (notification.user_id !== userId) {
     const error = new Error("Not authorized to delete this notification");
     error.statusCode = 403;
@@ -152,11 +120,7 @@ export const deleteNotification = async (notificationId, userId) => {
   return { message: "Notification deleted successfully" };
 };
 
-/**
- * Mark all notifications as read for a user
- * @param {string} userId - User ID
- * @returns {Object} Success message
- */
+
 export const markAllAsRead = async (userId) => {
   await Notification.update(
     { is_read: true },
@@ -166,11 +130,7 @@ export const markAllAsRead = async (userId) => {
   return { message: "All notifications marked as read" };
 };
 
-/**
- * Get unread notification count for a user
- * @param {string} userId - User ID
- * @returns {number} Count of unread notifications
- */
+
 export const getUnreadCount = async (userId) => {
   const count = await Notification.count({
     where: { user_id: userId, is_read: false },
@@ -179,16 +139,11 @@ export const getUnreadCount = async (userId) => {
   return count;
 };
 
-/**
- * Broadcast notification to target audience with enhanced features
- * @param {Object} notificationData - Notification data with target audience
- * @param {string} adminId - Admin ID creating the notification
- * @returns {Object} Result with delivery stats
- */
+
 export const broadcastNotification = async (notificationData, adminId) => {
   const { title, message, targetAudience, scheduledAt, type = "announcement" } = notificationData;
 
-  // Validate target audience
+  
   const validAudiences = ["all", "students", "instructors"];
   if (!validAudiences.includes(targetAudience)) {
     const error = new Error("Invalid target audience. Must be 'all', 'students', or 'instructors'");
@@ -196,7 +151,7 @@ export const broadcastNotification = async (notificationData, adminId) => {
     throw error;
   }
 
-  // Get recipients based on target audience
+  
   const recipients = await getRecipientsByAudience(targetAudience);
 
   if (recipients.length === 0) {
@@ -205,7 +160,7 @@ export const broadcastNotification = async (notificationData, adminId) => {
     throw error;
   }
 
-  // If scheduled for future, store for later delivery
+  
   if (scheduledAt && new Date(scheduledAt) > new Date()) {
     return await scheduleNotification({
       title,
@@ -218,7 +173,7 @@ export const broadcastNotification = async (notificationData, adminId) => {
     });
   }
 
-  // Create notifications for all recipients
+  
   const notifications = await Promise.allSettled(
     recipients.map(user => 
       Notification.create({
@@ -234,7 +189,7 @@ export const broadcastNotification = async (notificationData, adminId) => {
   const delivered = notifications.filter(r => r.status === "fulfilled").length;
   const failed = notifications.filter(r => r.status === "rejected").length;
 
-  // Log the broadcast to NotificationLog
+  
   try {
     await NotificationLog.create({
       admin_id: adminId,
@@ -262,12 +217,7 @@ export const broadcastNotification = async (notificationData, adminId) => {
   };
 };
 
-/**
- * Get recipients by target audience with filtering
- * @param {string} targetAudience - "all", "students", or "instructors"
- * @param {Object} additionalFilters - Optional additional filters
- * @returns {Array} List of users
- */
+
 async function getRecipientsByAudience(targetAudience, additionalFilters = {}) {
   const whereClause = { is_active: true, ...additionalFilters };
 
@@ -276,7 +226,7 @@ async function getRecipientsByAudience(targetAudience, additionalFilters = {}) {
   } else if (targetAudience === "instructors") {
     whereClause.role = "instructor";
   }
-  // "all" means no role filter
+  
 
   const users = await User.findAll({
     where: whereClause,
@@ -286,15 +236,11 @@ async function getRecipientsByAudience(targetAudience, additionalFilters = {}) {
   return users;
 }
 
-/**
- * Schedule notification for future delivery
- * @param {Object} scheduleData - Notification scheduling data
- * @returns {Object} Scheduled notification details
- */
+
 async function scheduleNotification(scheduleData) {
   const { title, message, targetAudience, scheduledAt, type, adminId, recipientCount } = scheduleData;
 
-  // Create notification log entry with scheduled status
+  
   const scheduledNotification = await NotificationLog.create({
     admin_id: adminId,
     title,
@@ -320,15 +266,11 @@ async function scheduleNotification(scheduleData) {
   };
 }
 
-/**
- * Get notification history with enhanced filtering and engagement metrics
- * @param {Object} filters - Filter options (startDate, endDate, status, targetAudience)
- * @returns {Array} List of broadcast notifications with engagement data
- */
+
 export const getNotificationHistory = async (filters = {}) => {
   const whereClause = {};
 
-  // Filter by date range
+  
   if (filters.startDate || filters.endDate) {
     whereClause.sent_at = {};
     if (filters.startDate) {
@@ -339,17 +281,17 @@ export const getNotificationHistory = async (filters = {}) => {
     }
   }
 
-  // Filter by status
+  
   if (filters.status) {
     whereClause.status = filters.status;
   }
 
-  // Filter by target audience
+  
   if (filters.targetAudience) {
     whereClause.target_audience = filters.targetAudience;
   }
 
-  // Get notification logs with sender information
+  
   const notificationLogs = await NotificationLog.findAll({
     where: whereClause,
     include: [
@@ -368,7 +310,7 @@ export const getNotificationHistory = async (filters = {}) => {
     offset: filters.offset || 0
   });
 
-  // Calculate engagement metrics for each notification
+  
   const historyWithMetrics = await Promise.all(
     notificationLogs.map(async (log) => {
       const openedCount = log.opened_count || 0;
@@ -402,11 +344,7 @@ export const getNotificationHistory = async (filters = {}) => {
   return historyWithMetrics;
 };
 
-/**
- * Get detailed engagement metrics for a specific notification
- * @param {string} notificationLogId - NotificationLog ID
- * @returns {Object} Detailed engagement metrics
- */
+
 export const getNotificationMetrics = async (notificationLogId) => {
   const notificationLog = await NotificationLog.findByPk(notificationLogId);
 
@@ -416,7 +354,7 @@ export const getNotificationMetrics = async (notificationLogId) => {
     throw error;
   }
 
-  // Get all individual notifications sent for this broadcast
+  
   const notifications = await Notification.findAll({
     where: {
       title: notificationLog.title,
@@ -439,7 +377,7 @@ export const getNotificationMetrics = async (notificationLogId) => {
   const unopened = total - opened;
   const openRate = total > 0 ? ((opened / total) * 100).toFixed(1) : 0;
 
-  // Calculate engagement by audience segment
+  
   const byRole = notifications.reduce((acc, n) => {
     const role = n.User?.role || "unknown";
     if (!acc[role]) {
@@ -473,10 +411,7 @@ export const getNotificationMetrics = async (notificationLogId) => {
   };
 };
 
-/**
- * Get scheduled notifications that are ready to send
- * @returns {Array} List of notifications ready for delivery
- */
+
 export const getScheduledNotificationsToSend = async () => {
   const now = new Date();
 
@@ -500,11 +435,7 @@ export const getScheduledNotificationsToSend = async () => {
   return scheduledNotifications;
 };
 
-/**
- * Process and send a scheduled notification
- * @param {string} notificationLogId - NotificationLog ID
- * @returns {Object} Delivery result
- */
+
 export const sendScheduledNotification = async (notificationLogId) => {
   const notificationLog = await NotificationLog.findByPk(notificationLogId, {
     include: [
@@ -527,11 +458,11 @@ export const sendScheduledNotification = async (notificationLogId) => {
     throw error;
   }
 
-  // Get recipients based on target audience
+  
   const recipients = await getRecipientsByAudience(notificationLog.target_audience);
 
   if (recipients.length === 0) {
-    // Update status to failed
+    
     await notificationLog.update({
       status: "failed",
       failed_count: notificationLog.recipient_count
@@ -543,7 +474,7 @@ export const sendScheduledNotification = async (notificationLogId) => {
     };
   }
 
-  // Create notifications for all recipients
+  
   const notifications = await Promise.allSettled(
     recipients.map(user => 
       Notification.create({
@@ -559,7 +490,7 @@ export const sendScheduledNotification = async (notificationLogId) => {
   const delivered = notifications.filter(r => r.status === "fulfilled").length;
   const failed = notifications.filter(r => r.status === "rejected").length;
 
-  // Update notification log
+  
   await notificationLog.update({
     status: "sent",
     sent_at: new Date(),
@@ -577,12 +508,7 @@ export const sendScheduledNotification = async (notificationLogId) => {
   };
 };
 
-/**
- * Cancel a scheduled notification
- * @param {string} notificationLogId - NotificationLog ID
- * @param {string} adminId - Admin ID canceling the notification
- * @returns {Object} Cancellation result
- */
+
 export const cancelScheduledNotification = async (notificationLogId, adminId) => {
   const notificationLog = await NotificationLog.findByPk(notificationLogId);
 
@@ -608,11 +534,7 @@ export const cancelScheduledNotification = async (notificationLogId, adminId) =>
   };
 };
 
-/**
- * Get notification delivery statistics
- * @param {Object} filters - Filter options (startDate, endDate, targetAudience)
- * @returns {Object} Delivery statistics
- */
+
 export const getDeliveryStatistics = async (filters = {}) => {
   const whereClause = {};
 

@@ -7,7 +7,7 @@ const { Report, User, Course, Lesson, Quiz } = models;
 class ReportService {
   async createReport(reportData, userId) {
     try {
-      // Get user info for contact details
+      
       const user = await User.findByPk(userId, {
         attributes: ["id", "first_name", "last_name", "email", "role"],
       });
@@ -16,20 +16,20 @@ class ReportService {
         throw new Error("User not found");
       }
 
-      // Determine reporter type
+      
       const reporterType = user.role === "instructor" ? "instructor" : "student";
 
-      // Validate required fields based on reporter type
+      
       if (reporterType === "instructor") {
         if (!reportData.contactEmail && !reportData.contactPhone) {
           throw new Error("Instructor reports require contact information");
         }
         if (!reportData.priority) {
-          reportData.priority = "medium"; // Default priority
+          reportData.priority = "medium"; 
         }
       }
 
-      // Use AI to categorize and assess severity if configured
+      
       let aiAnalysis = {
         category: "other",
         severity: reporterType === "instructor" && reportData.priority === "critical" 
@@ -46,7 +46,7 @@ class ReportService {
           );
         } catch (error) {
           console.error("AI categorization failed:", error);
-          // Continue without AI analysis
+          
         }
       }
 
@@ -146,7 +146,7 @@ class ReportService {
           },
         ],
         order: [
-          ["priority", "DESC"], // High priority first
+          ["priority", "DESC"], 
           ["created_at", "DESC"]
         ],
       });
@@ -180,7 +180,7 @@ class ReportService {
         return null;
       }
 
-      // If there's a content reference, try to fetch the content details
+      
       if (report.content_reference && report.content_type !== "general") {
         let contentDetails = null;
 
@@ -302,10 +302,10 @@ class ReportService {
         };
       }
 
-      // Get AI analysis with action recommendations
+      
       const analysis = await geminiService.analyzeReportForActions(report);
 
-      // Find similar past reports
+      
       const similarReports = await Report.findAll({
         where: {
           ai_category: report.ai_category,
@@ -322,8 +322,8 @@ class ReportService {
         priority: analysis.priority,
         recommendedActions: analysis.actions.map((action) => ({
           ...action,
-          requiresConfirmation: true, // All actions require manual confirmation
-          canBeAutomated: false, // AI cannot execute actions directly
+          requiresConfirmation: true, 
+          canBeAutomated: false, 
         })),
         similarCases: {
           description: analysis.similarCases,
@@ -377,7 +377,7 @@ class ReportService {
 
       await report.save();
 
-      // TODO: Send notification to reporter about resolution
+      
 
       return report;
     } catch (error) {
@@ -401,11 +401,11 @@ class ReportService {
         where: { ai_severity: "high", status: { [Op.ne]: "resolved" } },
       });
 
-      // Stats by reporter type
+      
       const studentReports = await Report.count({ where: { reporter_type: "student" } });
       const instructorReports = await Report.count({ where: { reporter_type: "instructor" } });
 
-      // Average resolution time
+      
       const resolvedWithTime = await Report.findAll({
         where: { 
           status: "resolved",
@@ -420,7 +420,7 @@ class ReportService {
           const diff = new Date(report.reviewed_at) - new Date(report.created_at);
           return sum + diff;
         }, 0);
-        avgResolutionTime = Math.round(totalTime / resolvedWithTime.length / (1000 * 60 * 60)); // hours
+        avgResolutionTime = Math.round(totalTime / resolvedWithTime.length / (1000 * 60 * 60)); 
       }
 
       return {

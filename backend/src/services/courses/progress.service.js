@@ -2,13 +2,7 @@ import models from "../../models/index.js";
 
 const { Enrollment, Course, Chapter, Lesson, Quiz } = models;
 
-/**
- * Update student progress for an enrollment
- * @param {string} enrollmentId 
- * @param {string} studentId 
- * @param {Object} progressData 
- * @returns {Promise<Object>} Updated enrollment object
- */
+
 export const updateProgress = async (enrollmentId, studentId, progressData) => {
   const enrollment = await Enrollment.findOne({
     where: {
@@ -23,7 +17,7 @@ export const updateProgress = async (enrollmentId, studentId, progressData) => {
     throw error;
   }
 
-  // Merge new progress data with existing
+  
   const currentProgress = enrollment.progress || {
     completedLessons: [],
     completedChapters: [],
@@ -43,7 +37,7 @@ export const updateProgress = async (enrollmentId, studentId, progressData) => {
     lastAccessed: new Date(),
   };
 
-  // If lesson completed, add to array if not already there
+  
   if (progressData.completedLessonId) {
     if (
       !updatedProgress.completedLessons.includes(progressData.completedLessonId)
@@ -52,7 +46,7 @@ export const updateProgress = async (enrollmentId, studentId, progressData) => {
     }
   }
 
-  // If chapter completed, add to array
+  
   if (progressData.completedChapterId) {
     if (
       !updatedProgress.completedChapters.includes(
@@ -63,7 +57,7 @@ export const updateProgress = async (enrollmentId, studentId, progressData) => {
     }
   }
 
-  // If quiz completed, add to array and store score
+  
   if (progressData.completedQuizId) {
     if (
       !updatedProgress.completedQuizzes.includes(progressData.completedQuizId)
@@ -76,7 +70,7 @@ export const updateProgress = async (enrollmentId, studentId, progressData) => {
     }
   }
 
-  // Update watch time
+  
   if (progressData.lessonId && progressData.watchTime) {
     updatedProgress.lessonWatchTime[progressData.lessonId] =
       progressData.watchTime;
@@ -85,7 +79,7 @@ export const updateProgress = async (enrollmentId, studentId, progressData) => {
     ).reduce((sum, time) => sum + time, 0);
   }
 
-  // Calculate completion percentage
+  
   const course = await Course.findByPk(enrollment.course_id, {
     include: [
       {
@@ -130,15 +124,13 @@ export const updateProgress = async (enrollmentId, studentId, progressData) => {
   updatedProgress.completionPercentage =
     totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
-  // Update enrollment
+  
   await enrollment.update({ progress: updatedProgress });
 
   return enrollment;
 };
 
-/**
- * Handle lesson completion logic wrapper
- */
+
 export const completeLesson = async (enrollmentId, lessonId, userId) => {
   const enrollment = await Enrollment.findByPk(enrollmentId);
 
@@ -163,7 +155,7 @@ export const completeLesson = async (enrollmentId, lessonId, userId) => {
     throw error;
   }
 
-  // Calculate if chapter is complete
+  
   const progress = enrollment.progress || { completedLessons: [], completedQuizzes: [], completedChapters: [] };
   const currentCompletedLessons = [...progress.completedLessons];
   if(!currentCompletedLessons.includes(lessonId)) currentCompletedLessons.push(lessonId);

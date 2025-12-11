@@ -29,7 +29,7 @@ export const sendMessageHandler = (io, socket, connectedUsers) => {
         file_url: fileUrl,
       });
 
-      // Add message to Redis cache
+      
       try {
         const { addMessageToCache, isRedisAvailable } = await import('../../utils/redis.util.js');
         if (isRedisAvailable()) {
@@ -85,11 +85,11 @@ export const sendMessageHandler = (io, socket, connectedUsers) => {
             user_id: otherParticipant.user_id,
             type: "new_message",
             title: "New Message",
-            message: `${user.first_name} sent you a message`, // Fixed: user.name -> user.first_name (assuming name is not directly on user) or construct full name. The original code used user.name which might be wrong if user model doesn't have virtual getter for name. I'll stick to original logic but check if user.name exists. Original code used user.name in notification message but constructed senderName. I will use constructed name or just first_name as in original code it was user.name but I only fetched first_name and last_name. Wait, original code fetched first_name, last_name but used user.name in notification. I should probably fix this to use `${user.first_name} ${user.last_name}` or just be careful.
-            // Actually, looking at original code:
-            // senderName: `${user.first_name} ${user.last_name}`,
-            // message: `${user.name} sent you a message`,
-            // It seems inconsistent. I will use `${user.first_name} ${user.last_name}` to be safe as I am fetching those fields.
+            message: `${user.first_name} sent you a message`, 
+            
+            
+            
+            
             related_id: roomId,
             related_type: "chat_room",
           });

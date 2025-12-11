@@ -1,6 +1,6 @@
 class AISecurityService {
   constructor() {
-    // Patterns that indicate potential attacks
+    
     this.dangerousPatterns = [
       /ignore previous instructions/i,
       /system prompt/i,
@@ -12,17 +12,17 @@ class AISecurityService {
       /api[_\s]?key/i,
     ];
 
-    // Sensitive data patterns to filter from responses
+    
     this.sensitivePatterns = [
-      /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // emails
-      /\b\d{3}-\d{2}-\d{4}\b/g, // SSN
-      /\b(?:\d{4}[-\s]?){3}\d{4}\b/g, // credit cards
+      /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, 
+      /\b\d{3}-\d{2}-\d{4}\b/g, 
+      /\b(?:\d{4}[-\s]?){3}\d{4}\b/g, 
       /password[:\s]+\S+/gi,
       /api[_\s]?key[:\s]+\S+/gi,
       /secret[:\s]+\S+/gi,
     ];
 
-    // Actions AI is NOT allowed to perform
+    
     this.forbiddenActions = [
       "delete",
       "remove",
@@ -37,18 +37,16 @@ class AISecurityService {
     ];
   }
 
-  /**
-   * Sanitize user input to prevent prompt injection
-   */
+  
   sanitizeInput(userInput) {
-    // Check for dangerous patterns
+    
     for (const pattern of this.dangerousPatterns) {
       if (pattern.test(userInput)) {
         throw new Error("Input contains potentially malicious content");
       }
     }
 
-    // Remove any attempts to break out of context
+    
     let sanitized = userInput
       .replace(/```/g, "") // Remove code blocks
       .replace(/\[SYSTEM\]/gi, "")

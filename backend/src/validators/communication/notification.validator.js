@@ -1,7 +1,4 @@
-/**
- * Notification Validators
- * Purpose: Validate notification-related requests
- */
+
 
 import { body, param } from "express-validator";
 

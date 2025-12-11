@@ -1,9 +1,6 @@
 import sanitizeHtml from 'sanitize-html';
 
-/**
- * Sanitization options for lesson HTML content
- * Allows safe HTML tags while removing dangerous content
- */
+
 const sanitizeOptions = {
   allowedTags: [
     'p', 'br', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -24,7 +21,7 @@ const sanitizeOptions = {
   allowedSchemesByTag: {
     img: ['http', 'https', 'data']
   },
-  // Transform links to add security attributes
+  
   transformTags: {
     'a': (tagName, attribs) => {
       return {
@@ -37,7 +34,7 @@ const sanitizeOptions = {
       };
     }
   },
-  // Disallow all classes except code-related ones
+  
   allowedClasses: {
     'code': ['language-*', 'hljs', 'hljs-*'],
     'pre': ['language-*', 'hljs'],
@@ -46,47 +43,38 @@ const sanitizeOptions = {
   }
 };
 
-/**
- * Sanitize HTML content for lessons
- * Removes dangerous content while preserving safe formatting
- * @param {string} htmlContent - The HTML content to sanitize
- * @returns {string} - Sanitized HTML content
- */
+
 export const sanitizeLessonContent = (htmlContent) => {
   if (!htmlContent || typeof htmlContent !== 'string') {
     return '';
   }
 
-  // Sanitize the HTML
+  
   const sanitized = sanitizeHtml(htmlContent, sanitizeOptions);
 
   return sanitized;
 };
 
-/**
- * Check if HTML content contains dangerous elements
- * @param {string} htmlContent - The HTML content to check
- * @returns {boolean} - True if dangerous content is detected
- */
+
 export const containsDangerousContent = (htmlContent) => {
   if (!htmlContent) return false;
 
-  // Check for script tags
+  
   if (/<script[\s\S]*?>[\s\S]*?<\/script>/gi.test(htmlContent)) {
     return true;
   }
 
-  // Check for event handlers
+  
   if (/on\w+\s*=/gi.test(htmlContent)) {
     return true;
   }
 
-  // Check for javascript: protocol
+  
   if (/javascript:/gi.test(htmlContent)) {
     return true;
   }
 
-  // Check for data: protocol (except in img tags)
+  
   if (/href\s*=\s*["']data:/gi.test(htmlContent)) {
     return true;
   }

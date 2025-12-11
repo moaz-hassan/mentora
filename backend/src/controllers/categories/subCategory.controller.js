@@ -1,9 +1,6 @@
 import * as subCategoryService from "../../services/categories/subCategory.service.js";
 
-/**
- * Get all subcategories
- * GET /api/subcategories
- */
+
 export const getAllSubCategories = async (req, res, next) => {
   try {
     const subCategories = await subCategoryService.getAllSubCategories();
@@ -18,10 +15,7 @@ export const getAllSubCategories = async (req, res, next) => {
   }
 };
 
-/**
- * Get single subcategory by ID
- * GET /api/subcategories/:id
- */
+
 export const getSubCategoryById = async (req, res, next) => {
   try {
     const subCategory = await subCategoryService.getSubCategoryById(
@@ -37,10 +31,7 @@ export const getSubCategoryById = async (req, res, next) => {
   }
 };
 
-/**
- * Get subcategories by category ID
- * GET /api/categories/:id/subcategories
- */
+
 export const getSubCategoriesByCategory = async (req, res, next) => {
   try {
     const subCategories =
@@ -56,10 +47,7 @@ export const getSubCategoriesByCategory = async (req, res, next) => {
   }
 };
 
-/**
- * Create a new subcategory
- * POST /api/subcategories
- */
+
 export const createSubCategory = async (req, res, next) => {
   try {
     const subCategory = await subCategoryService.createSubCategory(req.body);
@@ -74,10 +62,7 @@ export const createSubCategory = async (req, res, next) => {
   }
 };
 
-/**
- * Update a subcategory
- * PUT /api/subcategories/:id
- */
+
 export const updateSubCategory = async (req, res, next) => {
   try {
     const subCategory = await subCategoryService.updateSubCategory(
@@ -95,10 +80,7 @@ export const updateSubCategory = async (req, res, next) => {
   }
 };
 
-/**
- * Delete a subcategory
- * DELETE /api/subcategories/:id
- */
+
 export const deleteSubCategory = async (req, res, next) => {
   try {
     const result = await subCategoryService.deleteSubCategory(req.params.id);

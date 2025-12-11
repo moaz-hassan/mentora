@@ -1,15 +1,8 @@
-/**
- * Analytics Controller
- * Purpose: Handle analytics route handlers for instructors
- * Routes: /api/instructor/analytics
- */
+
 
 import * as analyticsService from "../../services/instructor/analytics.service.js";
 
-/**
- * Get instructor dashboard overview
- * GET /api/instructor/analytics/overview
- */
+
 export const getInstructorOverview = async (req, res, next) => {
   try {
     const instructorId = req.user.id;
@@ -24,10 +17,7 @@ export const getInstructorOverview = async (req, res, next) => {
   }
 };
 
-/**
- * Get course-specific analytics
- * GET /api/instructor/analytics/courses/:courseId
- */
+
 export const getCourseAnalytics = async (req, res, next) => {
   try {
     const { courseId } = req.params;
@@ -47,10 +37,7 @@ export const getCourseAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Get revenue analytics
- * GET /api/instructor/analytics/revenue
- */
+
 export const getRevenueAnalytics = async (req, res, next) => {
   try {
     const instructorId = req.user.id;
@@ -71,10 +58,7 @@ export const getRevenueAnalytics = async (req, res, next) => {
   }
 };
 
-/**
- * Get engagement metrics
- * GET /api/instructor/analytics/engagement
- */
+
 export const getEngagementMetrics = async (req, res, next) => {
   try {
     const instructorId = req.user.id;
@@ -94,10 +78,7 @@ export const getEngagementMetrics = async (req, res, next) => {
   }
 };
 
-/**
- * Export analytics data
- * GET /api/instructor/analytics/export
- */
+
 export const exportAnalyticsData = async (req, res, next) => {
   try {
     const instructorId = req.user.id;
@@ -119,15 +100,12 @@ export const exportAnalyticsData = async (req, res, next) => {
   }
 };
 
-/**
- * Get enrollment trend
- * GET /api/instructor/analytics/enrollments
- */
+
 export const getEnrollmentTrend = async (req, res, next) => {
   try {
     const instructorId = req.user.id;
     const days = parseInt(req.query.days) || 30;
-    const groupBy = req.query.groupBy || 'day'; // day, week, or month
+    const groupBy = req.query.groupBy || 'day'; 
 
     const trend = await analyticsService.getEnrollmentTrendWithGrouping(
       instructorId,
@@ -145,10 +123,7 @@ export const getEnrollmentTrend = async (req, res, next) => {
 };
 
 
-/**
- * Generate comprehensive analytics report
- * POST /api/instructor/analytics/report
- */
+
 export const generateReport = async (req, res, next) => {
   try {
     const instructorId = req.user.id;
@@ -159,7 +134,7 @@ export const generateReport = async (req, res, next) => {
       startDate,
       endDate,
       courseIds,
-      anonymizeStudents !== false // Default to true
+      anonymizeStudents !== false 
     );
 
     res.status(200).json({

@@ -1,23 +1,18 @@
-/**
- * Logging Worker
- * Purpose: Process logging jobs from Bull queue
- */
+
 
 import { loggingQueue } from "../config/queue.js";
 import models from "../models/index.js";
 
 const { AuditLog, PaymentLog, EnrollmentLog, ErrorLog, ModerationLog, NotificationLog } = models;
 
-// Batch configuration
+
 const BATCH_SIZE = 50;
-const BATCH_TIMEOUT = 5000; // 5 seconds
+const BATCH_TIMEOUT = 5000; 
 
 let logBatch = [];
 let batchTimer = null;
 
-/**
- * Flush batch to database
- */
+
 const flushBatch = async () => {
   if (logBatch.length === 0) return;
 
@@ -25,14 +20,14 @@ const flushBatch = async () => {
   logBatch = [];
 
   try {
-    // Group logs by type
+    
     const grouped = currentBatch.reduce((acc, log) => {
       if (!acc[log.type]) acc[log.type] = [];
       acc[log.type].push(log.data);
       return acc;
     }, {});
 
-    // Bulk insert for each type
+    
     const promises = [];
 
     if (grouped.audit) {
@@ -58,18 +53,16 @@ const flushBatch = async () => {
     console.log(`✅ Flushed ${currentBatch.length} logs to database`);
   } catch (error) {
     console.error("❌ Error flushing log batch:", error);
-    // Re-add failed logs to batch for retry
+    
     logBatch.push(...currentBatch);
   }
 };
 
-/**
- * Add log to batch
- */
+
 const addToBatch = async (log) => {
   logBatch.push(log);
 
-  // Flush if batch is full
+  
   if (logBatch.length >= BATCH_SIZE) {
     if (batchTimer) {
       clearTimeout(batchTimer);
@@ -77,7 +70,7 @@ const addToBatch = async (log) => {
     }
     await flushBatch();
   } else {
-    // Set timer to flush after timeout
+    
     if (!batchTimer) {
       batchTimer = setTimeout(async () => {
         batchTimer = null;
@@ -87,14 +80,12 @@ const addToBatch = async (log) => {
   }
 };
 
-/**
- * Process logging job
- */
+
 loggingQueue.process(async (job) => {
   const { type, data } = job.data;
 
   try {
-    // Add to batch for bulk processing
+    
     await addToBatch({ type, data });
 
     return { success: true, message: "Log added to batch" };
@@ -104,9 +95,7 @@ loggingQueue.process(async (job) => {
   }
 });
 
-/**
- * Graceful shutdown - flush remaining logs
- */
+
 process.on("SIGTERM", async () => {
   console.log("⚠️  SIGTERM received, flushing remaining logs...");
   if (batchTimer) {

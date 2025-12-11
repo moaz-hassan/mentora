@@ -14,7 +14,7 @@ export const getAllCategories = async () => {
     order: [["name", "ASC"]],
   });
 
-  // Add course count for each category
+  
   const categoriesWithCounts = await Promise.all(
     categories.map(async (category) => {
       const coursesCount = await Course.count({
@@ -52,7 +52,7 @@ export const getCategoryById = async (categoryId) => {
 
 
 export const createCategory = async (categoryData) => {
-  // Check for duplicate name (case-insensitive)
+  
   const existingCategory = await Category.findOne({
     where: {
       name: categoryData.name,
@@ -69,9 +69,7 @@ export const createCategory = async (categoryData) => {
   return category;
 };
 
-/**
- * Update an existing category
- */
+
 export const updateCategory = async (categoryId, updateData) => {
   const category = await Category.findByPk(categoryId);
 
@@ -81,7 +79,7 @@ export const updateCategory = async (categoryId, updateData) => {
     throw error;
   }
 
-  // Check for duplicate name if name is being updated
+  
   if (updateData.name && updateData.name !== category.name) {
     const existingCategory = await Category.findOne({
       where: {
@@ -100,9 +98,7 @@ export const updateCategory = async (categoryId, updateData) => {
   return category;
 };
 
-/**
- * Delete a category
- */
+
 export const deleteCategory = async (categoryId) => {
   const category = await Category.findByPk(categoryId);
 
@@ -112,7 +108,7 @@ export const deleteCategory = async (categoryId) => {
     throw error;
   }
 
-  // Check if category has associated courses
+  
   const hasCourses = await checkCategoryHasCourses(categoryId);
 
   if (hasCourses) {
@@ -127,9 +123,7 @@ export const deleteCategory = async (categoryId) => {
   return { message: "Category deleted successfully" };
 };
 
-/**
- * Check if category has associated courses
- */
+
 export const checkCategoryHasCourses = async (categoryId) => {
   const courseCount = await Course.count({
     where: { category_id: categoryId },
@@ -138,9 +132,7 @@ export const checkCategoryHasCourses = async (categoryId) => {
   return courseCount > 0;
 };
 
-/**
- * Search categories by name
- */
+
 export const searchCategories = async (searchTerm) => {
   const { Op } = await import("sequelize");
   
@@ -159,7 +151,7 @@ export const searchCategories = async (searchTerm) => {
     order: [["name", "ASC"]],
   });
 
-  // Add course count for each category
+  
   const categoriesWithCounts = await Promise.all(
     categories.map(async (category) => {
       const courseCount = await Course.count({

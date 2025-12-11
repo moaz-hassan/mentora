@@ -6,15 +6,13 @@ import {
 
 const { LessonMaterial, Lesson } = models;
 
-/**
- * Save material metadata (file already uploaded to Supabase from backend upload route)
- */
+
 export const saveMaterial = async (req, res) => {
   try {
     const { lessonId } = req.params;
     const { filename, url, public_id, file_type, file_size } = req.body;
 
-    // Validate required fields
+    
     if (!filename || !url || !public_id || !file_type || !file_size) {
       return res.status(400).json({
         success: false,
@@ -22,7 +20,7 @@ export const saveMaterial = async (req, res) => {
       });
     }
 
-    // Check if lesson exists
+    
     const lesson = await Lesson.findByPk(lessonId);
     if (!lesson) {
       return res.status(404).json({
@@ -31,7 +29,7 @@ export const saveMaterial = async (req, res) => {
       });
     }
 
-    // Validate file size (100MB = 104857600 bytes)
+    
     if (file_size > 104857600) {
       return res.status(400).json({
         success: false,
@@ -39,7 +37,7 @@ export const saveMaterial = async (req, res) => {
       });
     }
 
-    // Validate file type
+    
     const allowedTypes = ["pdf", "doc", "docx", "ppt", "pptx", "zip", "txt", "csv", "xlsx", "xls"];
     if (!allowedTypes.includes(file_type.toLowerCase())) {
       return res.status(400).json({
@@ -48,12 +46,12 @@ export const saveMaterial = async (req, res) => {
       });
     }
 
-    // Get current materials count for order_number
+    
     const materialsCount = await LessonMaterial.count({
       where: { lesson_id: lessonId },
     });
 
-    // Create material record
+    
     const material = await LessonMaterial.create({
       lesson_id: lessonId,
       filename: filename,
@@ -79,9 +77,7 @@ export const saveMaterial = async (req, res) => {
   }
 };
 
-/**
- * Get all materials for a lesson
- */
+
 export const getLessonMaterials = async (req, res) => {
   try {
     const { lessonId } = req.params;
@@ -105,9 +101,7 @@ export const getLessonMaterials = async (req, res) => {
   }
 };
 
-/**
- * Delete a material
- */
+
 export const deleteMaterial = async (req, res) => {
   try {
     const { materialId } = req.params;
@@ -120,17 +114,17 @@ export const deleteMaterial = async (req, res) => {
       });
     }
 
-    // Delete from Supabase Storage
+    
     if (isSupabaseConfigured() && material.public_id) {
       try {
         await deleteMaterialFromSupabase(material.public_id);
       } catch (supabaseError) {
         console.error("Supabase deletion error:", supabaseError);
-        // Continue even if Supabase deletion fails
+        
       }
     }
 
-    // Delete from database
+    
     await material.destroy();
 
     res.json({
@@ -147,13 +141,11 @@ export const deleteMaterial = async (req, res) => {
   }
 };
 
-/**
- * Update material order
- */
+
 export const updateMaterialOrder = async (req, res) => {
   try {
     const { lessonId } = req.params;
-    const { materials } = req.body; // Array of { id, order_number }
+    const { materials } = req.body; 
 
     if (!Array.isArray(materials)) {
       return res.status(400).json({
@@ -162,7 +154,7 @@ export const updateMaterialOrder = async (req, res) => {
       });
     }
 
-    // Update each material's order
+    
     await Promise.all(
       materials.map((material) =>
         LessonMaterial.update(

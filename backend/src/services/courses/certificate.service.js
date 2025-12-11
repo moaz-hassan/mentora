@@ -54,7 +54,7 @@ export const getCertificateByStudentAndCourse = async (studentId, courseId) => {
 };
 
 export const generateCertificate = async (studentId, courseId) => {
-  // Validate completion
+  
   const { isComplete, completionPercentage } = await validateCompletion(studentId, courseId);
   
   if (!isComplete) {
@@ -64,7 +64,7 @@ export const generateCertificate = async (studentId, courseId) => {
     throw error;
   }
 
-  // Get student data
+  
   const student = await User.findByPk(studentId, {
     include: [{ model: Profile, attributes: ["avatar_url"] }],
   });
@@ -75,7 +75,7 @@ export const generateCertificate = async (studentId, courseId) => {
     throw error;
   }
 
-  // Get course data with instructor
+  
   const course = await Course.findByPk(courseId, {
     include: [
       {
@@ -96,11 +96,11 @@ export const generateCertificate = async (studentId, courseId) => {
     throw error;
   }
 
-  // Calculate totals
+  
   const totalLessons = course.Chapters?.reduce((sum, ch) => sum + (ch.Lessons?.length || 0), 0) || 0;
   const totalQuizzes = course.Chapters?.reduce((sum, ch) => sum + (ch.Quizzes?.length || 0), 0) || 0;
 
-  // Prepare certificate data
+  
   const studentName = `${student.first_name} ${student.last_name}`;
   const instructorName = course.Instructor 
     ? `${course.Instructor.first_name} ${course.Instructor.last_name}` 
@@ -108,10 +108,10 @@ export const generateCertificate = async (studentId, courseId) => {
   const completionDate = new Date();
   const issuedAt = new Date();
 
-  // Generate temporary certificate ID for PDF
+  
   const tempCertificateId = `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
-  // Generate PDF
+  
   const pdfBuffer = await generateCertificatePDF({
     certificateId: tempCertificateId,
     studentName,
@@ -123,7 +123,7 @@ export const generateCertificate = async (studentId, courseId) => {
     issuedAt,
   });
 
-  // Check if Supabase is configured
+  
   if (!isSupabaseConfigured()) {
     const error = new Error("Supabase Storage is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY.");
     error.statusCode = 500;
@@ -131,7 +131,7 @@ export const generateCertificate = async (studentId, courseId) => {
     throw error;
   }
 
-  // Upload to Supabase Storage
+  
   let uploadResult;
   try {
     const filename = `certificate-${tempCertificateId}.pdf`;
@@ -148,19 +148,19 @@ export const generateCertificate = async (studentId, courseId) => {
     throw error;
   }
 
-  // Use Supabase download URL
+  
   const downloadUrl = uploadResult.downloadUrl;
 
-  // Check if certificate already exists
+  
   const existingCertificate = await getCertificateByStudentAndCourse(studentId, courseId);
 
   let certificate;
   if (existingCertificate) {
-    // Update existing certificate
+    
     certificate = await existingCertificate.update({
       certificate_url: uploadResult.publicUrl,
       download_url: downloadUrl,
-      public_id: uploadResult.filePath, // Supabase Storage file path
+      public_id: uploadResult.filePath, 
       issued_at: issuedAt,
       completion_date: completionDate,
       metadata: {
@@ -175,13 +175,13 @@ export const generateCertificate = async (studentId, courseId) => {
       },
     });
   } else {
-    // Create new certificate
+    
     certificate = await Certificate.create({
       student_id: studentId,
       course_id: courseId,
       certificate_url: uploadResult.publicUrl,
       download_url: downloadUrl,
-      public_id: uploadResult.filePath, // Supabase Storage file path
+      public_id: uploadResult.filePath, 
       issued_at: issuedAt,
       completion_date: completionDate,
       verified: true,
@@ -198,15 +198,11 @@ export const generateCertificate = async (studentId, courseId) => {
     });
   }
 
-  // Return certificate with associations
+  
   return await getCertificateById(certificate.id);
 };
 
-/**
- * Get all certificates with optional filtering
- * @param {Object} filters - Filter criteria
- * @returns {Promise<Array>} List of certificates
- */
+
 export const getAllCertificates = async (filters = {}) => {
   const where = {};
 
@@ -228,11 +224,7 @@ export const getAllCertificates = async (filters = {}) => {
   });
 };
 
-/**
- * Get certificate by ID
- * @param {string} id - Certificate ID
- * @returns {Promise<Object>} Certificate details
- */
+
 export const getCertificateById = async (id) => {
   const certificate = await Certificate.findByPk(id, {
     include: [
@@ -265,17 +257,11 @@ export const getCertificateById = async (id) => {
   return certificate;
 };
 
-/**
- * Get certificate with authorization check
- * @param {string} certificateId - Certificate ID
- * @param {string} userId - Requesting user's ID
- * @param {string} userRole - Requesting user's role
- * @returns {Promise<Object>} Certificate details
- */
+
 export const getCertificateWithAuth = async (certificateId, userId, userRole) => {
   const certificate = await getCertificateById(certificateId);
 
-  // Check authorization: owner or admin
+  
   if (certificate.student_id !== userId && userRole !== "admin") {
     const error = new Error("You do not have permission to access this certificate");
     error.statusCode = 403;
@@ -286,20 +272,12 @@ export const getCertificateWithAuth = async (certificateId, userId, userRole) =>
   return certificate;
 };
 
-/**
- * Get all certificates for a student
- * @param {string} studentId - Student's user ID
- * @returns {Promise<Array>} List of certificates
- */
+
 export const getStudentCertificates = async (studentId) => {
   return await getAllCertificates({ student_id: studentId });
 };
 
-/**
- * Verify a certificate exists and is valid
- * @param {string} id - Certificate ID
- * @returns {Promise<Object>} Verification result
- */
+
 export const verifyCertificate = async (id) => {
   try {
     const certificate = await getCertificateById(id);
@@ -317,17 +295,11 @@ export const verifyCertificate = async (id) => {
   }
 };
 
-/**
- * Get download URL for a certificate
- * @param {string} certificateId - Certificate ID
- * @param {string} userId - Requesting user's ID
- * @param {string} userRole - Requesting user's role
- * @returns {Promise<string>} Download URL
- */
+
 export const getCertificateDownloadUrl = async (certificateId, userId, userRole) => {
   const certificate = await getCertificateWithAuth(certificateId, userId, userRole);
   
-  // Return stored download URL (works for all storage providers)
+  
   return certificate.download_url || certificate.certificate_url;
 };
 

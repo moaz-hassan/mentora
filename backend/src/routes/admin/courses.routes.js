@@ -1,6 +1,4 @@
-/**
- * Admin Courses Routes (Course Review)
- */
+
 import express from "express";
 import * as courseController from "../../controllers/courses/course.controller.js";
 import { courseIdValidator } from "../../validators/courses/course.validator.js";
@@ -9,10 +7,10 @@ import { body } from "express-validator";
 
 const router = express.Router();
 
-// Get pending courses
+
 router.get("/pending", courseController.getPendingCourses);
 
-// Get course details
+
 router.get(
   "/:id",
   courseIdValidator,
@@ -20,7 +18,7 @@ router.get(
   courseController.getAdminCourseDetails
 );
 
-// Analyze course with AI
+
 router.post(
   "/:id/analyze",
   courseIdValidator,
@@ -28,7 +26,7 @@ router.post(
   courseController.analyzeCourse
 );
 
-// Approve course
+
 router.post(
   "/:id/approve",
   courseIdValidator,
@@ -36,7 +34,7 @@ router.post(
   courseController.approveCourse
 );
 
-// Reject course
+
 router.post(
   "/:id/reject",
   courseIdValidator,

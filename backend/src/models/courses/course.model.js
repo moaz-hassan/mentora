@@ -14,8 +14,8 @@ const Course = sequelize.define(
     title: { type: DataTypes.STRING(255), allowNull: false },
     subtitle: { type: DataTypes.STRING(500), allowNull: true },
     description: { type: DataTypes.TEXT, allowNull: false },
-    learning_objectives: { type: DataTypes.JSON, allowNull: true }, // Array of strings
-    requirements: { type: DataTypes.JSON, allowNull: true }, // Array of strings
+    learning_objectives: { type: DataTypes.JSON, allowNull: true }, 
+    requirements: { type: DataTypes.JSON, allowNull: true }, 
     target_audience: { type: DataTypes.TEXT, allowNull: true },
     category: { type: DataTypes.STRING(100) },
     subcategory: { type: DataTypes.STRING(100) },
@@ -45,7 +45,7 @@ const Course = sequelize.define(
 
     badge: { type: DataTypes.STRING(50) },
 
-    // Review system fields
+    
     status: {
       type: DataTypes.ENUM("draft", "pending_review", "approved", "rejected"),
       defaultValue: "draft",
@@ -60,23 +60,23 @@ const Course = sequelize.define(
     tableName: "courses", 
     timestamps: true,
     indexes: [
-      // Fulltext search index
+      
       {
         type: "FULLTEXT",
         name: "course_search_idx",
         fields: ["title", "description"],
       },
-      // Composite index for filtering
+      
       {
         name: "idx_course_filtering",
         fields: ["category", "price"],
       },
-      // Sorting index
+      
       {
         name: "idx_course_created_at",
         fields: [{ name: "createdAt", order: "DESC" }],
       },
-      // Instructor lookup
+      
       {
         name: "idx_course_instructor",
         fields: ["instructor_id"],
