@@ -3,10 +3,7 @@
 import { CldVideoPlayer } from 'next-cloudinary';
 import 'next-cloudinary/dist/cld-video-player.css';
 
-/**
- * Cloudinary Video Player Component using next-cloudinary
- * Provides optimized video streaming with HLS/DASH support
- */
+
 export default function CloudinaryVideoPlayer({
   publicId,
   poster,
@@ -29,7 +26,7 @@ export default function CloudinaryVideoPlayer({
         poster={poster}
         controls={controls}
         autoplay={autoplay}
-        muted={muted || autoplay} // Auto-mute if autoplay is enabled
+        muted={muted || autoplay} 
         loop={loop}
         sourceTypes={sourceTypes}
         colors={{

@@ -1,7 +1,4 @@
-/**
- * Admin Shared Components
- * Reusable components for the admin dashboard
- */
+
 
 export { AnalyticsCard } from "./AnalyticsCard";
 export { ChartWrapper } from "./ChartWrapper";

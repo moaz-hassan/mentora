@@ -3,17 +3,14 @@
 import { CheckCircle2, Circle, PlayCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * LessonItem - Individual lesson entry in the curriculum sidebar
- * Shows lesson title, duration, completion status, and active state
- */
+
 export default function LessonItem({
   lesson,
   isActive = false,
   isCompleted = false,
   onClick,
 }) {
-  // Format duration from seconds to mm:ss
+  
   const formatDuration = (seconds) => {
     if (!seconds) return "";
     const mins = Math.floor(seconds / 60);
@@ -30,7 +27,7 @@ export default function LessonItem({
         isActive && "bg-primary/10 border-l-2 border-primary"
       )}
     >
-      {/* Status icon */}
+      {}
       <div className="mt-0.5 flex-shrink-0">
         {isCompleted ? (
           <CheckCircle2 className="h-4 w-4 text-green-500" />
@@ -41,7 +38,7 @@ export default function LessonItem({
         )}
       </div>
 
-      {/* Lesson info */}
+      {}
       <div className="flex-1 min-w-0">
         <p
           className={cn(

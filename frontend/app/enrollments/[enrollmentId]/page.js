@@ -4,30 +4,30 @@ import { use, useState } from "react";
 import { Suspense } from "react";
 import { useLearningPage } from "@/hooks/enrollments/useLearningPage";
 
-// Layout components
+
 import LearningPageLayout from "@/components/pages/enrollments/learning/LearningPageLayout";
 import CourseHeader from "@/components/pages/enrollments/learning/CourseHeader";
 import CurriculumSidebar from "@/components/pages/enrollments/learning/CurriculumSidebar";
 
-// Content components
+
 import LessonContent from "@/components/pages/enrollments/learning/LessonContent";
 import QuizContent from "@/components/pages/enrollments/learning/QuizContent";
 import LessonHeader from "@/components/pages/enrollments/learning/LessonHeader";
 import NavigationButtons from "@/components/pages/enrollments/learning/NavigationButtons";
 import ContentTabs from "@/components/pages/enrollments/learning/ContentTabs";
 
-// Utility components
+
 import LoadingState from "@/components/pages/enrollments/LoadingState";
 import ErrorState from "@/components/pages/enrollments/ErrorState";
 import ReportModal from "@/components/modals/ReportModal";
 
 
 export default function EnrolledCoursePage({ params }) {
-  // Unwrap params using React.use() for Next.js 15
+  
   const { enrollmentId } = use(params);
 
   const {
-    // Data
+    
     course,
     chapters,
     progress,
@@ -39,7 +39,7 @@ export default function EnrolledCoursePage({ params }) {
     completedCount,
     chatMembership,
 
-    // State
+    
     isLoading,
     isLessonLoading,
     error,
@@ -49,7 +49,7 @@ export default function EnrolledCoursePage({ params }) {
     hasPrevious,
     hasNext,
 
-    // Actions
+    
     selectLesson,
     selectQuiz,
     markLessonComplete,
@@ -84,32 +84,32 @@ export default function EnrolledCoursePage({ params }) {
     setReportState((prev) => ({ ...prev, isOpen: false }));
   };
 
-  // Check if current lesson is completed
+  
   const isCurrentLessonCompleted = currentLesson
     ? progress?.completedLessons?.includes(currentLesson.id)
     : false;
 
-  // Check if current quiz is completed
+  
   const isCurrentQuizCompleted = currentQuiz
     ? progress?.completedQuizzes?.includes(currentQuiz.id)
     : false;
 
-  // Get quiz score if completed
+  
   const currentQuizScore = currentQuiz
     ? progress?.quizScores?.[currentQuiz.id]
     : null;
 
-  // Loading state
+  
   if (isLoading) {
     return <LoadingState />;
   }
 
-  // Error state
+  
   if (error) {
     return <ErrorState message={error} onRetry={refetch} />;
   }
 
-  // Get instructor info
+  
   const instructor = course?.User;
   const instructorName = instructor
     ? `${instructor.first_name} ${instructor.last_name}`
@@ -146,10 +146,10 @@ export default function EnrolledCoursePage({ params }) {
       }
       mainContent={
         <div className="max-w-4xl mx-auto p-4 lg:p-6">
-          {/* Render Quiz or Lesson Content based on contentType */}
+          {}
           {contentType === "quiz" ? (
             <>
-              {/* Quiz Content */}
+              {}
               <QuizContent
                 quiz={currentQuiz}
                 isLoading={isLessonLoading}
@@ -161,7 +161,7 @@ export default function EnrolledCoursePage({ params }) {
                 onReportClick={() => handleReport("quiz", currentQuiz?.id, currentQuiz?.title)}
               />
 
-              {/* Navigation Buttons for Quiz */}
+              {}
               <div className="mt-6">
                 <NavigationButtons
                   hasPrevious={hasPrevious}
@@ -176,7 +176,7 @@ export default function EnrolledCoursePage({ params }) {
             </>
           ) : (
             <>
-              {/* Video/Content Player */}
+              {}
               <LessonContent
                 lesson={currentLesson}
                 isLoading={isLessonLoading}
@@ -187,20 +187,20 @@ export default function EnrolledCoursePage({ params }) {
                 autoplay={autoplay}
               />
 
-              {/* Lesson Header */}
+              {}
               <LessonHeader
                 lessonTitle={currentLesson?.title || "Select a lesson"}
                 instructorName={instructorName}
                 instructorAvatar={instructorAvatar}
                 duration={currentLesson?.duration}
                 onNotesClick={() => {
-                  // TODO: Implement notes functionality
+                  
                   console.log("Notes clicked");
                 }}
                 onReportClick={() => handleReport("lesson", currentLesson?.id, currentLesson?.title)}
               />
 
-              {/* Navigation Buttons */}
+              {}
               <NavigationButtons
                 hasPrevious={hasPrevious}
                 hasNext={hasNext}
@@ -210,7 +210,7 @@ export default function EnrolledCoursePage({ params }) {
                 onAutoplayToggle={toggleAutoplay}
               />
 
-              {/* Content Tabs */}
+              {}
               <ContentTabs
                 activeTab={activeTab}
                 onTabChange={setActiveTab}

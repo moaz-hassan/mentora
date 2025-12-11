@@ -2,10 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getUserChatRooms, getRoomMessages, markChatAsRead } from "@/lib/apiCalls/chat/chat.apiCall";
 import { toast } from "sonner";
 
-/**
- * Custom hook for chat management
- * @returns {Object} Chat rooms, messages, and functions
- */
+
 export function useChats() {
   const [chatRooms, setChatRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -20,7 +17,7 @@ export function useChats() {
       if (response?.success) {
         setChatRooms(response.data || []);
       } else {
-        // Don't show error toast, just set empty array
+        
         setChatRooms([]);
       }
     } catch (error) {

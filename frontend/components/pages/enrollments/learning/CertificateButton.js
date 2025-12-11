@@ -9,10 +9,7 @@ import {
   checkCertificateExists,
 } from "@/lib/apiCalls/certificates/certificate.service";
 
-/**
- * Certificate Button Component
- * Displays a button to generate/view certificate when course is 100% complete
- */
+
 export default function CertificateButton({
   courseId,
   completionPercentage,
@@ -23,7 +20,7 @@ export default function CertificateButton({
   const [isChecking, setIsChecking] = useState(true);
   const [certificate, setCertificate] = useState(null);
 
-  // Check if certificate already exists
+  
   useEffect(() => {
     const checkCertificate = async () => {
       if (completionPercentage !== 100 || !courseId) {
@@ -65,12 +62,12 @@ export default function CertificateButton({
     }
   };
 
-  // Don't render if course is not complete
+  
   if (completionPercentage !== 100) {
     return null;
   }
 
-  // Show loading state during initial check
+  
   if (isChecking) {
     return (
       <span className={`inline-flex items-center gap-2 text-sm text-muted-foreground ${className}`}>
@@ -80,7 +77,7 @@ export default function CertificateButton({
     );
   }
 
-  // If certificate exists, show "View Certificate" link
+  
   if (certificate?.id) {
     return (
       <Link
@@ -93,7 +90,7 @@ export default function CertificateButton({
     );
   }
 
-  // If no certificate, show "Get My Certificate" button
+  
   return (
     <Button
       onClick={handleGenerateCertificate}

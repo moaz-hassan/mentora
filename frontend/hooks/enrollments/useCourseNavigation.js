@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 
 export function useCourseNavigation(chapters, currentLesson, currentQuiz) {
-  // Flatten lessons for navigation
+  
   const flattenedLessons = useMemo(() => {
     if (!chapters.length) return [];
     
@@ -22,25 +22,25 @@ export function useCourseNavigation(chapters, currentLesson, currentQuiz) {
     return lessons;
   }, [chapters]);
 
-  // Calculate total lessons count
+  
   const totalLessons = useMemo(() => {
     return chapters.reduce((count, chapter) => {
       return count + (chapter.Lessons?.length || 0) + (chapter.Quizzes?.length || 0);
     }, 0);
   }, [chapters]);
 
-  // Current position in flattened list
+  
   const currentIndex = useMemo(() => {
     if (!currentLesson && !currentQuiz) return -1;
     const currentId = currentLesson?.id || currentQuiz?.id;
     return flattenedLessons.findIndex((item) => item.id === currentId);
   }, [flattenedLessons, currentLesson, currentQuiz]);
 
-  // Navigation flags
+  
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex < flattenedLessons.length - 1 && currentIndex !== -1;
 
-  // Get next lessons for "Up Next" section
+  
   const upNextLessons = useMemo(() => {
     if (currentIndex === -1) return [];
     return flattenedLessons

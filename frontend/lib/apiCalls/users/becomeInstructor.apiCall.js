@@ -3,10 +3,7 @@ import { getAuthHeaders, getApiBaseUrl } from "@/lib/utils/apiHelpers";
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Convert current student to instructor
- * @returns {Object} Response with success status and updated user data
- */
+
 export const becomeInstructor = async () => {
   try {
     const headers = getAuthHeaders();

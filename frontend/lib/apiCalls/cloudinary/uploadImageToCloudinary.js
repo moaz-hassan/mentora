@@ -3,12 +3,7 @@ import Cookies from 'js-cookie';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api`;
 
-/**
- * Upload image directly to Cloudinary
- * @param {File} file - Image file to upload
- * @param {Function} onProgress - Optional progress callback (0-100)
- * @returns {Promise<Object>} Upload result with URL and metadata
- */
+
 export const uploadImageToCloudinary = async (file, onProgress) => {
   try {
     const token = Cookies.get('authToken');
@@ -17,18 +12,18 @@ export const uploadImageToCloudinary = async (file, onProgress) => {
       throw new Error('Authentication required');
     }
 
-    // Validate file type
+    
     if (!file.type.startsWith('image/')) {
       throw new Error('Please select a valid image file');
     }
 
-    // Validate file size (max 2MB)
-    const maxSize = 2 * 1024 * 1024; // 2MB
+    
+    const maxSize = 2 * 1024 * 1024; 
     if (file.size > maxSize) {
       throw new Error('Image size must be less than 2MB');
     }
 
-    // Step 1: Get upload signature from backend
+    
     if (onProgress) {
       onProgress({ progress: 0, message: 'Preparing upload...' });
     }
@@ -44,7 +39,7 @@ export const uploadImageToCloudinary = async (file, onProgress) => {
     const { signature, timestamp, cloudName, apiKey, folder } = 
       signatureResponse.data.data;
 
-    // Step 2: Build FormData for Cloudinary
+    
     const formData = new FormData();
     formData.append('file', file);
     formData.append('folder', folder);
@@ -52,7 +47,7 @@ export const uploadImageToCloudinary = async (file, onProgress) => {
     formData.append('signature', signature);
     formData.append('api_key', apiKey);
 
-    // Step 3: Upload directly to Cloudinary with progress tracking
+    
     if (onProgress) {
       onProgress({ progress: 10, message: 'Uploading image...' });
     }
@@ -75,12 +70,12 @@ export const uploadImageToCloudinary = async (file, onProgress) => {
       }
     );
 
-    // Step 4: Upload complete
+    
     if (onProgress) {
       onProgress({ progress: 100, message: 'Upload complete!' });
     }
 
-    // Step 5: Return complete metadata
+    
     return {
       secure_url: uploadResponse.data.secure_url,
       public_id: uploadResponse.data.public_id,

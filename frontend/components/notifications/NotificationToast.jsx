@@ -76,7 +76,7 @@ export function NotificationToastContainer() {
   const [toasts, setToasts] = useState([]);
 
   useEffect(() => {
-    // Listen for custom notification events
+    
     const handleNotification = (event) => {
       const notification = event.detail;
       const id = toastId++;
@@ -107,7 +107,7 @@ export function NotificationToastContainer() {
   );
 }
 
-// Helper function to show notifications
+
 export function showNotification(notification) {
   const event = new CustomEvent("show-notification", { detail: notification });
   window.dispatchEvent(event);

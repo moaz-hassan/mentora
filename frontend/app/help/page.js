@@ -114,7 +114,7 @@ export default function HelpPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -124,7 +124,7 @@ export default function HelpPage() {
               Find answers to your questions and get the support you need
             </p>
             
-            {/* Search Bar */}
+            {}
             <div className="max-w-2xl mx-auto">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -142,7 +142,7 @@ export default function HelpPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Help Categories */}
+        {}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Browse by Category</h2>
           
@@ -168,7 +168,7 @@ export default function HelpPage() {
             </div>
           ) : (
             <div className="bg-white rounded-lg shadow-lg p-8">
-              {/* Category Detail Header */}
+              {}
               <div className="flex items-center justify-between mb-6 pb-6 border-b">
                 <div className="flex items-center space-x-4">
                   <button
@@ -197,7 +197,7 @@ export default function HelpPage() {
                 </button>
               </div>
 
-              {/* Articles List */}
+              {}
               <div className="space-y-4">
                 {selectedCategory.articles.map((article, index) => (
                   <div
@@ -217,7 +217,7 @@ export default function HelpPage() {
           )}
         </div>
 
-        {/* FAQ Section */}
+        {}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Frequently Asked Questions
@@ -259,7 +259,7 @@ export default function HelpPage() {
           </div>
         </div>
 
-        {/* Contact Support */}
+        {}
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 text-center">
           <MessageCircle className="w-12 h-12 mx-auto mb-4 text-blue-600" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">

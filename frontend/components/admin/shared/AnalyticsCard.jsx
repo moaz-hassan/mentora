@@ -5,17 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
-/**
- * AnalyticsCard - Display metric cards with title, value, change percentage, icon
- * @param {string} title - Card title
- * @param {string|number} value - Main metric value
- * @param {number} change - Percentage change (positive or negative)
- * @param {string} changeLabel - Label for the change (e.g., "vs last month")
- * @param {React.ReactNode} icon - Icon component
- * @param {boolean} loading - Loading state
- * @param {string} className - Additional CSS classes
- * @param {string} format - Value format: 'number', 'currency', 'percent'
- */
+
 export function AnalyticsCard({
   title,
   value,

@@ -1,15 +1,12 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
-/**
- * Global Course Store using Zustand
- * Manages course creation state and draft persistence
- */
+
 const useCourseStore = create(
   devtools(
     persist(
       (set, get) => ({
-        // Default course data structure
+        
         DEFAULT_COURSE_DATA: {
           title: "",
           description: "",
@@ -24,12 +21,10 @@ const useCourseStore = create(
           lastUpdated: new Date().toISOString(),
         },
 
-        // State
+        
         courseData: null,
 
-        /**
-         * Initialize course data from localStorage or with defaults
-         */
+        
         initializeCourse: () => {
           const stored = localStorage.getItem("course_creation_draft");
           if (stored) {
@@ -53,10 +48,7 @@ const useCourseStore = create(
           }
         },
 
-        /**
-         * Update course data and auto-save to localStorage
-         * @param {Object} updatedData - Partial course data to update
-         */
+        
         updateCourseData: (updatedData) => {
           set((state) => {
             const newData = {
@@ -64,7 +56,7 @@ const useCourseStore = create(
               ...updatedData,
               lastUpdated: new Date().toISOString(),
             };
-            // Auto-save to localStorage
+            
             localStorage.setItem(
               "course_creation_draft",
               JSON.stringify(newData)
@@ -73,10 +65,7 @@ const useCourseStore = create(
           });
         },
 
-        /**
-         * Set entire course data object
-         * @param {Object} data - Complete course data
-         */
+        
         setCourseData: (data) => {
           set({
             courseData: {
@@ -93,10 +82,7 @@ const useCourseStore = create(
           );
         },
 
-        /**
-         * Save draft with user feedback
-         * @returns {Promise<void>}
-         */
+        
         saveDraft: async () => {
           const state = get();
           try {
@@ -118,15 +104,12 @@ const useCourseStore = create(
           }
         },
 
-        /**
-         * Publish course to backend
-         * @returns {Promise<Object>} API response or error
-         */
+        
         publishCourse: async () => {
           const state = get();
           const courseData = state.courseData;
 
-          // Validate required fields
+          
           if (!courseData.title) {
             return {
               success: false,
@@ -135,7 +118,7 @@ const useCourseStore = create(
           }
 
           try {
-            // TODO: Replace with your actual API endpoint
+            
             const response = await fetch("/api/courses", {
               method: "POST",
               headers: {
@@ -151,7 +134,7 @@ const useCourseStore = create(
 
             const result = await response.json();
 
-            // Clear draft on successful publish
+            
             get().clearDraft();
 
             return {
@@ -214,9 +197,9 @@ const useCourseStore = create(
         },
       }),
       {
-        name: "course-store", // Name of the localStorage key
+        name: "course-store", 
         partialize: (state) => ({
-          courseData: state.courseData, // Only persist courseData
+          courseData: state.courseData, 
         }),
       }
     ),

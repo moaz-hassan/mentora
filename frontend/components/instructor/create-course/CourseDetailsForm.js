@@ -24,23 +24,23 @@ export function CourseDetailsForm({
   mode = "create", 
   onSave = null 
 }) {
-  // Edit mode state
+  
   const isEditMode = mode === "edit";
   const canEdit = !isEditMode || courseData?.status !== "pending_review";
   
-  // Category/Subcategory state
+  
   const [categories, setCategories] = useState([]);
   const [allSubCategories, setAllSubCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState(null);
   
-  // Validation state
+  
   const [validationErrors, setValidationErrors] = useState({});
   
-  // Saving state for edit mode
+  
   const [saving, setSaving] = useState(false);
 
-  // Fetch categories and subcategories on mount
+  
   useEffect(() => {
     fetchCategoriesAndSubCategories();
   }, []);
@@ -50,7 +50,7 @@ export function CourseDetailsForm({
       setCategoriesLoading(true);
       setCategoriesError(null);
 
-      // Fetch both categories and subcategories in parallel
+      
       const [categoriesResponse, subCategoriesResponse] = await Promise.all([
         getCategories(),
         getSubCategories(),
@@ -67,23 +67,23 @@ export function CourseDetailsForm({
     }
   };
 
-  // Filter subcategories based on selected category
+  
   const filteredSubCategories = courseData?.category
     ? allSubCategories.filter((sub) => sub.category_id === courseData.category)
     : [];
 
-  // Handle field changes with validation
+  
   const handleFieldChange = (field, value) => {
-    // Update value
+    
     setCourseData({ ...courseData, [field]: value });
 
-    // Clear error for this field
+    
     if (validationErrors[field]) {
       setValidationErrors({ ...validationErrors, [field]: null });
     }
   };
 
-  // Validate field on blur
+  
   const handleFieldBlur = (field) => {
     const error = validateField(field, courseData?.[field], validationRules.course);
     if (error) {
@@ -94,17 +94,17 @@ export function CourseDetailsForm({
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Store the File object for upload
+      
       setCourseData({
         ...courseData,
         thumbnailFile: file,
-        thumbnail: URL.createObjectURL(file), // For preview
+        thumbnail: URL.createObjectURL(file), 
       });
     }
   };
 
   const removeThumbnail = () => {
-    // Revoke the object URL to free memory
+    
     if (courseData?.thumbnail && courseData.thumbnail.startsWith("blob:")) {
       URL.revokeObjectURL(courseData.thumbnail);
     }
@@ -115,14 +115,14 @@ export function CourseDetailsForm({
     });
   };
 
-  // Handle save in edit mode
+  
   const handleSave = async () => {
     if (!canEdit) {
       toast.error("Cannot edit course while it is pending review");
       return;
     }
 
-    // Validate course data
+    
     const errors = {};
     Object.keys(validationRules.course).forEach((field) => {
       const error = validateField(field, courseData?.[field], validationRules.course);
@@ -150,7 +150,7 @@ export function CourseDetailsForm({
       <Card className="p-6 bg-white border-neutral-200">
         <h2 className="mb-6 text-neutral-900">Course Details</h2>
 
-        {/* Status Alert for Pending Review */}
+        {}
         {isEditMode && !canEdit && (
           <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { createRating } from "@/lib/apiCalls/ratings/createRating.apiCall";
-import { toast } from "sonner"; // Using toast for notifications
+import { toast } from "sonner"; 
 
 export default function RatingModal({ isOpen, onClose, courseId, courseName, onSubmitSuccess }) {
   const [rating, setRating] = useState(0);
@@ -28,7 +28,7 @@ export default function RatingModal({ isOpen, onClose, courseId, courseName, onS
     e.preventDefault();
     setError(null);
 
-    // Validation
+    
     if (rating < 1 || rating > 5) {
       setError("Please select a rating between 1 and 5 stars");
       return;
@@ -57,20 +57,20 @@ export default function RatingModal({ isOpen, onClose, courseId, courseName, onS
         throw new Error(response.message);
       }
 
-      // Success
+      
       toast.success("Review submitted successfully!");
 
-      // Reset form
+      
       setRating(0);
       setReviewText("");
       setError(null);
 
-      // Call success callback
+      
       if (onSubmitSuccess) {
         onSubmitSuccess();
       }
 
-      // Close modal
+      
       onClose();
     } catch (err) {
       setError(err.message || "Failed to submit review");
@@ -81,15 +81,15 @@ export default function RatingModal({ isOpen, onClose, courseId, courseName, onS
 
   const handleClose = () => {
     if (!submitting) {
-      // Create a clean close handler
+      
       if (!rating && !reviewText) {
-         // If clean, just close
+         
       }
       onClose();
     }
   };
   
-  // Handle Dialog open change
+  
   const handleOpenChange = (open) => {
     if (!open) {
       handleClose();
@@ -111,7 +111,7 @@ export default function RatingModal({ isOpen, onClose, courseId, courseName, onS
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
-          {/* Star Rating */}
+          {}
           <div className="space-y-3">
             <label className="block text-sm font-semibold text-foreground">
               Your Rating *
@@ -145,7 +145,7 @@ export default function RatingModal({ isOpen, onClose, courseId, courseName, onS
             </div>
           </div>
 
-          {/* Review Text */}
+          {}
           <div className="space-y-2">
             <label htmlFor="review-text" className="block text-sm font-semibold text-foreground">
               Your Review *
@@ -173,14 +173,14 @@ export default function RatingModal({ isOpen, onClose, courseId, courseName, onS
             </div>
           </div>
 
-          {/* Error Message */}
+          {}
           {error && (
             <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive" role="alert">
               {error}
             </div>
           )}
 
-          {/* Actions */}
+          {}
           <div className="flex items-center justify-end gap-3 pt-2">
             <Button
               type="button"

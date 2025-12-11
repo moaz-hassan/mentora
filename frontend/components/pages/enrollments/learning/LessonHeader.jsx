@@ -4,9 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { StickyNote, Clock, Flag } from "lucide-react";
 
-/**
- * LessonHeader - Displays lesson title, instructor info, and notes button
- */
+
 export default function LessonHeader({
   lessonTitle,
   instructorName,
@@ -15,7 +13,7 @@ export default function LessonHeader({
   onNotesClick,
   onReportClick,
 }) {
-  // Format duration from seconds to readable format
+  
   const formatDuration = (seconds) => {
     if (!seconds) return "";
     const mins = Math.floor(seconds / 60);
@@ -23,7 +21,7 @@ export default function LessonHeader({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Get instructor initials for avatar fallback
+  
   const getInitials = (name) => {
     if (!name) return "IN";
     return name
@@ -37,10 +35,10 @@ export default function LessonHeader({
   return (
     <div className="flex items-center justify-between py-4">
       <div className="flex-1">
-        {/* Lesson title */}
+        {}
         <h1 className="text-xl font-semibold mb-2">{lessonTitle}</h1>
 
-        {/* Instructor and duration */}
+        {}
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6">
@@ -61,7 +59,7 @@ export default function LessonHeader({
         </div>
       </div>
 
-      {/* Notes button */}
+      {}
       <Button
         variant="secondary"
         size="sm"
@@ -72,7 +70,7 @@ export default function LessonHeader({
         Notes
       </Button>
 
-      {/* Report Button */}
+      {}
       <Button
         variant="ghost"
         size="icon"

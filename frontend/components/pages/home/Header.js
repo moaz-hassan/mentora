@@ -22,7 +22,7 @@ export default function Header() {
 
 
   useEffect(() => {
-    // Wait for zustand to hydrate from localStorage
+    
     const timer = setTimeout(() => {
       setIsInitializing(false);
     }, 100);
@@ -41,7 +41,7 @@ export default function Header() {
     }
   };
 
-  // Show loader while initializing or loading
+  
   const showLoader = isInitializing || isLoading;
 
   return (

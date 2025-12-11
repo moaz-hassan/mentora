@@ -2,10 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { getAllUsers, updateUserRole, toggleUserStatus } from "@/lib/apiCalls/admin/users.apiCall";
 
-/**
- * Custom hook for admin user management
- * @returns {Object} Users data, filters, loading state, error, and action functions
- */
+
 export function useAdminUsers() {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -42,7 +39,7 @@ export function useAdminUsers() {
     fetchUsers();
   }, [fetchUsers]);
 
-  // Apply filters
+  
   useEffect(() => {
     let result = [...users];
 

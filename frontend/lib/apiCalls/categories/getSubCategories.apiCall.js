@@ -1,8 +1,4 @@
-/**
- * Fetch all subcategories or subcategories by category ID
- * @param {string|null} categoryId - Optional category ID to filter subcategories
- * @returns {Promise<Object>} Response with subcategories array
- */
+
 export const getSubCategories = async (categoryId = null) => {
   try {
     const url = categoryId

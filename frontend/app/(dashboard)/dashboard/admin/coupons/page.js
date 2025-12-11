@@ -56,7 +56,7 @@ import {
   updateCouponStatus,
 } from "@/lib/apiCalls/admin/coupons.apiCall";
 
-// Move CouponForm outside to prevent re-creation on every render
+
 const CouponForm = ({ formData, setFormData, formErrors }) => (
   <div className="space-y-4 py-4">
     <div className="grid grid-cols-2 gap-4">
@@ -153,12 +153,12 @@ export default function CouponManagementPage() {
   const [analytics, setAnalytics] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
 
-  // Dialog states
+  
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState(null);
 
-  // Form state
+  
   const [formData, setFormData] = useState({
     code: "",
     discountType: "percentage",
@@ -246,7 +246,7 @@ export default function CouponManagementPage() {
         discount_start_date: formData.startDate,
         discount_end_date: formData.endDate,
         max_count: formData.usageLimit ? parseInt(formData.usageLimit) : null,
-        // Don't include course_id - admin coupons apply to all courses
+        
       };
 
       const res = await createCoupon(payload);
@@ -336,7 +336,7 @@ export default function CouponManagementPage() {
     ? coupons
     : coupons.filter((c) => c.status === statusFilter);
 
-  // Table columns
+  
   const columns = [
     {
       accessorKey: "code",
@@ -436,7 +436,7 @@ export default function CouponManagementPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Coupon Management</h1>
@@ -485,7 +485,7 @@ export default function CouponManagementPage() {
         </div>
       </div>
 
-      {/* Analytics Cards */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard
           title="Total Coupons"
@@ -514,7 +514,7 @@ export default function CouponManagementPage() {
         />
       </div>
 
-      {/* Filter */}
+      {}
       <FilterBar
         showSearch={false}
         showDateRange={false}
@@ -526,7 +526,7 @@ export default function CouponManagementPage() {
         onStatusChange={(status) => setStatusFilter(status || "all")}
       />
 
-      {/* Coupons Table */}
+      {}
       <Card>
         <CardHeader>
           <CardTitle>All Coupons</CardTitle>
@@ -546,7 +546,7 @@ export default function CouponManagementPage() {
         </CardContent>
       </Card>
 
-      {/* Edit Dialog */}
+      {}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>

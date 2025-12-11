@@ -12,7 +12,7 @@ import {
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 
-// Optimized dynamic import - load only when needed
+
 const VideoPlayer = dynamic(() => import("../media/VideoPlayer"), {
   ssr: false,
   loading: () => (
@@ -30,12 +30,12 @@ export default function PreviewLessonModal({ isOpen, onClose, lesson }) {
 
   useEffect(() => {
     if (isOpen) {
-      // Increment key to force remount of VideoPlayer
+      
       setPlayerKey((prev) => prev + 1);
-      // Freeze the lesson content when opening to prevent re-renders
+      
       setFrozenLesson(lesson);
       setShowModal(true);
-      // Use RAF for smooth animation start
+      
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsAnimating(true);
@@ -43,11 +43,11 @@ export default function PreviewLessonModal({ isOpen, onClose, lesson }) {
       });
       document.body.style.overflow = "hidden";
     } else {
-      // Start closing animation
+      
       setIsAnimating(false);
       const timer = setTimeout(() => {
         setShowModal(false);
-        // Clear frozen lesson after modal is fully hidden
+        
         setTimeout(() => setFrozenLesson(null), 50);
       }, 250);
       document.body.style.overflow = "unset";
@@ -62,7 +62,7 @@ export default function PreviewLessonModal({ isOpen, onClose, lesson }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 lg:p-8">
-      {/* Modern Backdrop */}
+      {}
       <div
         className={`absolute inset-0 bg-black/60 backdrop-blur-2xl transition-all duration-250 ${
           isAnimating ? "opacity-100" : "opacity-0"
@@ -70,7 +70,7 @@ export default function PreviewLessonModal({ isOpen, onClose, lesson }) {
         onClick={onClose}
       />
 
-      {/* Modal Container */}
+      {}
       <div
         className={`
           relative w-full h-full lg:h-auto lg:max-h-[88vh] max-w-4xl 
@@ -81,7 +81,7 @@ export default function PreviewLessonModal({ isOpen, onClose, lesson }) {
         `}
         style={{ willChange: isAnimating ? "transform, opacity" : "auto" }}
       >
-        {/* Minimalist Header */}
+        {}
         <div className="flex items-center justify-between px-4 lg:px-5 py-3 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
             <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900">
@@ -113,9 +113,9 @@ export default function PreviewLessonModal({ isOpen, onClose, lesson }) {
           </button>
         </div>
 
-        {/* Main Content Area */}
+        {}
         <div className="flex-1 overflow-y-auto bg-neutral-50 dark:bg-neutral-950">
-          {/* Premium CTA Card */}
+          {}
           <div className="p-3 lg:p-4 bg-gradient-to-r from-blue-500 to-teal-600 text-white">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-start gap-2.5 flex-1">
@@ -143,7 +143,7 @@ export default function PreviewLessonModal({ isOpen, onClose, lesson }) {
             </div>
           </div>
 
-          {/* Video Player Section - Only show for video lessons */}
+          {}
           {frozenLesson?.lesson_type === "video" && (
             <div className="w-full bg-black">
               <div className="aspect-video w-full">
@@ -166,9 +166,9 @@ export default function PreviewLessonModal({ isOpen, onClose, lesson }) {
             </div>
           )}
 
-          {/* Content Container */}
+          {}
           <div className="max-w-3xl mx-auto px-4 lg:px-6 py-5 lg:py-6">
-            {/* Lesson Content */}
+            {}
             <div className="space-y-3">
               {frozenLesson?.content ? (
                 <div

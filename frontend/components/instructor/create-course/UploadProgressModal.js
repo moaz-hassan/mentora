@@ -53,14 +53,14 @@ export function UploadProgressModal({ isOpen, progress }) {
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Upload Stage Indicator */}
+          {}
           {progress.uploadStage && progress.status === 'uploading' && (
             <div className="text-sm text-blue-600 font-medium text-center">
               {getStageLabel()}
             </div>
           )}
 
-          {/* Progress Bar */}
+          {}
           {progress.status === 'uploading' && (
             <>
               <Progress value={getProgressValue()} className="w-full" />
@@ -70,28 +70,28 @@ export function UploadProgressModal({ isOpen, progress }) {
             </>
           )}
 
-          {/* Chapter Progress */}
+          {}
           {progress.chapterIndex && (
             <div className="text-sm text-neutral-700">
               Chapter {progress.chapterIndex} of {progress.totalChapters}
             </div>
           )}
 
-          {/* Lesson Progress */}
+          {}
           {progress.lessonIndex && (
             <div className="text-sm text-neutral-700">
               Lesson {progress.lessonIndex} of {progress.totalLessons}
             </div>
           )}
 
-          {/* Success Message */}
+          {}
           {(progress.status === 'complete' || progress.status === 'success') && (
             <div className="text-center space-y-4">
               <div className="text-green-600 font-medium text-lg">
                 {progress.message || 'Your course has been created successfully!'}
               </div>
               
-              {/* Detailed Course Information */}
+              {}
               {progress.details && (
                 <div className="bg-gray-50 rounded-lg p-4 text-left space-y-3">
                   <p className="font-semibold text-gray-900 text-base">
@@ -130,7 +130,7 @@ export function UploadProgressModal({ isOpen, progress }) {
             </div>
           )}
 
-          {/* Error Message */}
+          {}
           {progress.status === 'error' && (
             <div className="text-center text-red-600 font-medium">
               {progress.message || 'An error occurred during upload'}

@@ -5,12 +5,7 @@ import { createLesson } from "../lessons/createLesson";
 import { createQuiz } from "../quizzes/createQuiz";
 import { createLessonMaterial } from "../lessons/createLessonMaterial";
 
-/**
- * Upload complete course content including chapters, lessons, and quizzes
- * @param {Object} courseData - Complete course data
- * @param {Function} onProgress - Progress callback function
- * @returns {Promise<Object>} Response with success flag and course ID
- */
+
 export default async function uploadCourseContent(courseData, onProgress) {
   try {
     const token = getAuthToken();
@@ -19,7 +14,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
       throw new Error("Authentication required");
     }
 
-    // Step 1: Create course with thumbnail
+    
     onProgress({
       stage: "course",
       status: "uploading",
@@ -61,7 +56,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
       progress: 100,
     });
 
-    // Step 1.5: Upload introduction video if provided
+    
     if (courseData.introVideoFile) {
       onProgress({
         stage: "intro-video",
@@ -105,7 +100,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
       });
     }
 
-    // Step 2: Process chapters sequentially
+    
     const chapters = courseData.chapters || [];
     const totalChapters = chapters.length;
 
@@ -120,7 +115,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
         message: `Creating chapter ${chapterIndex + 1} of ${totalChapters}...`,
       });
 
-      // Create chapter
+      
       const chapterResponse = await createChapter(
         {
           course_id: courseId,
@@ -140,7 +135,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
         message: `Chapter ${chapterIndex + 1} created`,
       });
 
-      // Process lessons sequentially (lessons have a 'type' property with value 'video' or 'text')
+      
       const lessons = chapter.items?.filter((item) => "type" in item) || [];
       const totalLessons = lessons.length;
 
@@ -165,7 +160,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
         let hlsUrl = null;
         let duration = lesson.duration || 0;
 
-        // Upload video directly to Cloudinary if it's a video lesson
+        
         if (lesson.type === "video" && lesson.videoFile) {
           const { uploadVideoToCloudinary } = await import(
             "@/lib/apiCalls/cloudinary/uploadVideoToCloudinary"
@@ -194,7 +189,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
           duration = uploadResult.duration || duration;
         }
 
-        // Create lesson with video metadata
+        
         const lessonResponse = await createLesson(
           {
             chapter_id: chapterId,
@@ -212,7 +207,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
 
         const lessonId = lessonResponse.data.id;
 
-        // Process lesson materials
+        
         if (lesson.materials && lesson.materials.length > 0) {
           const { uploadFileToCloudinary } = await import(
             "@/lib/apiCalls/cloudinary/uploadFileToCloudinary"
@@ -233,15 +228,15 @@ export default async function uploadCourseContent(courseData, onProgress) {
             });
 
             try {
-              // Upload file to Cloudinary
+              
               const uploadResult = await uploadFileToCloudinary(
                 material.file,
                 (progress) => {
-                  // We could update granular progress here if needed
+                  
                 }
               );
 
-              // Create material record
+              
               await createLessonMaterial(
                 lessonId,
                 {
@@ -254,7 +249,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
               );
             } catch (err) {
               console.error(`Failed to upload material ${material.filename}:`, err);
-              // Continue with other materials even if one fails
+              
             }
           }
         }
@@ -273,7 +268,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
         });
       }
 
-      // Process quizzes sequentially (quizzes have a 'questions' property)
+      
       const quizzes =
         chapter.items?.filter((item) => "questions" in item) || [];
 
@@ -313,7 +308,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
       }
     }
 
-    // All done - Clear local storage and state
+    
     onProgress({
       stage: "complete",
       status: "complete",
@@ -321,7 +316,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
       courseId,
     });
 
-    // Clear course data from local storage
+    
     if (typeof window !== "undefined") {
       localStorage.removeItem("courseData");
       localStorage.removeItem("courseDraft");

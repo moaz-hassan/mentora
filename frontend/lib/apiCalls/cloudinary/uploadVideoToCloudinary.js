@@ -29,10 +29,10 @@ export const uploadVideoToCloudinary = async (file, onProgress) => {
       throw new Error('Authentication required');
     }
 
-    // Step 1: Get video duration
+    
     const duration = await getVideoDuration(file);
 
-    // Step 2: Get upload signature from backend
+    
     onProgress({ stage: 'signature', progress: 0, message: 'Preparing upload...' });
     
     const signatureResponse = await axios.post(
@@ -46,8 +46,8 @@ export const uploadVideoToCloudinary = async (file, onProgress) => {
     const { signature, timestamp, cloudName, apiKey, folder } = 
       signatureResponse.data.data;
 
-    // Step 3: Build FormData for Cloudinary
-    // IMPORTANT: Only include parameters that were signed
+    
+    
     const formData = new FormData();
     formData.append('file', file);
     formData.append('folder', folder);
@@ -55,8 +55,8 @@ export const uploadVideoToCloudinary = async (file, onProgress) => {
     formData.append('signature', signature);
     formData.append('api_key', apiKey);
 
-    // Step 4: Upload directly to Cloudinary
-    // resource_type is in the URL, not in the form data
+    
+    
     onProgress({ stage: 'uploading', progress: 0, message: 'Uploading video...' });
     
     const uploadResponse = await axios.post(
@@ -78,17 +78,17 @@ export const uploadVideoToCloudinary = async (file, onProgress) => {
       }
     );
 
-    // Step 5: Processing complete
+    
     onProgress({ 
       stage: 'processing', 
       progress: 100, 
       message: 'Processing video...' 
     });
 
-    // Extract HLS URL from eager transformations (if available)
+    
     const hlsUrl = uploadResponse.data.eager?.[0]?.secure_url || null;
 
-    // Step 6: Return complete metadata
+    
     const result = {
       secure_url: uploadResponse.data.secure_url,
       public_id: uploadResponse.data.public_id,

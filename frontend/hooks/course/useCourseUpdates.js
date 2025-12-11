@@ -3,20 +3,12 @@ import { updateCourseInfo } from "@/lib/apiCalls/courses/updateCourseInfo.apiCal
 import { saveAllCourseChanges } from "@/services/courseService";
 import { toast } from "sonner";
 
-/**
- * Custom hook for managing course updates
- * @param {string} courseId - The ID of the course being edited
- * @param {Function} uploadVideo - Video upload function from useVideoUpload
- * @param {Function} refetchCourse - Function to refetch course data
- * @returns {Object} Update functions and state
- */
+
 export function useCourseUpdates(courseId, uploadVideo, refetchCourse) {
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  /**
-   * Update general course information
-   */
+  
   const updateGeneralInfo = useCallback(
     async (courseData, updatedData) => {
       try {
@@ -48,9 +40,7 @@ export function useCourseUpdates(courseId, uploadVideo, refetchCourse) {
     [courseId]
   );
 
-  /**
-   * Save all course changes (chapters, lessons, quizzes)
-   */
+  
   const saveAllChanges = useCallback(
     async (courseData) => {
       if (!hasUnsavedChanges) {
@@ -66,7 +56,7 @@ export function useCourseUpdates(courseId, uploadVideo, refetchCourse) {
         toast.success("All changes saved successfully!");
         setHasUnsavedChanges(false);
 
-        // Refresh course data
+        
         if (refetchCourse) {
           await refetchCourse();
         }

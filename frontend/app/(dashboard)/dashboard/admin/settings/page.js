@@ -41,7 +41,7 @@ export default function SystemSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("general");
 
-  // Settings state
+  
   const [settings, setSettings] = useState({
     general: {
       siteName: "",
@@ -80,7 +80,7 @@ export default function SystemSettingsPage() {
     try {
       const res = await settingsAPI.getAll();
       if (res.success && res.data?.settings) {
-        // Merge fetched settings with defaults
+        
         const fetched = res.data.settings;
         setSettings((prev) => ({
           general: { ...prev.general, ...fetched.general },
@@ -141,7 +141,7 @@ export default function SystemSettingsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">System Settings</h1>
@@ -170,7 +170,7 @@ export default function SystemSettingsPage() {
         </div>
       </div>
 
-      {/* Settings Tabs */}
+      {}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="general" className="gap-2">
@@ -191,7 +191,7 @@ export default function SystemSettingsPage() {
           </TabsTrigger>
         </TabsList>
 
-        {/* General Settings */}
+        {}
         <TabsContent value="general">
           <Card>
             <CardHeader>
@@ -257,7 +257,7 @@ export default function SystemSettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* Email Settings */}
+        {}
         <TabsContent value="email">
           <Card>
             <CardHeader>
@@ -329,7 +329,7 @@ export default function SystemSettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* Payment Settings */}
+        {}
         <TabsContent value="payment">
           <Card>
             <CardHeader>
@@ -424,7 +424,7 @@ export default function SystemSettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* Course Settings */}
+        {}
         <TabsContent value="course">
           <Card>
             <CardHeader>

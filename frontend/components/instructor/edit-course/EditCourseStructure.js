@@ -17,10 +17,10 @@ import {
 } from "@dnd-kit/sortable";
 
 export function EditCourseStructure({ courseData, setCourseData }) {
-  // Ensure chapters array exists
+  
   const chapters = courseData?.chapters || [];
 
-  // Separate existing and new chapters
+  
   const existingChapters = chapters.filter(
     (ch) => !ch.id.toString().startsWith("chapter-")
   );
@@ -36,7 +36,7 @@ export function EditCourseStructure({ courseData, setCourseData }) {
       items: [],
     };
 
-    // Add new chapter at the end of all chapters
+    
     setCourseData({
       ...courseData,
       chapters: [...chapters, newChapter],
@@ -59,7 +59,7 @@ export function EditCourseStructure({ courseData, setCourseData }) {
     });
   };
 
-  // Sensors for drag and drop - only for new chapters
+  
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -72,7 +72,7 @@ export function EditCourseStructure({ courseData, setCourseData }) {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      // Only allow reordering within new chapters
+      
       const activeIsNew = active.id.toString().startsWith("chapter-");
       const overIsNew = over.id.toString().startsWith("chapter-");
 
@@ -132,7 +132,7 @@ export function EditCourseStructure({ courseData, setCourseData }) {
           </div>
         ) : (
           <>
-            {/* Existing Chapters - Not draggable */}
+            {}
             {existingChapters.length > 0 && (
               <div className="space-y-4">
                 <div className="text-sm font-medium text-neutral-500 uppercase tracking-wide mb-2">
@@ -149,7 +149,7 @@ export function EditCourseStructure({ courseData, setCourseData }) {
               </div>
             )}
 
-            {/* New Chapters - Draggable */}
+            {}
             {newChapters.length > 0 && (
               <div className="space-y-4">
                 {existingChapters.length > 0 && (
@@ -182,7 +182,7 @@ export function EditCourseStructure({ courseData, setCourseData }) {
         )}
       </div>
 
-      {/* Info Box */}
+      {}
       {existingChapters.length > 0 && (
         <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">

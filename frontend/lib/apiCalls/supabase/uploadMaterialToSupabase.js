@@ -5,12 +5,7 @@ const API_URL = `${
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
 }/api`;
 
-/**
- * Upload a material file to Supabase via backend
- * @param {File} file - The file to upload
- * @param {Function} onProgress - Progress callback (optional)
- * @returns {Promise<Object>} - Upload result with url and public_id
- */
+
 export const uploadMaterialToSupabase = async (file, onProgress) => {
   try {
     const token = Cookies.get("authToken");
@@ -23,11 +18,11 @@ export const uploadMaterialToSupabase = async (file, onProgress) => {
       onProgress(0);
     }
 
-    // Create FormData with file
+    
     const formData = new FormData();
     formData.append("file", file);
 
-    // Upload to backend (which uploads to Supabase)
+    
     const response = await axios.post(
       `${API_URL}/materials/upload`,
       formData,
@@ -51,7 +46,7 @@ export const uploadMaterialToSupabase = async (file, onProgress) => {
       throw new Error(response.data.message || "Upload failed");
     }
 
-    // Return in same format as before for compatibility
+    
     return {
       secure_url: response.data.data.url,
       public_id: response.data.data.public_id,

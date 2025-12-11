@@ -2,11 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getCourseForEdit } from "@/lib/apiCalls/courses/getCourseForEdit.apiCall";
 import { toast } from "sonner";
 
-/**
- * Custom hook for managing edit course data fetching and state
- * @param {string} courseId - The ID of the course to edit
- * @returns {Object} Course data, loading state, error state, and refetch function
- */
+
 export function useEditCourse(courseId) {
   const [courseData, setCourseData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,7 +19,7 @@ export function useEditCourse(courseId) {
         throw new Error(response.message || "Failed to load course");
       }
 
-      // Transform backend data to match frontend structure
+      
       const transformedData = {
         ...response.data,
         thumbnail: response.data.thumbnail_url,

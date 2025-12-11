@@ -9,7 +9,7 @@ export default function CTA() {
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    // Handle newsletter subscription
+    
     console.log("Subscribe:", email);
     setEmail("");
   };

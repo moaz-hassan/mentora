@@ -25,7 +25,7 @@ export default function ForgotPasswordPage() {
   const [ableToResend, setAbleToResend] = useState(true);
   const [ableToResendTimer, setAbleToResendTimer] = useState(60);
 
-  // Initialize state from localStorage on mount
+  
   useEffect(() => {
     const storedData = localStorage.getItem(STORAGE_KEY);
     if (storedData) {
@@ -34,14 +34,14 @@ export default function ForgotPasswordPage() {
         const now = Date.now();
         
         if (expiresAt > now) {
-          // Timer is still active
+          
           const remainingSeconds = Math.ceil((expiresAt - now) / 1000);
           setEmail(storedEmail);
           setResetSent(true);
           setAbleToResend(false);
           setAbleToResendTimer(remainingSeconds);
         } else {
-          // Timer expired, clean up
+          
           localStorage.removeItem(STORAGE_KEY);
         }
       } catch (error) {
@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
     }
   }, []);
 
-  // Handle timer countdown
+  
   useEffect(() => {
     if (!resetSent || ableToResend) return;
 
@@ -79,8 +79,8 @@ export default function ForgotPasswordPage() {
       if (response.success) {
         toast.success(response.message);
         
-        // Store timer data in localStorage
-        const expiresAt = Date.now() + 60000; // 60 seconds from now
+        
+        const expiresAt = Date.now() + 60000; 
         localStorage.setItem(
           STORAGE_KEY,
           JSON.stringify({ email, expiresAt })

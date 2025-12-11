@@ -86,7 +86,7 @@ export default function ProfileTab({ userData, profileData, onRefetch }) {
     <div className="space-y-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Avatar Section */}
+          {}
           <Card className="border bg-card/50 backdrop-blur-sm">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -129,7 +129,7 @@ export default function ProfileTab({ userData, profileData, onRefetch }) {
             </CardContent>
           </Card>
 
-          {/* Personal Information */}
+          {}
           <Card className="border bg-card/50 backdrop-blur-sm">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -217,7 +217,7 @@ export default function ProfileTab({ userData, profileData, onRefetch }) {
             </CardContent>
           </Card>
 
-          {/* Social Links */}
+          {}
           <Card className="border bg-card/50 backdrop-blur-sm">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -255,7 +255,7 @@ export default function ProfileTab({ userData, profileData, onRefetch }) {
             </CardContent>
           </Card>
 
-          {/* Submit Button */}
+          {}
           <div className="flex justify-end">
             <Button 
               type="submit" 

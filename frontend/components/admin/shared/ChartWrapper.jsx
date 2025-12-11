@@ -33,20 +33,7 @@ const COLORS = [
   "hsl(var(--chart-5))",
 ];
 
-/**
- * ChartWrapper - Wrapper for chart libraries with consistent styling
- * @param {string} title - Chart title
- * @param {string} description - Chart description
- * @param {string} type - Chart type: 'line', 'bar', 'area', 'pie'
- * @param {Array} data - Chart data
- * @param {Object} config - Chart configuration for colors and labels
- * @param {string} dataKey - Key for Y-axis data
- * @param {string} xAxisKey - Key for X-axis data
- * @param {boolean} loading - Loading state
- * @param {string} className - Additional CSS classes
- * @param {boolean} showLegend - Show chart legend
- * @param {boolean} showGrid - Show grid lines
- */
+
 export function ChartWrapper({
   title,
   description,

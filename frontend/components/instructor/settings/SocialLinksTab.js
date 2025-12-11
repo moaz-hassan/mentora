@@ -108,7 +108,7 @@ export default function SocialLinksTab({
           ))}
         </div>
 
-        {/* Save Button */}
+        {}
         <div className="flex justify-end pt-4 border-t border-gray-200">
           <Button
             onClick={onSave}

@@ -31,7 +31,7 @@ export default function InstructorSearchPage() {
   const [loading, setLoading] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
 
-  // All searchable items in the dashboard
+  
   const searchableItems = {
     pages: [
       {
@@ -154,7 +154,7 @@ export default function InstructorSearchPage() {
   };
 
   useEffect(() => {
-    // Load recent searches from localStorage
+    
     const saved = localStorage.getItem("recentSearches");
     if (saved) {
       setRecentSearches(JSON.parse(saved));
@@ -173,7 +173,7 @@ export default function InstructorSearchPage() {
     setLoading(true);
     const lowerQuery = query.toLowerCase();
 
-    // Search pages
+    
     const matchedPages = searchableItems.pages.filter(
       (item) =>
         item.title.toLowerCase().includes(lowerQuery) ||
@@ -181,7 +181,7 @@ export default function InstructorSearchPage() {
         item.keywords.some((keyword) => keyword.includes(lowerQuery))
     );
 
-    // Search actions
+    
     const matchedActions = searchableItems.actions.filter(
       (item) =>
         item.title.toLowerCase().includes(lowerQuery) ||
@@ -189,7 +189,7 @@ export default function InstructorSearchPage() {
         item.keywords.some((keyword) => keyword.includes(lowerQuery))
     );
 
-    // Search help articles
+    
     const matchedHelp = searchableItems.help.filter(
       (item) =>
         item.title.toLowerCase().includes(lowerQuery) ||
@@ -201,7 +201,7 @@ export default function InstructorSearchPage() {
       pages: matchedPages,
       actions: matchedActions,
       help: matchedHelp,
-      courses: [], // Would be populated from API in real implementation
+      courses: [], 
     });
 
     setLoading(false);
@@ -234,11 +234,11 @@ export default function InstructorSearchPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Search</h1>
 
-        {/* Search Bar */}
+        {}
         <form onSubmit={handleSearch} className="relative">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
@@ -260,7 +260,7 @@ export default function InstructorSearchPage() {
           )}
         </form>
 
-        {/* Results Count */}
+        {}
         {searchQuery && (
           <p className="mt-4 text-sm text-gray-600">
             {loading ? "Searching..." : `Found ${totalResults} results for "${searchQuery}"`}
@@ -268,7 +268,7 @@ export default function InstructorSearchPage() {
         )}
       </div>
 
-      {/* Recent Searches */}
+      {}
       {!searchQuery && recentSearches.length > 0 && (
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-4">
@@ -297,10 +297,10 @@ export default function InstructorSearchPage() {
         </div>
       )}
 
-      {/* Search Results */}
+      {}
       {searchQuery && !loading && (
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* Pages */}
+          {}
           {results.pages.length > 0 && (
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Pages</h2>
@@ -332,7 +332,7 @@ export default function InstructorSearchPage() {
             </div>
           )}
 
-          {/* Quick Actions */}
+          {}
           {results.actions.length > 0 && (
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -365,7 +365,7 @@ export default function InstructorSearchPage() {
             </div>
           )}
 
-          {/* Help Articles */}
+          {}
           {results.help.length > 0 && (
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -398,7 +398,7 @@ export default function InstructorSearchPage() {
             </div>
           )}
 
-          {/* No Results */}
+          {}
           {totalResults === 0 && (
             <div className="text-center py-12">
               <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -419,7 +419,7 @@ export default function InstructorSearchPage() {
         </div>
       )}
 
-      {/* Popular Searches */}
+      {}
       {!searchQuery && (
         <div className="max-w-4xl mx-auto">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">

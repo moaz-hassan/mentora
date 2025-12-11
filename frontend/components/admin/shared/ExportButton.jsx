@@ -11,13 +11,7 @@ import {
 import { Download, FileText, FileSpreadsheet, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-/**
- * ExportButton - Export data to CSV/PDF
- * @param {Function} onExport - Export handler, receives format ('csv' | 'pdf' | 'excel')
- * @param {boolean} loading - Loading state
- * @param {string} className - Additional CSS classes
- * @param {Array} formats - Available export formats
- */
+
 export function ExportButton({
   onExport,
   loading = false,

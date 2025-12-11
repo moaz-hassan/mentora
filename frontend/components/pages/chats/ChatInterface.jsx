@@ -13,15 +13,15 @@ export default function ChatInterface({ userRole, contextType, contextData = {} 
   const inputRef = useRef(null);
 
   useEffect(() => {
-    // Focus input on mount
+    
     inputRef.current?.focus();
 
-    // Fetch example questions
+    
     fetchExampleQuestions();
   }, [userRole]);
 
   useEffect(() => {
-    // Auto-scroll to latest message
+    
     scrollToBottom();
   }, [messages]);
 
@@ -94,7 +94,7 @@ export default function ChatInterface({ userRole, contextType, contextData = {} 
 
   return (
     <div className="flex flex-col h-[600px] bg-white rounded-lg shadow-lg">
-      {/* Messages Area */}
+      {}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
           <div className="text-center py-8">
@@ -154,7 +154,7 @@ export default function ChatInterface({ userRole, contextType, contextData = {} 
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
+      {}
       <div className="border-t p-4">
         <form onSubmit={handleSubmit} className="flex space-x-2">
           <input

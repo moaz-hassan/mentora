@@ -41,7 +41,7 @@ export function ChapterItem({
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   
-  // Check if this is a new chapter (not yet saved to backend)
+  
   const isNewChapter = chapter.id && chapter.id.toString().startsWith("chapter-");
   
   const {
@@ -53,7 +53,7 @@ export function ChapterItem({
     isDragging,
   } = useSortable({ 
     id: chapter.id,
-    disabled: !isNewChapter // Only allow dragging new chapters
+    disabled: !isNewChapter 
   });
 
   const style = {
@@ -62,20 +62,20 @@ export function ChapterItem({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  // Sensors for drag and drop of items within chapter
+  
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // Require 8px movement before drag starts
+        distance: 8, 
       },
     }),
     useSensor(KeyboardSensor)
   );
 
-  // Get items safely
+  
   const items = chapter.items || [];
 
-  // Handle drag end for items within chapter
+  
   const handleItemDragEnd = (event) => {
     const { active, over } = event;
 
@@ -152,11 +152,11 @@ export function ChapterItem({
   };
 
   const isLesson = (item) => {
-    // Check if it's a quiz first (has questions property)
+    
     if ("questions" in item) {
       return false;
     }
-    // Otherwise it's a lesson (has type property)
+    
     return "type" in item;
   };
 
@@ -170,7 +170,7 @@ export function ChapterItem({
       className="relative border rounded-lg overflow-hidden mb-4"
       {...attributes}
     >
-      {/* Chapter Header */}
+      {}
       <div className="flex items-center gap-3 p-4 border-b border-neutral-100">
         {isNewChapter ? (
           <button
@@ -276,10 +276,10 @@ export function ChapterItem({
         </div>
       </div>
 
-      {/* Chapter Content */}
+      {}
       {isExpanded && (
         <div className="p-4 space-y-3">
-          {/* Chapter Description - only editable for new chapters */}
+          {}
           {isNewChapter && (
             <div className="mb-4">
               <Input

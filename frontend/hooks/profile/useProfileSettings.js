@@ -3,10 +3,7 @@ import { updateUserProfile } from "@/lib/apiCalls/student/profile.apiCall";
 import { changePassword } from "@/lib/apiCalls/student/profile.apiCall";
 import { toast } from "sonner";
 
-/**
- * Custom hook for profile settings management
- * @returns {Object} Profile update functions and state
- */
+
 export function useProfileSettings() {
   const [isSaving, setIsSaving] = useState(false);
 

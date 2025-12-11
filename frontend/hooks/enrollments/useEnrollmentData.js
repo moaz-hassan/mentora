@@ -8,10 +8,10 @@ import { getEnrollmentById } from "@/lib/apiCalls/enrollments/enrollment.service
 export function useEnrollmentData(enrollmentId) {
   const router = useRouter();
   
-  // Track if initial load has completed
+  
   const initialLoadComplete = useRef(false);
 
-  // Core data state
+  
   const [enrollment, setEnrollment] = useState(null);
   const [course, setCourse] = useState(null);
   const [chapters, setChapters] = useState([]);
@@ -25,14 +25,14 @@ export function useEnrollmentData(enrollmentId) {
     currentChapterId: null,
   });
 
-  // UI state
+  
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Chat membership state
+  
   const [chatMembership, setChatMembership] = useState(null);
 
-  // Fetch initial enrollment data
+  
   const fetchEnrollment = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -61,7 +61,7 @@ export function useEnrollmentData(enrollmentId) {
         completionPercentage: 0,
       });
       
-      // Set chat membership from enrollment data
+      
       setChatMembership(data.chatMembership || null);
       
       initialLoadComplete.current = true;

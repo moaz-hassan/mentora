@@ -79,12 +79,7 @@ export const getMyEnrollments = async () => {
   }
 };
 
-/**
- * Get lesson detail (lazy loading)
- * @param {string} enrollmentId - Enrollment ID
- * @param {string} lessonId - Lesson ID
- * @returns {Promise<Object>} Response with full lesson data including video URLs and materials
- */
+
 export const getLessonDetail = async (enrollmentId, lessonId) => {
   try {
     const headers = getAuthHeaders();
@@ -98,12 +93,7 @@ export const getLessonDetail = async (enrollmentId, lessonId) => {
   }
 };
 
-/**
- * Get quiz detail (lazy loading)
- * @param {string} enrollmentId - Enrollment ID
- * @param {string} quizId - Quiz ID
- * @returns {Promise<Object>} Response with full quiz data including questions
- */
+
 export const getQuizDetail = async (enrollmentId, quizId) => {
   try {
     const headers = getAuthHeaders();
@@ -117,12 +107,7 @@ export const getQuizDetail = async (enrollmentId, quizId) => {
   }
 };
 
-/**
- * Mark lesson as complete
- * @param {string} enrollmentId - Enrollment ID
- * @param {string} lessonId - Lesson ID
- * @returns {Promise<Object>} Response with updated progress
- */
+
 export const markLessonComplete = async (enrollmentId, lessonId) => {
   try {
     const headers = getAuthHeaders();
@@ -137,13 +122,7 @@ export const markLessonComplete = async (enrollmentId, lessonId) => {
   }
 };
 
-/**
- * Submit quiz answers
- * @param {string} enrollmentId - Enrollment ID
- * @param {string} quizId - Quiz ID
- * @param {Object} answers - User answers {questionIndex: answer}
- * @returns {Promise<Object>} Response with quiz results
- */
+
 export const submitQuiz = async (enrollmentId, quizId, answers) => {
   try {
     const headers = getAuthHeaders();

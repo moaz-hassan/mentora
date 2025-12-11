@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-/**
- * Simple confetti animation for celebration moments
- */
+
 export default function Confetti() {
   const [pieces, setPieces] = useState([]);
 
   useEffect(() => {
-    // Generate confetti pieces
+    
     const colors = ["#FFD700", "#FF6B6B", "#4ECDC4", "#A78BFA", "#F472B6", "#34D399"];
     const newPieces = [];
     
@@ -26,7 +24,7 @@ export default function Confetti() {
     
     setPieces(newPieces);
 
-    // Clean up after animation
+    
     const timer = setTimeout(() => {
       setPieces([]);
     }, 5000);

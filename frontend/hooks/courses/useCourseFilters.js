@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
   const searchParams = useSearchParams();
   
-  // State
+  
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedPriceFilters, setSelectedPriceFilters] = useState([]);
@@ -13,7 +13,7 @@ export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
   const [sortBy, setSortBy] = useState("popularity");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Initialize from URL on mount
+  
   useEffect(() => {
     const query = searchParams.get("search");
     if (query) setSearchQuery(query);
@@ -37,7 +37,7 @@ export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
     if (page) setCurrentPage(Number(page));
   }, []);
 
-  // Update URL parameters
+  
   const updateUrlParams = useCallback(() => {
     const params = new URLSearchParams();
 
@@ -61,12 +61,12 @@ export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
     currentPage
   ]);
 
-  // Sync with URL whenever filters change
+  
   useEffect(() => {
     updateUrlParams();
   }, [updateUrlParams]);
 
-  // Handlers
+  
   const toggleCategory = (categoryId) => {
     setSelectedCategories((prev) =>
       prev.includes(categoryId)

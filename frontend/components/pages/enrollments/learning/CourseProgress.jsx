@@ -2,10 +2,7 @@
 
 import { Progress } from "@/components/ui/progress";
 
-/**
- * CourseProgress - Displays progress bar and completion stats
- * Shows percentage and completed lessons count
- */
+
 export default function CourseProgress({
   percentage = 0,
   completedCount = 0,

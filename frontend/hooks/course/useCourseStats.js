@@ -1,10 +1,6 @@
 import { useMemo } from "react";
 
-/**
- * Custom hook for calculating course statistics
- * @param {Object} courseData - Course data
- * @returns {Object} Course statistics
- */
+
 export function useCourseStats(courseData) {
   const stats = useMemo(() => {
     const chapters = courseData?.chapters || [];

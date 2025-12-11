@@ -1,6 +1,4 @@
-/**
- * Format file size for display
- */
+
 export const formatFileSize = (bytes) => {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;

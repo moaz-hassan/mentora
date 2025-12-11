@@ -18,7 +18,7 @@ export default function EditCoursePage({ params }) {
   const courseId = resolvedParams.id;
   const [activeTab, setActiveTab] = useState("details");
 
-  // Custom hooks
+  
   const { courseData, setCourseData, loading, error, refetch } = useEditCourse(courseId);
   const { uploadProgress, uploadVideo } = useVideoUpload();
   const {
@@ -29,24 +29,24 @@ export default function EditCoursePage({ params }) {
     saveAllChanges,
   } = useCourseUpdates(courseId, uploadVideo, refetch);
 
-  // Handle course info updates
+  
   const handleUpdateGeneralInfo = async (updatedData) => {
     const updated = await updateGeneralInfo(courseData, updatedData);
     setCourseData({ ...courseData, ...updated });
   };
 
-  // Handle saving all changes
+  
   const handleSaveAllChanges = async () => {
     await saveAllChanges(courseData);
   };
 
-  // Handle course data changes
+  
   const handleCourseDataChange = (newData) => {
     setCourseData(newData);
     setHasUnsavedChanges(true);
   };
 
-  // Loading state
+  
   if (loading) {
     return (
       <div className="container mx-auto py-8 px-4">
@@ -60,7 +60,7 @@ export default function EditCoursePage({ params }) {
     );
   }
 
-  // Error state
+  
   if (error) {
     return (
       <div className="container mx-auto py-8 px-4">
@@ -74,7 +74,7 @@ export default function EditCoursePage({ params }) {
     );
   }
 
-  // No course data
+  
   if (!courseData) {
     return null;
   }

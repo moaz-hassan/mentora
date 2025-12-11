@@ -15,10 +15,10 @@ export function NotificationDropdown({ user }) {
 
   useEffect(() => {
     if (user?.id) {
-      // fetchUnreadCount();
-      // Set up polling for new notifications every 30 seconds
+      
+      
       const interval = setInterval(() => {
-        // fetchUnreadCount();
+        
         if (isOpen) {
           fetchNotifications();
         }
@@ -45,7 +45,7 @@ export function NotificationDropdown({ user }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Listen for new notification events
+  
   useEffect(() => {
     const handleNewNotification = (event) => {
       const notification = event.detail;
@@ -202,7 +202,7 @@ export function NotificationDropdown({ user }) {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Bell Icon Button */}
+      {}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
@@ -215,10 +215,10 @@ export function NotificationDropdown({ user }) {
         )}
       </button>
 
-      {/* Dropdown */}
+      {}
       {isOpen && (
         <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-          {/* Header */}
+          {}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">
               Notifications
@@ -242,7 +242,7 @@ export function NotificationDropdown({ user }) {
             </div>
           </div>
 
-          {/* Notifications List */}
+          {}
           <div className="max-h-96 overflow-y-auto">
             {loading ? (
               <div className="p-8 text-center">
@@ -300,7 +300,7 @@ export function NotificationDropdown({ user }) {
             )}
           </div>
 
-          {/* Footer */}
+          {}
           {notifications.length > 0 && (
             <div className="p-3 border-t border-gray-200 text-center">
               <Link

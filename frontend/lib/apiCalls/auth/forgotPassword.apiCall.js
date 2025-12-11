@@ -5,17 +5,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Request password reset email
- * @param {string} email - User's email address
- * @returns {Promise<Object>} Response with success flag and data/error
- * 
- * @example
- * const result = await forgotPassword('user@example.com');
- * if (result.success) {
- *   console.log(result.message);
- * }
- */
+
 const forgotPassword = async (email) => {
   if (!email) {
     return {

@@ -7,9 +7,7 @@ import {
 const API_URL = getApiBaseUrl();
 
 export const settingsAPI = {
-  /**
-   * Get all system settings
-   */
+  
   getAll: async () => {
     try {
       const headers = getAuthHeaders();
@@ -20,15 +18,12 @@ export const settingsAPI = {
     }
   },
 
-  /**
-   * Bulk update settings
-   * @param {Object} settings - Nested settings object { category: { key: value } }
-   */
+  
   bulkUpdate: async (settings) => {
     try {
       const headers = getAuthHeaders();
       
-      // Transform nested object to array of updates
+      
       const updates = [];
       Object.entries(settings).forEach(([category, values]) => {
         Object.entries(values).forEach(([key, value]) => {

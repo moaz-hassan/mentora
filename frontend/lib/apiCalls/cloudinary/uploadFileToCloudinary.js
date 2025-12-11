@@ -27,7 +27,7 @@ export const uploadFileToCloudinary = async (file, onProgress) => {
     const { signature, timestamp, cloudName, apiKey, folder } =
       signatureResponse.data.data;
 
-    // Step 2: Build FormData for Cloudinary
+    
     const formData = new FormData();
     formData.append("file", file);
     formData.append("folder", folder);
@@ -35,9 +35,9 @@ export const uploadFileToCloudinary = async (file, onProgress) => {
     formData.append("signature", signature);
     formData.append("api_key", apiKey);
 
-    // Step 3: Upload directly to Cloudinary
-    // Use 'raw' or 'auto' for generic files
-    const resourceType = "raw"; // or 'auto'
+    
+    
+    const resourceType = "raw"; 
 
     const uploadResponse = await axios.post(
       `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
@@ -54,7 +54,7 @@ export const uploadFileToCloudinary = async (file, onProgress) => {
       }
     );
 
-    // Step 4: Return complete metadata
+    
     return {
       secure_url: uploadResponse.data.secure_url,
       public_id: uploadResponse.data.public_id,

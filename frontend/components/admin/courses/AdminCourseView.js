@@ -29,7 +29,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
     setActiveLesson(item);
   };
 
-  // Helper to get all items (lessons + quizzes) sorted
+  
   const getChapterItems = (chapter) => {
     const lessons = (chapter.Lessons || []).map(l => ({ ...l, type: 'lesson', itemType: l.lesson_type || 'video' }));
     const quizzes = (chapter.Quizzes || []).map(q => ({ ...q, type: 'quiz', itemType: 'quiz' }));
@@ -40,7 +40,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
     if (!activeLesson) {
       return (
         <div className="space-y-6">
-          {/* Intro Video */}
+          {}
           <Card>
             <CardHeader>
               <CardTitle>Course Introduction</CardTitle>
@@ -64,7 +64,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
             </CardContent>
           </Card>
 
-          {/* Description */}
+          {}
           <Card>
             <CardHeader>
               <CardTitle>Description</CardTitle>
@@ -74,7 +74,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
             </CardContent>
           </Card>
 
-          {/* Metadata Grid */}
+          {}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
               <CardHeader>
@@ -105,7 +105,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
       );
     }
 
-    // Render active lesson/quiz content
+    
     return (
       <Card className="h-full border-0 shadow-none">
         <CardHeader className="px-0 pt-0">
@@ -182,7 +182,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
             </div>
           )}
 
-          {/* Attachments for lessons */}
+          {}
           {activeLesson.type === 'lesson' && activeLesson.attachments?.length > 0 && (
             <div className="mt-6">
               <h4 className="text-sm font-medium text-gray-900 mb-3">Attachments</h4>
@@ -210,7 +210,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
-      {/* Top Bar */}
+      {}
       <div className="bg-white border-b sticky top-0 z-30 px-6 py-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
           <Button variant="ghost" onClick={onClose} className="gap-2">
@@ -253,7 +253,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
 
       <div className="container mx-auto p-6 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Sidebar - Curriculum */}
+          {}
           <div className="lg:col-span-1 space-y-6">
             <Card className="max-h-[calc(100vh-140px)] overflow-y-auto">
               <CardHeader>
@@ -310,7 +310,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
               </CardContent>
             </Card>
 
-            {/* AI Analysis Card (Small version for quick reference) */}
+            {}
             {course.ai_analysis && (
               <Card className="bg-purple-50 border-purple-100">
                 <CardHeader className="pb-2">
@@ -333,7 +333,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
                   <Button 
                     variant="link" 
                     className="text-purple-700 p-0 h-auto text-xs"
-                    onClick={() => setActiveLesson(null)} // Go to overview to see full analysis if we add it there
+                    onClick={() => setActiveLesson(null)} 
                   >
                     View Full Analysis
                   </Button>
@@ -342,15 +342,15 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
             )}
           </div>
 
-          {/* Main Content Area */}
+          {}
           <div className="lg:col-span-2 space-y-6">
             {renderContentPreview()}
             
-            {/* Full AI Analysis (Only shown on Overview) */}
+            {}
             {!activeLesson && course.ai_analysis && (
                <div className="p-5 bg-gradient-to-br from-purple-50 to-white rounded-xl border border-purple-100 shadow-sm mt-6">
-                 {/* ... Reuse the AI analysis UI from page.js ... */}
-                 {/* For brevity, I'll just show the summary and reasoning here nicely */}
+                 {}
+                 {}
                  <h3 className="font-semibold text-purple-900 mb-4 flex items-center gap-2">
                    <Video className="w-5 h-5" />
                    Full AI Analysis

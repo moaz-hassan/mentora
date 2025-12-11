@@ -6,18 +6,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Initiate a private chat with an instructor
- * @param {string|number} instructorId - The instructor's user ID
- * @param {string|number|null} courseId - The course ID (optional, for context)
- * @returns {Promise<Object>} Response with success flag and chat room data
- * 
- * @example
- * const result = await initiatePrivateChat(123, 456);
- * if (result.success) {
- *   console.log(result.data);
- * }
- */
+
 export async function initiatePrivateChat(instructorId, courseId = null) {
   try {
     const headers = getAuthHeaders();

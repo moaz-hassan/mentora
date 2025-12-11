@@ -6,16 +6,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Get user profile
- * @returns {Promise<Object>} Response with profile data
- * 
- * @example
- * const result = await getUserProfile();
- * if (result.success) {
- *   console.log(result.data);
- * }
- */
+
 export const getUserProfile = async () => {
   try {
     const headers = getAuthHeaders();
@@ -26,17 +17,7 @@ export const getUserProfile = async () => {
   }
 };
 
-/**
- * Update user profile
- * @param {Object} profileData - Profile data to update
- * @returns {Promise<Object>} Response with success status
- * 
- * @example
- * const result = await updateUserProfile({ first_name: 'John', last_name: 'Doe' });
- * if (result.success) {
- *   console.log('Profile updated');
- * }
- */
+
 export const updateUserProfile = async (profileData) => {
   try {
     const headers = getAuthHeaders();
@@ -51,10 +32,7 @@ export const updateUserProfile = async (profileData) => {
   }
 };
 
-/**
- * Get notification preferences
- * @returns {Promise<Object>} Response with notification preferences
- */
+
 export const getNotificationPreferences = async () => {
   try {
     const headers = getAuthHeaders();
@@ -65,11 +43,7 @@ export const getNotificationPreferences = async () => {
   }
 };
 
-/**
- * Update notification preferences
- * @param {Object} preferences - Notification preferences
- * @returns {Promise<Object>} Response with success status
- */
+
 export const updateNotificationPreferences = async (preferences) => {
   try {
     const headers = getAuthHeaders();
@@ -84,13 +58,7 @@ export const updateNotificationPreferences = async (preferences) => {
   }
 };
 
-/**
- * Change user password
- * @param {string} currentPassword - Current password
- * @param {string} newPassword - New password
- * @param {string} confirmPassword - Confirm new password
- * @returns {Promise<Object>} Response with success status
- */
+
 export const changePassword = async (currentPassword, newPassword, confirmPassword) => {
   try {
     const headers = getAuthHeaders();

@@ -1,15 +1,11 @@
 import Papa from "papaparse";
 import JSZip from "jszip";
 
-/**
- * Generate CSV files from analytics data and bundle in ZIP
- * @param {Object} reportData - The report data from backend
- * @returns {Promise<void>}
- */
+
 export const generateCSV = async (reportData) => {
   const zip = new JSZip();
 
-  // 1. Overview CSV
+  
   if (reportData.overview) {
     const overviewData = [
       {
@@ -25,7 +21,7 @@ export const generateCSV = async (reportData) => {
     zip.file("overview.csv", overviewCSV);
   }
 
-  // 2. Courses CSV
+  
   if (reportData.courses && reportData.courses.length > 0) {
     const coursesData = reportData.courses.map((course) => ({
       "Course ID": course.id,
@@ -40,7 +36,7 @@ export const generateCSV = async (reportData) => {
     zip.file("courses.csv", coursesCSV);
   }
 
-  // 3. Revenue by Month CSV
+  
   if (reportData.revenue && reportData.revenue.revenue_by_month) {
     const revenueData = reportData.revenue.revenue_by_month.map((item) => ({
       "Month": item.month,
@@ -52,7 +48,7 @@ export const generateCSV = async (reportData) => {
     zip.file("revenue_by_month.csv", revenueCSV);
   }
 
-  // 4. Revenue by Course CSV
+  
   if (reportData.revenue && reportData.revenue.revenue_by_course) {
     const revenueByCourseData = reportData.revenue.revenue_by_course.map((item) => ({
       "Course ID": item.course_id,
@@ -66,7 +62,7 @@ export const generateCSV = async (reportData) => {
     zip.file("revenue_by_course.csv", revenueByCourseCSV);
   }
 
-  // 5. Enrollment Trend CSV
+  
   if (reportData.enrollmentTrend && reportData.enrollmentTrend.length > 0) {
     const enrollmentData = reportData.enrollmentTrend.map((item) => ({
       "Date": item.date,
@@ -77,7 +73,7 @@ export const generateCSV = async (reportData) => {
     zip.file("enrollment_trend.csv", enrollmentCSV);
   }
 
-  // 6. Engagement Metrics CSV
+  
   if (reportData.engagement) {
     const engagementData = [
       {
@@ -90,7 +86,7 @@ export const generateCSV = async (reportData) => {
     zip.file("engagement.csv", engagementCSV);
   }
 
-  // 7. Quiz Analytics CSV
+  
   if (reportData.quizAnalytics) {
     const quizData = [
       {
@@ -104,10 +100,10 @@ export const generateCSV = async (reportData) => {
     zip.file("quiz_analytics.csv", quizCSV);
   }
 
-  // Generate ZIP file
+  
   const zipBlob = await zip.generateAsync({ type: "blob" });
 
-  // Trigger download
+  
   const url = window.URL.createObjectURL(zipBlob);
   const link = document.createElement("a");
   link.href = url;
@@ -118,11 +114,7 @@ export const generateCSV = async (reportData) => {
   window.URL.revokeObjectURL(url);
 };
 
-/**
- * Generate a single CSV file
- * @param {Array} data - Array of objects to convert to CSV
- * @param {string} filename - Name of the file
- */
+
 export const generateSingleCSV = (data, filename) => {
   const csv = Papa.unparse(data);
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });

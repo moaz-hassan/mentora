@@ -3,11 +3,7 @@ import { getAuthHeaders, getApiBaseUrl } from "@/lib/utils/apiHelpers";
 
 const API_URL = `${getApiBaseUrl()}/api`;
 
-/**
- * Generate a certificate for a completed course
- * @param {string} courseId - Course ID
- * @returns {Promise<Object>} Response with certificate data
- */
+
 export const generateCertificate = async (courseId) => {
   try {
     const headers = getAuthHeaders();
@@ -22,11 +18,7 @@ export const generateCertificate = async (courseId) => {
   }
 };
 
-/**
- * Get certificate by ID
- * @param {string} certificateId - Certificate ID
- * @returns {Promise<Object>} Response with certificate data
- */
+
 export const getCertificateById = async (certificateId) => {
   try {
     const headers = getAuthHeaders();
@@ -40,10 +32,7 @@ export const getCertificateById = async (certificateId) => {
   }
 };
 
-/**
- * Get all certificates for the authenticated user
- * @returns {Promise<Object>} Response with list of certificates
- */
+
 export const getMyCertificates = async () => {
   try {
     const headers = getAuthHeaders();
@@ -54,11 +43,7 @@ export const getMyCertificates = async () => {
   }
 };
 
-/**
- * Check if a certificate exists for a course
- * @param {string} courseId - Course ID
- * @returns {Promise<Object>} Response with exists flag and certificate data if exists
- */
+
 export const checkCertificateExists = async (courseId) => {
   try {
     const headers = getAuthHeaders();
@@ -72,11 +57,7 @@ export const checkCertificateExists = async (courseId) => {
   }
 };
 
-/**
- * Verify a certificate (public)
- * @param {string} certificateId - Certificate ID
- * @returns {Promise<Object>} Response with verification result
- */
+
 export const verifyCertificate = async (certificateId) => {
   try {
     const response = await axios.get(
@@ -88,11 +69,7 @@ export const verifyCertificate = async (certificateId) => {
   }
 };
 
-/**
- * Get the download URL for a certificate (through backend)
- * @param {string} certificateId - Certificate ID
- * @returns {Promise<Object>} Response with download URL
- */
+
 export const getDownloadUrl = async (certificateId) => {
   try {
     const headers = getAuthHeaders();

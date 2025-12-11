@@ -19,7 +19,7 @@ export default function EnrollmentLineChart({ data }) {
     );
   }
 
-  // Custom tooltip
+  
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
@@ -36,10 +36,10 @@ export default function EnrollmentLineChart({ data }) {
     return null;
   };
 
-  // Format x-axis labels
+  
   const formatXAxis = (value) => {
     if (value.includes('Week')) return value;
-    if (value.length > 10) return value.substring(5); // Show MM-DD
+    if (value.length > 10) return value.substring(5); 
     return value;
   };
 

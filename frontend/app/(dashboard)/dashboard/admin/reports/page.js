@@ -72,7 +72,7 @@ export default function ReportsManagementPage() {
     priority: "all",
   });
 
-  // Dialog states
+  
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
   const [internalNote, setInternalNote] = useState("");
@@ -233,7 +233,7 @@ export default function ReportsManagementPage() {
     );
   };
 
-  // Table columns
+  
   const columns = [
     {
       accessorKey: "id",
@@ -308,7 +308,7 @@ export default function ReportsManagementPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Report Management</h1>
@@ -326,7 +326,7 @@ export default function ReportsManagementPage() {
         </Button>
       </div>
 
-      {/* Stats Cards */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard
           title="Total Reports"
@@ -354,7 +354,7 @@ export default function ReportsManagementPage() {
         />
       </div>
 
-      {/* Filters */}
+      {}
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-wrap items-center gap-4">
@@ -414,7 +414,7 @@ export default function ReportsManagementPage() {
         </CardContent>
       </Card>
 
-      {/* Reports Table */}
+      {}
       <Card>
         <CardHeader>
           <CardTitle>All Reports</CardTitle>
@@ -434,7 +434,7 @@ export default function ReportsManagementPage() {
         </CardContent>
       </Card>
 
-      {/* Report Detail Dialog */}
+      {}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
         <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -497,7 +497,7 @@ export default function ReportsManagementPage() {
                   </div>
                 </div>
 
-                {/* Attachments for instructor reports */}
+                {}
                 {selectedReport.attachments?.length > 0 && (
                   <>
                     <Separator />

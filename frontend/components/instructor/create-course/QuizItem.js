@@ -21,7 +21,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
 
-  // Check if this is a new quiz (not yet saved to backend)
+  
   const isNewQuiz = quiz.id && quiz.id.toString().startsWith("quiz-");
 
   const {
@@ -33,7 +33,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
     isDragging,
   } = useSortable({
     id: quiz.id,
-    disabled: !isNewQuiz, // Only allow dragging new quizzes
+    disabled: !isNewQuiz, 
   });
 
   const style = {
@@ -42,16 +42,16 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
     opacity: isDragging ? 0.5 : 1,
   };
 
-  // Helper function to normalize options format (handles both object and array formats)
+  
   const normalizeOptions = (options) => {
     if (!options) {
       return [{ a: "" }, { b: "" }, { c: "" }, { d: "" }];
     }
-    // If options is already an array, return it
+    
     if (Array.isArray(options)) {
       return options;
     }
-    // If options is an object (old format), convert to array
+    
     if (typeof options === "object") {
       return Object.entries(options).map(([key, value]) => ({
         [key.toLowerCase()]: value,
@@ -60,7 +60,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
     return [{ a: "" }, { b: "" }, { c: "" }, { d: "" }];
   };
 
-  // Helper function to get option value from normalized options
+  
   const getOptionValue = (options, optionKey) => {
     const normalizedOptions = normalizeOptions(options);
     const optionObj = normalizedOptions.find(
@@ -96,7 +96,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
       ...quiz,
       questions: quiz.questions.map((q) => {
         if (q.id === questionId) {
-          // Normalize options to array format first
+          
           const normalizedOptions = normalizeOptions(q.options);
           const updatedOptions = normalizedOptions.map((opt) => {
             const key = Object.keys(opt)[0];
@@ -123,7 +123,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
       className="border border-neutral-200 rounded-lg bg-neutral-50 overflow-hidden"
       {...attributes}
     >
-      {/* Quiz Header */}
+      {}
       <div className="flex items-center gap-3 p-3">
         {isNewQuiz ? (
           <button
@@ -202,7 +202,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
         )}
       </div>
 
-      {/* Quiz Content */}
+      {}
       {isExpanded && isNewQuiz && (
         <div className="px-3 pb-3 pt-0 space-y-3">
           {quiz.questions.map((question, qIndex) => (
@@ -210,7 +210,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
               key={question.id}
               className="bg-white rounded-lg p-4 space-y-4"
             >
-              {/* Question Header */}
+              {}
               <div className="flex items-start gap-3">
                 <Badge variant="secondary" className="text-xs mt-1">
                   Q{qIndex + 1}
@@ -236,7 +236,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
                 </Button>
               </div>
 
-              {/* Options */}
+              {}
               <div className="space-y-3 pl-12">
                 <RadioGroup
                   value={question.correctAnswer || question.answer || "a"}
@@ -288,7 +288,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
             </div>
           ))}
 
-          {/* Add Question Button */}
+          {}
           <Button
             variant="outline"
             onClick={addQuestion}

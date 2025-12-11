@@ -1,11 +1,11 @@
 "use client";
 import Link from 'next/link';
 import { Home, Search, ArrowLeft } from 'lucide-react';
-import { useEffect } from 'react'; // 1. Import useEffect
-import { useRouter } from 'next/navigation'; // 2. Import useRouter
+import { useEffect } from 'react'; 
+import { useRouter } from 'next/navigation'; 
 
 export default function NotFound() {
-  const router = useRouter(); // 3. Get the router instance
+  const router = useRouter(); 
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -17,13 +17,13 @@ export default function NotFound() {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
-        {/* 404 Illustration */}
+        {}
         <div className="mb-8">
           <div className="text-9xl font-bold text-gray-300 mb-4">404</div>
           <div className="w-32 h-1 bg-linear-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
         </div>
 
-        {/* Error Message */}
+        {}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
             Oops! Page Not Found
@@ -31,13 +31,13 @@ export default function NotFound() {
           <p className="text-gray-600 text-lg leading-relaxed">
             The page you're looking for seems to have wandered off. Don't worry, even the best explorers sometimes take a wrong turn.
           </p>
-          {/* Add a message informing the user about the redirect */}
+          {}
           <p className="text-gray-500 mt-4 text-sm">
             You will be automatically redirected to the homepage in 5 seconds.
           </p>
         </div>
 
-        {/* Action Buttons */}
+        {}
         <div className="space-y-4">
           <Link
             href="/"
@@ -66,7 +66,7 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Help Text */}
+        {}
         <div className="mt-8 text-sm text-gray-500">
           <p>
             Need help? Contact our{' '}
@@ -76,7 +76,7 @@ export default function NotFound() {
           </p>
         </div>
 
-        {/* Decorative Elements */}
+        {}
         <div className="absolute top-10 left-10 w-20 h-20 bg-blue-100 rounded-full opacity-50 animate-pulse"></div>
         <div className="absolute bottom-10 right-10 w-16 h-16 bg-purple-100 rounded-full opacity-50 animate-pulse delay-1000"></div>
         <div className="absolute top-1/3 right-20 w-12 h-12 bg-pink-100 rounded-full opacity-50 animate-pulse delay-500"></div>

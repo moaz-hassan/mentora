@@ -4,9 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-/**
- * NavigationButtons - Previous/Next lesson navigation with autoplay toggle
- */
+
 export default function NavigationButtons({
   hasPrevious = false,
   hasNext = false,
@@ -18,7 +16,7 @@ export default function NavigationButtons({
 }) {
   return (
     <div className="flex items-center justify-between py-4">
-      {/* Navigation buttons */}
+      {}
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
@@ -43,7 +41,7 @@ export default function NavigationButtons({
         </Button>
       </div>
 
-      {/* Autoplay toggle - hidden for quizzes */}
+      {}
       {!hideAutoplay && (
         <div className="flex items-center gap-2">
           <Checkbox

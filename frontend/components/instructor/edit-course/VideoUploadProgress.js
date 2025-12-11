@@ -16,19 +16,19 @@ export function VideoUploadProgress({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
-        {/* Icon */}
+        {}
         <div className="flex justify-center mb-6">
           <div className="bg-blue-100 rounded-full p-4">
             <Upload className="w-8 h-8 text-blue-600 animate-pulse" />
           </div>
         </div>
 
-        {/* Title */}
+        {}
         <h3 className="text-xl font-semibold text-gray-900 text-center mb-2">
           Uploading Video
         </h3>
 
-        {/* File Info */}
+        {}
         <div className="text-center mb-6">
           <p className="text-sm font-medium text-gray-700 mb-1">{fileName}</p>
           <p className="text-xs text-gray-500">
@@ -41,7 +41,7 @@ export function VideoUploadProgress({
           </p>
         </div>
 
-        {/* Progress Bar */}
+        {}
         <div className="mb-4">
           <div className="flex justify-between text-sm text-gray-600 mb-2">
             <span>Progress</span>
@@ -57,14 +57,14 @@ export function VideoUploadProgress({
           </div>
         </div>
 
-        {/* Status Message */}
+        {}
         <p className="text-sm text-gray-500 text-center mb-6">
           {progress < 100 
             ? "Please wait while your video is being uploaded..." 
             : "Processing video..."}
         </p>
 
-        {/* Cancel Button (optional) */}
+        {}
         {onCancel && progress < 100 && (
           <button
             onClick={onCancel}

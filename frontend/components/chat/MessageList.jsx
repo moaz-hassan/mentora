@@ -14,7 +14,7 @@ export default function MessageList({
   const scrollContainerRef = useRef(null);
   const [prevScrollHeight, setPrevScrollHeight] = useState(0);
 
-  // Maintain scroll position when loading older messages
+  
   useLayoutEffect(() => {
     if (scrollContainerRef.current && prevScrollHeight > 0) {
       const newScrollHeight = scrollContainerRef.current.scrollHeight;
@@ -24,11 +24,11 @@ export default function MessageList({
     }
   }, [messages, prevScrollHeight]);
 
-  // Handle infinite scroll
+  
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight } = e.target;
     
-    // Load more when scrolled to top (with buffer)
+    
     if (scrollTop < 50 && hasMore && !loadingMore) {
       setPrevScrollHeight(scrollHeight);
       loadMoreMessages();
@@ -82,7 +82,7 @@ export default function MessageList({
                     isOwnMessage ? "flex-row-reverse" : "flex-row"
                   } ${msg.isOptimistic ? "opacity-70" : "opacity-100"}`}
                 >
-                  {/* Avatar */}
+                  {}
                   {!isOwnMessage && (
                     <img
                       src={senderAvatar}
@@ -91,7 +91,7 @@ export default function MessageList({
                     />
                   )}
 
-                  {/* Message Bubble */}
+                  {}
                   <div
                     className={`max-w-[70%] p-3 rounded-lg text-sm shadow-sm ${
                       isOwnMessage

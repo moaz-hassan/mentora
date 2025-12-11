@@ -29,12 +29,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Update report status
- * @param {string} reportId - Report ID
- * @param {string} status - New status
- * @returns {Promise<object>} Updated report
- */
+
 export default async function updateReportStatus(reportId, status) {
   try {
     const response = await apiClient.patch(`/api/reports/${reportId}`, { status });

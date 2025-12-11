@@ -11,7 +11,7 @@ export function useLearningPage(enrollmentId) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // 1. Enrollment Data (includes chatMembership)
+  
   const {
     enrollment,
     course,
@@ -25,7 +25,7 @@ export function useLearningPage(enrollmentId) {
     initialLoadComplete
   } = useEnrollmentData(enrollmentId);
 
-  // 2. Lesson Content
+  
   const {
     currentLesson,
     currentQuiz,
@@ -35,7 +35,7 @@ export function useLearningPage(enrollmentId) {
     fetchQuizContent
   } = useLessonContent(enrollmentId);
 
-  // 3. Navigation Logic
+  
   const {
     flattenedLessons,
     totalLessons,
@@ -45,7 +45,7 @@ export function useLearningPage(enrollmentId) {
     upNextLessons
   } = useCourseNavigation(chapters, currentLesson, currentQuiz);
 
-  // 4. Progress Logic
+  
   const {
     completedCount,
     markLessonComplete,
@@ -54,11 +54,11 @@ export function useLearningPage(enrollmentId) {
     submitQuiz
   } = useCourseProgress(enrollmentId, progress, setProgress, currentLesson);
 
-  // 5. UI State
+  
   const [activeTab, setActiveTab] = useState("overview");
   const [expandedSections, setExpandedSections] = useState([]);
   
-  // Autoplay preference
+  
   const [autoplay, setAutoplay] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("learning-autoplay") === "true";
@@ -66,14 +66,14 @@ export function useLearningPage(enrollmentId) {
     return false;
   });
 
-  // Update URL with lesson/quiz parameter
+  
   const updateURL = useCallback((type, id) => {
     const params = new URLSearchParams();
     params.set(type, id);
     router.replace(`?${params.toString()}`, { scroll: false });
   }, [router]);
 
-  // Select a lesson
+  
   const selectLesson = useCallback(
     (lessonId) => {
       if (currentLesson?.id === lessonId) return;
@@ -83,7 +83,7 @@ export function useLearningPage(enrollmentId) {
       fetchLessonContent(lessonId).then((lesson) => {
         if (lesson) {
           setActiveTab("overview");
-          // Expand section
+          
           if (lesson.chapter_id) {
             setExpandedSections((prev) =>
               prev.includes(lesson.chapter_id) ? prev : [...prev, lesson.chapter_id]
@@ -95,7 +95,7 @@ export function useLearningPage(enrollmentId) {
     [fetchLessonContent, currentLesson, updateURL, resetCompletionTrigger]
   );
 
-  // Select a quiz
+  
   const selectQuiz = useCallback(
     (quizId) => {
       if (currentQuiz?.id === quizId) return;
@@ -103,7 +103,7 @@ export function useLearningPage(enrollmentId) {
       updateURL("quiz", quizId);
       fetchQuizContent(quizId).then((quiz) => {
         if (quiz) {
-          // Expand section
+          
           if (quiz.chapter_id) {
             setExpandedSections((prev) =>
               prev.includes(quiz.chapter_id) ? prev : [...prev, quiz.chapter_id]
@@ -115,11 +115,11 @@ export function useLearningPage(enrollmentId) {
     [fetchQuizContent, currentQuiz, updateURL]
   );
 
-  // Navigate to next lesson
+  
   const goToNextLesson = useCallback(async () => {
     if (!hasNext) return;
 
-    // Mark current lesson as complete before moving
+    
     if (currentLesson && !progress.completedLessons?.includes(currentLesson.id)) {
       await markLessonComplete(currentLesson.id);
     }
@@ -141,7 +141,7 @@ export function useLearningPage(enrollmentId) {
     selectQuiz,
   ]);
 
-  // Navigate to previous lesson
+  
   const goToPreviousLesson = useCallback(() => {
     if (!hasPrevious) return;
 
@@ -153,7 +153,7 @@ export function useLearningPage(enrollmentId) {
     }
   }, [hasPrevious, flattenedLessons, currentIndex, selectLesson, selectQuiz]);
 
-  // Toggle section expand/collapse
+  
   const toggleSection = useCallback((sectionId) => {
     setExpandedSections((prev) =>
       prev.includes(sectionId)
@@ -162,7 +162,7 @@ export function useLearningPage(enrollmentId) {
     );
   }, []);
 
-  // Toggle autoplay
+  
   const toggleAutoplay = useCallback(() => {
     setAutoplay((prev) => {
       const newValue = !prev;
@@ -173,27 +173,27 @@ export function useLearningPage(enrollmentId) {
     });
   }, []);
 
-  // Handle video end (for autoplay)
+  
   const handleVideoEnd = useCallback(() => {
     if (autoplay && hasNext) {
       goToNextLesson();
     }
   }, [autoplay, hasNext, goToNextLesson]);
 
-  // Initial Data Loading Effect
+  
   useEffect(() => {
     if (enrollmentId && !initialLoadComplete.current) {
       fetchEnrollment().then((data) => {
         if (!data) return;
 
-        // Expand section containing current lesson
+        
         if (data.progress?.currentChapterId) {
           setExpandedSections([data.progress.currentChapterId]);
         } else if (data.Course?.Chapters?.length > 0) {
           setExpandedSections([data.Course.Chapters[0].id]);
         }
 
-        // Determine which lesson/quiz to load
+        
         const urlLessonId = searchParams.get("lesson");
         const urlQuizId = searchParams.get("quiz");
         
@@ -205,7 +205,7 @@ export function useLearningPage(enrollmentId) {
           fetchLessonContent(data.progress.currentLessonId);
           updateURL("lesson", data.progress.currentLessonId);
         } else {
-          // Load first lesson
+          
           const firstChapter = data.Course?.Chapters?.sort(
             (a, b) => a.order_number - b.order_number
           )[0];
@@ -222,7 +222,7 @@ export function useLearningPage(enrollmentId) {
   }, [enrollmentId, fetchEnrollment, searchParams, fetchLessonContent, fetchQuizContent, updateURL, initialLoadComplete]);
 
   return {
-    // Data
+    
     enrollment,
     course,
     chapters,
@@ -236,7 +236,7 @@ export function useLearningPage(enrollmentId) {
     completedCount,
     chatMembership,
 
-    // State
+    
     isLoading,
     isLessonLoading,
     error,
@@ -246,7 +246,7 @@ export function useLearningPage(enrollmentId) {
     hasPrevious,
     hasNext,
 
-    // Actions
+    
     selectLesson,
     selectQuiz,
     markLessonComplete,

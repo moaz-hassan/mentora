@@ -54,7 +54,7 @@ export default function EnrollmentsPage() {
         const dateB = new Date(b.progress?.lastAccessed || 0);
         return dateB - dateA;
       }
-      // Add more sort options if needed
+      
       return 0;
     });
 
@@ -69,7 +69,7 @@ export default function EnrollmentsPage() {
           Enrollments
         </span>
       </nav>
-      {/* Header Section */}
+      {}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">My Enrollments</h1>
         <p className="text-muted-foreground">
@@ -77,7 +77,7 @@ export default function EnrollmentsPage() {
         </p>
       </div>
 
-      {/* Controls Section */}
+      {}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -104,7 +104,7 @@ export default function EnrollmentsPage() {
         </div>
       </div>
 
-      {/* Content Section */}
+      {}
       {loading ? (
         <div className={viewMode === "grid" 
           ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 

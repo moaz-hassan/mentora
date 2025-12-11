@@ -28,7 +28,7 @@ export default function InstructorChatsPage() {
     fetchChats();
   }, []);
 
-  // Listen for real-time updates
+  
   useEffect(() => {
     if (isConnected && socket) {
       const handleMessage = (data) => {
@@ -100,7 +100,7 @@ export default function InstructorChatsPage() {
 
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col">
-      {/* Header */}
+      {}
       <div className="p-6 border-b border-gray-200 bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div>
@@ -118,16 +118,16 @@ export default function InstructorChatsPage() {
         </div>
       </div>
 
-      {/* Chat Interface */}
+      {}
       <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
+        {}
         <div
           className={cn(
             "w-full md:w-[350px] lg:w-[400px] flex-shrink-0 border-r border-border bg-background flex flex-col",
             chatId ? "hidden md:flex" : "flex"
           )}
         >
-          {/* Search */}
+          {}
           <div className="p-4 border-b border-border">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -140,7 +140,7 @@ export default function InstructorChatsPage() {
             </div>
           </div>
 
-          {/* Chat List */}
+          {}
           <div className="flex-1 overflow-y-auto">
             {loading ? (
               <div className="p-4 space-y-4">
@@ -177,7 +177,7 @@ export default function InstructorChatsPage() {
           </div>
         </div>
 
-        {/* Main Content */}
+        {}
         <div
           className={cn(
             "flex-1 flex flex-col min-w-0 bg-muted/10",
@@ -186,7 +186,7 @@ export default function InstructorChatsPage() {
         >
           {chatId ? (
             <div className="flex flex-col h-full">
-              {/* Mobile Back Button */}
+              {}
               <div className="md:hidden p-2 border-b border-border bg-background">
                 <Button
                   variant="ghost"

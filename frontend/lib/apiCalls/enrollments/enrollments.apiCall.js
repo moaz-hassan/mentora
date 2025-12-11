@@ -6,16 +6,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Get user enrollments
- * @returns {Promise<Object>} Response with enrollments list
- * 
- * @example
- * const result = await getUserEnrollments();
- * if (result.success) {
- *   console.log(result.data);
- * }
- */
+
 export default async function getUserEnrollments() {
   try {
     const headers = getAuthHeaders();
@@ -26,11 +17,7 @@ export default async function getUserEnrollments() {
   }
 }
 
-/**
- * Get enrollment by ID
- * @param {string} enrollmentId - Enrollment ID
- * @returns {Promise<Object>} Response with enrollment details
- */
+
 export const getEnrollmentById = async (enrollmentId) => {
   try {
     const headers = getAuthHeaders();
@@ -41,11 +28,7 @@ export const getEnrollmentById = async (enrollmentId) => {
   }
 };
 
-/**
- * Create new enrollment
- * @param {string} courseId - Course ID
- * @returns {Promise<Object>} Response with enrollment data
- */
+
 export const createEnrollment = async (courseId) => {
   try {
     const headers = getAuthHeaders();

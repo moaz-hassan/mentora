@@ -69,7 +69,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
@@ -93,11 +93,11 @@ export default function NotificationsPage() {
         )}
       </div>
 
-      {/* Filters and Search */}
+      {}
       <Card>
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4">
-            {/* Search */}
+            {}
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
@@ -109,7 +109,7 @@ export default function NotificationsPage() {
               />
             </div>
 
-            {/* Filter */}
+            {}
             <div className="flex items-center gap-2">
               <Filter className="w-5 h-5 text-gray-400" />
               <select
@@ -126,7 +126,7 @@ export default function NotificationsPage() {
         </CardContent>
       </Card>
 
-      {/* Notifications List */}
+      {}
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -203,7 +203,7 @@ export default function NotificationsPage() {
         </div>
       )}
 
-      {/* Load More */}
+      {}
       {hasMore && filteredNotifications.length > 0 && (
         <div className="text-center">
           <Button

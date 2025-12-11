@@ -4,16 +4,14 @@ import { FileText, FileArchive, FileCode, Download, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UpNextSection from "./UpNextSection";
 
-/**
- * ResourcesTab - Displays downloadable lesson materials and up next section
- */
+
 export default function ResourcesTab({
   materials = [],
   upNextLessons = [],
   onDownload,
   onLessonSelect,
 }) {
-  // Format file size to human readable
+  
   const formatFileSize = (bytes) => {
     if (!bytes) return "";
     if (bytes < 1024) return `${bytes} B`;
@@ -21,7 +19,7 @@ export default function ResourcesTab({
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  // Get icon based on file type
+  
   const getFileIcon = (fileType) => {
     const type = fileType?.toLowerCase() || "";
     if (type.includes("pdf")) return FileText;
@@ -31,7 +29,7 @@ export default function ResourcesTab({
     return File;
   };
 
-  // Get file type display name
+  
   const getFileTypeDisplay = (fileType) => {
     const type = fileType?.toLowerCase() || "";
     if (type.includes("pdf")) return "PDF";
@@ -43,7 +41,7 @@ export default function ResourcesTab({
 
   return (
     <div className="py-6">
-      {/* Lesson Materials */}
+      {}
       <section>
         <h2 className="text-xl font-semibold mb-4">Lesson Materials</h2>
 
@@ -95,7 +93,7 @@ export default function ResourcesTab({
         )}
       </section>
 
-      {/* Up Next Section */}
+      {}
       <UpNextSection lessons={upNextLessons} onLessonSelect={onLessonSelect} />
     </div>
   );

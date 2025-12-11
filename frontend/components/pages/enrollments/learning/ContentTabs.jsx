@@ -5,10 +5,7 @@ import { BookOpen, FolderOpen } from "lucide-react";
 import OverviewTab from "./OverviewTab";
 import ResourcesTab from "./ResourcesTab";
 
-/**
- * ContentTabs - Tabbed interface for Overview and Resources
- * Simplified to two tabs with enhanced visual styling
- */
+
 export default function ContentTabs({
   activeTab = "overview",
   onTabChange,

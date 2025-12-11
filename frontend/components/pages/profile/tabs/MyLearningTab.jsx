@@ -81,7 +81,7 @@ export default function MyLearningTab() {
 
   return (
     <div className="space-y-6">
-      {/* Header with filters and search */}
+      {}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <CourseFilters
           activeFilter={activeFilter}
@@ -89,7 +89,7 @@ export default function MyLearningTab() {
           counts={counts}
         />
         
-        {/* Search */}
+        {}
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -101,7 +101,7 @@ export default function MyLearningTab() {
         </div>
       </div>
 
-      {/* Course Grid */}
+      {}
       <CourseGrid
         enrollments={filteredEnrollments}
         emptyMessage={searchQuery ? "No courses match your search" : emptyMessages[activeFilter]}

@@ -1,7 +1,4 @@
-/**
- * Settings Header Component
- * Displays the page title and description
- */
+
 
 export default function SettingsHeader() {
   return (

@@ -122,7 +122,7 @@ export default function InstructorEarningsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Earnings</h1>
@@ -160,7 +160,7 @@ export default function InstructorEarningsPage() {
         title="Export Earnings Report"
       />
 
-      {/* Summary Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-6 text-white">
           <div className="flex items-center justify-between mb-4">
@@ -208,7 +208,7 @@ export default function InstructorEarningsPage() {
         </div>
       </div>
 
-      {/* Revenue Trend Chart */}
+      {}
       {monthlyTrend.length > 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
@@ -225,7 +225,7 @@ export default function InstructorEarningsPage() {
         </div>
       )}
 
-      {/* Revenue by Course */}
+      {}
       {revenueByCourse.length > 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Revenue by Course</h2>
@@ -256,14 +256,14 @@ export default function InstructorEarningsPage() {
         </div>
       )}
 
-      {/* Recent Transactions */}
+      {}
       <RecentTransactionsSection 
         transactions={[]} 
         formatCurrency={formatCurrency} 
         formatDate={formatDate} 
       />
 
-      {/* Payout Info */}
+      {}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-blue-900 mb-3">Payout Information</h3>
         <ul className="space-y-2 text-sm text-blue-800">

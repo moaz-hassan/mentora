@@ -29,7 +29,7 @@ export function MessageInstructorButton({
       const result = await initiatePrivateChat(instructorId, courseId);
 
       if (result.success) {
-        // Navigate to the chat page
+        
         const userRole = localStorage.getItem("user_role") || "student";
         router.push(`/dashboard/${userRole}/messages`);
       } else {

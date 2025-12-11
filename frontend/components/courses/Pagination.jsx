@@ -25,7 +25,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
 
   return (
     <div className="flex items-center justify-center gap-1 mt-10">
-      {/* Previous */}
+      {}
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
@@ -35,7 +35,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         <span className="hidden sm:inline">Previous</span>
       </button>
 
-      {/* Page Numbers */}
+      {}
       <div className="flex items-center gap-1 mx-2">
         {getPageNumbers().map((page, index) =>
           page === "..." ? (
@@ -61,7 +61,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         )}
       </div>
 
-      {/* Next */}
+      {}
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}

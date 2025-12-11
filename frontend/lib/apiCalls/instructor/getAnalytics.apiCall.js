@@ -11,14 +11,14 @@ export const getInstructorAnalytics = async (courseId = null, days = 30) => {
   try {
     const headers = getAuthHeaders();
     
-    // Build query parameters
+    
     const params = {};
     if (courseId) {
       params.courseId = courseId;
     }
     params.days = days;
 
-    // Backend route is /api/instructor/ (not /api/instructor/analytics)
+    
     const response = await axios.get(`${API_URL}/api/instructor/analytics`, {
       headers,
       params,
@@ -34,14 +34,14 @@ export const exportInstructorAnalytics = async (courseId = null, days = 30) => {
   try {
     const headers = getAuthHeaders();
     
-    // Build query parameters
+    
     const params = {};
     if (courseId) {
       params.courseId = courseId;
     }
     params.days = days;
 
-    // Backend route is /api/instructor/export (not /api/instructor/analytics/export)
+    
     const response = await axios.get(`${API_URL}/api/instructor/analytics/export`, {
       headers,
       params,

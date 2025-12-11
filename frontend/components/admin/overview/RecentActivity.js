@@ -1,5 +1,5 @@
 export function RecentActivity({ activities = [], loading = false }) {
-  // Default activities if none provided
+  
   const defaultActivities = [
     {
       id: 1,

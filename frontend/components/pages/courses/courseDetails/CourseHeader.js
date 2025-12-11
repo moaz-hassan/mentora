@@ -9,7 +9,7 @@ export default function CourseHeader({ course }) {
 
   return (
     <div className="mb-10 text-white">
-      {/* Breadcrumb */}
+      {}
       <nav className="flex items-center gap-2 text-xs text-gray-400 mb-4">
         <Link href="/" className="hover:text-white transition-colors">
           Home
@@ -22,7 +22,7 @@ export default function CourseHeader({ course }) {
         <span className="text-gray-300 truncate max-w-[200px]">{course.title}</span>
       </nav>
 
-      {/* Title & Badge */}
+      {}
       <div className="flex flex-wrap items-center gap-3 mb-3">
         <Badge className="bg-blue-600 border-none text-white hover:bg-blue-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
           {course.category_name || "COURSE"}
@@ -32,12 +32,12 @@ export default function CourseHeader({ course }) {
         </h1>
       </div>
 
-      {/* Description (Smaller Size) */}
+      {}
       <p className="text-base text-gray-300 mb-6 leading-relaxed max-w-3xl">
         {course.description}
       </p>
 
-      {/* Stats Row */}
+      {}
       <div className="flex flex-wrap items-center gap-4 text-sm mb-6">
         {course.average_rating ? (
           <div className="flex items-center gap-1 text-yellow-400 font-bold">
@@ -86,7 +86,7 @@ export default function CourseHeader({ course }) {
         </div>
       </div>
 
-      {/* Instructor Mini Profile */}
+      {}
       <div className="flex items-center gap-3 text-sm">
         <div className="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center overflow-hidden ring-2 ring-white/10">
           {course.Instructor?.Profile?.avatar_url ? (

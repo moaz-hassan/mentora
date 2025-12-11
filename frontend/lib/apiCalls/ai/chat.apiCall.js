@@ -29,12 +29,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Send a chat message to the AI
- * @param {string} message - The user's message
- * @param {object} context - Context information (page, data, etc.)
- * @returns {Promise<object>} AI response
- */
+
 export default async function chat(message, context = {}) {
   try {
     const response = await apiClient.post("/api/ai/chat", {

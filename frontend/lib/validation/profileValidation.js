@@ -1,16 +1,9 @@
-/**
- * Profile Validation
- * Client-side validation for profile update data
- */
 
-/**
- * Validate first name
- * @param {string} firstName - First name to validate
- * @returns {Object} { isValid: boolean, error: string }
- */
+
+
 export const validateFirstName = (firstName) => {
   if (!firstName) {
-    return { isValid: true, error: "" }; // Optional field
+    return { isValid: true, error: "" }; 
   }
 
   const trimmed = firstName.trim();
@@ -32,14 +25,10 @@ export const validateFirstName = (firstName) => {
   return { isValid: true, error: "" };
 };
 
-/**
- * Validate last name
- * @param {string} lastName - Last name to validate
- * @returns {Object} { isValid: boolean, error: string }
- */
+
 export const validateLastName = (lastName) => {
   if (!lastName) {
-    return { isValid: true, error: "" }; // Optional field
+    return { isValid: true, error: "" }; 
   }
 
   const trimmed = lastName.trim();
@@ -61,14 +50,10 @@ export const validateLastName = (lastName) => {
   return { isValid: true, error: "" };
 };
 
-/**
- * Validate bio
- * @param {string} bio - Bio to validate
- * @returns {Object} { isValid: boolean, error: string }
- */
+
 export const validateBio = (bio) => {
   if (!bio) {
-    return { isValid: true, error: "" }; // Optional field
+    return { isValid: true, error: "" }; 
   }
 
   const trimmed = bio.trim();
@@ -83,14 +68,10 @@ export const validateBio = (bio) => {
   return { isValid: true, error: "" };
 };
 
-/**
- * Validate headline
- * @param {string} headline - Headline to validate
- * @returns {Object} { isValid: boolean, error: string }
- */
+
 export const validateHeadline = (headline) => {
   if (!headline) {
-    return { isValid: true, error: "" }; // Optional field
+    return { isValid: true, error: "" }; 
   }
 
   const trimmed = headline.trim();
@@ -105,20 +86,16 @@ export const validateHeadline = (headline) => {
   return { isValid: true, error: "" };
 };
 
-/**
- * Validate URL
- * @param {string} url - URL to validate
- * @returns {Object} { isValid: boolean, error: string }
- */
+
 export const validateUrl = (url) => {
   if (!url) {
-    return { isValid: true, error: "" }; // Optional field
+    return { isValid: true, error: "" }; 
   }
 
   const trimmed = url.trim();
 
-  // More flexible URL regex that accepts various formats
-  const urlRegex = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+  
+  const urlRegex = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&
 
   if (!urlRegex.test(trimmed)) {
     return {
@@ -130,14 +107,10 @@ export const validateUrl = (url) => {
   return { isValid: true, error: "" };
 };
 
-/**
- * Validate avatar URL
- * @param {string} avatarUrl - Avatar URL to validate
- * @returns {Object} { isValid: boolean, error: string }
- */
+
 export const validateAvatarUrl = (avatarUrl) => {
   if (!avatarUrl) {
-    return { isValid: true, error: "" }; // Optional field
+    return { isValid: true, error: "" }; 
   }
 
   const trimmed = avatarUrl.trim();
@@ -153,14 +126,10 @@ export const validateAvatarUrl = (avatarUrl) => {
   }
 };
 
-/**
- * Validate social links
- * @param {Object} socialLinks - Social links object to validate
- * @returns {Object} { isValid: boolean, errors: Object }
- */
+
 export const validateSocialLinks = (socialLinks) => {
   if (!socialLinks || typeof socialLinks !== "object") {
-    return { isValid: true, errors: {} }; // Optional field
+    return { isValid: true, errors: {} }; 
   }
 
   const validPlatforms = [
@@ -177,7 +146,7 @@ export const validateSocialLinks = (socialLinks) => {
   let hasErrors = false;
 
   Object.keys(socialLinks).forEach((platform) => {
-    // Check if platform is valid
+    
     if (!validPlatforms.includes(platform.toLowerCase())) {
       errors[platform] = `Invalid platform: ${platform}`;
       hasErrors = true;
@@ -186,12 +155,12 @@ export const validateSocialLinks = (socialLinks) => {
 
     const url = socialLinks[platform];
 
-    // Skip empty URLs
+    
     if (!url || !url.trim()) {
       return;
     }
 
-    // Validate URL format
+    
     const validation = validateUrl(url);
     if (!validation.isValid) {
       errors[platform] = validation.error;
@@ -205,15 +174,11 @@ export const validateSocialLinks = (socialLinks) => {
   };
 };
 
-/**
- * Validate complete profile update data
- * @param {Object} profileData - Profile data to validate
- * @returns {Object} { isValid: boolean, errors: Object }
- */
+
 export const validateProfileUpdate = (profileData) => {
   const errors = {};
 
-  // Validate user fields
+  
   if (profileData.first_name !== undefined) {
     const firstNameValidation = validateFirstName(profileData.first_name);
     if (!firstNameValidation.isValid) {
@@ -228,7 +193,7 @@ export const validateProfileUpdate = (profileData) => {
     }
   }
 
-  // Validate profile fields
+  
   if (profileData.bio !== undefined) {
     const bioValidation = validateBio(profileData.bio);
     if (!bioValidation.isValid) {
@@ -263,16 +228,11 @@ export const validateProfileUpdate = (profileData) => {
   };
 };
 
-/**
- * Sanitize profile update data
- * Removes empty values and trims strings
- * @param {Object} profileData - Profile data to sanitize
- * @returns {Object} Sanitized profile data
- */
+
 export const sanitizeProfileData = (profileData) => {
   const sanitized = {};
 
-  // Sanitize user fields
+  
   if (profileData.first_name?.trim()) {
     sanitized.first_name = profileData.first_name.trim();
   }
@@ -281,7 +241,7 @@ export const sanitizeProfileData = (profileData) => {
     sanitized.last_name = profileData.last_name.trim();
   }
 
-  // Sanitize profile fields
+  
   if (profileData.bio?.trim()) {
     sanitized.bio = profileData.bio.trim();
   }
@@ -294,7 +254,7 @@ export const sanitizeProfileData = (profileData) => {
     sanitized.avatar_url = profileData.avatar_url.trim();
   }
 
-  // Sanitize social links - only include non-empty URLs
+  
   if (profileData.social_links && typeof profileData.social_links === "object") {
     const filteredSocialLinks = {};
 

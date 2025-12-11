@@ -14,16 +14,16 @@ import React from "react";
 export function NavDocuments({ groupName, items }) {
   const pathname = usePathname();
 
-  // Check if a link is active
+  
   const isActive = (url) => {
-    // Exact match for root dashboard pages (instructor, admin, student)
+    
     const rootDashboards = ["/dashboard/instructor", "/dashboard/admin", "/dashboard/student"];
     if (rootDashboards.includes(url)) {
       return pathname === url;
     }
     
-    // For other routes, check if pathname starts with the url
-    // This handles nested routes like /dashboard/instructor/courses/123
+    
+    
     if (pathname.startsWith(url)) {
       return true;
     }

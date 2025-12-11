@@ -29,10 +29,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Get example questions based on user role
- * @returns {Promise<object>} Example questions
- */
+
 export default async function getExamples() {
   try {
     const response = await apiClient.get("/api/ai/examples");

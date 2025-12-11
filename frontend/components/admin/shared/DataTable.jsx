@@ -30,19 +30,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * DataTable - Reusable data table with sorting, filtering, and pagination
- * @param {Array} columns - Column definitions
- * @param {Array} data - Table data
- * @param {boolean} loading - Loading state
- * @param {string} searchKey - Key to filter by
- * @param {string} searchPlaceholder - Search input placeholder
- * @param {boolean} showSearch - Show search input
- * @param {boolean} showPagination - Show pagination controls
- * @param {number} pageSize - Items per page
- * @param {Function} onRowClick - Row click handler
- * @param {string} className - Additional CSS classes
- */
+
 export function DataTable({
   columns,
   data = [],
@@ -238,9 +226,7 @@ export function DataTable({
   );
 }
 
-/**
- * Helper to create sortable column header
- */
+
 export function createSortableHeader(label) {
   return ({ column }) => (
     <Button

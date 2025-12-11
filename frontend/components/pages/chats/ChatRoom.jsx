@@ -146,14 +146,14 @@ export default function ChatRoom({ chatId }) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Connection Status Indicator (Optional) */}
+      {}
       {!isConnected && (
         <div className="bg-yellow-100 text-yellow-800 text-xs text-center py-1">
           Connecting...
         </div>
       )}
 
-      {/* Messages Area */}
+      {}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, index) => {
           const isMe = msg.sender_id === user?.id;
@@ -227,7 +227,7 @@ export default function ChatRoom({ chatId }) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
+      {}
       <div className="p-4 border-t border-border bg-background">
         <form onSubmit={handleSend} className="flex gap-2">
           <Input

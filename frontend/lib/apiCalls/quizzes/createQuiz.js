@@ -2,9 +2,7 @@ import axios from "axios";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api`;
 
-/**
- * Create a quiz
- */
+
 export const createQuiz = async (quizData, token) => {
   try {
     const response = await axios.post(`${API_URL}/quizzes`, quizData, {

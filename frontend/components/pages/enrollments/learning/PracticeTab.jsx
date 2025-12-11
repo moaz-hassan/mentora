@@ -3,9 +3,7 @@
 import { FileQuestion, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-/**
- * PracticeTab - Practice content or quiz integration
- */
+
 export default function PracticeTab({ quiz, isCompleted, onStartQuiz }) {
   if (quiz) {
     return (
@@ -41,7 +39,7 @@ export default function PracticeTab({ quiz, isCompleted, onStartQuiz }) {
     );
   }
 
-  // Placeholder when no quiz available
+  
   return (
     <div className="py-6">
       <h2 className="text-xl font-semibold mb-4">Practice</h2>

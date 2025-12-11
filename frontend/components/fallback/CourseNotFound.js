@@ -7,7 +7,7 @@ export default function CourseNotFound() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-lg w-full text-center space-y-8">
-        {/* Icon Container */}
+        {}
         <div className="relative mx-auto w-32 h-32">
           <div className="absolute inset-0 bg-blue-100 rounded-full opacity-50 animate-pulse"></div>
           <div className="relative flex items-center justify-center w-full h-full bg-white rounded-full shadow-sm border border-gray-100">
@@ -15,7 +15,7 @@ export default function CourseNotFound() {
           </div>
         </div>
 
-        {/* Text Content */}
+        {}
         <div className="space-y-3">
           <h1 className="text-3xl font-bold text-gray-900">Course Not Found</h1>
           <p className="text-gray-600 text-lg">
@@ -24,7 +24,7 @@ export default function CourseNotFound() {
           </p>
         </div>
 
-        {/* Action Buttons */}
+        {}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link href="/courses">
             <Button
@@ -44,7 +44,7 @@ export default function CourseNotFound() {
           </Link>
         </div>
 
-        {/* Helpful Links / Suggestions */}
+        {}
         <Card className="mt-8 border-dashed">
           <CardContent className="p-6">
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">

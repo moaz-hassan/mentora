@@ -6,17 +6,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Submit course for review
- * @param {string|number} courseId - Course ID
- * @returns {Promise<Object>} Response with success flag and data
- * 
- * @example
- * const result = await submitForReview(123);
- * if (result.success) {
- *   console.log('Course submitted for review');
- * }
- */
+
 export const submitForReview = async (courseId) => {
   try {
     const headers = getAuthHeaders();

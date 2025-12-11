@@ -3,9 +3,7 @@ import { getAuthHeaders, getApiBaseUrl } from "@/lib/utils/apiHelpers";
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Get all coupons
- */
+
 export const getAllCoupons = async () => {
   try {
     const headers = getAuthHeaders();
@@ -20,9 +18,7 @@ export const getAllCoupons = async () => {
   }
 };
 
-/**
- * Get coupon analytics
- */
+
 export const getCouponAnalytics = async () => {
   try {
     const headers = getAuthHeaders();
@@ -37,9 +33,7 @@ export const getCouponAnalytics = async () => {
   }
 };
 
-/**
- * Create a new coupon
- */
+
 export const createCoupon = async (couponData) => {
   try {
     const headers = getAuthHeaders();
@@ -51,9 +45,7 @@ export const createCoupon = async (couponData) => {
   }
 };
 
-/**
- * Update a coupon
- */
+
 export const updateCoupon = async (couponId, couponData) => {
   try {
     const headers = getAuthHeaders();
@@ -65,9 +57,7 @@ export const updateCoupon = async (couponId, couponData) => {
   }
 };
 
-/**
- * Update coupon status
- */
+
 export const updateCouponStatus = async (couponId, status) => {
   try {
     const headers = getAuthHeaders();
@@ -82,9 +72,7 @@ export const updateCouponStatus = async (couponId, status) => {
   }
 };
 
-/**
- * Delete a coupon
- */
+
 export const deleteCoupon = async (couponId) => {
   try {
     const headers = getAuthHeaders();

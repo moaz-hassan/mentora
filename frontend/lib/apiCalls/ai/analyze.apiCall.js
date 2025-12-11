@@ -29,12 +29,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Analyze content with AI
- * @param {string} content - Content to analyze
- * @param {string} analysisType - Type of analysis (moderation, summary, insights, categorization)
- * @returns {Promise<object>} Analysis results
- */
+
 export default async function analyze(content, analysisType) {
   try {
     const response = await apiClient.post("/api/ai/analyze", {

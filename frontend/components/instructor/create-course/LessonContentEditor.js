@@ -6,7 +6,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { Label } from '@/components/ui/label';
 import 'react-quill/dist/quill.snow.css';
 
-// Dynamically import ReactQuill to avoid SSR issues
+
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const quillModules = {
@@ -36,7 +36,7 @@ export function LessonContentEditor({ value, onChange, label = "Lesson Content" 
   }, []);
 
   const handleChange = (content) => {
-    // Sanitize on frontend before storing
+    
     const sanitized = DOMPurify.sanitize(content, {
       ALLOWED_TAGS: [
         'p', 'br', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',

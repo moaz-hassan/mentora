@@ -18,13 +18,13 @@ export function IntroVideoUploader({ courseData, onVideoUploaded }) {
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
+      
       if (!file.type.startsWith('video/')) {
         alert('Please select a video file');
         return;
       }
 
-      // Validate file size (max 100MB)
+      
       if (file.size > 100 * 1024 * 1024) {
         alert('Video file size must be less than 100MB');
         return;
@@ -49,7 +49,7 @@ export function IntroVideoUploader({ courseData, onVideoUploaded }) {
         setUploadStage(progress.message || 'Uploading...');
       });
 
-      // Call parent callback with video data
+      
       if (onVideoUploaded) {
         onVideoUploaded({
           intro_video_url: result.secure_url,
@@ -122,7 +122,7 @@ export function IntroVideoUploader({ courseData, onVideoUploaded }) {
         </label>
       ) : (
         <div className="space-y-4">
-          {/* Video Preview */}
+          {}
           <div className="relative rounded-lg overflow-hidden bg-black">
             <video
               src={videoPreview}
@@ -139,7 +139,7 @@ export function IntroVideoUploader({ courseData, onVideoUploaded }) {
             )}
           </div>
 
-          {/* Upload Progress */}
+          {}
           {isUploading && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
@@ -150,7 +150,7 @@ export function IntroVideoUploader({ courseData, onVideoUploaded }) {
             </div>
           )}
 
-          {/* Upload Complete */}
+          {}
           {uploadComplete && (
             <div className="flex items-center gap-2 text-green-600 text-sm">
               <CheckCircle2 className="w-5 h-5" />
@@ -158,7 +158,7 @@ export function IntroVideoUploader({ courseData, onVideoUploaded }) {
             </div>
           )}
 
-          {/* Action Buttons */}
+          {}
           <div className="flex gap-3">
             {!uploadComplete && !isUploading && (
               <>

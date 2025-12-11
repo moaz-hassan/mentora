@@ -64,17 +64,17 @@ export default function CourseSidebar({
     };
 
     try {
-      // Try native share if available (mobile browsers)
+      
       if (navigator.share && navigator.canShare(shareData)) {
         await navigator.share(shareData);
         toast.success("Shared successfully!");
       } else {
-        // Fallback to clipboard
+        
         await navigator.clipboard.writeText(shareUrl);
         toast.success("Course link copied to clipboard!");
       }
     } catch (error) {
-      // If share was cancelled or failed, try clipboard
+      
       if (error.name !== "AbortError") {
         try {
           await navigator.clipboard.writeText(shareUrl);
@@ -87,7 +87,7 @@ export default function CourseSidebar({
   };
 
   const handleGiftCourse = () => {
-    // Only allow gifting free courses for now
+    
     if (Number(course.price) !== 0) {
       toast.error("Only free courses can be gifted at this time");
       return;
@@ -243,7 +243,7 @@ export default function CourseSidebar({
 
       <div className="lg:hidden h-20" />
 
-      {/* Gift Course Modal */}
+      {}
       <GiftCourseModal
         isOpen={giftModalOpen}
         onClose={() => setGiftModalOpen(false)}

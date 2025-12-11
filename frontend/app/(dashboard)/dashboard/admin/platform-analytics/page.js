@@ -39,7 +39,7 @@ import {
   exportAnalyticsData
 } from "@/lib/apiCalls/admin/analytics.apiCall";
 
-// Chart configs
+
 const enrollmentChartConfig = {
   enrollments: { label: "Enrollments", color: "hsl(var(--chart-1))" },
   completions: { label: "Completions", color: "hsl(var(--chart-2))" },
@@ -68,7 +68,7 @@ export default function PlatformAnalyticsPage() {
     to: new Date(),
   });
 
-  // Data states
+  
   const [enrollmentData, setEnrollmentData] = useState(null);
   const [paymentData, setPaymentData] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -128,7 +128,7 @@ export default function PlatformAnalyticsPage() {
     }
   };
 
-  // Top courses columns
+  
   const topCoursesColumns = [
     {
       accessorKey: "title",
@@ -168,7 +168,7 @@ export default function PlatformAnalyticsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Platform Analytics</h1>
@@ -189,7 +189,7 @@ export default function PlatformAnalyticsPage() {
         </div>
       </div>
 
-      {/* Filters */}
+      {}
       <FilterBar
         showSearch={false}
         showStatus={false}
@@ -198,7 +198,7 @@ export default function PlatformAnalyticsPage() {
         filters={{ dateRange }}
       />
 
-      {/* Overview Cards */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard
           title="Total Enrollments"
@@ -235,7 +235,7 @@ export default function PlatformAnalyticsPage() {
         />
       </div>
 
-      {/* Analytics Tabs */}
+      {}
       <Tabs defaultValue="enrollments" className="space-y-4">
         <TabsList>
           <TabsTrigger value="enrollments" className="gap-2">
@@ -256,7 +256,7 @@ export default function PlatformAnalyticsPage() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Enrollments Tab */}
+        {}
         <TabsContent value="enrollments" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <Card>

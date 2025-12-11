@@ -26,11 +26,11 @@ export default function PendingReviewsPage() {
       setLoading(true);
       setError(null);
 
-      // Fetch all instructor courses
+      
       const response = await getAllInstructorCourses();
       const allCourses = response.data;
 
-      // Filter for pending and under_review courses
+      
       const pending = allCourses.filter(
         (course) => 
           course.status === "pending" || 
@@ -127,7 +127,7 @@ export default function PendingReviewsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Pending Reviews</h1>
@@ -144,7 +144,7 @@ export default function PendingReviewsPage() {
         </button>
       </div>
 
-      {/* Info Banner */}
+      {}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <div className="flex items-start">
           <AlertCircle className="w-5 h-5 text-blue-600 mr-3 mt-0.5" />

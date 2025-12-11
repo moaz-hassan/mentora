@@ -238,7 +238,7 @@ export default function CoursesManagementPage() {
         <p className="mt-2 text-gray-600">Review pending courses and manage existing ones.</p>
       </div>
 
-      {/* Tabs */}
+      {}
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           <button
@@ -264,7 +264,7 @@ export default function CoursesManagementPage() {
         </nav>
       </div>
 
-      {/* Filters */}
+      {}
       <div className="flex items-center space-x-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
@@ -278,7 +278,7 @@ export default function CoursesManagementPage() {
         </div>
       </div>
 
-      {/* Content */}
+      {}
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -332,12 +332,12 @@ export default function CoursesManagementPage() {
                   
                   <p className="text-gray-600 line-clamp-2 mb-4">{course.description}</p>
                   
-                  {/* AI Analysis Section */}
+                  {}
                   {activeTab === "pending" && (
                     <div className="mb-4">
                       {course.ai_analysis ? (
                         <div className="p-5 bg-gradient-to-br from-purple-50 to-white rounded-xl border border-purple-100 shadow-sm">
-                          {/* Header */}
+                          {}
                           <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2">
                               <div className="p-1.5 bg-purple-100 rounded-lg">
@@ -356,7 +356,7 @@ export default function CoursesManagementPage() {
                             </span>
                           </div>
 
-                          {/* Summary */}
+                          {}
                           <div className="mb-4">
                             <h4 className="text-xs font-semibold text-purple-900 uppercase tracking-wider mb-2">Summary</h4>
                             <p className="text-sm text-gray-700 leading-relaxed bg-white/50 p-3 rounded-lg border border-purple-50">
@@ -364,9 +364,9 @@ export default function CoursesManagementPage() {
                             </p>
                           </div>
 
-                          {/* Strengths & Weaknesses Grid */}
+                          {}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            {/* Strengths */}
+                            {}
                             {course.ai_analysis.strengths && course.ai_analysis.strengths.length > 0 && (
                               <div className="bg-green-50/50 rounded-lg p-3 border border-green-100">
                                 <h4 className="flex items-center gap-2 text-xs font-semibold text-green-800 uppercase tracking-wider mb-3">
@@ -383,7 +383,7 @@ export default function CoursesManagementPage() {
                               </div>
                             )}
 
-                            {/* Weaknesses */}
+                            {}
                             {course.ai_analysis.weaknesses && course.ai_analysis.weaknesses.length > 0 && (
                               <div className="bg-red-50/50 rounded-lg p-3 border border-red-100">
                                 <h4 className="flex items-center gap-2 text-xs font-semibold text-red-800 uppercase tracking-wider mb-3">
@@ -401,7 +401,7 @@ export default function CoursesManagementPage() {
                             )}
                           </div>
 
-                          {/* Reasoning */}
+                          {}
                           <div className="bg-purple-100/50 rounded-lg p-4 border border-purple-100">
                             <h4 className="text-xs font-semibold text-purple-900 uppercase tracking-wider mb-2">Final Reasoning</h4>
                             <p className="text-sm text-purple-900 leading-relaxed">
@@ -504,7 +504,7 @@ export default function CoursesManagementPage() {
         </div>
       )}
 
-      {/* Confirmation Modal */}
+      {}
       {showModal && selectedCourse && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6">

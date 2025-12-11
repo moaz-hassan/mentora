@@ -2,17 +2,12 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import html2canvas from "html2canvas";
 
-/**
- * Generate PDF report from analytics data
- * @param {Object} reportData - The report data from backend
- * @param {Object} options - Generation options
- * @returns {Promise<void>}
- */
+
 export const generatePDF = async (reportData, options = {}) => {
   const pdf = new jsPDF();
   let yPosition = 20;
 
-  // Title Page
+  
   pdf.setFontSize(24);
   pdf.setFont(undefined, "bold");
   pdf.text("Instructor Analytics Report", 20, yPosition);
@@ -32,7 +27,7 @@ export const generatePDF = async (reportData, options = {}) => {
   pdf.text(`Generated: ${new Date().toLocaleString()}`, 20, yPosition);
   yPosition += 15;
 
-  // Executive Summary
+  
   pdf.setFontSize(16);
   pdf.setFont(undefined, "bold");
   pdf.setTextColor(0);
@@ -61,7 +56,7 @@ export const generatePDF = async (reportData, options = {}) => {
 
   yPosition = pdf.lastAutoTable.finalY + 15;
 
-  // Course Performance
+  
   if (reportData.courses && reportData.courses.length > 0) {
     if (yPosition > 250) {
       pdf.addPage();
@@ -92,7 +87,7 @@ export const generatePDF = async (reportData, options = {}) => {
     yPosition = pdf.lastAutoTable.finalY + 15;
   }
 
-  // Revenue Analysis
+  
   if (reportData.revenue) {
     if (yPosition > 250) {
       pdf.addPage();
@@ -129,7 +124,7 @@ export const generatePDF = async (reportData, options = {}) => {
     }
   }
 
-  // Enrollment Trend
+  
   if (reportData.enrollmentTrend && reportData.enrollmentTrend.length > 0) {
     if (yPosition > 250) {
       pdf.addPage();
@@ -158,7 +153,7 @@ export const generatePDF = async (reportData, options = {}) => {
     yPosition = pdf.lastAutoTable.finalY + 15;
   }
 
-  // Engagement Metrics
+  
   if (reportData.engagement) {
     if (yPosition > 250) {
       pdf.addPage();
@@ -187,7 +182,7 @@ export const generatePDF = async (reportData, options = {}) => {
     yPosition = pdf.lastAutoTable.finalY + 15;
   }
 
-  // Quiz Analytics
+  
   if (reportData.quizAnalytics) {
     if (yPosition > 250) {
       pdf.addPage();
@@ -215,7 +210,7 @@ export const generatePDF = async (reportData, options = {}) => {
     });
   }
 
-  // Footer on each page
+  
   const pageCount = pdf.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     pdf.setPage(i);
@@ -234,16 +229,12 @@ export const generatePDF = async (reportData, options = {}) => {
     );
   }
 
-  // Save the PDF
+  
   const filename = `analytics-report-${Date.now()}.pdf`;
   pdf.save(filename);
 };
 
-/**
- * Capture chart as image
- * @param {string} elementId - The ID of the chart element
- * @returns {Promise<string>} Base64 image data
- */
+
 export const captureChartAsImage = async (elementId) => {
   const element = document.getElementById(elementId);
   if (!element) {

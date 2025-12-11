@@ -6,14 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle2 } from "lucide-react";
 
-/**
- * LessonContent - Conditionally renders video player or text content
- * based on lesson type
- * 
- * Features:
- * - Video lessons: tracks progress and auto-completes at 90%
- * - Text lessons: manual "Mark as Complete" checkbox
- */
+
 export default function LessonContent({
   lesson,
   isLoading = false,
@@ -23,12 +16,12 @@ export default function LessonContent({
   isCompleted = false,
   autoplay = false,
 }) {
-  // Track if 90% threshold has been triggered to avoid multiple calls
+  
   const hasTriggered90 = useRef(false);
-  // Track the current lesson ID to detect changes
+  
   const currentLessonIdRef = useRef(null);
 
-  // Reset trigger when lesson changes
+  
   useEffect(() => {
     if (lesson?.id && lesson.id !== currentLessonIdRef.current) {
       currentLessonIdRef.current = lesson.id;
@@ -36,14 +29,14 @@ export default function LessonContent({
     }
   }, [lesson?.id]);
 
-  // Handle video progress - trigger completion at 90%
+  
   const handleProgress = (percentage) => {
     if (percentage >= 90 && !hasTriggered90.current && onVideoProgress && !isCompleted) {
       hasTriggered90.current = true;
       onVideoProgress(percentage);
     }
   };
-  // Loading state
+  
   if (isLoading) {
     return (
       <div className="aspect-video bg-black rounded-lg overflow-hidden">
@@ -52,7 +45,7 @@ export default function LessonContent({
     );
   }
 
-  // No lesson selected
+  
   if (!lesson) {
     return (
       <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
@@ -61,7 +54,7 @@ export default function LessonContent({
     );
   }
 
-  // Text lesson
+  
   if (lesson.lesson_type === "text") {
     return (
       <div className="bg-muted/30 rounded-lg p-6 min-h-[300px]">
@@ -70,7 +63,7 @@ export default function LessonContent({
           dangerouslySetInnerHTML={{ __html: lesson.content || "" }}
         />
         
-        {/* Mark as Complete checkbox for text lessons */}
+        {}
         <div className="flex items-center gap-3 pt-4 border-t">
           {isCompleted ? (
             <div className="flex items-center gap-2 text-green-600">
@@ -95,7 +88,7 @@ export default function LessonContent({
     );
   }
 
-  // Video lesson
+  
   const videoPublicId = lesson.video_public_id || lesson.video_url;
 
   if (!videoPublicId) {

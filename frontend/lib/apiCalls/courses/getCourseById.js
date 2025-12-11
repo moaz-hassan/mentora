@@ -5,17 +5,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Get course details by ID
- * @param {string|number} courseId - Course ID
- * @returns {Promise<Object>} Response with success flag and course data
- * 
- * @example
- * const result = await getCourseById(123);
- * if (result.success) {
- *   console.log(result.data);
- * }
- */
+
 export default async function getCourseById(courseId) {
   try {
     const response = await axios.get(`${API_URL}/api/courses/${courseId}`);

@@ -19,7 +19,7 @@ const HeroAnimation = () => (
       </filter>
     </defs>
 
-    {/* Background animated circles */}
+    {}
     <circle cx="100" cy="100" r="80" fill="url(#heroGrad1)" opacity="0.15">
       <animate
         attributeName="r"
@@ -37,7 +37,7 @@ const HeroAnimation = () => (
       />
     </circle>
 
-    {/* Main book/course card */}
+    {}
     <g filter="url(#heroShadow)">
       <rect
         x="100"
@@ -49,7 +49,7 @@ const HeroAnimation = () => (
       />
       <rect x="110" y="90" width="280" height="220" rx="16" fill="white" />
 
-      {/* Header section */}
+      {}
       <rect
         x="120"
         y="105"
@@ -69,13 +69,13 @@ const HeroAnimation = () => (
         Learn Anything
       </text>
 
-      {/* Content lines */}
+      {}
       <rect x="120" y="160" width="260" height="6" rx="3" fill="#e5e7eb" />
       <rect x="120" y="175" width="240" height="6" rx="3" fill="#e5e7eb" />
       <rect x="120" y="190" width="250" height="6" rx="3" fill="#e5e7eb" />
       <rect x="120" y="205" width="220" height="6" rx="3" fill="#e5e7eb" />
 
-      {/* Animated progress bar */}
+      {}
       <rect x="120" y="230" width="260" height="8" rx="4" fill="#f3f4f6" />
       <rect
         x="120"
@@ -94,7 +94,7 @@ const HeroAnimation = () => (
       </rect>
     </g>
 
-    {/* Floating elements */}
+    {}
     <g>
       <circle cx="80" cy="250" r="12" fill="#8b5cf6" opacity="0.8">
         <animateMotion
@@ -135,7 +135,7 @@ const HeroAnimation = () => (
       </text>
     </g>
 
-    {/* Decorative stars */}
+    {}
     <g fill="#f97316" opacity="0.6">
       <circle cx="150" cy="50" r="4">
         <animate

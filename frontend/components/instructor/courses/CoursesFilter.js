@@ -11,7 +11,7 @@ import {
 export function CoursesFilter({ searchQuery, setSearchQuery, statusFilter, setStatusFilter }) {
   return (
     <div className="flex flex-col sm:flex-row gap-4">
-      {/* Search */}
+      {}
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
         <Input
@@ -23,7 +23,7 @@ export function CoursesFilter({ searchQuery, setSearchQuery, statusFilter, setSt
         />
       </div>
 
-      {/* Status Filter */}
+      {}
       <div className="sm:w-48">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger>

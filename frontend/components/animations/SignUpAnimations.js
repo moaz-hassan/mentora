@@ -30,7 +30,7 @@ const RegisterAnimation = () => (
       </linearGradient>
     </defs>
 
-    {/* Central certificate/diploma */}
+    {}
     <g>
       <rect
         x="120"
@@ -51,7 +51,7 @@ const RegisterAnimation = () => (
         />
       </rect>
 
-      {/* Certificate ribbon */}
+      {}
       <circle cx="200" cy="150" r="20" fill="url(#grad2)">
         <animateTransform
           attributeName="transform"
@@ -75,7 +75,7 @@ const RegisterAnimation = () => (
         />
       </path>
 
-      {/* Certificate text lines */}
+      {}
       <rect x="140" y="180" width="120" height="4" rx="2" fill="#e9d5ff">
         <animateTransform
           attributeName="transform"
@@ -104,7 +104,7 @@ const RegisterAnimation = () => (
         />
       </rect>
 
-      {/* Signature line */}
+      {}
       <path
         d="M 150 240 Q 170 235 180 240 Q 190 245 200 240 Q 210 235 220 240 Q 230 245 250 240"
         stroke="#a855f7"
@@ -122,7 +122,7 @@ const RegisterAnimation = () => (
       </path>
     </g>
 
-    {/* Floating books stack */}
+    {}
     <g>
       <rect
         x="50"
@@ -179,7 +179,7 @@ const RegisterAnimation = () => (
       </rect>
     </g>
 
-    {/* Graduation cap */}
+    {}
     <g>
       <path d="M 320 240 L 350 250 L 320 260 L 290 250 Z" fill="#a855f7">
         <animateTransform
@@ -210,7 +210,7 @@ const RegisterAnimation = () => (
       </circle>
     </g>
 
-    {/* Sparkles */}
+    {}
     {[...Array(8)].map((_, i) => (
       <g key={i}>
         <path
@@ -235,7 +235,7 @@ const RegisterAnimation = () => (
       </g>
     ))}
 
-    {/* Profile badge with checkmark */}
+    {}
     <g opacity="0.8">
       <circle cx="320" cy="120" r="30" fill="url(#grad2)">
         <animateTransform

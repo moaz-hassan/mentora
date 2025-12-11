@@ -10,9 +10,7 @@ const filters = [
   { id: "archived", label: "Archived", icon: Archive },
 ];
 
-/**
- * Filter enrollments by status
- */
+
 export function filterEnrollments(enrollments, filter) {
   if (!enrollments || !Array.isArray(enrollments)) return [];
   
@@ -33,9 +31,7 @@ export function filterEnrollments(enrollments, filter) {
   }
 }
 
-/**
- * Get counts for each filter
- */
+
 export function getFilterCounts(enrollments) {
   if (!enrollments || !Array.isArray(enrollments)) {
     return { all: 0, "in-progress": 0, completed: 0, archived: 0 };

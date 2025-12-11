@@ -6,7 +6,7 @@ export default function ResetPasswordAnimation() {
       className="w-full h-full max-w-lg mx-auto"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Background Circle with gradient */}
+      {}
       <defs>
         <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style={{ stopColor: "#14b8a6", stopOpacity: 0.1 }} />
@@ -19,7 +19,7 @@ export default function ResetPasswordAnimation() {
         </linearGradient>
       </defs>
 
-      {/* Animated background circle */}
+      {}
       <circle cx="200" cy="200" r="150" fill="url(#bgGradient)">
         <animate
           attributeName="r"
@@ -29,7 +29,7 @@ export default function ResetPasswordAnimation() {
         />
       </circle>
 
-      {/* Orbiting particles */}
+      {}
       <circle cx="200" cy="80" r="6" fill="#14b8a6" opacity="0.6">
         <animateTransform
           attributeName="transform"
@@ -52,7 +52,7 @@ export default function ResetPasswordAnimation() {
         />
       </circle>
 
-      {/* Key body - main rectangle */}
+      {}
       <g transform="translate(200, 200)">
         <rect
           x="-30"
@@ -71,7 +71,7 @@ export default function ResetPasswordAnimation() {
           />
         </rect>
 
-        {/* Key teeth */}
+        {}
         <rect x="-30" y="95" width="6" height="10" fill="url(#keyGradient)">
           <animateTransform
             attributeName="transform"
@@ -91,7 +91,7 @@ export default function ResetPasswordAnimation() {
           />
         </rect>
 
-        {/* Key head - circle */}
+        {}
         <circle cx="-20" cy="30" r="25" fill="url(#keyGradient)">
           <animateTransform
             attributeName="transform"
@@ -102,7 +102,7 @@ export default function ResetPasswordAnimation() {
           />
         </circle>
         
-        {/* Key hole in head */}
+        {}
         <circle cx="-20" cy="30" r="8" fill="white">
           <animateTransform
             attributeName="transform"
@@ -113,7 +113,7 @@ export default function ResetPasswordAnimation() {
           />
         </circle>
 
-        {/* Lock body */}
+        {}
         <rect
           x="10"
           y="50"
@@ -124,7 +124,7 @@ export default function ResetPasswordAnimation() {
           opacity="0.9"
         />
 
-        {/* Lock shackle */}
+        {}
         <path
           d="M 25 50 Q 25 20, 40 20 Q 55 20, 55 50"
           stroke="#0d9488"
@@ -134,11 +134,11 @@ export default function ResetPasswordAnimation() {
           opacity="0.9"
         />
 
-        {/* Keyhole on lock */}
+        {}
         <circle cx="40" cy="75" r="6" fill="#06b6d4" />
         <rect x="37" y="75" width="6" height="15" rx="2" fill="#06b6d4" />
 
-        {/* Sparkles */}
+        {}
         <g opacity="0.8">
           <path d="M 75 60 L 77 65 L 82 67 L 77 69 L 75 74 L 73 69 L 68 67 L 73 65 Z" fill="#fbbf24">
             <animate
@@ -159,7 +159,7 @@ export default function ResetPasswordAnimation() {
         </g>
       </g>
 
-      {/* Floating particles in background */}
+      {}
       <circle cx="80" cy="100" r="3" fill="#14b8a6" opacity="0.4">
         <animate attributeName="cy" values="100;90;100" dur="3s" repeatCount="indefinite" />
       </circle>

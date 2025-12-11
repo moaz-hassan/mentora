@@ -24,14 +24,12 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Don't automatically redirect - let the page handle errors
+    
     return Promise.reject(error);
   }
 );
 
-/**
- * Get all marketing campaigns
- */
+
 export const getCampaigns = async () => {
   try {
     const response = await apiClient.get("/api/admin/marketing/campaigns");
@@ -48,9 +46,7 @@ export const getCampaigns = async () => {
   }
 };
 
-/**
- * Create a new campaign
- */
+
 export const createCampaign = async (campaignData) => {
   try {
     const response = await apiClient.post("/api/admin/marketing/campaigns", campaignData);
@@ -64,9 +60,7 @@ export const createCampaign = async (campaignData) => {
   }
 };
 
-/**
- * Update a campaign
- */
+
 export const updateCampaign = async (campaignId, campaignData) => {
   try {
     const response = await apiClient.put(`/api/admin/marketing/campaigns/${campaignId}`, campaignData);
@@ -80,9 +74,7 @@ export const updateCampaign = async (campaignId, campaignData) => {
   }
 };
 
-/**
- * Delete a campaign
- */
+
 export const deleteCampaign = async (campaignId) => {
   try {
     const response = await apiClient.delete(`/api/admin/marketing/campaigns/${campaignId}`);
@@ -96,9 +88,7 @@ export const deleteCampaign = async (campaignId) => {
   }
 };
 
-/**
- * Get featured courses
- */
+
 export const getFeaturedCourses = async () => {
   try {
     const response = await apiClient.get("/api/admin/marketing/featured-courses");
@@ -115,9 +105,7 @@ export const getFeaturedCourses = async () => {
   }
 };
 
-/**
- * Add a featured course
- */
+
 export const addFeaturedCourse = async (data) => {
   try {
     const response = await apiClient.post("/api/admin/marketing/featured-courses", data);
@@ -131,9 +119,7 @@ export const addFeaturedCourse = async (data) => {
   }
 };
 
-/**
- * Remove a featured course
- */
+
 export const removeFeaturedCourse = async (featuredId) => {
   try {
     const response = await apiClient.delete(`/api/admin/marketing/featured-courses/${featuredId}`);
@@ -147,9 +133,7 @@ export const removeFeaturedCourse = async (featuredId) => {
   }
 };
 
-/**
- * Get campaign analytics
- */
+
 export const getCampaignAnalytics = async (campaignId = null) => {
   try {
     const url = campaignId 

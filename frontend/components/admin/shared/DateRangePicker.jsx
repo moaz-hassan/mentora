@@ -32,12 +32,7 @@ const presets = [
   { label: "Custom", value: "custom", getRange: () => ({ from: null, to: null }) },
 ];
 
-/**
- * DateRangePicker - Date range selection with presets
- * @param {Object} value - Current date range { from, to }
- * @param {Function} onChange - Change handler
- * @param {string} className - Additional CSS classes
- */
+
 export function DateRangePicker({ value, onChange, className }) {
   const [preset, setPreset] = useState("30days");
   const [isOpen, setIsOpen] = useState(false);

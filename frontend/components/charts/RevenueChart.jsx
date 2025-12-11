@@ -21,7 +21,7 @@ export default function RevenueChart({ data, formatCurrency }) {
     );
   }
 
-  // Custom tooltip
+  
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (

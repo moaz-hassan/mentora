@@ -8,15 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, XCircle, HelpCircle, Trophy, Flag } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-/**
- * QuizContent - Renders quiz questions and handles submission
- * 
- * Features:
- * - Displays quiz questions with multiple choice options
- * - Tracks selected answers
- * - Shows results after submission
- * - Displays score and correct/incorrect indicators
- */
+
 export default function QuizContent({
   quiz,
   isLoading = false,
@@ -32,7 +24,7 @@ export default function QuizContent({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRetaking, setIsRetaking] = useState(false);
 
-  // Loading state
+  
   if (isLoading) {
     return (
       <div className="space-y-4 p-6">
@@ -47,7 +39,7 @@ export default function QuizContent({
     );
   }
 
-  // No quiz selected
+  
   if (!quiz) {
     return (
       <div className="bg-muted/30 rounded-lg p-6 min-h-[300px] flex items-center justify-center">
@@ -61,7 +53,7 @@ export default function QuizContent({
 
   const questions = quiz.questions || [];
 
-  // Handle answer selection
+  
   const handleAnswerChange = (questionIndex, answer) => {
     setAnswers((prev) => ({
       ...prev,
@@ -69,20 +61,20 @@ export default function QuizContent({
     }));
   };
 
-  // Handle quiz submission
+  
   const handleSubmit = async () => {
     if (!onSubmit) return;
 
     setIsSubmitting(true);
     try {
-      // Call parent callback which calls the backend
+      
       const result = await onSubmit(answers);
       
       if (result) {
         setScore(result.score);
         setResults(result.results);
         setSubmitted(true);
-        setIsRetaking(false); // Reset retake state on submission
+        setIsRetaking(false); 
       }
     } catch (error) {
       console.error("Quiz submission failed:", error);
@@ -91,11 +83,11 @@ export default function QuizContent({
     }
   };
 
-  // Check if all questions are answered
+  
   const allAnswered = questions.length > 0 && 
     Object.keys(answers).length === questions.length;
 
-  // Already completed state (show only if not retaking and not just submitted)
+  
   if (isCompleted && !submitted && !isRetaking) {
     return (
       <div className="bg-muted/30 rounded-lg p-6">
@@ -127,7 +119,7 @@ export default function QuizContent({
 
   return (
     <div className="bg-muted/30 rounded-lg p-6">
-      {/* Quiz Header */}
+      {}
       <div className="mb-6">
         <h2 className="text-xl font-semibold">{quiz.title}</h2>
         {quiz.description && (
@@ -148,7 +140,7 @@ export default function QuizContent({
         </div>
       </div>
 
-      {/* Results Summary */}
+      {}
       {submitted && score !== null && (
         <Card className="mb-6 border-primary/20 bg-primary/5">
           <CardContent className="pt-6">
@@ -172,10 +164,10 @@ export default function QuizContent({
         </Card>
       )}
 
-      {/* Questions */}
+      {}
       <div className="space-y-6">
         {questions.map((question, qIndex) => {
-          // Get result for this question if available
+          
           const result = results ? results[qIndex] : null;
           const isCorrect = submitted && result?.isCorrect;
           const correctAnswer = result?.correctAnswer;
@@ -204,7 +196,7 @@ export default function QuizContent({
                   disabled={submitted}
                 >
                   {(question.options || []).map((option, oIndex) => {
-                    // Handle object options {key: value} or string options
+                    
                     let optionValue = option;
                     let optionLabel = option;
 
@@ -248,7 +240,7 @@ export default function QuizContent({
         })}
       </div>
 
-      {/* Submit Button */}
+      {}
       {!submitted && questions.length > 0 && (
         <div className="mt-6 flex justify-end">
           <Button
@@ -261,7 +253,7 @@ export default function QuizContent({
         </div>
       )}
 
-      {/* Retake Button */}
+      {}
       {submitted && (
         <div className="mt-6 flex justify-end">
           <Button

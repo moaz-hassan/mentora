@@ -12,9 +12,7 @@ import RatingModal from "@/components/modals/RatingModal";
 import { joinChat } from "@/lib/apiCalls/chat/chat.apiCall";
 import { toast } from "sonner";
 
-/**
- * CourseHeader - Top navigation bar with course info and progress
- */
+
 export default function CourseHeader({
   courseTitle,
   instructorName,
@@ -27,7 +25,7 @@ export default function CourseHeader({
   const [joinLoading, setJoinLoading] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
 
-  // Get instructor initials for avatar fallback
+  
   const getInitials = (name) => {
     if (!name) return "IN";
     return name
@@ -38,17 +36,17 @@ export default function CourseHeader({
       .slice(0, 2);
   };
 
-  // Handle join chat
+  
   const handleJoinChat = async () => {
     if (!courseId) return;
 
-    // If already a member, just redirect to the chat
+    
     if (chatMembership?.isMember && chatMembership?.roomId) {
       router.push(`/chats/${chatMembership.roomId}`);
       return;
     }
 
-    // Otherwise, join the chat first
+    
     setJoinLoading(true);
     try {
       const response = await joinChat(courseId);
@@ -66,7 +64,7 @@ export default function CourseHeader({
     }
   };
 
-  // Handle rating success
+  
   const handleRatingSuccess = () => {
     toast.success("Thank you for your rating!");
   };
@@ -74,7 +72,7 @@ export default function CourseHeader({
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-14 items-center justify-between px-4">
-        {/* Left section - Back link and course info */}
+        {}
         <div className="flex items-center gap-4">
           <Link
             href="/enrollments"
@@ -100,9 +98,9 @@ export default function CourseHeader({
           </div>
         </div>
 
-        {/* Right section - Progress, Chat, Certificate, and user */}
+        {}
         <div className="flex items-center gap-3">
-          {/* Progress indicator */}
+          {}
           <div className="hidden sm:flex items-center gap-3">
             <span className="text-xs text-muted-foreground">Your Progress</span>
             <div className="flex items-center gap-2">
@@ -113,7 +111,7 @@ export default function CourseHeader({
             </div>
           </div>
 
-          {/* Rate Course Button */}
+          {}
           <Button
             variant="ghost"
             size="sm"
@@ -124,7 +122,7 @@ export default function CourseHeader({
             <span className="hidden md:inline">Rate Course</span>
           </Button>
 
-          {/* Join Chat Button */}
+          {}
           <Button
             variant="outline"
             size="sm"
@@ -142,14 +140,14 @@ export default function CourseHeader({
             </span>
           </Button>
 
-          {/* Certificate Button - shows when 100% complete */}
+          {}
           <CertificateButton
             courseId={courseId}
             completionPercentage={progressPercentage}
             className="hidden sm:flex"
           />
 
-          {/* User avatar placeholder */}
+          {}
           <Avatar className="h-8 w-8">
             <AvatarFallback>
               <User className="h-4 w-4" />

@@ -11,16 +11,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-/**
- * Theme Toggle Component
- * Provides a dropdown menu to switch between light, dark, and system themes
- * Includes smooth animations and visual feedback
- */
+
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
-  // Avoid hydration mismatch by only rendering after mount
+  
   React.useEffect(() => {
     setMounted(true);
   }, []);

@@ -5,27 +5,14 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Reset user password with token
- * @param {string} email - User's email address
- * @param {string} token - Reset token from email
- * @param {string} newPassword - New password
- * @param {string} confirmPassword - Password confirmation
- * @returns {Promise<Object>} Response with success flag and data/error
- * 
- * @example
- * const result = await resetPasswordApiCall('user@example.com', '123456', 'NewPass123!', 'NewPass123!');
- * if (result.success) {
- *   console.log(result.message);
- * }
- */
+
 export default async function resetPasswordApiCall(
   email,
   token,
   newPassword,
   confirmPassword
 ) {
-  // Validation
+  
   if (!email || !token || !newPassword || !confirmPassword) {
     return {
       success: false,

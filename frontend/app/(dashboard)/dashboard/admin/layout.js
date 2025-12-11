@@ -13,14 +13,14 @@ export const metadata = {
 export default async function AdminLayout({ children }) {
   const response = await getUserDataOnServer();
   
-  // Check if there's an error in the response
+  
   if (!response || response.error || !response.success) {
     return <NotFound />;
   }
   
   const userData = response?.data;
   
-  // Check if user data exists and user is an admin
+  
   if (!userData || userData.role !== "admin") {
     return <NotFound />;
   }

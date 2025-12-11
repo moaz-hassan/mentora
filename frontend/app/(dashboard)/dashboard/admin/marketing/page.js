@@ -69,14 +69,14 @@ export default function MarketingToolsPage() {
   const [campaigns, setCampaigns] = useState([]);
   const [featuredCourses, setFeaturedCourses] = useState([]);
 
-  // Dialog states
+  
   const [campaignDialogOpen, setCampaignDialogOpen] = useState(false);
   const [featuredDialogOpen, setFeaturedDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Form states
+  
   const [campaignForm, setCampaignForm] = useState({
     name: "",
     description: "",
@@ -223,13 +223,13 @@ export default function MarketingToolsPage() {
     setDeleteDialogOpen(true);
   };
 
-  // Calculate totals
+  
   const activeCampaigns = campaigns.filter((c) => c.isActive).length;
   const totalImpressions = campaigns.reduce((sum, c) => sum + (c.impressions || 0), 0);
   const totalClicks = campaigns.reduce((sum, c) => sum + (c.clicks || 0), 0);
   const totalConversions = campaigns.reduce((sum, c) => sum + (c.conversions || 0), 0);
 
-  // Campaign columns
+  
   const campaignColumns = [
     {
       accessorKey: "name",
@@ -306,7 +306,7 @@ export default function MarketingToolsPage() {
     },
   ];
 
-  // Featured courses columns
+  
   const featuredColumns = [
     {
       accessorKey: "position",
@@ -351,7 +351,7 @@ export default function MarketingToolsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Marketing Tools</h1>
@@ -369,7 +369,7 @@ export default function MarketingToolsPage() {
         </Button>
       </div>
 
-      {/* Overview Cards */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard
           title="Active Campaigns"
@@ -397,7 +397,7 @@ export default function MarketingToolsPage() {
         />
       </div>
 
-      {/* Tabs */}
+      {}
       <Tabs defaultValue="campaigns" className="space-y-4">
         <TabsList>
           <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
@@ -595,7 +595,7 @@ export default function MarketingToolsPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Delete Confirmation */}
+      {}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

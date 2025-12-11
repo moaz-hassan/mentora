@@ -2,10 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import getUserDataOnClient from "@/lib/apiCalls/auth/getUserDataOnClient.apiCall";
 import { toast } from "sonner";
 
-/**
- * Custom hook for settings page data management
- * @returns {Object} User data, profile data, and handlers
- */
+
 export function useSettings() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({
@@ -33,7 +30,7 @@ export function useSettings() {
       setLoading(true);
       const response = await getUserDataOnClient();
       
-      // Handle failed response
+      
       if (!response?.success && !response?.data) {
         console.error("Failed to fetch user data:", response);
         setLoading(false);

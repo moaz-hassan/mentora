@@ -14,19 +14,7 @@ import { DateRangePicker } from "./DateRangePicker";
 import { Search, X, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * FilterBar - Reusable filter bar with search, date range, and status filters
- * @param {Function} onSearch - Search handler
- * @param {Function} onDateRangeChange - Date range change handler
- * @param {Function} onStatusChange - Status filter change handler
- * @param {Function} onClear - Clear all filters handler
- * @param {Array} statusOptions - Status filter options [{value, label}]
- * @param {string} searchPlaceholder - Search input placeholder
- * @param {boolean} showSearch - Show search input
- * @param {boolean} showDateRange - Show date range picker
- * @param {boolean} showStatus - Show status filter
- * @param {string} className - Additional CSS classes
- */
+
 export function FilterBar({
   onSearch,
   onDateRangeChange,

@@ -5,10 +5,7 @@ import { cn } from "@/lib/utils";
 import LessonItem from "./LessonItem";
 import QuizItem from "./QuizItem";
 
-/**
- * SectionItem - Collapsible section (chapter) with lessons and quizzes
- * Shows section title, progress, and expandable content
- */
+
 export default function SectionItem({
   section,
   sectionNumber,
@@ -21,13 +18,13 @@ export default function SectionItem({
   onLessonSelect,
   onQuizSelect,
 }) {
-  // Combine and sort lessons and quizzes by order_number
+  
   const items = [
     ...(section.Lessons || []).map((l) => ({ ...l, type: "lesson" })),
     ...(section.Quizzes || []).map((q) => ({ ...q, type: "quiz" })),
   ].sort((a, b) => a.order_number - b.order_number);
 
-  // Calculate section progress
+  
   const totalItems = items.length;
   const completedItems =
     (section.Lessons || []).filter((l) => completedLessons.includes(l.id)).length +
@@ -37,7 +34,7 @@ export default function SectionItem({
 
   return (
     <div className="border-b last:border-b-0">
-      {/* Section header */}
+      {}
       <button
         onClick={onToggle}
         className={cn(
@@ -65,7 +62,7 @@ export default function SectionItem({
         </div>
       </button>
 
-      {/* Section content */}
+      {}
       {isExpanded && (
         <div className="bg-muted/30">
           {items.map((item) =>

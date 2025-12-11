@@ -2,11 +2,9 @@
 
 import { ChevronRight } from "lucide-react";
 
-/**
- * UpNextSection - Preview of upcoming lessons
- */
+
 export default function UpNextSection({ lessons = [], onLessonSelect }) {
-  // Format duration from seconds to readable format
+  
   const formatDuration = (seconds) => {
     if (!seconds) return "";
     const mins = Math.floor(seconds / 60);

@@ -3,9 +3,7 @@ import { getAuthHeaders, getApiBaseUrl } from "@/lib/utils/apiHelpers";
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Get notification statistics
- */
+
 export const getStatistics = async () => {
   try {
     const headers = getAuthHeaders();
@@ -23,9 +21,7 @@ export const getStatistics = async () => {
   }
 };
 
-/**
- * Get notification history
- */
+
 export const getHistory = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -46,9 +42,7 @@ export const getHistory = async (params = {}) => {
   }
 };
 
-/**
- * Get scheduled notifications
- */
+
 export const getScheduled = async () => {
   try {
     const headers = getAuthHeaders();
@@ -66,9 +60,7 @@ export const getScheduled = async () => {
   }
 };
 
-/**
- * Broadcast a notification
- */
+
 export const broadcast = async (notificationData) => {
   try {
     const headers = getAuthHeaders();
@@ -83,9 +75,7 @@ export const broadcast = async (notificationData) => {
   }
 };
 
-/**
- * Send a scheduled notification immediately
- */
+
 export const sendScheduled = async (notificationId) => {
   try {
     const headers = getAuthHeaders();
@@ -100,9 +90,7 @@ export const sendScheduled = async (notificationId) => {
   }
 };
 
-/**
- * Cancel a scheduled notification
- */
+
 export const cancelScheduled = async (notificationId) => {
   try {
     const headers = getAuthHeaders();
@@ -117,9 +105,7 @@ export const cancelScheduled = async (notificationId) => {
   }
 };
 
-/**
- * Get notification templates
- */
+
 export const getTemplates = async () => {
   try {
     const headers = getAuthHeaders();
@@ -137,9 +123,7 @@ export const getTemplates = async () => {
   }
 };
 
-/**
- * Create notification template
- */
+
 export const createTemplate = async (templateData) => {
   try {
     const headers = getAuthHeaders();

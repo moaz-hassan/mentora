@@ -6,11 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-/**
- * LearningPageLayout - Split-panel layout with responsive sidebar
- * Desktop: sidebar + main content side by side
- * Mobile: collapsible sidebar drawer
- */
+
 export default function LearningPageLayout({
   header,
   sidebar,
@@ -21,12 +17,12 @@ export default function LearningPageLayout({
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
+      {}
       {header}
 
-      {/* Main layout */}
+      {}
       <div className="flex-1 flex">
-        {/* Desktop sidebar */}
+        {}
         <aside
           className="hidden lg:block border-r bg-muted/30 overflow-y-auto"
           style={{ width: sidebarWidth, minWidth: sidebarWidth }}
@@ -34,7 +30,7 @@ export default function LearningPageLayout({
           {sidebar}
         </aside>
 
-        {/* Mobile sidebar toggle */}
+        {}
         <div className="lg:hidden fixed bottom-4 left-4 z-50">
           <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
             <SheetTrigger asChild>
@@ -48,7 +44,7 @@ export default function LearningPageLayout({
           </Sheet>
         </div>
 
-        {/* Main content area */}
+        {}
         <main className="flex-1 overflow-y-auto">
           {mainContent}
         </main>

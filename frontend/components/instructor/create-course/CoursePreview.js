@@ -32,12 +32,12 @@ export function CoursePreview({ courseData }) {
     return "type" in item;
   };
 
-  // Sort chapters by order_number
+  
   const sortedChapters = [...(courseData.chapters || [])].sort(
     (a, b) => (a.order_number || 0) - (b.order_number || 0)
   );
 
-  // Calculate statistics
+  
   const totalLessons = sortedChapters.reduce(
     (acc, chapter) =>
       acc + (chapter.items || []).filter((item) => isLesson(item)).length,
@@ -49,7 +49,7 @@ export function CoursePreview({ courseData }) {
     0
   );
 
-  // Calculate prices
+  
   const originalPrice = parseFloat(courseData.price) || 0;
   const discountPercent = parseFloat(courseData.discount) || 0;
   const discountedPrice =
@@ -57,13 +57,13 @@ export function CoursePreview({ courseData }) {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Hero Section */}
+      {}
       <div className="bg-neutral-900 text-white">
         <div className="max-w-[1200px] mx-auto px-6 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
-            {/* Left Content */}
+            {}
             <div>
-              {/* Breadcrumb */}
+              {}
               {courseData.category && (
                 <div className="flex items-center gap-2 text-sm text-neutral-400 mb-4">
                   <span className="capitalize">{courseData.category}</span>
@@ -76,17 +76,17 @@ export function CoursePreview({ courseData }) {
                 </div>
               )}
 
-              {/* Title */}
+              {}
               <h1 className="text-white mb-4">
                 {courseData.title || "Untitled Course"}
               </h1>
 
-              {/* Description */}
+              {}
               <p className="text-neutral-300 mb-6">
                 {courseData.description || "No description available"}
               </p>
 
-              {/* Stats */}
+              {}
               <div className="flex flex-wrap items-center gap-6 mb-6">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center">
@@ -114,10 +114,10 @@ export function CoursePreview({ courseData }) {
               </div>
             </div>
 
-            {/* Right Card - Course Preview Card */}
+            {}
             <div>
               <Card className="overflow-hidden sticky top-24">
-                {/* Intro Video or Thumbnail */}
+                {}
                 {courseData.introVideoUrl || courseData.intro_video_url ? (
                   <div className="aspect-video w-full overflow-hidden bg-black">
                     <video
@@ -142,7 +142,7 @@ export function CoursePreview({ courseData }) {
                 )}
 
                 <div className="p-6">
-                  {/* Price */}
+                  {}
                   <div className="mb-4">
                     {courseData.price ? (
                       <div className="flex items-baseline gap-3">
@@ -165,7 +165,7 @@ export function CoursePreview({ courseData }) {
                     )}
                   </div>
 
-                  {/* Action Buttons */}
+                  {}
                   <div className="space-y-2 mb-4">
                     <Button className="w-full bg-purple-600 hover:bg-purple-700">
                       Enroll Now
@@ -177,7 +177,7 @@ export function CoursePreview({ courseData }) {
 
                   <Separator className="my-4" />
 
-                  {/* Course Includes */}
+                  {}
                   <div className="space-y-3 text-sm">
                     <p className="text-neutral-700">This course includes:</p>
                     <div className="space-y-2">
@@ -210,11 +210,11 @@ export function CoursePreview({ courseData }) {
         </div>
       </div>
 
-      {/* Course Content Section */}
+      {}
       <div className="max-w-[1200px] mx-auto px-6 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
           <div className="space-y-8">
-            {/* What You'll Learn */}
+            {}
             <Card className="p-6">
               <h2 className="text-neutral-900 mb-4">What You'll Learn</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

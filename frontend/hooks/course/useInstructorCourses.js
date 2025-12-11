@@ -2,10 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getAllInstructorCourses } from "@/lib/apiCalls/instructor/getAllInstructorCourses.apiCall";
 import { toast } from "sonner";
 
-/**
- * Custom hook for managing instructor courses list
- * @returns {Object} Courses data, loading state, and filter functions
- */
+
 export function useInstructorCourses() {
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
@@ -38,16 +35,16 @@ export function useInstructorCourses() {
     fetchCourses();
   }, [fetchCourses]);
 
-  // Apply filters
+  
   useEffect(() => {
     let result = [...courses];
 
-    // Filter by status
+    
     if (filters.status !== "all") {
       result = result.filter((course) => course.status === filters.status);
     }
 
-    // Filter by search
+    
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       result = result.filter(

@@ -1,7 +1,4 @@
-/**
- * Settings Tabs Component
- * Navigation tabs for different settings sections
- */
+
 
 import { User, Lock, Link as LinkIcon } from "lucide-react";
 

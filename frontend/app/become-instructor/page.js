@@ -32,12 +32,12 @@ export default function BecomeInstructorPage() {
         setSuccess(true);
         toast.success(response.message);
         
-        // Update the user data in cookies/localStorage
+        
         const userData = JSON.parse(Cookies.get("user") || "{}");
         userData.role = "instructor";
         Cookies.set("user", JSON.stringify(userData));
         
-        // Redirect after a short delay
+        
         setTimeout(() => {
           router.push("/instructor/dashboard");
         }, 2000);
@@ -98,7 +98,7 @@ export default function BecomeInstructorPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
-      {/* Hero Section */}
+      {}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10" />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
@@ -148,7 +148,7 @@ export default function BecomeInstructorPage() {
         </div>
       </div>
 
-      {/* Benefits Section */}
+      {}
       <div className="max-w-6xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -179,7 +179,7 @@ export default function BecomeInstructorPage() {
         </div>
       </div>
 
-      {/* CTA Section */}
+      {}
       <div className="max-w-4xl mx-auto px-4 pb-20">
         <div className="bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 rounded-3xl p-8 md:p-12 text-center border border-primary/20">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
@@ -209,7 +209,7 @@ export default function BecomeInstructorPage() {
         </div>
       </div>
 
-      {/* Note Section */}
+      {}
       <div className="max-w-2xl mx-auto px-4 pb-16">
         <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 text-center">
           <p className="text-sm text-amber-800 dark:text-amber-200">

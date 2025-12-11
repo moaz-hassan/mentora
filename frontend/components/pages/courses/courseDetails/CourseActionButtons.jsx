@@ -8,10 +8,7 @@ import { handlePurchase, isFreeCourse } from "@/lib/utils/handlePurchase";
 import useAuthStore from "@/store/authStore";
 import GiftCourseModal from "@/components/modals/GiftCourseModal";
 
-/**
- * Course action buttons component for "Buy Now" and "Gift Course" actions
- * Handles both free and paid courses appropriately
- */
+
 export default function CourseActionButtons({
   course,
   activeDiscount,
@@ -41,7 +38,7 @@ export default function CourseActionButtons({
         },
       });
     } finally {
-      // Only set loading to false if we didn't navigate away
+      
       if (isFree) {
         setLoading(false);
       }
@@ -56,7 +53,7 @@ export default function CourseActionButtons({
     });
   };
 
-  // If user is enrolled, show "Go to Course" button
+  
   if (isEnrolled) {
     return (
       <div className={className}>
@@ -101,7 +98,7 @@ export default function CourseActionButtons({
         </Button>
       </div>
 
-      {/* Gift Modal for free courses */}
+      {}
       <GiftCourseModal
         isOpen={giftModalOpen}
         onClose={() => setGiftModalOpen(false)}

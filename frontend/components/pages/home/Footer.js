@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
-          {/* Brand */}
+          {}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -17,7 +17,7 @@ export default function Footer() {
             <p className="text-gray-400 text-sm mb-4">
               Empowering learners worldwide with quality education and skills for the future.
             </p>
-            {/* Social Links */}
+            {}
             <div className="flex items-center gap-3">
               <Link href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Facebook className="w-5 h-5" />
@@ -37,7 +37,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Platform */}
+          {}
           <div>
             <h3 className="font-semibold text-white mb-4">Platform</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
@@ -69,7 +69,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Company */}
+          {}
           <div>
             <h3 className="font-semibold text-white mb-4">Company</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
@@ -101,7 +101,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
+          {}
           <div>
             <h3 className="font-semibold text-white mb-4">Support</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
@@ -133,7 +133,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Community */}
+          {}
           <div>
             <h3 className="font-semibold text-white mb-4">Community</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
@@ -166,7 +166,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {}
         <div className="pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">

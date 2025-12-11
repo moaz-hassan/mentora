@@ -1,6 +1,4 @@
-/**
- * Get reports statistics for admin dashboard
- */
+
 
 import axios from "axios";
 import { 
@@ -10,17 +8,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Fetch reports statistics
- * @returns {Promise<Object>} Response with reports stats (pending, resolved, etc.)
- * 
- * @example
- * const result = await getReportsStats();
- * if (result.success) {
- *   console.log(result.data.stats.pending);
- *   console.log(result.data.stats.resolved);
- * }
- */
+
 export default async function getReportsStats() {
   try {
     const headers = getAuthHeaders();

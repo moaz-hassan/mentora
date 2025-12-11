@@ -2,10 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import getAdminStats from "@/lib/apiCalls/admin/getAdminStats.apiCall";
 
-/**
- * Custom hook for admin dashboard overview data
- * @returns {Object} Dashboard stats, recent activity, loading state, error, and refetch function
- */
+
 export function useAdminOverview() {
   const [stats, setStats] = useState({
     totalUsers: 0,

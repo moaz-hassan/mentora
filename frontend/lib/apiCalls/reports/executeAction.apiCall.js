@@ -29,12 +29,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Execute an action on a report
- * @param {string} reportId - Report ID
- * @param {string} actionType - Action to execute
- * @returns {Promise<object>} Action result
- */
+
 export default async function executeAction(reportId, actionType) {
   try {
     const response = await apiClient.post(`/api/reports/${reportId}/execute`, { actionType });

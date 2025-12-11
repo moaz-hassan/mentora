@@ -21,7 +21,7 @@ import {
 } from "@/components/admin/shared";
 import { useAdminAnalytics } from "@/hooks/admin";
 
-// Chart configuration
+
 const revenueChartConfig = {
   revenue: { label: "Revenue", color: "hsl(var(--chart-1))" },
 };
@@ -36,7 +36,7 @@ const enrollmentsChartConfig = {
   completions: { label: "Completions", color: "hsl(var(--chart-5))" },
 };
 
-// Course table columns
+
 const courseColumns = [
   { accessorKey: "title", header: "Course" },
   { accessorKey: "instructor", header: "Instructor" },
@@ -80,7 +80,7 @@ export default function AnalyticsDashboardPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
@@ -101,7 +101,7 @@ export default function AnalyticsDashboardPage() {
         </div>
       </div>
 
-      {/* Filters */}
+      {}
       <FilterBar
         showSearch={false}
         showStatus={false}
@@ -110,7 +110,7 @@ export default function AnalyticsDashboardPage() {
         filters={{ dateRange }}
       />
 
-      {/* Overview Cards */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard
           title="Total Revenue"
@@ -147,7 +147,7 @@ export default function AnalyticsDashboardPage() {
         />
       </div>
 
-      {/* AI Insights */}
+      {}
       <AIInsightPanel
         title="AI Insights"
         insights={aiInsights}
@@ -155,7 +155,7 @@ export default function AnalyticsDashboardPage() {
         onRefresh={handleRefresh}
       />
 
-      {/* Charts */}
+      {}
       <Tabs defaultValue="revenue" className="space-y-4">
         <TabsList>
           <TabsTrigger value="revenue">Revenue</TabsTrigger>
@@ -206,7 +206,7 @@ export default function AnalyticsDashboardPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Top Courses Table */}
+      {}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>

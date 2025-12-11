@@ -16,17 +16,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * Format username with @ prefix
- */
+
 export function formatUsername(username) {
   if (!username) return "";
   return username.startsWith("@") ? username : `@${username}`;
 }
 
-/**
- * Format date to readable string
- */
+
 function formatMemberSince(dateString) {
   if (!dateString) return "Recently";
   const date = new Date(dateString);
@@ -77,15 +73,15 @@ export default function ProfileHeader({ user, profile, enrollmentCount = 0, cert
 
   return (
     <Card className="overflow-hidden border bg-card/50 backdrop-blur-sm">
-      {/* Clean Header Banner */}
+      {}
       <div className="relative h-24 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,transparent_0%,rgba(255,255,255,0.1)_50%,transparent_100%)]" />
       </div>
 
       <CardContent className="relative px-6 pb-6">
-        {/* Profile Section */}
+        {}
         <div className="flex flex-col sm:flex-row gap-6 -mt-12">
-          {/* Avatar */}
+          {}
           <div className="shrink-0 self-center sm:self-start">
             <div className="relative">
               <Avatar className="h-24 w-24 border-4 border-background shadow-lg ring-2 ring-border">
@@ -104,7 +100,7 @@ export default function ProfileHeader({ user, profile, enrollmentCount = 0, cert
             </div>
           </div>
 
-          {/* User Info */}
+          {}
           <div className="flex-1 min-w-0 text-center sm:text-left pt-2">
             <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
               <h1 className="text-2xl font-bold text-foreground tracking-tight">
@@ -133,7 +129,7 @@ export default function ProfileHeader({ user, profile, enrollmentCount = 0, cert
             </div>
           </div>
 
-          {/* Actions */}
+          {}
           <div className="shrink-0 flex items-center gap-2 self-center sm:self-start sm:pt-2">
             <Button
               variant="outline"
@@ -156,7 +152,7 @@ export default function ProfileHeader({ user, profile, enrollmentCount = 0, cert
           </div>
         </div>
 
-        {/* Stats Grid */}
+        {}
         <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t">
           {stats.map((stat, index) => (
             <div 

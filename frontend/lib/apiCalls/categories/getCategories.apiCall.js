@@ -1,7 +1,4 @@
-/**
- * Fetch all categories from the API
- * @returns {Promise<Object>} Response with categories array
- */
+
 export const getCategories = async () => {
   try {
     const response = await fetch(

@@ -3,9 +3,7 @@ import { getAuthHeaders, getApiBaseUrl } from "@/lib/utils/apiHelpers";
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Get financial overview
- */
+
 export const getOverview = async () => {
   try {
     const headers = getAuthHeaders();
@@ -23,9 +21,7 @@ export const getOverview = async () => {
   }
 };
 
-/**
- * Get revenue data
- */
+
 export const getRevenue = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -46,9 +42,7 @@ export const getRevenue = async (params = {}) => {
   }
 };
 
-/**
- * Get payouts data
- */
+
 export const getPayouts = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -69,9 +63,7 @@ export const getPayouts = async (params = {}) => {
   }
 };
 
-/**
- * Get transactions data
- */
+
 export const getTransactions = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -92,9 +84,7 @@ export const getTransactions = async (params = {}) => {
   }
 };
 
-/**
- * Process a payout
- */
+
 export const processPayout = async (payoutId) => {
   try {
     const headers = getAuthHeaders();
@@ -109,9 +99,7 @@ export const processPayout = async (payoutId) => {
   }
 };
 
-/**
- * Export financial data
- */
+
 export const exportData = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -126,12 +114,10 @@ export const exportData = async (params = {}) => {
   }
 };
 
-// Alias for compatibility (export is a reserved keyword)
+
 export { exportData as export };
 
-/**
- * Get refunds data
- */
+
 export const getRefunds = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -152,9 +138,7 @@ export const getRefunds = async (params = {}) => {
   }
 };
 
-/**
- * Process a refund
- */
+
 export const processRefund = async (refundData) => {
   try {
     const headers = getAuthHeaders();

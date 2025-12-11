@@ -2,10 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getRevenueAnalytics } from "@/lib/apiCalls/analytics/getRevenueAnalytics.apiCall";
 import { toast } from "sonner";
 
-/**
- * Custom hook for earnings data
- * @returns {Object} Earnings data and loading state
- */
+
 export function useEarnings() {
   const [earnings, setEarnings] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +17,7 @@ export function useEarnings() {
       const endDate = new Date();
       const startDate = new Date();
 
-      // Set date range based on selection
+      
       switch (timeRange) {
         case "1month":
           startDate.setMonth(startDate.getMonth() - 1);

@@ -1,7 +1,4 @@
-/**
- * Avatar Upload Component
- * Handles profile picture upload and display
- */
+
 
 import { Camera } from "lucide-react";
 

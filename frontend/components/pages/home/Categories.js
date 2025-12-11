@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-// Map category names to icons and colors
+
 const categoryConfig = {
   development: { Icon: Code, color: "bg-blue-100 text-blue-600" },
   business: { Icon: Briefcase, color: "bg-purple-100 text-purple-600" },

@@ -5,23 +5,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Register a new user account
- * @param {string} first_name - User's first name
- * @param {string} last_name - User's last name
- * @param {string} email - User's email address
- * @param {string} password - User's password
- * @param {string} confirmPassword - Password confirmation
- * @returns {Promise<Object>} Response with success flag and data/error
- * 
- * @example
- * const result = await registerApiCall('John', 'Doe', 'john@example.com', 'Password123!', 'Password123!');
- * if (result.success) {
- *   console.log(result.message);
- * } else {
- *   console.error(result.error);
- * }
- */
+
 const registerApiCall = async (
   first_name,
   last_name,
@@ -29,7 +13,7 @@ const registerApiCall = async (
   password,
   confirmPassword
 ) => {
-  // Validation
+  
   if (
     first_name === "" ||
     last_name === "" ||

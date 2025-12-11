@@ -13,7 +13,7 @@ import Link from "next/link";
 export function NavSecondary({ items, ...props }) {
   const pathname = usePathname();
 
-  // Check if a link is active
+  
   const isActive = (url) => {
     return pathname === url || pathname.startsWith(url + '/');
   };

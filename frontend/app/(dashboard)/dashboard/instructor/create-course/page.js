@@ -39,7 +39,7 @@ export default function CreateCoursePage() {
     clearDraft,
   } = useCourseStore();
 
-  // Custom hooks
+  
   const { isUploading, uploadProgress, saveDraft, submitForReview } =
     useCreateCourse(clearDraft);
   const { canSaveOrSubmit, validateChapters, validateFullCourse, getValidationMessage } =
@@ -52,7 +52,7 @@ export default function CreateCoursePage() {
     }
   }, [courseData, initializeCourse]);
 
-  // Handle save draft
+  
   const handleSaveDraft = async () => {
     if (!validateChapters()) {
       toast.error(getValidationMessage);
@@ -67,7 +67,7 @@ export default function CreateCoursePage() {
     await saveDraft(courseData);
   };
 
-  // Handle submit for review
+  
   const handleSubmitForReview = async () => {
     if (!validateChapters()) {
       toast.error(getValidationMessage);
@@ -87,7 +87,7 @@ export default function CreateCoursePage() {
     setIsSubmitDialogOpen(false);
   };
 
-  // Loading state
+  
   if (!courseData) {
     return (
       <div className="container mx-auto py-8 px-4">

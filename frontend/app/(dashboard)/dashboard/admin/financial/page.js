@@ -43,7 +43,7 @@ import {
 } from "@/components/admin/shared";
 import * as financialAPI from "@/lib/apiCalls/admin/financial.apiCall";
 
-// Chart config
+
 const revenueChartConfig = {
   revenue: { label: "Revenue", color: "hsl(var(--chart-1))" },
   payouts: { label: "Payouts", color: "hsl(var(--chart-2))" },
@@ -57,7 +57,7 @@ export default function FinancialDashboardPage() {
   const [payouts, setPayouts] = useState([]);
   const [transactions, setTransactions] = useState([]);
   
-  // Payout processing
+  
   const [processDialogOpen, setProcessDialogOpen] = useState(false);
   const [selectedPayout, setSelectedPayout] = useState(null);
   const [processing, setProcessing] = useState(false);
@@ -127,7 +127,7 @@ export default function FinancialDashboardPage() {
     setProcessDialogOpen(true);
   };
 
-  // Payout columns
+  
   const payoutColumns = [
     {
       accessorKey: "instructorName",
@@ -197,7 +197,7 @@ export default function FinancialDashboardPage() {
     },
   ];
 
-  // Transaction columns
+  
   const transactionColumns = [
     {
       accessorKey: "transactionId",
@@ -256,7 +256,7 @@ export default function FinancialDashboardPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Financial Dashboard</h1>
@@ -277,7 +277,7 @@ export default function FinancialDashboardPage() {
         </div>
       </div>
 
-      {/* Overview Cards */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard
           title="Total Revenue"
@@ -311,7 +311,7 @@ export default function FinancialDashboardPage() {
         />
       </div>
 
-      {/* Revenue Chart */}
+      {}
       <ChartWrapper
         title="Revenue vs Payouts"
         description="Monthly comparison of revenue and instructor payouts"
@@ -324,7 +324,7 @@ export default function FinancialDashboardPage() {
         height={300}
       />
 
-      {/* Tabs */}
+      {}
       <Tabs defaultValue="payouts" className="space-y-4">
         <TabsList>
           <TabsTrigger value="payouts">Instructor Payouts</TabsTrigger>
@@ -374,7 +374,7 @@ export default function FinancialDashboardPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Process Payout Dialog */}
+      {}
       <AlertDialog open={processDialogOpen} onOpenChange={setProcessDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

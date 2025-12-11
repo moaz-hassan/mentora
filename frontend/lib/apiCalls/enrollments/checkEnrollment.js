@@ -7,17 +7,7 @@ import {
 
 const API_URL = `${getApiBaseUrl()}/api`;
 
-/**
- * Check if current user is enrolled in a course
- * @param {string|number} courseId - Course ID
- * @returns {Promise<boolean>} - Enrollment status
- * 
- * @example
- * const isEnrolled = await checkEnrollment(123);
- * if (isEnrolled) {
- *   console.log('User is enrolled');
- * }
- */
+
 export const checkEnrollment = async (courseId) => {
   try {
     const token = getAuthToken();
@@ -34,7 +24,7 @@ export const checkEnrollment = async (courseId) => {
     
     return response.data?.isEnrolled || false;
   } catch (error) {
-    // If error (like 401), assume not enrolled
+    
     console.error('Error checking enrollment:', error);
     return false;
   }

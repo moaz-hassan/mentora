@@ -20,7 +20,7 @@ export default function ExportDialog({ isOpen, onClose, onExport, title = "Expor
         className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 transform animate-slide-in-up"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
+        {}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg transition-colors"

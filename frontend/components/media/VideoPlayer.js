@@ -11,13 +11,13 @@ export default function VideoPlayer({
 }) {
   const videoRef = useRef(null);
   const playerRef = useRef(null);
-  // Check if script is already loaded on mount
+  
   const [isScriptLoaded, setIsScriptLoaded] = useState(
     () => typeof window !== "undefined" && !!window.cloudinary
   );
   const [isPlayerReady, setIsPlayerReady] = useState(false);
 
-  // Cleanup function
+  
   const cleanupPlayer = () => {
     if (playerRef.current) {
       try {
@@ -30,11 +30,11 @@ export default function VideoPlayer({
     setIsPlayerReady(false);
   };
 
-  // Initialize player
+  
   const initPlayer = () => {
     if (!window.cloudinary || !videoRef.current) return;
 
-    // Clean up existing player first
+    
     if (playerRef.current) {
       cleanupPlayer();
     }
@@ -44,7 +44,7 @@ export default function VideoPlayer({
         cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
       });
 
-      // Initialize Player
+      
       playerRef.current = cld.videoPlayer(videoRef.current, {
         logo: false,
         colors: {
@@ -62,7 +62,7 @@ export default function VideoPlayer({
         muted: autoPlay,
       });
 
-      // Load Source
+      
       playerRef.current.source(publicId, {
         sourceTypes: ["hls"],
         transformation: { streaming_profile: "hd" },
@@ -71,12 +71,12 @@ export default function VideoPlayer({
 
       setIsPlayerReady(true);
 
-      // Events
+      
       if (onNextLesson && showNextButton) {
         playerRef.current.on("ended", onNextLesson);
       }
 
-      // Track video progress for auto-completion
+      
       if (onProgress) {
         playerRef.current.on("timeupdate", () => {
           const player = playerRef.current;
@@ -95,17 +95,17 @@ export default function VideoPlayer({
     }
   };
 
-  // Check if script is already loaded on mount
+  
   useEffect(() => {
     if (window.cloudinary && !isScriptLoaded) {
       setIsScriptLoaded(true);
     }
   }, []);
 
-  // Initialize when script loads or publicId changes
+  
   useEffect(() => {
     if (window.cloudinary) {
-      // Small delay to ensure DOM is ready
+      
       const timer = setTimeout(() => {
         initPlayer();
       }, 100);
@@ -119,27 +119,27 @@ export default function VideoPlayer({
 
   return (
     <div className="w-full h-full bg-black relative">
-      {/* Load Cloudinary styles */}
+      {}
       <link
         href="https://unpkg.com/cloudinary-video-player@1.10.6/dist/cld-video-player.min.css"
         rel="stylesheet"
       />
 
-      {/* Load Cloudinary script */}
+      {}
       <Script
         src="https://unpkg.com/cloudinary-video-player@1.10.6/dist/cld-video-player.min.js"
         strategy="afterInteractive"
         onLoad={() => setIsScriptLoaded(true)}
       />
 
-      {/* Loading indicator */}
+      {}
       {!isPlayerReady && (
         <div className="absolute inset-0 flex items-center justify-center bg-black">
           <div className="w-10 h-10 border-2 border-neutral-800 border-t-blue-500 rounded-full animate-spin" />
         </div>  
       )}
 
-      {/* Video element */}
+      {}
       <video ref={videoRef} className="cld-video-player cld-fluid" />
     </div>
   );

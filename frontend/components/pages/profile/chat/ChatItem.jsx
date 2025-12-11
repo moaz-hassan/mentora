@@ -34,7 +34,7 @@ export default function ChatItem({ chat, href, onClick }) {
 
   const content = (
     <>
-      {/* Avatar */}
+      {}
       <div className="relative shrink-0">
         <Avatar className="h-10 w-10">
           <AvatarImage src={chat?.avatar_url} alt={chat?.name} />
@@ -45,7 +45,7 @@ export default function ChatItem({ chat, href, onClick }) {
         )}
       </div>
 
-      {/* Content */}
+      {}
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-2">
           <span className={cn(
@@ -83,7 +83,7 @@ export default function ChatItem({ chat, href, onClick }) {
     hasUnread && "bg-primary/5"
   );
 
-  // Use onClick if provided (for query param navigation)
+  
   if (onClick) {
     return (
       <button onClick={onClick} className={className}>
@@ -92,7 +92,7 @@ export default function ChatItem({ chat, href, onClick }) {
     );
   }
 
-  // Use custom href if provided, otherwise default to /chats/:id
+  
   return (
     <Link href={href || `/chats/${chat.id}`} className={className}>
       {content}

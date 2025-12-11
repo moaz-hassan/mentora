@@ -61,7 +61,7 @@ export default function CourseReviews({ course, isEnrolled }) {
         )}
       </div>
 
-      {/* Rating Summary Block */}
+      {}
       {reviews.length > 0 && (
         <div className="flex flex-col sm:flex-row gap-8 mb-8">
           <div className="flex flex-col items-center justify-center text-center">
@@ -114,7 +114,7 @@ export default function CourseReviews({ course, isEnrolled }) {
         </div>
       )}
 
-      {/* Reviews List */}
+      {}
       <div className="space-y-6">
         {reviewsLoading ? (
           <div className="text-center py-8 text-muted-foreground">

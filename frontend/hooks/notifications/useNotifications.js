@@ -2,10 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from "@/lib/apiCalls/notifications/notifications.apiCall";
 import { toast } from "sonner";
 
-/**
- * Custom hook for notifications management
- * @returns {Object} Notifications data and functions
- */
+
 export function useNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);

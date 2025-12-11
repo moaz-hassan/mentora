@@ -3,10 +3,7 @@ import Link from "next/link";
 import { AlertCircle, RefreshCw, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-/**
- * ErrorState - Error display with retry functionality
- * Shows error message and provides options to retry or go back
- */
+
 const ErrorState = ({ message, onRetry }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full bg-background p-4">

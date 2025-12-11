@@ -27,22 +27,22 @@ export function CourseStructureEditor({
 }) {
   const isEditMode = mode === "edit";
   
-  // Ensure chapters array exists
+  
   const chapters = courseData?.chapters || [];
 
   const addChapter = async () => {
     if (isEditMode && onAddChapter) {
-      // In edit mode, call the API handler
+      
       try {
         await onAddChapter({
           title: `Chapter ${chapters.length + 1}`,
           description: "",
         });
       } catch (error) {
-        // Error handling is done in parent component
+        
       }
     } else {
-      // In create mode, add to local state
+      
       const newChapter = {
         id: `chapter-${Date.now()}`,
         title: `Chapter ${chapters.length + 1}`,
@@ -84,7 +84,7 @@ export function CourseStructureEditor({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // Require 8px movement before drag starts
+        distance: 8, 
       },
     }),
     useSensor(KeyboardSensor, {

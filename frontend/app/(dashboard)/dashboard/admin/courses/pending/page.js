@@ -25,9 +25,9 @@ export default function PendingCoursesPage() {
 
   const fetchPendingCourses = async () => {
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/admin/courses/pending');
-      // const data = await response.json();
+      
+      
+      
 
       const mockCourses = [
         {
@@ -76,8 +76,8 @@ export default function PendingCoursesPage() {
 
   const handleApprove = async (courseId) => {
     try {
-      // TODO: API call to approve course
-      // await fetch(`/api/admin/courses/${courseId}/approve`, { method: 'POST' });
+      
+      
 
       setCourses((prev) => prev.filter((c) => c.id !== courseId));
       setShowModal(false);
@@ -94,11 +94,11 @@ export default function PendingCoursesPage() {
     }
 
     try {
-      // TODO: API call to reject course
-      // await fetch(`/api/admin/courses/${courseId}/reject`, {
-      //   method: 'POST',
-      //   body: JSON.stringify({ rejection_reason: rejectionReason })
-      // });
+      
+      
+      
+      
+      
 
       setCourses((prev) => prev.filter((c) => c.id !== courseId));
       setShowModal(false);
@@ -133,7 +133,7 @@ export default function PendingCoursesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Pending Courses</h1>
         <p className="mt-2 text-gray-600">
@@ -141,7 +141,7 @@ export default function PendingCoursesPage() {
         </p>
       </div>
 
-      {/* Courses List */}
+      {}
       {courses.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <CheckCircle className="w-16 h-16 mx-auto text-green-500 mb-4" />
@@ -160,14 +160,14 @@ export default function PendingCoursesPage() {
               className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
             >
               <div className="flex gap-6">
-                {/* Thumbnail */}
+                {}
                 <img
                   src={course.thumbnail_url}
                   alt={course.title}
                   className="w-48 h-32 object-cover rounded-lg flex-shrink-0"
                 />
 
-                {/* Content */}
+                {}
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-3">
                     <div>
@@ -183,7 +183,7 @@ export default function PendingCoursesPage() {
                     </span>
                   </div>
 
-                  {/* Meta Info */}
+                  {}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                     <div className="flex items-center text-sm text-gray-600">
                       <User className="w-4 h-4 mr-2" />
@@ -204,7 +204,7 @@ export default function PendingCoursesPage() {
                     </div>
                   </div>
 
-                  {/* Actions */}
+                  {}
                   <div className="flex items-center space-x-3">
                     <button
                       onClick={() => window.open(`/courses/${course.id}`, "_blank")}
@@ -235,7 +235,7 @@ export default function PendingCoursesPage() {
         </div>
       )}
 
-      {/* Confirmation Modal */}
+      {}
       {showModal && selectedCourse && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6">

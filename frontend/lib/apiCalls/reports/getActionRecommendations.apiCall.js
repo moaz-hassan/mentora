@@ -29,11 +29,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Get AI-powered action recommendations for a report
- * @param {string} reportId - Report ID
- * @returns {Promise<object>} AI recommendations
- */
+
 export default async function getActionRecommendations(reportId) {
   try {
     const response = await apiClient.get(`/api/reports/${reportId}/recommendations`);

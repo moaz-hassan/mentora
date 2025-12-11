@@ -50,7 +50,7 @@ import {
 } from "@/components/admin/shared";
 import { instructorsAPI } from "@/lib/apiCalls/admin/instructors.apiCall";
 
-// Chart config
+
 const performanceChartConfig = {
   revenue: { label: "Revenue", color: "hsl(var(--chart-1))" },
   enrollments: { label: "Enrollments", color: "hsl(var(--chart-2))" },
@@ -61,7 +61,7 @@ export default function InstructorManagementPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [instructors, setInstructors] = useState([]);
   
-  // Dialog states
+  
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
@@ -145,13 +145,13 @@ export default function InstructorManagementPage() {
     setStatusDialogOpen(true);
   };
 
-  // Calculate totals
+  
   const totalInstructors = instructors.length;
   const activeInstructors = instructors.filter((i) => i.status === "active").length;
   const totalRevenue = instructors.reduce((sum, i) => sum + (i.totalRevenue || 0), 0);
   const totalStudents = instructors.reduce((sum, i) => sum + (i.totalStudents || 0), 0);
 
-  // Table columns
+  
   const columns = [
     {
       accessorKey: "name",
@@ -251,7 +251,7 @@ export default function InstructorManagementPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Instructor Management</h1>
@@ -269,7 +269,7 @@ export default function InstructorManagementPage() {
         </Button>
       </div>
 
-      {/* Overview Cards */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard
           title="Total Instructors"
@@ -298,7 +298,7 @@ export default function InstructorManagementPage() {
         />
       </div>
 
-      {/* Instructors Table */}
+      {}
       <Card>
         <CardHeader>
           <CardTitle>All Instructors</CardTitle>
@@ -318,7 +318,7 @@ export default function InstructorManagementPage() {
         </CardContent>
       </Card>
 
-      {/* Instructor Detail Dialog */}
+      {}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
         <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
@@ -423,7 +423,7 @@ export default function InstructorManagementPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Status Change Dialog */}
+      {}
       <AlertDialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

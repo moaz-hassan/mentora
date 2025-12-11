@@ -4,10 +4,7 @@ import { getInstructorAnalytics } from "@/lib/apiCalls/instructor/getAnalytics.a
 import { getEnrollmentTrend } from "@/lib/apiCalls/analytics/getEnrollmentTrend.apiCall";
 import { toast } from "sonner";
 
-/**
- * Custom hook for instructor analytics data
- * @returns {Object} Analytics data and loading state
- */
+
 export function useAnalytics() {
   const searchParams = useSearchParams();
   const courseIdParam = searchParams.get("courseId");

@@ -5,13 +5,13 @@ import { toast } from "sonner";
 import { getLessonDetail, getQuizDetail } from "@/lib/apiCalls/enrollments/enrollment.service";
 
 export function useLessonContent(enrollmentId) {
-  // Current content state (lazy loaded)
+  
   const [currentLesson, setCurrentLesson] = useState(null);
   const [currentQuiz, setCurrentQuiz] = useState(null);
-  const [contentType, setContentType] = useState("lesson"); // 'lesson' or 'quiz'
+  const [contentType, setContentType] = useState("lesson"); 
   const [isLessonLoading, setIsLessonLoading] = useState(false);
 
-  // Fetch lesson content (lazy loading)
+  
   const fetchLessonContent = useCallback(
     async (lessonId) => {
       setIsLessonLoading(true);
@@ -38,7 +38,7 @@ export function useLessonContent(enrollmentId) {
     [enrollmentId]
   );
 
-  // Fetch quiz content (lazy loading)
+  
   const fetchQuizContent = useCallback(
     async (quizId) => {
       setIsLessonLoading(true);

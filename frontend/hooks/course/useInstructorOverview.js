@@ -5,10 +5,7 @@ import { getUnreadCount } from "@/lib/apiCalls/chat/chat.apiCall";
 import { getEnrollmentTrend } from "@/lib/apiCalls/analytics/getEnrollmentTrend.apiCall";
 import { getRevenueAnalytics } from "@/lib/apiCalls/analytics/getRevenueAnalytics.apiCall";
 
-/**
- * Custom hook for instructor overview/dashboard data
- * @returns {Object} Dashboard stats, courses, and chart data
- */
+
 export function useInstructorOverview() {
   const [stats, setStats] = useState({
     totalStudents: 0,
@@ -29,15 +26,15 @@ export function useInstructorOverview() {
       setLoading(true);
       setError(null);
 
-      // Fetch analytics
+      
       const analyticsResponse = await getInstructorAnalytics(null, 30);
       const analyticsData = analyticsResponse.data;
 
-      // Fetch courses
+      
       const coursesResponse = await getAllInstructorCourses();
       const coursesData = coursesResponse.data;
 
-      // Fetch unread messages
+      
       let unreadCount = 0;
       try {
         const unreadResponse = await getUnreadCount();
@@ -46,7 +43,7 @@ export function useInstructorOverview() {
         console.warn("Could not fetch unread count:", err);
       }
 
-      // Fetch enrollment trend
+      
       try {
         const enrollmentResponse = await getEnrollmentTrend(30, "day");
         setEnrollmentData(enrollmentResponse.data?.enrollments || []);
@@ -55,7 +52,7 @@ export function useInstructorOverview() {
         setEnrollmentData([]);
       }
 
-      // Fetch revenue data
+      
       try {
         const endDate = new Date();
         const startDate = new Date();
@@ -79,12 +76,12 @@ export function useInstructorOverview() {
         setRevenueData([]);
       }
 
-      // Calculate pending reviews
+      
       const pendingReviews = coursesData.filter(
         (course) => course.status === "pending" || course.status === "under_review"
       ).length;
 
-      // Set stats
+      
       setStats({
         totalStudents: analyticsData.overview?.totalEnrollments || 0,
         totalEarnings: analyticsData.overview?.totalRevenue || 0,
@@ -94,7 +91,7 @@ export function useInstructorOverview() {
         unreadMessages: unreadCount,
       });
 
-      // Set recent courses
+      
       const sortedCourses = coursesData
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 6);

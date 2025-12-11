@@ -29,11 +29,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Get AI suggestions based on context
- * @param {object} context - Context for suggestions
- * @returns {Promise<object>} AI suggestions
- */
+
 export default async function getSuggestions(context) {
   try {
     const response = await apiClient.post("/api/ai/suggest", {

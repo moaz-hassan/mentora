@@ -22,16 +22,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * AIInsightPanel - Display AI-generated insights
- * @param {string} title - Panel title
- * @param {Array} insights - Array of insight objects
- * @param {boolean} loading - Loading state
- * @param {Function} onRefresh - Refresh handler
- * @param {boolean} collapsible - Allow collapsing
- * @param {boolean} defaultOpen - Default open state
- * @param {string} className - Additional CSS classes
- */
+
 export function AIInsightPanel({
   title = "AI Insights",
   insights = [],

@@ -6,14 +6,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Get all courses with optional filters (admin)
- * @param {Object} filters - Filter options
- * @param {string} filters.status - Filter by status
- * @param {number} filters.page - Page number
- * @param {number} filters.limit - Items per page
- * @returns {Promise<Object>} Response with courses list
- */
+
 export const getAdminCourses = async (filters = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -34,10 +27,7 @@ export const getAdminCourses = async (filters = {}) => {
   }
 };
 
-/**
- * Get pending courses for review (admin)
- * @returns {Promise<Object>} Response with pending courses
- */
+
 export const getPendingCourses = async () => {
   try {
     const headers = getAuthHeaders();
@@ -48,11 +38,7 @@ export const getPendingCourses = async () => {
   }
 };
 
-/**
- * Approve a course (admin)
- * @param {string} courseId - Course ID
- * @returns {Promise<Object>} Response with success status
- */
+
 export const approveCourse = async (courseId) => {
   try {
     const headers = getAuthHeaders();
@@ -67,12 +53,7 @@ export const approveCourse = async (courseId) => {
   }
 };
 
-/**
- * Reject a course (admin)
- * @param {string} courseId - Course ID
- * @param {string} rejectionReason - Reason for rejection
- * @returns {Promise<Object>} Response with success status
- */
+
 export const rejectCourse = async (courseId, rejectionReason) => {
   try {
     const headers = getAuthHeaders();
@@ -87,11 +68,7 @@ export const rejectCourse = async (courseId, rejectionReason) => {
   }
 };
 
-/**
- * Delete a course (admin)
- * @param {string} courseId - Course ID
- * @returns {Promise<Object>} Response with success status
- */
+
 export const deleteCourse = async (courseId) => {
   try {
     const headers = getAuthHeaders();
@@ -102,11 +79,7 @@ export const deleteCourse = async (courseId) => {
   }
 };
 
-/**
- * Analyze course with AI (admin)
- * @param {string} courseId - Course ID
- * @returns {Promise<Object>} Response with AI analysis
- */
+
 export const analyzeCourseWithAI = async (courseId) => {
   try {
     const headers = getAuthHeaders();
@@ -121,11 +94,7 @@ export const analyzeCourseWithAI = async (courseId) => {
   }
 };
 
-/**
- * Get course details (admin)
- * @param {string} courseId - Course ID
- * @returns {Promise<Object>} Response with course details
- */
+
 export const getCourseDetails = async (courseId) => {
   try {
     const headers = getAuthHeaders();

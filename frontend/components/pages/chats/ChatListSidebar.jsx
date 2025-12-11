@@ -24,7 +24,7 @@ export default function ChatListSidebar({ basePath = "/chats" }) {
     fetchChats();
   }, []);
 
-  // Listen for real-time updates
+  
   useEffect(() => {
     if (isConnected && socket) {
       const handleMessage = (data) => {
@@ -40,7 +40,7 @@ export default function ChatListSidebar({ basePath = "/chats" }) {
                   createdAt: data.createdAt,
                 },
                 unreadCount: (isCurrentChat || data.senderId === user?.id) 
-                  ? 0 // If open or sent by me, count is 0
+                  ? 0 
                   : (chat.unreadCount || 0) + 1,
               };
             }
@@ -50,10 +50,10 @@ export default function ChatListSidebar({ basePath = "/chats" }) {
       };
 
       const handleMessagesRead = (data) => {
-        // When messages are read in a room, reset unread count for that room
-        // But only if *I* read them? No, if *someone* marked them read.
-        // Wait, `mark_read` event from server says "User X marked messages as read".
-        // If *I* marked them read (which happens when I open the chat), I should clear my count.
+        
+        
+        
+        
         if (data.userId === user?.id) {
           setChats((prevChats) =>
             prevChats.map((chat) =>
@@ -96,7 +96,7 @@ export default function ChatListSidebar({ basePath = "/chats" }) {
 
   return (
     <div className="w-full h-full flex flex-col bg-background border-r border-border">
-      {/* Header */}
+      {}
       <div className="p-4 border-b border-border space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">Chats</h2>
@@ -115,7 +115,7 @@ export default function ChatListSidebar({ basePath = "/chats" }) {
         </div>
       </div>
 
-      {/* Chat List */}
+      {}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
           <div className="p-4 space-y-4">

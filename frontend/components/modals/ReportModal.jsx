@@ -54,7 +54,7 @@ export default function ReportModal({
       if (response.success) {
         toast.success("Report submitted successfully. Thank you for your feedback.");
         onClose();
-        // Reset form
+        
         setReason("");
         setDescription("");
       } else {

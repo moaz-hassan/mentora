@@ -18,28 +18,28 @@ const useAuthStore = create(
         }));
       },
 
-      // FIX 1: Make this async
+      
       fetchUser: async () => {
-        set({ isLoading: true }); // Start loading
+        set({ isLoading: true }); 
 
         try {
-          // FIX 2: Await the API call
+          
           const response = await getUserDataOnClient();
 
           if (response && response.success) {
-            // FIX 3: Correct way to update state
+            
             set({
               isAuthenticated: true,
               user: response.data,
               isLoading: false,
             });
           } else {
-            // If API returns false (token expired), clear auth to stop loop
+            
             get().clearAuth();
           }
         } catch (error) {
           console.log(error);
-          get().clearAuth(); // Safety net: Logout on error
+          get().clearAuth(); 
         }
       },
 
@@ -47,7 +47,7 @@ const useAuthStore = create(
         set(() => ({
           isAuthenticated: false,
           user: null,
-          isLoading: false, // Stop loading so we can redirect
+          isLoading: false, 
         }));
         localStorage.removeItem("auth-store");
         Cookies.remove("authToken");

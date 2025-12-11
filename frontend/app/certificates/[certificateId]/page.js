@@ -53,7 +53,7 @@ export default function CertificatePage({ params }) {
     try {
       const response = await getDownloadUrl(certificateId);
       if (response.success && response.downloadUrl) {
-        // Create a hidden anchor element to trigger direct download
+        
         const link = document.createElement('a');
         link.href = response.downloadUrl;
         link.download = `certificate-${certificateId}.pdf`;
@@ -90,7 +90,7 @@ export default function CertificatePage({ params }) {
     });
   };
 
-  // Loading state
+  
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -102,7 +102,7 @@ export default function CertificatePage({ params }) {
     );
   }
 
-  // Error state
+  
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -129,7 +129,7 @@ export default function CertificatePage({ params }) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
+      {}
       <div className="bg-white dark:bg-gray-800 border-b">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <button
@@ -143,49 +143,49 @@ export default function CertificatePage({ params }) {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-8">
-        {/* Certificate Card */}
+        {}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
-          {/* Certificate Visual - Matching PDF Design */}
+          {}
           <div className="relative p-8 md:p-12 min-h-[500px]">
-            {/* Corner Decorations */}
+            {}
             <div className="absolute top-0 left-0 w-20 h-20 border-l-4 border-t-4 border-indigo-600 rounded-tl-lg" />
             <div className="absolute top-0 right-0 w-20 h-20 border-r-4 border-t-4 border-indigo-600 rounded-tr-lg" />
             <div className="absolute bottom-0 left-0 w-20 h-20 border-l-4 border-b-4 border-indigo-600 rounded-bl-lg" />
             <div className="absolute bottom-0 right-0 w-20 h-20 border-r-4 border-b-4 border-indigo-600 rounded-br-lg" />
 
-            {/* Certificate Content */}
+            {}
             <div className="text-center space-y-4 pt-4">
-              {/* Certificate Badge */}
+              {}
               <div className="flex justify-center">
                 <span className="bg-teal-600 text-white text-xs font-bold px-6 py-2 rounded-full tracking-wider">
                   CERTIFICATE OF COMPLETION
                 </span>
               </div>
 
-              {/* Presented to text */}
+              {}
               <p className="text-gray-500 dark:text-gray-400 text-sm mt-6">
                 This certificate is proudly presented to
               </p>
 
-              {/* Student Name */}
+              {}
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white py-2">
                 {studentName}
               </h2>
 
-              {/* Course completion text */}
+              {}
               <p className="text-gray-500 dark:text-gray-400 text-sm italic">
                 for successfully completing the Mentora course
               </p>
 
-              {/* Course Title */}
+              {}
               <h3 className="text-xl md:text-2xl font-bold text-teal-600 py-2">
                 {courseTitle}
               </h3>
             </div>
 
-            {/* Footer Section - 3 columns */}
+            {}
             <div className="flex justify-between items-end mt-12 px-4">
-              {/* Left - Instructor */}
+              {}
               <div className="text-center">
                 <div className="border-t border-gray-300 dark:border-gray-600 pt-2 w-36">
                   <p className="text-gray-900 dark:text-white font-medium italic">{instructorName}</p>
@@ -193,7 +193,7 @@ export default function CertificatePage({ params }) {
                 </div>
               </div>
 
-              {/* Center - QR Code Placeholder & Verified Badge */}
+              {}
               <div className="flex flex-col items-center gap-2">
                 {certificate?.verified && (
                   <div className="inline-flex items-center gap-2 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-medium">
@@ -206,7 +206,7 @@ export default function CertificatePage({ params }) {
                 </p>
               </div>
 
-              {/* Right - Date */}
+              {}
               <div className="text-center">
                 <p className="text-teal-600 font-bold text-lg">{formatDate(certificate?.completion_date)}</p>
                 <p className="text-gray-500 dark:text-gray-400 text-xs">Date of Completion</p>
@@ -215,7 +215,7 @@ export default function CertificatePage({ params }) {
           </div>
         </div>
 
-          {/* Actions Bar */}
+          {}
           <div className="bg-gray-50 dark:bg-gray-800/50 px-8 py-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-3">
@@ -243,9 +243,9 @@ export default function CertificatePage({ params }) {
           </div>
         </div>
 
-        {/* Course Details Section */}
+        {}
         <div className="mt-8 grid md:grid-cols-2 gap-6">
-          {/* Course Info Card */}
+          {}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-indigo-600" />
@@ -271,7 +271,7 @@ export default function CertificatePage({ params }) {
             </div>
           </div>
 
-          {/* Achievement Card */}
+          {}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Trophy className="h-5 w-5 text-yellow-500" />
@@ -307,7 +307,7 @@ export default function CertificatePage({ params }) {
           </div>
         </div>
 
-        {/* Student Info */}
+        {}
         <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <User className="h-5 w-5 text-indigo-600" />

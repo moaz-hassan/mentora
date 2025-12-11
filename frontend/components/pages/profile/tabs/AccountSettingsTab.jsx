@@ -87,7 +87,7 @@ export default function AccountSettingsTab({ userData }) {
 
   return (
     <div className="space-y-6">
-      {/* Email Verification Status */}
+      {}
       <Card className="border bg-card/50 backdrop-blur-sm overflow-hidden">
         <CardHeader className="pb-4">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -141,7 +141,7 @@ export default function AccountSettingsTab({ userData }) {
         </CardContent>
       </Card>
 
-      {/* Change Password */}
+      {}
       <Card className="border bg-card/50 backdrop-blur-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-lg flex items-center gap-2">

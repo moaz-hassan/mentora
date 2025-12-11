@@ -29,11 +29,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Get a single report by ID
- * @param {string} reportId - Report ID
- * @returns {Promise<object>} Report details
- */
+
 export default async function getReportById(reportId) {
   try {
     const response = await apiClient.get(`/api/reports/${reportId}`);

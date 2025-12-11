@@ -3,10 +3,7 @@
 import { CheckCircle2, FileQuestion } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * QuizItem - Individual quiz entry in the curriculum sidebar
- * Shows quiz title and completion status
- */
+
 export default function QuizItem({
   quiz,
   isCompleted = false,
@@ -20,7 +17,7 @@ export default function QuizItem({
         "hover:bg-accent/50"
       )}
     >
-      {/* Status icon */}
+      {}
       <div className="mt-0.5 flex-shrink-0">
         {isCompleted ? (
           <CheckCircle2 className="h-4 w-4 text-green-500" />
@@ -29,7 +26,7 @@ export default function QuizItem({
         )}
       </div>
 
-      {/* Quiz info */}
+      {}
       <div className="flex-1 min-w-0">
         <p
           className={cn(

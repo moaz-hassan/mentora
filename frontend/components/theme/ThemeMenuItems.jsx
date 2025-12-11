@@ -4,11 +4,7 @@ import * as React from "react";
 import { IconMoon, IconSun, IconDeviceDesktop } from "@tabler/icons-react";
 import { useTheme } from "next-themes";
 
-/**
- * Simple Theme Toggle Menu Items (Alternative)
- * Three separate menu items for theme selection
- * Simpler than submenu approach
- */
+
 export function ThemeMenuItems() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);

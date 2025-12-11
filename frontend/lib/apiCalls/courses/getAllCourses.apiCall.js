@@ -3,19 +3,7 @@ import { getApiBaseUrl } from "@/lib/utils/apiHelpers";
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Search and filter courses with enhanced fuzzy search
- * @param {Object} params - Search and filter parameters
- * @param {string} params.search - Search query (supports fuzzy matching)
- * @param {Array<string>} params.categories - Category filters
- * @param {Array<string>} params.levels - Level filters
- * @param {Array<string>} params.priceFilters - Price filters (free/paid)
- * @param {number} params.rating - Minimum rating (1-5)
- * @param {string} params.sortBy - Sort option
- * @param {number} params.page - Page number
- * @param {number} params.limit - Items per page
- * @returns {Promise<Object>} Response with courses and pagination
- */
+
 export default async function searchCourses(params = {}) {
   try {
     const {
@@ -30,45 +18,45 @@ export default async function searchCourses(params = {}) {
       limit = 12,
     } = params;
 
-    // Build query parameters
+    
     const queryParams = new URLSearchParams();
 
-    // Add search query
+    
     if (search && search.trim()) {
       queryParams.append("search", search.trim());
     }
 
-    // Add category filter
+    
     if (categories.length > 0) {
       queryParams.append("category", categories[0]);
     }
 
-    // Add level filter
+    
     if (levels.length > 0) {
       queryParams.append("level", levels[0]);
     }
 
-    // Add price filters (using new priceType parameter)
+    
     if (priceFilters.length > 0) {
       if (priceFilters.includes("free") && !priceFilters.includes("paid")) {
         queryParams.append("priceType", "free");
       } else if (priceFilters.includes("paid") && !priceFilters.includes("free")) {
         queryParams.append("priceType", "paid");
       }
-      // If both selected, don't add filter (show all)
+      
     }
 
-    // Add rating filter
+    
     if (rating && rating > 0) {
       queryParams.append("rating", rating.toString());
     }
 
-    // Add language filter
+    
     if (language && language.trim()) {
       queryParams.append("language", language.trim());
     }
 
-    // Map frontend sort values to backend values
+    
     const sortMapping = {
       popularity: "popularity",
       rating: "rating",
@@ -79,20 +67,20 @@ export default async function searchCourses(params = {}) {
     };
     queryParams.append("sortBy", sortMapping[sortBy] || "popularity");
 
-    // Add pagination
+    
     queryParams.append("page", page.toString());
     queryParams.append("limit", limit.toString());
 
-    // Make API request to search endpoint
+    
     const response = await axios.get(
       `${API_URL}/api/courses/search?${queryParams.toString()}`
     );
 
-    // Extract data from response format
-    // Backend returns: { courses, page, perPage, totalPages, totalCount }
+    
+    
     const { courses, page: currentPage, perPage, totalPages, totalCount } = response.data;
 
-    // Transform courses to match frontend expectations
+    
     const transformedCourses = (courses || []).map((course) => ({
       id: course.id,
       title: course.title,

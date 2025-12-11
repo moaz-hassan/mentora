@@ -67,7 +67,7 @@ export default function CourseCardClient({ course }) {
             </div>
           )}
 
-          {/* Badges container */}
+          {}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {level && (
               <span
@@ -92,7 +92,7 @@ export default function CourseCardClient({ course }) {
           </h3>
           <p className="text-sm text-gray-600 mb-3">{instructorName}</p>
 
-          {/* Rating */}
+          {}
           <div className="flex items-center gap-2 mb-3">
             {averageRating !== null ? (
               <>
@@ -114,7 +114,7 @@ export default function CourseCardClient({ course }) {
             )}
           </div>
 
-          {/* Stats */}
+          {}
           <div className="flex items-center gap-4 text-xs text-gray-600 mb-4">
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
@@ -128,13 +128,13 @@ export default function CourseCardClient({ course }) {
             </div>
           </div>
 
-          {/* Enrollments */}
+          {}
           <div className="flex items-center gap-1 text-xs text-gray-500 mb-4">
             <Users className="w-4 h-4" />
             <span>{formattedEnrollments}</span>
           </div>
 
-          {/* Price */}
+          {}
           <div className="flex items-center justify-between">
             <span
               className={`text-xl font-bold ${

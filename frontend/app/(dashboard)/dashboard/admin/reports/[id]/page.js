@@ -157,7 +157,7 @@ export default function ReportDetailPage() {
             </p>
             <button
               onClick={() => {
-                // Navigate to content
+                
                 const routes = {
                   course: `/courses/${report.content_reference}`,
                   lesson: `/lessons/${report.content_reference}`,

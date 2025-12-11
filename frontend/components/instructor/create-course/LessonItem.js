@@ -36,7 +36,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
   const [uploadProgress, setUploadProgress] = useState(0);
   const materialInputRef = useRef(null);
   
-  // Check if this is a new lesson (not yet saved to backend)
+  
   const isNewLesson = lesson.id && lesson.id.toString().startsWith("lesson-");
   
   const {
@@ -48,7 +48,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
     isDragging,
   } = useSortable({ 
     id: lesson.id,
-    disabled: !isNewLesson // Only allow dragging new lessons
+    disabled: !isNewLesson 
   });
 
   const style = {
@@ -60,7 +60,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
   const handleVideoUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Store both the file object for upload and URL for preview
+      
       updateLesson(lesson.id, {
         ...lesson,
         videoFile: file,
@@ -85,13 +85,13 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
     const files = Array.from(e.target.files);
     
     for (const file of files) {
-      // Validate file size (100MB max)
+      
       if (file.size > 104857600) {
         toast.error(`${file.name} is too large (max 100MB)`);
         continue;
       }
 
-      // Get file extension
+      
       const fileExtension = file.name.split(".").pop().toLowerCase();
       const allowedTypes = ["pdf", "doc", "docx", "ppt", "pptx", "zip", "txt", "csv", "xlsx", "xls"];
       
@@ -100,18 +100,18 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
         continue;
       }
 
-      // Store file object locally - will upload when course is saved
+      
       const material = {
         id: `material-${Date.now()}-${Math.random()}`,
         filename: file.name,
-        file: file, // Store the actual File object
+        file: file, 
         file_type: fileExtension,
         file_size: file.size,
         uploadedAt: new Date().toISOString(),
-        pending: true, // Mark as pending upload
+        pending: true, 
       };
 
-      // Add to lesson materials
+      
       updateLesson(lesson.id, {
         ...lesson,
         materials: [...(lesson.materials || []), material],
@@ -120,7 +120,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
       toast.success(`${file.name} added - will upload when you save the course`);
     }
 
-    // Reset input
+    
     if (materialInputRef.current) {
       materialInputRef.current.value = "";
     }
@@ -144,7 +144,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
       className="border border-neutral-200 rounded-lg bg-neutral-50 overflow-hidden"
       {...attributes}
     >
-      {/* Lesson Header */}
+      {}
       <div className="flex items-center gap-3 p-3">
         {isNewLesson ? (
           <button
@@ -220,11 +220,11 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
         )}
       </div>
 
-      {/* Lesson Content */}
+      {}
       {isExpanded && isNewLesson && (
         <div className="px-3 pb-3 pt-0 space-y-3">
           <div className="bg-white rounded-lg p-4 space-y-4">
-            {/* Type Selector */}
+            {}
             <div className="space-y-2">
               <label className="text-sm text-neutral-700">Lesson Type</label>
               <Select
@@ -243,7 +243,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
               </Select>
             </div>
 
-            {/* Preview Checkbox */}
+            {}
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
@@ -262,7 +262,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
               </label>
             </div>
 
-            {/* Video Upload */}
+            {}
             {lesson.type === "video" && (
               <div className="space-y-2">
                 <label className="text-sm text-neutral-700">Video Upload</label>
@@ -308,7 +308,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
               </div>
             )}
 
-            {/* Text Editor */}
+            {}
             {lesson.type === "text" && (
               <div className="space-y-2">
                 <label className="text-sm text-neutral-700">
@@ -332,7 +332,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
               </div>
             )}
 
-            {/* Supplementary Materials Section */}
+            {}
             <div className="border-t pt-4 mt-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
@@ -355,7 +355,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
                 </Button>
               </div>
 
-              {/* Hidden file input */}
+              {}
               <input
                 ref={materialInputRef}
                 type="file"
@@ -365,7 +365,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
                 multiple
               />
 
-              {/* Materials List */}
+              {}
               {lesson.materials && lesson.materials.length > 0 ? (
                 <div className="space-y-2">
                   {lesson.materials.map((material, index) => (
@@ -374,7 +374,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
                       className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg border border-neutral-200 hover:border-blue-300 transition-colors"
                     >
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        {/* File Icon */}
+                        {}
                         <div className="w-10 h-10 bg-white rounded flex items-center justify-center flex-shrink-0 border">
                           {getFileIcon(material.file_type)}
                         </div>
@@ -393,7 +393,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
                       </div>
 
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        {/* Preview button for PDFs */}
+                        {}
                         {material.file_type === "pdf" && material.url && (
                           <Button
                             variant="ghost"
@@ -406,7 +406,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
                           </Button>
                         )}
 
-                        {/* Download button */}
+                        {}
                         {material.url && (
                           <Button
                             variant="ghost"
@@ -419,7 +419,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
                           </Button>
                         )}
 
-                        {/* Delete button */}
+                        {}
                         <Button
                           variant="ghost"
                           size="sm"

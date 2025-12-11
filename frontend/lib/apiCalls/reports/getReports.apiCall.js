@@ -29,11 +29,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Get all reports with optional filters
- * @param {object} filters - Filter options (status, type, dateRange)
- * @returns {Promise<object>} List of reports
- */
+
 export default async function getReports(filters = {}) {
   try {
     const params = new URLSearchParams();

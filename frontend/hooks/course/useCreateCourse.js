@@ -3,16 +3,12 @@ import { toast } from "sonner";
 import uploadCourseContent from "@/lib/apiCalls/courses/uploadCourseContent";
 import courseSaveDraftApiCall from "@/lib/apiCalls/courses/courseSaveDraft.apiCall";
 
-/**
- * Custom hook for creating a course
- * @param {Function} clearDraft - Function to clear draft from store
- * @returns {Object} Course creation functions and state
- */
+
 export function useCreateCourse(clearDraft) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
 
-  // Helper to calculate stats locally
+  
   const calculateStats = (data) => {
     const chapters = data?.chapters || [];
     let lessonsCount = 0;
@@ -34,9 +30,7 @@ export function useCreateCourse(clearDraft) {
     };
   };
 
-  /**
-   * Save course as draft
-   */
+  
   const saveDraft = useCallback(
     async (courseData) => {
       setIsUploading(true);
@@ -47,7 +41,7 @@ export function useCreateCourse(clearDraft) {
           setUploadProgress(progress);
         });
 
-        // Save as draft
+        
         if (courseId) {
           try {
             await courseSaveDraftApiCall(courseId);
@@ -56,10 +50,10 @@ export function useCreateCourse(clearDraft) {
           }
         }
 
-        // Clear store state
+        
         clearDraft();
 
-        // Get stats
+        
         const stats = calculateStats(courseData);
 
         setUploadProgress({
@@ -88,9 +82,7 @@ export function useCreateCourse(clearDraft) {
     [clearDraft]
   );
 
-  /**
-   * Submit course for review
-   */
+  
   const submitForReview = useCallback(
     async (courseData) => {
       setIsUploading(true);
@@ -104,7 +96,7 @@ export function useCreateCourse(clearDraft) {
           setUploadProgress(progress);
         });
 
-        // Submit for review
+        
         if (courseId) {
           const { submitCourseForReview } = await import(
             "@/lib/apiCalls/instructor/courses.apiCall"
@@ -116,10 +108,10 @@ export function useCreateCourse(clearDraft) {
           }
         }
 
-        // Clear store state
+        
         clearDraft();
 
-        // Get stats
+        
         const stats = calculateStats(courseData);
 
         setUploadProgress({

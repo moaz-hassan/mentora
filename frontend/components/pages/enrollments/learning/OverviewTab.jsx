@@ -2,16 +2,13 @@
 
 import { CheckCircle2 } from "lucide-react";
 
-/**
- * OverviewTab - Displays lesson description and learning objectives
- * Content can be from lesson data or AI-generated
- */
+
 export default function OverviewTab({
   description,
   learningObjectives = [],
   lessonTitle,
 }) {
-  // Default learning objectives if none provided
+  
   const defaultObjectives = [
     "Understand the core principles and best practices",
     "Apply practical techniques to real-world scenarios",
@@ -23,7 +20,7 @@ export default function OverviewTab({
 
   return (
     <div className="py-6 space-y-8">
-      {/* About This Lesson */}
+      {}
       <section>
         <h2 className="text-xl font-semibold mb-4">About This Lesson</h2>
         <p className="text-muted-foreground leading-relaxed">
@@ -32,7 +29,7 @@ export default function OverviewTab({
         </p>
       </section>
 
-      {/* What You'll Learn */}
+      {}
       <section>
         <h3 className="text-lg font-semibold mb-4">What You'll Learn</h3>
         <ul className="space-y-3">

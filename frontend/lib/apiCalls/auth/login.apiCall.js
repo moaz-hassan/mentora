@@ -8,7 +8,7 @@ const API_URL = getApiBaseUrl();
 
 
 export default async function loginApiCall(email, password) {
-  // Validation
+  
   if (!email || !password) {
     return {
       success: false,

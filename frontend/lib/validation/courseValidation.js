@@ -1,6 +1,4 @@
-/**
- * Validation rules matching backend validators
- */
+
 export const validationRules = {
   course: {
     title: { min: 1, max: 255, required: true },
@@ -36,29 +34,23 @@ export const validationRules = {
   },
 };
 
-/**
- * Validate a single field against its rules
- * @param {string} fieldName - Name of the field
- * @param {any} value - Value to validate
- * @param {Object} rules - Validation rules for the field
- * @returns {string|null} Error message or null if valid
- */
+
 export const validateField = (fieldName, value, rules) => {
   const rule = rules[fieldName];
   if (!rule) return null;
 
-  // Required check
+  
   if (rule.required && (!value || (typeof value === "string" && value.trim() === ""))) {
     const displayName = fieldName.replace(/_/g, " ");
     return `${displayName.charAt(0).toUpperCase() + displayName.slice(1)} is required`;
   }
 
-  // Skip other validations if value is empty and not required
+  
   if (!value || (typeof value === "string" && value.trim() === "")) {
     return null;
   }
 
-  // Length checks for strings
+  
   if (typeof value === "string") {
     if (rule.min !== undefined && value.length < rule.min) {
       const displayName = fieldName.replace(/_/g, " ");
@@ -70,7 +62,7 @@ export const validateField = (fieldName, value, rules) => {
     }
   }
 
-  // Number checks
+  
   if (typeof value === "number" || !isNaN(value)) {
     const numValue = typeof value === "number" ? value : parseFloat(value);
     if (rule.min !== undefined && numValue < rule.min) {
@@ -79,7 +71,7 @@ export const validateField = (fieldName, value, rules) => {
     }
   }
 
-  // Enum check
+  
   if (rule.enum && !rule.enum.includes(value)) {
     const displayName = fieldName.replace(/_/g, " ");
     return `${displayName.charAt(0).toUpperCase() + displayName.slice(1)} must be one of: ${rule.enum.join(", ")}`;
@@ -88,11 +80,7 @@ export const validateField = (fieldName, value, rules) => {
   return null;
 };
 
-/**
- * Validate course data
- * @param {Object} courseData - Course data to validate
- * @returns {Object} Object with field names as keys and error messages as values
- */
+
 export const validateCourse = (courseData) => {
   const errors = {};
 
@@ -104,11 +92,7 @@ export const validateCourse = (courseData) => {
   return errors;
 };
 
-/**
- * Validate chapter data
- * @param {Object} chapter - Chapter data to validate
- * @returns {Object} Object with field names as keys and error messages as values
- */
+
 export const validateChapter = (chapter) => {
   const errors = {};
 
@@ -120,11 +104,7 @@ export const validateChapter = (chapter) => {
   return errors;
 };
 
-/**
- * Validate lesson data
- * @param {Object} lesson - Lesson data to validate
- * @returns {Object} Object with field names as keys and error messages as values
- */
+
 export const validateLesson = (lesson) => {
   const errors = {};
 
@@ -136,19 +116,15 @@ export const validateLesson = (lesson) => {
   return errors;
 };
 
-/**
- * Validate quiz data
- * @param {Object} quiz - Quiz data to validate
- * @returns {Object} Object with field names as keys and error messages as values
- */
+
 export const validateQuiz = (quiz) => {
   const errors = {};
 
-  // Validate quiz title
+  
   const titleError = validateField("title", quiz?.title, validationRules.quiz);
   if (titleError) errors.title = titleError;
 
-  // Validate questions
+  
   if (!quiz?.questions || !Array.isArray(quiz.questions)) {
     errors.questions = "Questions must be an array";
   } else if (quiz.questions.length === 0) {
@@ -157,21 +133,21 @@ export const validateQuiz = (quiz) => {
     quiz.questions.forEach((q, index) => {
       const questionErrors = {};
 
-      // Validate question text
+      
       if (!q.question || q.question.trim() === "") {
         questionErrors.question = "Question is required";
       } else if (q.question.length < 3 || q.question.length > 255) {
         questionErrors.question = "Question must be between 3 and 255 characters";
       }
 
-      // Validate options
+      
       if (!q.options || !Array.isArray(q.options)) {
         questionErrors.options = "Options must be an array";
       } else if (q.options.length === 0) {
         questionErrors.options = "At least one option is required";
       }
 
-      // Validate answer
+      
       if (!q.answer || q.answer.trim() === "") {
         questionErrors.answer = "Answer is required";
       } else if (q.answer.length !== 1) {
@@ -187,11 +163,7 @@ export const validateQuiz = (quiz) => {
   return errors;
 };
 
-/**
- * Validate chapter requirement (at least one chapter)
- * @param {Array} chapters - Array of chapters
- * @returns {string|null} Error message or null if valid
- */
+
 export const validateChapterRequirement = (chapters) => {
   if (!chapters || !Array.isArray(chapters) || chapters.length === 0) {
     return "At least one chapter is required before saving or submitting";
@@ -199,11 +171,7 @@ export const validateChapterRequirement = (chapters) => {
   return null;
 };
 
-/**
- * Check if there are any validation errors
- * @param {Object} errors - Errors object
- * @returns {boolean} True if there are errors
- */
+
 export const hasErrors = (errors) => {
   return Object.keys(errors).some((key) => errors[key] !== null && errors[key] !== undefined);
 };

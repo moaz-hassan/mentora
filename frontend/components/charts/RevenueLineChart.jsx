@@ -19,7 +19,7 @@ export default function RevenueLineChart({ data, formatCurrency }) {
     );
   }
 
-  // Custom tooltip
+  
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (

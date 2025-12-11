@@ -74,7 +74,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 
-// Imported sub-components
+
 import { DragHandle, StatusCell, EditableCell, ReviewerCell } from "./TableCells";
 import { TrendDrawer } from "./TrendDrawer";
 

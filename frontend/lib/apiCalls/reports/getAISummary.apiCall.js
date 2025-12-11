@@ -29,11 +29,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Get AI summary for a report
- * @param {string} reportId - Report ID
- * @returns {Promise<object>} AI summary
- */
+
 export default async function getAISummary(reportId) {
   try {
     const response = await apiClient.get(`/api/reports/${reportId}/summary`);

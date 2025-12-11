@@ -53,7 +53,7 @@ export default function ReportGenerator() {
       setGenerating(true);
       setError(null);
 
-      // Prepare options
+      
       const options = {
         startDate: dateRange.start || null,
         endDate: dateRange.end || null,
@@ -61,11 +61,11 @@ export default function ReportGenerator() {
         anonymizeStudents: true,
       };
 
-      // Fetch report data
+      
       const response = await generateReport(options);
       const reportData = response.data;
 
-      // Generate file based on format
+      
       if (format === "pdf") {
         await generatePDF(reportData);
       } else {
@@ -83,7 +83,7 @@ export default function ReportGenerator() {
 
   return (
     <>
-      {/* Trigger Button */}
+      {}
       <button
         onClick={() => setShowModal(true)}
         className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -92,11 +92,11 @@ export default function ReportGenerator() {
         Generate Report
       </button>
 
-      {/* Modal */}
+      {}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Header */}
+            {}
             <div className="p-6 border-b border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900">
                 Generate Analytics Report
@@ -106,9 +106,9 @@ export default function ReportGenerator() {
               </p>
             </div>
 
-            {/* Content */}
+            {}
             <div className="p-6 space-y-6">
-              {/* Date Range */}
+              {}
               <div>
                 <label className="block text-sm font-medium text-gray-900 mb-3">
                   <Calendar className="w-4 h-4 inline mr-2" />
@@ -144,7 +144,7 @@ export default function ReportGenerator() {
                 </div>
               </div>
 
-              {/* Course Selection */}
+              {}
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <label className="block text-sm font-medium text-gray-900">
@@ -188,7 +188,7 @@ export default function ReportGenerator() {
                 </p>
               </div>
 
-              {/* Format Selection */}
+              {}
               <div>
                 <label className="block text-sm font-medium text-gray-900 mb-3">
                   Report Format
@@ -264,7 +264,7 @@ export default function ReportGenerator() {
                 </div>
               </div>
 
-              {/* Error Message */}
+              {}
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-sm text-red-800">{error}</p>
@@ -272,7 +272,7 @@ export default function ReportGenerator() {
               )}
             </div>
 
-            {/* Footer */}
+            {}
             <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowModal(false)}

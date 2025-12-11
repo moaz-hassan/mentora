@@ -1,11 +1,8 @@
-/**
- * Course Edit Validation
- * Consolidated validation for all course edit sections
- */
 
-// ============================================
-// COURSE INFO VALIDATION
-// ============================================
+
+
+
+
 
 export const courseInfoRules = {
   title: { min: 1, max: 255, required: true },
@@ -31,9 +28,9 @@ export const validateCourseInfo = (courseData) => {
   return errors;
 };
 
-// ============================================
-// COURSE PRICING VALIDATION
-// ============================================
+
+
+
 
 export const coursePricingRules = {
   price: { min: 0, required: true },
@@ -55,7 +52,7 @@ export const validateCoursePricing = (pricingData) => {
     if (error) errors[field] = error;
   });
 
-  // Custom validation: discount end date must be after start date
+  
   if (pricingData?.discount_start_date && pricingData?.discount_end_date) {
     const startDate = new Date(pricingData.discount_start_date);
     const endDate = new Date(pricingData.discount_end_date);
@@ -65,7 +62,7 @@ export const validateCoursePricing = (pricingData) => {
     }
   }
 
-  // Custom validation: if have_discount is true, discount fields are required
+  
   if (pricingData?.have_discount) {
     if (!pricingData.discount_type) {
       errors.discount_type = "Discount type is required when discount is enabled";
@@ -81,7 +78,7 @@ export const validateCoursePricing = (pricingData) => {
     }
   }
 
-  // Custom validation: percentage discount cannot exceed 100
+  
   if (pricingData?.discount_type === "percentage" && pricingData?.discount_value > 100) {
     errors.discount_value = "Percentage discount cannot exceed 100%";
   }
@@ -89,9 +86,9 @@ export const validateCoursePricing = (pricingData) => {
   return errors;
 };
 
-// ============================================
-// CHAPTER VALIDATION
-// ============================================
+
+
+
 
 export const chapterRules = {
   title: { min: 1, max: 255, required: true },
@@ -114,9 +111,9 @@ export const validateChapterRequirement = (chapters) => {
   return null;
 };
 
-// ============================================
-// LESSON VALIDATION
-// ============================================
+
+
+
 
 export const lessonRules = {
   title: { min: 1, max: 255, required: true },
@@ -134,12 +131,12 @@ export const validateLesson = (lesson) => {
     if (error) errors[field] = error;
   });
 
-  // Custom validation: video lessons must have video_url
+  
   if (lesson?.lesson_type === "video" && !lesson?.video_url) {
     errors.video_url = "Video URL is required for video lessons";
   }
 
-  // Custom validation: text lessons must have content
+  
   if (lesson?.lesson_type === "text" && !lesson?.content) {
     errors.content = "Content is required for text lessons";
   }
@@ -147,9 +144,9 @@ export const validateLesson = (lesson) => {
   return errors;
 };
 
-// ============================================
-// QUIZ VALIDATION
-// ============================================
+
+
+
 
 export const quizRules = {
   title: { min: 3, max: 255, required: true },
@@ -163,14 +160,14 @@ export const quizRules = {
 export const validateQuiz = (quiz) => {
   const errors = {};
 
-  // Validate quiz title
+  
   if (!quiz?.title || quiz.title.trim() === "") {
     errors.title = "Quiz title is required";
   } else if (quiz.title.length < 3 || quiz.title.length > 255) {
     errors.title = "Quiz title must be between 3 and 255 characters";
   }
 
-  // Validate questions
+  
   if (!quiz?.questions || !Array.isArray(quiz.questions)) {
     errors.questions = "Questions must be an array";
   } else if (quiz.questions.length === 0) {
@@ -179,14 +176,14 @@ export const validateQuiz = (quiz) => {
     quiz.questions.forEach((q, index) => {
       const questionErrors = {};
 
-      // Validate question text
+      
       if (!q.question || q.question.trim() === "") {
         questionErrors.question = "Question is required";
       } else if (q.question.length < 3 || q.question.length > 255) {
         questionErrors.question = "Question must be between 3 and 255 characters";
       }
 
-      // Validate options
+      
       if (!q.options || !Array.isArray(q.options)) {
         questionErrors.options = "Options must be an array";
       } else if (q.options.length === 0) {
@@ -200,7 +197,7 @@ export const validateQuiz = (quiz) => {
         }
       }
 
-      // Validate answer
+      
       if (!q.answer || q.answer.trim() === "") {
         questionErrors.answer = "Answer is required";
       } else if (q.answer.length !== 1) {
@@ -209,7 +206,7 @@ export const validateQuiz = (quiz) => {
         questionErrors.answer = "Answer must be A, B, C, or D";
       }
 
-      // Validate that answer corresponds to an existing option
+      
       if (q.answer && q.options && Array.isArray(q.options)) {
         const answerIndex = q.answer.toUpperCase().charCodeAt(0) - 65;
         if (answerIndex >= q.options.length) {
@@ -262,26 +259,26 @@ export const validateQuestion = (question, index = 0) => {
   return errors;
 };
 
-// ============================================
-// SHARED VALIDATION HELPER
-// ============================================
+
+
+
 
 export const validateField = (fieldName, value, rules) => {
   const rule = rules[fieldName];
   if (!rule) return null;
 
-  // Required check
+  
   if (rule.required && (!value || (typeof value === "string" && value.trim() === ""))) {
     const displayName = fieldName.replace(/_/g, " ");
     return `${displayName.charAt(0).toUpperCase() + displayName.slice(1)} is required`;
   }
 
-  // Skip other validations if value is empty and not required
+  
   if (!value || (typeof value === "string" && value.trim() === "")) {
     return null;
   }
 
-  // Length checks for strings
+  
   if (typeof value === "string") {
     if (rule.min !== undefined && value.length < rule.min) {
       const displayName = fieldName.replace(/_/g, " ");
@@ -293,7 +290,7 @@ export const validateField = (fieldName, value, rules) => {
     }
   }
 
-  // Number checks
+  
   if (typeof value === "number" || !isNaN(value)) {
     const numValue = typeof value === "number" ? value : parseFloat(value);
     if (rule.min !== undefined && numValue < rule.min) {
@@ -302,7 +299,7 @@ export const validateField = (fieldName, value, rules) => {
     }
   }
 
-  // Enum check
+  
   if (rule.enum && !rule.enum.includes(value)) {
     const displayName = fieldName.replace(/_/g, " ");
     return `${displayName.charAt(0).toUpperCase() + displayName.slice(1)} must be one of: ${rule.enum.join(", ")}`;
@@ -311,9 +308,9 @@ export const validateField = (fieldName, value, rules) => {
   return null;
 };
 
-// ============================================
-// UTILITY FUNCTIONS
-// ============================================
+
+
+
 
 export const hasErrors = (errors) => {
   return Object.keys(errors).some((key) => errors[key] !== null && errors[key] !== undefined);

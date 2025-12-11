@@ -6,18 +6,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Update course general information
- * @param {string|number} courseId - The course ID
- * @param {Object} updateData - The data to update
- * @returns {Promise<Object>} Response with success flag and updated course data
- * 
- * @example
- * const result = await updateCourseInfo(123, { title: 'New Title' });
- * if (result.success) {
- *   console.log(result.data);
- * }
- */
+
 export const updateCourseInfo = async (courseId, updateData) => {
   try {
     const headers = getAuthHeaders();

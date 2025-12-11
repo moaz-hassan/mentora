@@ -28,11 +28,11 @@ export default function PendingChaptersPage() {
 
   const fetchPendingChapters = async () => {
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/admin/chapters/pending');
-      // const data = await response.json();
       
-      // Placeholder data grouped by course
+      
+      
+      
+      
       const groupedData = {
         "course-1": {
           course_id: "course-1",
@@ -98,28 +98,28 @@ export default function PendingChaptersPage() {
     setSubmitting(true);
 
     try {
-      // TODO: Replace with actual API call
-      // const endpoint = reviewAction === 'approve' 
-      //   ? `/api/admin/chapters/${selectedChapter.id}/approve`
-      //   : `/api/admin/chapters/${selectedChapter.id}/reject`;
       
-      // await fetch(endpoint, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ rejection_reason: rejectionReason }),
-      // });
+      
+      
+      
+      
+      
+      
+      
+      
+      
 
-      // Simulate API call
+      
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Remove chapter from list
+      
       const updatedChapters = { ...chapters };
       const courseId = selectedChapter.courseInfo.course_id;
       updatedChapters[courseId].chapters = updatedChapters[courseId].chapters.filter(
         (ch) => ch.id !== selectedChapter.id
       );
       
-      // Remove course if no chapters left
+      
       if (updatedChapters[courseId].chapters.length === 0) {
         delete updatedChapters[courseId];
       }
@@ -166,7 +166,7 @@ export default function PendingChaptersPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Pending Chapters</h1>
@@ -182,7 +182,7 @@ export default function PendingChaptersPage() {
         </div>
       </div>
 
-      {/* Chapters List Grouped by Course */}
+      {}
       {totalPendingChapters === 0 ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
@@ -200,7 +200,7 @@ export default function PendingChaptersPage() {
               key={courseId}
               className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
             >
-              {/* Course Header */}
+              {}
               <button
                 onClick={() => toggleCourse(courseId)}
                 className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
@@ -226,7 +226,7 @@ export default function PendingChaptersPage() {
                 </div>
               </button>
 
-              {/* Chapters List */}
+              {}
               {expandedCourse === courseId && (
                 <div className="border-t border-gray-200 divide-y divide-gray-200">
                   {courseData.chapters.map((chapter) => (
@@ -255,7 +255,7 @@ export default function PendingChaptersPage() {
                           </div>
                         </div>
 
-                        {/* Actions */}
+                        {}
                         <div className="flex gap-2 ml-4">
                           <button
                             onClick={() =>
@@ -286,7 +286,7 @@ export default function PendingChaptersPage() {
         </div>
       )}
 
-      {/* Review Modal */}
+      {}
       {showReviewModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">

@@ -3,9 +3,7 @@ import { getAuthHeaders, getApiBaseUrl } from "@/lib/utils/apiHelpers";
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Get logs analytics
- */
+
 export const getAnalytics = async () => {
   try {
     const headers = getAuthHeaders();
@@ -23,9 +21,7 @@ export const getAnalytics = async () => {
   }
 };
 
-/**
- * Get audit logs
- */
+
 export const getAudit = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -46,9 +42,7 @@ export const getAudit = async (params = {}) => {
   }
 };
 
-/**
- * Get payment logs
- */
+
 export const getPayments = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -69,9 +63,7 @@ export const getPayments = async (params = {}) => {
   }
 };
 
-/**
- * Get enrollment logs
- */
+
 export const getEnrollments = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -92,9 +84,7 @@ export const getEnrollments = async (params = {}) => {
   }
 };
 
-/**
- * Get error logs
- */
+
 export const getErrors = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -115,9 +105,7 @@ export const getErrors = async (params = {}) => {
   }
 };
 
-/**
- * Search logs
- */
+
 export const search = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -138,9 +126,7 @@ export const search = async (params = {}) => {
   }
 };
 
-/**
- * Export logs data
- */
+
 export const exportData = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -155,12 +141,10 @@ export const exportData = async (params = {}) => {
   }
 };
 
-// Alias for compatibility (export is a reserved keyword)
+
 export { exportData as export };
 
-/**
- * Clear old logs
- */
+
 export const clearOldLogs = async (params = {}) => {
   try {
     const headers = getAuthHeaders();

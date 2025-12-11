@@ -6,15 +6,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Get all reports with optional filters
- * @param {Object} filters - Filter options
- * @param {string} filters.status - Filter by status
- * @param {string} filters.type - Filter by type
- * @param {number} filters.page - Page number
- * @param {number} filters.limit - Items per page
- * @returns {Promise<Object>} Response with reports list
- */
+
 export const getReports = async (filters = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -32,10 +24,7 @@ export const getReports = async (filters = {}) => {
   }
 };
 
-/**
- * Get reports statistics
- * @returns {Promise<Object>} Response with stats
- */
+
 export const getReportsStats = async () => {
   try {
     const headers = getAuthHeaders();
@@ -46,11 +35,7 @@ export const getReportsStats = async () => {
   }
 };
 
-/**
- * Get single report by ID
- * @param {string} reportId - Report ID
- * @returns {Promise<Object>} Response with report details
- */
+
 export const getReportById = async (reportId) => {
   try {
     const headers = getAuthHeaders();
@@ -61,12 +46,7 @@ export const getReportById = async (reportId) => {
   }
 };
 
-/**
- * Update report status
- * @param {string} reportId - Report ID
- * @param {string} status - New status
- * @returns {Promise<Object>} Response with success status
- */
+
 export const updateReportStatus = async (reportId, status) => {
   try {
     const headers = getAuthHeaders();
@@ -81,12 +61,7 @@ export const updateReportStatus = async (reportId, status) => {
   }
 };
 
-/**
- * Add notes to a report
- * @param {string} reportId - Report ID
- * @param {string} notes - Notes to add
- * @returns {Promise<Object>} Response with success status
- */
+
 export const addReportNotes = async (reportId, notes) => {
   try {
     const headers = getAuthHeaders();
@@ -101,12 +76,7 @@ export const addReportNotes = async (reportId, notes) => {
   }
 };
 
-/**
- * Resolve a report
- * @param {string} reportId - Report ID
- * @param {string} resolution - Resolution notes
- * @returns {Promise<Object>} Response with success status
- */
+
 export const resolveReport = async (reportId, resolution) => {
   try {
     const headers = getAuthHeaders();
@@ -121,11 +91,7 @@ export const resolveReport = async (reportId, resolution) => {
   }
 };
 
-/**
- * Get AI summary for a report
- * @param {string} reportId - Report ID
- * @returns {Promise<Object>} Response with AI summary
- */
+
 export const getReportAISummary = async (reportId) => {
   try {
     const headers = getAuthHeaders();

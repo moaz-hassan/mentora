@@ -10,10 +10,7 @@ import {
   exportAnalyticsData,
 } from "@/lib/apiCalls/admin/analytics.apiCall";
 
-/**
- * Custom hook for admin analytics data
- * @returns {Object} Analytics data, loading states, and handler functions
- */
+
 export function useAdminAnalytics() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

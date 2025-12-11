@@ -1,10 +1,7 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 
-/**
- * Custom hook for managing video upload to Cloudinary with progress tracking
- * @returns {Object} Upload state and upload function
- */
+
 export function useVideoUpload() {
   const [uploadProgress, setUploadProgress] = useState({
     isVisible: false,
@@ -17,7 +14,7 @@ export function useVideoUpload() {
 
   const uploadVideo = useCallback(async (videoFile, fileName) => {
     try {
-      // Show upload progress overlay
+      
       setUploadProgress({
         isVisible: true,
         progress: 0,
@@ -41,7 +38,7 @@ export function useVideoUpload() {
         }
       );
 
-      // Hide progress overlay
+      
       setUploadProgress({
         isVisible: false,
         progress: 0,

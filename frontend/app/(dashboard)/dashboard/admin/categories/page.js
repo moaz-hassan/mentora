@@ -65,20 +65,20 @@ export default function CategoryManagementPage() {
   const [categories, setCategories] = useState([]);
   const [expandedCategories, setExpandedCategories] = useState({});
 
-  // Dialog states
+  
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   
-  // Subcategory dialog states
+  
   const [createSubDialogOpen, setCreateSubDialogOpen] = useState(false);
   const [editSubDialogOpen, setEditSubDialogOpen] = useState(false);
   const [deleteSubDialogOpen, setDeleteSubDialogOpen] = useState(false);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [parentCategoryForSub, setParentCategoryForSub] = useState(null);
   
-  // Form states
+  
   const [formData, setFormData] = useState({ name: "" });
   const [subFormData, setSubFormData] = useState({ name: "", category_id: "" });
   const [formError, setFormError] = useState("");
@@ -147,7 +147,7 @@ export default function CategoryManagementPage() {
     return true;
   };
 
-  // Category CRUD handlers
+  
   const handleCreate = async () => {
     if (!validateForm()) return;
 
@@ -209,7 +209,7 @@ export default function CategoryManagementPage() {
   };
 
 
-  // Subcategory CRUD handlers
+  
   const handleCreateSubcategory = async () => {
     if (!validateSubForm()) return;
 
@@ -225,7 +225,7 @@ export default function CategoryManagementPage() {
         setSubFormData({ name: "", category_id: "" });
         setParentCategoryForSub(null);
         fetchCategories();
-        // Expand the parent category to show the new subcategory
+        
         setExpandedCategories(prev => ({
           ...prev,
           [subFormData.category_id]: true
@@ -282,7 +282,7 @@ export default function CategoryManagementPage() {
     }
   };
 
-  // Dialog openers
+  
   const openEditDialog = (category) => {
     setSelectedCategory(category);
     setFormData({ name: category.name });
@@ -328,7 +328,7 @@ export default function CategoryManagementPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Category Management</h1>
@@ -396,7 +396,7 @@ export default function CategoryManagementPage() {
         </div>
       </div>
 
-      {/* Categories List */}
+      {}
       <Card>
         <CardHeader>
           <CardTitle>All Categories</CardTitle>
@@ -519,7 +519,7 @@ export default function CategoryManagementPage() {
       </Card>
 
 
-      {/* Edit Category Dialog */}
+      {}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -556,7 +556,7 @@ export default function CategoryManagementPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Category Confirmation Dialog */}
+      {}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -588,7 +588,7 @@ export default function CategoryManagementPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Create Subcategory Dialog */}
+      {}
       <Dialog open={createSubDialogOpen} onOpenChange={setCreateSubDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -649,7 +649,7 @@ export default function CategoryManagementPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Subcategory Dialog */}
+      {}
       <Dialog open={editSubDialogOpen} onOpenChange={setEditSubDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -686,7 +686,7 @@ export default function CategoryManagementPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Subcategory Confirmation Dialog */}
+      {}
       <AlertDialog open={deleteSubDialogOpen} onOpenChange={setDeleteSubDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

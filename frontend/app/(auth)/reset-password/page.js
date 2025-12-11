@@ -37,7 +37,7 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
 
-  // Extract email and token from URL on mount
+  
   useEffect(() => {
     const emailParam = searchParams.get("email");
     const tokenParam = searchParams.get("token");

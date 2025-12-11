@@ -10,11 +10,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
-/**
- * Theme Toggle Menu Item Component
- * A submenu item for switching themes within a dropdown menu
- * Used in the user navigation dropdown
- */
+
 export function ThemeToggleMenuItem() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);

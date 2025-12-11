@@ -122,7 +122,7 @@ export function AppSidebar({ user, ...props }) {
   } else if (user.role === "admin") {
     groupsDataNames = ["Dashboard", "Content", "Users", "Marketing", "System"];
     groupsData = [
-      // Dashboard
+      
       [
         {
           name: "Overview",
@@ -140,7 +140,7 @@ export function AppSidebar({ user, ...props }) {
           icon: IconChartPie,
         },
       ],
-      // Content
+      
       [
         {
           name: "Courses",
@@ -158,7 +158,7 @@ export function AppSidebar({ user, ...props }) {
           icon: IconReport,
         },
       ],
-      // Users
+      
       [
         {
           name: "Users",
@@ -171,7 +171,7 @@ export function AppSidebar({ user, ...props }) {
           icon: IconUsers,
         },
       ],
-      // Marketing
+      
       [
         {
           name: "Coupons",
@@ -189,7 +189,7 @@ export function AppSidebar({ user, ...props }) {
           icon: IconBell,
         },
       ],
-      // System
+      
       [
         {
           name: "Financial",

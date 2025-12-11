@@ -25,7 +25,7 @@ export function calculateDiscountedPrice(originalPrice, discountType, discountVa
     discountedPrice = originalPrice - discountValue;
   }
   
-  // Ensure price is not negative
+  
   return Math.max(0, discountedPrice);
 }
 
@@ -82,11 +82,7 @@ export function isDiscountActive(startDate, endDate) {
 }
 
 
-/**
- * Calculate active discount information for a course
- * @param {Object} course - Course object with discount fields
- * @returns {Object|null} - Discount info or null if no active discount
- */
+
 export function getActiveDiscount(course) {
   if (!course || !course.have_discount) return null;
   
@@ -109,11 +105,7 @@ export function getActiveDiscount(course) {
   };
 }
 
-/**
- * Format duration for display in minutes or hours
- * @param {number} seconds - Duration in seconds
- * @returns {string} - Formatted duration string
- */
+
 export function formatLessonDuration(seconds) {
   if (!seconds || seconds === 0) return "0 min";
   
@@ -129,11 +121,7 @@ export function formatLessonDuration(seconds) {
   return `${hours}h ${remainingMinutes}m`;
 }
 
-/**
- * Get instructor display name
- * @param {Object} user - User object with first_name and last_name
- * @returns {string} - Full name or "Unknown Instructor"
- */
+
 export function getInstructorName(user) {
   if (!user) return "Unknown Instructor";
   const firstName = user.first_name || "";
@@ -142,11 +130,7 @@ export function getInstructorName(user) {
   return fullName || "Unknown Instructor";
 }
 
-/**
- * Get instructor initials for avatar fallback
- * @param {Object} user - User object with first_name and last_name
- * @returns {string} - Initials (e.g., "JD")
- */
+
 export function getInstructorInitials(user) {
   if (!user) return "?";
   const firstInitial = user.first_name?.[0] || "";
@@ -155,11 +139,7 @@ export function getInstructorInitials(user) {
 }
 
 
-/**
- * Calculate average rating from ratings array
- * @param {Array} ratings - Array of rating objects with 'rating' property
- * @returns {number|null} - Average rating or null if no ratings
- */
+
 export function calculateAverageRating(ratings) {
   if (!ratings || !Array.isArray(ratings) || ratings.length === 0) {
     return null;
@@ -170,11 +150,7 @@ export function calculateAverageRating(ratings) {
 }
 
 
-/**
- * Format enrollment count with K/M suffixes
- * @param {number} count - Enrollment count
- * @returns {string} - Formatted count (e.g., "1.2K") or "Be first to enroll" for zero
- */
+
 export function formatEnrollmentCount(count) {
   if (!count || count === 0) {
     return "Be first to enroll";

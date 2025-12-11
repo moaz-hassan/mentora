@@ -5,18 +5,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Verify user email with token
- * @param {string} token - Verification token from email
- * @param {string} email - User's email address
- * @returns {Promise<Object>} Response with success flag and data/error
- * 
- * @example
- * const result = await verifyEmail('123456', 'user@example.com');
- * if (result.success) {
- *   console.log(result.message);
- * }
- */
+
 export default async function verifyEmail(token, email) {
   if (!token || !email) {
     return {

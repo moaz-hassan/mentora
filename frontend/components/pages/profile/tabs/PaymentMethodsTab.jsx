@@ -17,7 +17,7 @@ export default function PaymentMethodsTab() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            {/* Illustration */}
+            {}
             <div className="relative mb-6">
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
                 <CreditCard className="h-10 w-10 text-primary/60" />
@@ -27,7 +27,7 @@ export default function PaymentMethodsTab() {
               </div>
             </div>
 
-            {/* Text */}
+            {}
             <div className="space-y-2 max-w-sm">
               <h3 className="text-lg font-semibold text-foreground flex items-center justify-center gap-2">
                 Coming Soon
@@ -38,7 +38,7 @@ export default function PaymentMethodsTab() {
               </p>
             </div>
 
-            {/* Button */}
+            {}
             <Button disabled variant="outline" className="mt-6 gap-2">
               <Plus className="h-4 w-4" />
               Add Payment Method

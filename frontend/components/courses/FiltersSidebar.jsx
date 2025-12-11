@@ -19,7 +19,7 @@ export default function FiltersSidebar({
 }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden sticky top-8">
-      {/* Header */}
+      {}
       <div className="px-5 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Filters</h3>
         {activeFiltersCount > 0 && (
@@ -34,7 +34,7 @@ export default function FiltersSidebar({
       </div>
 
       <div className="p-5 space-y-6">
-        {/* Category Filter */}
+        {}
         <div>
           <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
@@ -63,10 +63,10 @@ export default function FiltersSidebar({
           </div>
         </div>
 
-        {/* Divider */}
+        {}
         <div className="h-px bg-gray-100" />
 
-        {/* Price Filter */}
+        {}
         <div>
           <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
@@ -89,10 +89,10 @@ export default function FiltersSidebar({
           </div>
         </div>
 
-        {/* Divider */}
+        {}
         <div className="h-px bg-gray-100" />
 
-        {/* Difficulty Level */}
+        {}
         <div>
           <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
@@ -115,10 +115,10 @@ export default function FiltersSidebar({
           </div>
         </div>
 
-        {/* Divider */}
+        {}
         <div className="h-px bg-gray-100" />
 
-        {/* Rating Filter */}
+        {}
         <div>
           <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>

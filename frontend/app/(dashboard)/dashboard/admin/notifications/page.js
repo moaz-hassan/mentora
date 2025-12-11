@@ -53,7 +53,7 @@ import {
 } from "@/components/admin/shared";
 import * as notificationsAPI from "@/lib/apiCalls/admin/notifications.apiCall";
 
-// History table columns
+
 const historyColumns = [
   {
     accessorKey: "title",
@@ -115,7 +115,7 @@ const historyColumns = [
   },
 ];
 
-// Scheduled table columns
+
 const scheduledColumns = [
   {
     accessorKey: "title",
@@ -173,12 +173,12 @@ export default function NotificationManagementPage() {
   const [sending, setSending] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
 
-  // Data states
+  
   const [statistics, setStatistics] = useState(null);
   const [history, setHistory] = useState([]);
   const [scheduled, setScheduled] = useState([]);
 
-  // Form state
+  
   const [formData, setFormData] = useState({
     title: "",
     message: "",
@@ -198,7 +198,7 @@ export default function NotificationManagementPage() {
       if (historyRes.success) setHistory(historyRes.data?.notifications || []);
       if (scheduledRes.success) setScheduled(scheduledRes.data?.notifications || []);
       
-      // Only show error if all requests failed
+      
       if (!statsRes.success && !historyRes.success && !scheduledRes.success) {
         toast.error("Failed to load notifications data");
       }
@@ -232,7 +232,7 @@ export default function NotificationManagementPage() {
 
     setGeneratingAI(true);
     try {
-      // Simulate AI generation - in real app, call AI endpoint
+      
       await new Promise((resolve) => setTimeout(resolve, 1500));
       
       const suggestions = {
@@ -323,7 +323,7 @@ export default function NotificationManagementPage() {
     }
   };
 
-  // Add action handlers to scheduled data
+  
   const scheduledWithActions = scheduled.map((item) => ({
     ...item,
     onSend: handleSendScheduled,
@@ -332,7 +332,7 @@ export default function NotificationManagementPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Notification Management</h1>
@@ -469,7 +469,7 @@ export default function NotificationManagementPage() {
         </div>
       </div>
 
-      {/* Statistics Cards */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard
           title="Total Sent"
@@ -499,7 +499,7 @@ export default function NotificationManagementPage() {
         />
       </div>
 
-      {/* Tabs */}
+      {}
       <Tabs defaultValue="history" className="space-y-4">
         <TabsList>
           <TabsTrigger value="history">History</TabsTrigger>
@@ -556,7 +556,7 @@ export default function NotificationManagementPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Preview Dialog */}
+      {}
       <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
         <DialogContent>
           <DialogHeader>

@@ -5,7 +5,7 @@ import { MessageCircle } from "lucide-react";
 export default function CourseChatCard({ isEnrolled }) {
   return (
     <div className="bg-gradient-to-br from-indigo-600 to-violet-600 dark:from-indigo-900 dark:to-violet-900 rounded-xl p-6 text-white shadow-lg relative overflow-hidden group">
-      {/* Background Pattern */}
+      {}
       <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors duration-500" />
       <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 bg-black/10 rounded-full blur-xl" />
 

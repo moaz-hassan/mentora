@@ -6,10 +6,7 @@ import {
 
 const API_URL = getApiBaseUrl();
 
-/**
- * Get platform overview stats
- * @param {Object} params - Query parameters
- */
+
 export const getPlatformOverview = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -23,10 +20,7 @@ export const getPlatformOverview = async (params = {}) => {
   }
 };
 
-/**
- * Get admin revenue analytics
- * @param {Object} params - Query parameters
- */
+
 export const getAdminRevenueAnalytics = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -40,10 +34,7 @@ export const getAdminRevenueAnalytics = async (params = {}) => {
   }
 };
 
-/**
- * Get user growth analytics
- * @param {Object} params - Query parameters
- */
+
 export const getUserGrowthAnalytics = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -57,10 +48,7 @@ export const getUserGrowthAnalytics = async (params = {}) => {
   }
 };
 
-/**
- * Get enrollment analytics
- * @param {Object} params - Query parameters
- */
+
 export const getEnrollmentAnalytics = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -74,10 +62,7 @@ export const getEnrollmentAnalytics = async (params = {}) => {
   }
 };
 
-/**
- * Get course performance analytics
- * @param {Object} params - Query parameters
- */
+
 export const getCoursePerformanceAnalytics = async (params = {}) => {
   try {
     const headers = getAuthHeaders();
@@ -91,10 +76,7 @@ export const getCoursePerformanceAnalytics = async (params = {}) => {
   }
 };
 
-/**
- * Export analytics data
- * @param {Object} data - Export options
- */
+
 export const exportAnalyticsData = async (data = {}) => {
   try {
     const headers = getAuthHeaders();
