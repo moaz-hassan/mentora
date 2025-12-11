@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { Plus, Users, DollarSign, BookOpen, Star } from "lucide-react";
-import { StatsCard } from "@/components/instructorDashboard/overview";
+import { StatsCard } from "@/components/instructor/overview";
 import { useInstructorOverview } from "@/hooks/course";
 import EnrollmentChart from "@/components/charts/EnrollmentChart";
 import RevenueChart from "@/components/charts/RevenueChart";
-import { OverviewHeader, AlertsSection, RecentCoursesSection, QuickActionsSection } from "@/components/instructorDashboard/overview";
+import { OverviewHeader, AlertsSection, RecentCoursesSection, QuickActionsSection } from "@/components/instructor/overview";
 
 export default function InstructorOverviewPage() {
   const {

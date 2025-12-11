@@ -1,8 +1,9 @@
-import { AppSidebar } from "@/components/app-sidebar";
-import { SiteHeader } from "@/components/site-header";
+import { AppSidebar } from "@/components/layout/app-sidebar";
+import { SiteHeader } from "@/components/layout/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import NotFound from "@/app/not-found";
 import getUserDataOnServer from "@/lib/apiCalls/auth/getUserDataOnServer.apiCall";
+import AuthProvider from "@/components/AuthProvider";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -34,7 +35,9 @@ export default async function AdminLayout({ children }) {
       <AppSidebar variant="inset" user={userData} />
       <SidebarInset>
         <SiteHeader user={userData} />
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -3,15 +3,25 @@
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   CourseDetailsForm,
   CourseStructureEditor,
   CoursePreview,
   UploadProgressModal,
   CreateCourseHeader,
   CreateCourseActions,
-} from "@/components/instructorDashboard/create-course";
+} from "@/components/instructor/create-course";
 import useCourseStore from "@/store/courseStore";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   useCreateCourse,
   useCourseValidation,
@@ -20,6 +30,7 @@ import {
 
 export default function CreateCoursePage() {
   const [activeTab, setActiveTab] = useState("details");
+  const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
 
   const {
     courseData,
@@ -53,7 +64,7 @@ export default function CreateCoursePage() {
       return;
     }
 
-    await saveDraft(courseData, getCourseStats);
+    await saveDraft(courseData);
   };
 
   // Handle submit for review
@@ -68,15 +79,12 @@ export default function CreateCoursePage() {
       return;
     }
 
-    if (
-      !confirm(
-        "Are you sure you want to submit this course for review? You won't be able to edit it until the review is complete."
-      )
-    ) {
-      return;
-    }
+    setIsSubmitDialogOpen(true);
+  };
 
-    await submitForReview(courseData, getCourseStats);
+  const handleConfirmSubmit = async () => {
+    await submitForReview(courseData);
+    setIsSubmitDialogOpen(false);
   };
 
   // Loading state
@@ -169,6 +177,21 @@ export default function CreateCoursePage() {
       </Tabs>
 
       <UploadProgressModal isOpen={isUploading} progress={uploadProgress} />
+
+      <AlertDialog open={isSubmitDialogOpen} onOpenChange={setIsSubmitDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to submit this course for review?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You won't be able to edit it until the review is complete.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmSubmit}>Submit</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

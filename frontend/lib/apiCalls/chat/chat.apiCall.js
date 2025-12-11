@@ -84,3 +84,31 @@ export const sendMessage = async (roomId, message) => {
     return error.response?.data || { success: false, message: error.message };
   }
 };
+
+export const joinChat = async (courseId) => {
+  try {
+    const headers = getAuthHeaders();
+    const response = await axios.post(
+      `${API_URL}/api/chat/join`,
+      { courseId },
+      { headers }
+    );
+    return response.data;
+  } catch (error) {
+    return error.response?.data || { success: false, message: error.message };
+  }
+};
+
+export const checkChatMembership = async (courseId) => {
+  try {
+    const headers = getAuthHeaders();
+    const response = await axios.get(
+      `${API_URL}/api/chat/membership/${courseId}`,
+      { headers }
+    );
+    return response.data;
+  } catch (error) {
+    return error.response?.data || { success: false, message: error.message };
+  }
+};
+

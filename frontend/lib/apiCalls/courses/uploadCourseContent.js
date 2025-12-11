@@ -3,6 +3,7 @@ import { createCourse } from "./createCourse";
 import { createChapter } from "../chapters/createChapter";
 import { createLesson } from "../lessons/createLesson";
 import { createQuiz } from "../quizzes/createQuiz";
+import { createLessonMaterial } from "../lessons/createLessonMaterial";
 
 /**
  * Upload complete course content including chapters, lessons, and quizzes
@@ -194,7 +195,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
         }
 
         // Create lesson with video metadata
-        await createLesson(
+        const lessonResponse = await createLesson(
           {
             chapter_id: chapterId,
             title: lesson.title,
@@ -208,6 +209,55 @@ export default async function uploadCourseContent(courseData, onProgress) {
           },
           token
         );
+
+        const lessonId = lessonResponse.data.id;
+
+        // Process lesson materials
+        if (lesson.materials && lesson.materials.length > 0) {
+          const { uploadFileToCloudinary } = await import(
+            "@/lib/apiCalls/cloudinary/uploadFileToCloudinary"
+          );
+
+          for (let i = 0; i < lesson.materials.length; i++) {
+            const material = lesson.materials[i];
+
+            onProgress({
+              stage: "lesson",
+              chapterIndex: chapterIndex + 1,
+              totalChapters,
+              lessonIndex: lessonIndex + 1,
+              totalLessons,
+              status: "uploading",
+              message: `Uploading material: ${material.filename}...`,
+              videoProgress: 100,
+            });
+
+            try {
+              // Upload file to Cloudinary
+              const uploadResult = await uploadFileToCloudinary(
+                material.file,
+                (progress) => {
+                  // We could update granular progress here if needed
+                }
+              );
+
+              // Create material record
+              await createLessonMaterial(
+                lessonId,
+                {
+                  filename: material.filename,
+                  file_url: uploadResult.secure_url,
+                  file_type: material.file_type,
+                  file_size: material.file_size,
+                },
+                token
+              );
+            } catch (err) {
+              console.error(`Failed to upload material ${material.filename}:`, err);
+              // Continue with other materials even if one fails
+            }
+          }
+        }
 
         onProgress({
           stage: "lesson",

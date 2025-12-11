@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getUserChatRooms, getRoomMessages, markChatAsRead } from "@/lib/apiCalls/chat/chat.apiCall";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Custom hook for chat management
@@ -17,14 +17,15 @@ export function useChats() {
       setLoading(true);
       const response = await getUserChatRooms();
 
-      if (response.success) {
+      if (response?.success) {
         setChatRooms(response.data || []);
       } else {
-        toast.error("Failed to load chat rooms");
+        // Don't show error toast, just set empty array
+        setChatRooms([]);
       }
     } catch (error) {
       console.error("Error fetching chat rooms:", error);
-      toast.error("Failed to load chat rooms");
+      setChatRooms([]);
     } finally {
       setLoading(false);
     }

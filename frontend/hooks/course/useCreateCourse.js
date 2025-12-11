@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import uploadCourseContent from "@/lib/apiCalls/courses/uploadCourseContent";
 import courseSaveDraftApiCall from "@/lib/apiCalls/courses/courseSaveDraft.apiCall";
 
@@ -12,11 +12,33 @@ export function useCreateCourse(clearDraft) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
 
+  // Helper to calculate stats locally
+  const calculateStats = (data) => {
+    const chapters = data?.chapters || [];
+    let lessonsCount = 0;
+    let quizzesCount = 0;
+
+    chapters.forEach((chapter) => {
+      if (chapter.items) {
+        chapter.items.forEach((item) => {
+          if (item.type === "lesson") lessonsCount++;
+          if (item.type === "quiz") quizzesCount++;
+        });
+      }
+    });
+
+    return {
+      chaptersCount: chapters.length,
+      lessonsCount,
+      quizzesCount,
+    };
+  };
+
   /**
    * Save course as draft
    */
   const saveDraft = useCallback(
-    async (courseData, getCourseStats) => {
+    async (courseData) => {
       setIsUploading(true);
       setUploadProgress({ status: "uploading", message: "Saving as draft..." });
 
@@ -38,7 +60,7 @@ export function useCreateCourse(clearDraft) {
         clearDraft();
 
         // Get stats
-        const stats = getCourseStats();
+        const stats = calculateStats(courseData);
 
         setUploadProgress({
           status: "success",
@@ -70,7 +92,7 @@ export function useCreateCourse(clearDraft) {
    * Submit course for review
    */
   const submitForReview = useCallback(
-    async (courseData, getCourseStats) => {
+    async (courseData) => {
       setIsUploading(true);
       setUploadProgress({
         status: "uploading",
@@ -98,7 +120,7 @@ export function useCreateCourse(clearDraft) {
         clearDraft();
 
         // Get stats
-        const stats = getCourseStats();
+        const stats = calculateStats(courseData);
 
         setUploadProgress({
           status: "success",

@@ -1,102 +1,69 @@
+import getUserDataOnClient from "@/lib/apiCalls/auth/getUserDataOnClient.apiCall";
+import Cookies from "js-cookie";
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 const useAuthStore = create(
-  devtools(
-    persist(
-      (set, get) => ({
-        isAuthenticated: false,
-        user: null,
-        isLoading: true,
-        token: null,
+  persist(
+    (set, get) => ({
+      isAuthenticated: false,
+      user: null,
+      isLoading: false,
 
-        initializeAuth: () => {
-          const token = getCookie("authToken");
-          if (token) {
-            const userData = localStorage.getItem("user_data");
+      setAuth: (userData) => {
+        set(() => ({
+          isAuthenticated: true,
+          user: userData,
+          isLoading: false,
+        }));
+      },
+
+      // FIX 1: Make this async
+      fetchUser: async () => {
+        set({ isLoading: true }); // Start loading
+
+        try {
+          // FIX 2: Await the API call
+          const response = await getUserDataOnClient();
+
+          if (response && response.success) {
+            // FIX 3: Correct way to update state
             set({
               isAuthenticated: true,
-              user: userData ? JSON.parse(userData) : null,
-              token,
+              user: response.data,
               isLoading: false,
             });
           } else {
-            set({
-              isAuthenticated: false,
-              user: null,
-              token: null,
-              isLoading: false,
-            });
+            // If API returns false (token expired), clear auth to stop loop
+            get().clearAuth();
           }
-        },
+        } catch (error) {
+          console.log(error);
+          get().clearAuth(); // Safety net: Logout on error
+        }
+      },
 
-        setAuth: (userData, token = null) => {
-          set({
-            isAuthenticated: true,
-            user: userData,
-            token: token || getCookie("authToken"),
-            isLoading: false,
-          });
-          localStorage.setItem("user_data", JSON.stringify(userData));
-        },
+      clearAuth: () => {
+        set(() => ({
+          isAuthenticated: false,
+          user: null,
+          isLoading: false, // Stop loading so we can redirect
+        }));
+        localStorage.removeItem("auth-store");
+        Cookies.remove("authToken");
+      },
 
-        updateUser: (userData) => {
-          set({ user: userData });
-          localStorage.setItem("user_data", JSON.stringify(userData));
-        },
-
-        clearAuth: () => {
-          localStorage.removeItem("user_data");
-          localStorage.removeItem("course_creation_draft");
-
-          if (typeof document !== "undefined") {
-            document.cookie =
-              "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          }
-
-          set({
-            isAuthenticated: false,
-            user: null,
-            token: null,
-            isLoading: false,
-          });
-        },
-
-        getToken: () => {
-          const state = get();
-          return state.token || getCookie("authToken");
-        },
-
-        setLoading: (loading) => {
-          set({ isLoading: loading });
-        },
-
-        getAuthState: () => {
-          return {
-            isAuthenticated: get().isAuthenticated,
-            user: get().user,
-            isLoading: get().isLoading,
-            token: get().token,
-          };
-        },
+      setLoading: (loading) => set({ isLoading: loading }),
+    }),
+    {
+      name: "auth-store",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        isAuthenticated: state.isAuthenticated,
+        user: state.user,
       }),
-      {
-        name: "auth-store", 
-        partialize: (state) => ({
-          user: state.user, 
-        }),
-      }
-    ),
-    { name: "AuthStore" }
+    }
   )
 );
-
-  function getCookie(name) {
-  if (typeof document === "undefined") return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
-  return null;
-}
 
 export default useAuthStore;

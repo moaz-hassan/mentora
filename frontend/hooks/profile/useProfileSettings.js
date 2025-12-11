@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { updateUserProfile } from "@/lib/apiCalls/student/profile.apiCall";
 import { changePassword } from "@/lib/apiCalls/student/profile.apiCall";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Custom hook for profile settings management

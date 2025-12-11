@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Download } from "lucide-react";
 import { useAnalytics } from "@/hooks/analytics";
-import ExportDialog from "@/components/ExportDialog";
+import ExportDialog from "@/components/modals/ExportDialog";
 import {
   AnalyticsHeader,
   KeyMetricsGrid,
@@ -16,7 +16,7 @@ import {
   EngagementMetrics,
   RevenueOverview,
   PerformanceInsights,
-} from "@/components/instructorDashboard/analytics";
+} from "@/components/instructor/analytics";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 

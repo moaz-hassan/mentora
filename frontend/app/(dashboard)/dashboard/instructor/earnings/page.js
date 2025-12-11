@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import { useEarnings } from "@/hooks/earnings";
 import RevenueLineChart from "@/components/charts/RevenueLineChart";
-import ExportDialog from "@/components/ExportDialog";
-import { RecentTransactionsSection } from "@/components/instructorDashboard/earnings";
+import ExportDialog from "@/components/modals/ExportDialog";
+import { RecentTransactionsSection } from "@/components/instructor/earnings";
 import jsPDF from "jspdf";
 import { useState } from "react";
 

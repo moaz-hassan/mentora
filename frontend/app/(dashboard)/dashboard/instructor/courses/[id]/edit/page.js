@@ -2,15 +2,15 @@
 
 import { use, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourseDetailsForm } from "@/components/instructorDashboard/create-course/CourseDetailsForm";
-import { CoursePreview } from "@/components/instructorDashboard/create-course/CoursePreview";
+import { CourseDetailsForm } from "@/components/instructor/create-course/CourseDetailsForm";
+import { CoursePreview } from "@/components/instructor/create-course/CoursePreview";
 import {
   EditCourseHeader,
   UnsavedChangesWarning,
   EditCourseActions,
   EditCourseStructure,
   VideoUploadProgress,
-} from "@/components/instructorDashboard/edit-course";
+} from "@/components/instructor/edit-course";
 import { useEditCourse, useVideoUpload, useCourseUpdates } from "@/hooks/course";
 
 export default function EditCoursePage({ params }) {

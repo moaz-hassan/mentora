@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getAllInstructorCourses } from "@/lib/apiCalls/instructor/getAllInstructorCourses.apiCall";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Custom hook for managing instructor courses list

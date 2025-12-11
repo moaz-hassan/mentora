@@ -1,19 +1,23 @@
 import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { getInstructorAnalytics } from "@/lib/apiCalls/instructor/getAnalytics.apiCall";
 import { getEnrollmentTrend } from "@/lib/apiCalls/analytics/getEnrollmentTrend.apiCall";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Custom hook for instructor analytics data
  * @returns {Object} Analytics data and loading state
  */
 export function useAnalytics() {
+  const searchParams = useSearchParams();
+  const courseIdParam = searchParams.get("courseId");
+
   const [analytics, setAnalytics] = useState(null);
   const [enrollmentData, setEnrollmentData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [timeRange, setTimeRange] = useState("30");
-  const [selectedCourse, setSelectedCourse] = useState("all");
+  const [selectedCourse, setSelectedCourse] = useState(courseIdParam || "all");
 
   const fetchAnalytics = useCallback(async () => {
     try {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getRevenueAnalytics } from "@/lib/apiCalls/analytics/getRevenueAnalytics.apiCall";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Custom hook for earnings data

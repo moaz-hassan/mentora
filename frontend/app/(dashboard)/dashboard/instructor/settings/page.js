@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { uploadImageToCloudinary } from "@/lib/apiCalls/cloudinary/uploadImageToCloudinary";
 import {
   SettingsHeader,
@@ -9,7 +9,7 @@ import {
   ProfileTab,
   SocialLinksTab,
   SecurityTab,
-} from "@/components/instructorDashboard/settings";
+} from "@/components/instructor/settings";
 import updateProfile from "@/lib/apiCalls/profile/updateUserProfile.apiCall";
 import {
   validateProfileUpdate,

@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { updateCourseInfo } from "@/lib/apiCalls/courses/updateCourseInfo.apiCall";
 import { saveAllCourseChanges } from "@/services/courseService";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Custom hook for managing course updates

@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Custom hook for managing video upload to Cloudinary with progress tracking

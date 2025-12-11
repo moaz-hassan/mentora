@@ -1,105 +1,118 @@
 "use client";
 
-import { MessageSquare, Search, Users, User, Send, BookOpen } from "lucide-react";
-import { useChats } from "@/hooks/chat";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { MessageSquare, Search, ArrowLeft } from "lucide-react";
+import { getUserChatRooms } from "@/lib/apiCalls/chat/chat.apiCall";
+import ChatRoom from "@/components/pages/chats/ChatRoom";
+import ChatItem from "@/components/pages/profile/chat/ChatItem";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSocket } from "@/hooks/useSocket";
+import useAuthStore from "@/store/authStore";
+import { cn } from "@/lib/utils";
 
 export default function InstructorChatsPage() {
-  const {
-    chatRooms,
-    selectedRoom,
-    messages,
-    loading,
-    selectRoom,
-  } = useChats();
-
-  const [newMessage, setNewMessage] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const chatId = searchParams.get("chatId");
+  
+  const [chats, setChats] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const messagesEndRef = useRef(null);
+  const { socket, isConnected } = useSocket();
+  const { user } = useAuthStore();
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    fetchChats();
+  }, []);
 
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !selectedRoom) return;
+  // Listen for real-time updates
+  useEffect(() => {
+    if (isConnected && socket) {
+      const handleMessage = (data) => {
+        setChats((prevChats) => {
+          return prevChats.map((chat) => {
+            if (chat.id === data.roomId) {
+              const isCurrentChat = chatId === chat.id;
+              
+              return {
+                ...chat,
+                lastMessage: {
+                  content: data.message,
+                  createdAt: data.createdAt,
+                },
+                unreadCount: (isCurrentChat || data.senderId === user?.id) 
+                  ? 0
+                  : (chat.unreadCount || 0) + 1,
+              };
+            }
+            return chat;
+          });
+        });
+      };
 
-    const messageText = newMessage.trim();
-    setNewMessage("");
+      const handleMessagesRead = (data) => {
+        if (data.userId === user?.id) {
+          setChats((prevChats) =>
+            prevChats.map((chat) =>
+              chat.id === data.roomId ? { ...chat, unreadCount: 0 } : chat
+            )
+          );
+        }
+      };
 
-    // TODO: Implement actual message sending
-    console.log("Sending message:", messageText, "to room:", selectedRoom.id);
-  };
+      socket.on("message_received", handleMessage);
+      socket.on("messages_read", handleMessagesRead);
 
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = (now - date) / (1000 * 60 * 60);
-
-    if (diffInHours < 24) {
-      return date.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      });
-    } else if (diffInHours < 48) {
-      return "Yesterday";
-    } else {
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
+      return () => {
+        socket.off("message_received", handleMessage);
+        socket.off("messages_read", handleMessagesRead);
+      };
     }
-  };
+  }, [isConnected, socket, chatId, user]);
 
-  const getChatRoomName = (room) => {
-    if (room.type === "group" && room.Course) {
-      return room.Course.title;
-    }
-    if (room.type === "private" && room.ChatParticipants) {
-      const otherParticipant = room.ChatParticipants.find(
-        (p) => p.User && p.user_id !== "current-user"
-      );
-      if (otherParticipant && otherParticipant.User) {
-        return `${otherParticipant.User.first_name} ${otherParticipant.User.last_name}`;
+  const fetchChats = async () => {
+    try {
+      const response = await getUserChatRooms();
+      if (response.success) {
+        setChats(response.data);
       }
+    } catch (error) {
+      console.error("Error fetching chats:", error);
+    } finally {
+      setLoading(false);
     }
-    return room.name || "Chat Room";
   };
 
-  const getChatRoomSubtitle = (room) => {
-    return room.type === "group" ? "Community Chat" : "Private Chat";
+  const filteredChats = chats.filter((chat) =>
+    chat.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleChatClick = (selectedChatId) => {
+    router.push(`/dashboard/instructor/chats?chatId=${selectedChatId}`);
   };
 
-  const filteredChatRooms = chatRooms.filter((room) => {
-    const roomName = getChatRoomName(room).toLowerCase();
-    return roomName.includes(searchQuery.toLowerCase());
-  });
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  const handleBackClick = () => {
+    router.push("/dashboard/instructor/chats");
+  };
 
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 bg-white">
+      <div className="p-6 border-b border-gray-200 bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Messages</h1>
-            <p className="mt-2 text-gray-600">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Messages</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
               Chat with your students and manage conversations
             </p>
           </div>
           <div className="flex items-center gap-2">
             <MessageSquare className="w-6 h-6 text-blue-600" />
-            <span className="text-sm text-gray-600">
-              {chatRooms.length} conversation{chatRooms.length !== 1 ? "s" : ""}
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {chats.length} conversation{chats.length !== 1 ? "s" : ""}
             </span>
           </div>
         </div>
@@ -107,198 +120,94 @@ export default function InstructorChatsPage() {
 
       {/* Chat Interface */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Chat Rooms List */}
-        <div className="w-80 border-r border-gray-200 bg-white flex flex-col">
+        {/* Sidebar */}
+        <div
+          className={cn(
+            "w-full md:w-[350px] lg:w-[400px] flex-shrink-0 border-r border-border bg-background flex flex-col",
+            chatId ? "hidden md:flex" : "flex"
+          )}
+        >
           {/* Search */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-border">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search conversations..."
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search chats..."
+                className="pl-9 bg-muted/50"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
             </div>
           </div>
 
-          {/* Chat Rooms */}
+          {/* Chat List */}
           <div className="flex-1 overflow-y-auto">
-            {filteredChatRooms.length === 0 ? (
-              <div className="p-6 text-center text-gray-500">
-                <MessageSquare className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                <p className="text-sm">
-                  {searchQuery ? "No conversations found" : "No conversations yet"}
-                </p>
-              </div>
-            ) : (
-              filteredChatRooms.map((room) => (
-                <div
-                  key={room.id}
-                  onClick={() => selectRoom(room)}
-                  className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-                    selectedRoom?.id === room.id ? "bg-blue-50" : ""
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`p-2 rounded-lg ${
-                        room.type === "group" ? "bg-purple-100" : "bg-blue-100"
-                      }`}
-                    >
-                      {room.type === "group" ? (
-                        <Users className="w-5 h-5 text-purple-600" />
-                      ) : (
-                        <User className="w-5 h-5 text-blue-600" />
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-medium text-gray-900 truncate">
-                          {getChatRoomName(room)}
-                        </h3>
-                        {room.unreadCount > 0 && (
-                          <span className="ml-2 px-2 py-0.5 bg-blue-600 text-white text-xs font-medium rounded-full">
-                            {room.unreadCount}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-500 mb-1">
-                        {getChatRoomSubtitle(room)}
-                      </p>
-                      {room.lastMessage && (
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm text-gray-600 truncate">
-                            {room.lastMessage.message}
-                          </p>
-                          <span className="text-xs text-gray-400 ml-2">
-                            {formatTime(room.lastMessage.created_at)}
-                          </span>
-                        </div>
-                      )}
+            {loading ? (
+              <div className="p-4 space-y-4">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-3 w-full" />
                     </div>
                   </div>
-
-                  {room.type === "group" && room.Course && (
-                    <div className="mt-2 ml-11 flex items-center text-xs text-gray-500">
-                      <BookOpen className="w-3 h-3 mr-1" />
-                      <span className="truncate">{room.Course.title}</span>
-                    </div>
-                  )}
-                </div>
-              ))
+                ))}
+              </div>
+            ) : filteredChats.length > 0 ? (
+              <div className="divide-y divide-border">
+                {filteredChats.map((chat) => (
+                  <div
+                    key={chat.id}
+                    className={chatId === chat.id ? "bg-muted/50" : ""}
+                  >
+                    <ChatItem
+                      chat={chat}
+                      onClick={() => handleChatClick(chat.id)}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 text-center text-muted-foreground">
+                <MessageSquare className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                <p>{searchQuery ? "No chats found" : "No conversations yet"}</p>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Messages Area */}
-        <div className="flex-1 flex flex-col bg-gray-50">
-          {selectedRoom ? (
-            <>
-              {/* Chat Header */}
-              <div className="p-4 bg-white border-b border-gray-200">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`p-2 rounded-lg ${
-                      selectedRoom.type === "group" ? "bg-purple-100" : "bg-blue-100"
-                    }`}
-                  >
-                    {selectedRoom.type === "group" ? (
-                      <Users className="w-5 h-5 text-purple-600" />
-                    ) : (
-                      <User className="w-5 h-5 text-blue-600" />
-                    )}
-                  </div>
-                  <div>
-                    <h2 className="font-semibold text-gray-900">
-                      {getChatRoomName(selectedRoom)}
-                    </h2>
-                    <p className="text-sm text-gray-500">
-                      {getChatRoomSubtitle(selectedRoom)}
-                    </p>
-                  </div>
-                </div>
+        {/* Main Content */}
+        <div
+          className={cn(
+            "flex-1 flex flex-col min-w-0 bg-muted/10",
+            !chatId ? "hidden md:flex" : "flex"
+          )}
+        >
+          {chatId ? (
+            <div className="flex flex-col h-full">
+              {/* Mobile Back Button */}
+              <div className="md:hidden p-2 border-b border-border bg-background">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleBackClick}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Chats
+                </Button>
               </div>
-
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.length === 0 ? (
-                  <div className="flex items-center justify-center h-full text-gray-500">
-                    <div className="text-center">
-                      <MessageSquare className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                      <p>No messages yet</p>
-                      <p className="text-sm mt-1">
-                        Start the conversation by sending a message
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  messages.map((message) => {
-                    const isCurrentUser = message.User?.first_name === "You";
-                    return (
-                      <div
-                        key={message.id}
-                        className={`flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
-                      >
-                        <div className={`max-w-md ${isCurrentUser ? "order-2" : "order-1"}`}>
-                          <div className="flex items-center gap-2 mb-1">
-                            {!isCurrentUser && (
-                              <span className="text-sm font-medium text-gray-900">
-                                {message.User?.first_name} {message.User?.last_name}
-                              </span>
-                            )}
-                            <span className="text-xs text-gray-500">
-                              {formatTime(message.created_at)}
-                            </span>
-                          </div>
-                          <div
-                            className={`px-4 py-2 rounded-lg ${
-                              isCurrentUser
-                                ? "bg-blue-600 text-white"
-                                : "bg-white text-gray-900 border border-gray-200"
-                            }`}
-                          >
-                            <p className="text-sm">{message.message}</p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* Message Input */}
-              <div className="p-4 bg-white border-t border-gray-200">
-                <form onSubmit={handleSendMessage} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Type your message..."
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                  />
-                  <button
-                    type="submit"
-                    disabled={!newMessage.trim()}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Send className="w-5 h-5" />
-                  </button>
-                </form>
-              </div>
-            </>
+              <ChatRoom chatId={chatId} />
+            </div>
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
-              <div className="text-center">
-                <MessageSquare className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <p className="text-lg font-medium">Select a conversation</p>
-                <p className="text-sm mt-1">
-                  Choose a chat from the list to start messaging
-                </p>
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-muted-foreground">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <MessageSquare className="w-8 h-8" />
               </div>
+              <h3 className="text-xl font-semibold mb-2">Select a chat to start messaging</h3>
+              <p className="max-w-sm">
+                Choose a conversation from the sidebar to start chatting with your students.
+              </p>
             </div>
           )}
         </div>

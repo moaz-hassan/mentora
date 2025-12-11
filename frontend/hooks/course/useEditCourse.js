@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getCourseForEdit } from "@/lib/apiCalls/courses/getCourseForEdit.apiCall";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Custom hook for managing edit course data fetching and state

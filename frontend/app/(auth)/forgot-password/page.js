@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, ArrowLeft, CheckCircle2, Loader2Icon } from "lucide-react";
 import ForgotPasswordAnimation from "@/components/animations/ForgotPasswordAnimations";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import forgotPassword from "@/lib/apiCalls/auth/forgotPassword.apiCall";
 
 const STORAGE_KEY = "forgot_password_timer";

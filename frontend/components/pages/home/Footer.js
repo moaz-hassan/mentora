@@ -9,10 +9,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">L</span>
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-xl">M</span>
               </div>
-              <span className="text-xl font-bold">LearnHub</span>
+              <span className="text-xl font-bold">Mentora</span>
             </div>
             <p className="text-gray-400 text-sm mb-4">
               Empowering learners worldwide with quality education and skills for the future.
@@ -170,7 +170,7 @@ export default function Footer() {
         <div className="pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} LearnHub. All rights reserved.
+              © {new Date().getFullYear()} Mentora. All rights reserved.
             </p>
             <div className="flex items-center gap-6 text-sm text-gray-400">
               <Link href="/terms" className="hover:text-white transition-colors">

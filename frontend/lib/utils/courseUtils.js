@@ -153,3 +153,40 @@ export function getInstructorInitials(user) {
   const lastInitial = user.last_name?.[0] || "";
   return `${firstInitial}${lastInitial}`.toUpperCase() || "?";
 }
+
+
+/**
+ * Calculate average rating from ratings array
+ * @param {Array} ratings - Array of rating objects with 'rating' property
+ * @returns {number|null} - Average rating or null if no ratings
+ */
+export function calculateAverageRating(ratings) {
+  if (!ratings || !Array.isArray(ratings) || ratings.length === 0) {
+    return null;
+  }
+  
+  const sum = ratings.reduce((total, r) => total + (r.rating || 0), 0);
+  return sum / ratings.length;
+}
+
+
+/**
+ * Format enrollment count with K/M suffixes
+ * @param {number} count - Enrollment count
+ * @returns {string} - Formatted count (e.g., "1.2K") or "Be first to enroll" for zero
+ */
+export function formatEnrollmentCount(count) {
+  if (!count || count === 0) {
+    return "Be first to enroll";
+  }
+  
+  if (count >= 1000000) {
+    return `${(count / 1000000).toFixed(1)}M`;
+  }
+  
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(1)}K`;
+  }
+  
+  return count.toString();
+}

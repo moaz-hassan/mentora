@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from "@/lib/apiCalls/notifications/notifications.apiCall";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Custom hook for notifications management

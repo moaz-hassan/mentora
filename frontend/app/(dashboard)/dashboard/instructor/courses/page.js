@@ -6,7 +6,7 @@ import {
   CoursesFilterBar,
   CourseListItem,
   EmptyCoursesState,
-} from "@/components/instructorDashboard/courses";
+} from "@/components/instructor/courses";
 import { useInstructorCourses } from "@/hooks/course";
 import InstructorCoursesSkeleton from "@/components/skeleton/InstructorCoursesSkeleton";
 

@@ -23,17 +23,19 @@ import {
 import LoginAnimation from "@/components/animations/LoginAnimations";
 import Link from "next/link";
 import loginApiCall from "@/lib/apiCalls/auth/login.apiCall";
-import { toast } from "react-toastify";
-import TooltipComponent from "@/components/TooltipComponent";
-import InputInstructions from "@/components/InputInstructions";
+import { toast } from "sonner";
+import TooltipComponent from "@/components/common/TooltipComponent";
+import InputInstructions from "@/components/common/InputInstructions";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import useAuthStore from "@/store/authStore";
 
 export default function LoginPage() {
   const router = useRouter();
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const {setAuth} = useAuthStore();
 
   const handleLogin = async () => {
     setLoading(true);
@@ -43,7 +45,8 @@ export default function LoginPage() {
         Cookies.set("authToken", response.data.token);
         localStorage.getItem("forgot_password_timer")
           ? localStorage.removeItem("forgot_password_timer")
-          : null;
+          : null;          
+        setAuth(response.data.user);
         toast.success(response.message || "Login successful");
         router.push("/");
       } else {

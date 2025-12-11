@@ -22,7 +22,7 @@ import {
   EyeOff
 } from "lucide-react";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import resetPassword from "@/lib/apiCalls/auth/resetPassword.apiCalls";
 import ResetPasswordAnimation from "@/components/animations/ResetPasswordAnimation";
 

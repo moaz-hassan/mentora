@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import getUserDataOnClient from "@/lib/apiCalls/auth/getUserDataOnClient.apiCall";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 /**
  * Custom hook for settings page data management
@@ -32,28 +32,40 @@ export function useSettings() {
     try {
       setLoading(true);
       const response = await getUserDataOnClient();
+      
+      // Handle failed response
+      if (!response?.success && !response?.data) {
+        console.error("Failed to fetch user data:", response);
+        setLoading(false);
+        return;
+      }
+      
       const user = response?.data;
       
-      setUserData({
-        first_name: user.first_name || "",
-        last_name: user.last_name || "",
-        email: user.email || "",
-      });
-      
-      setProfileData({
-        bio: user?.Profile?.bio || "",
-        headline: user?.Profile?.headline || "",
-        avatar_url: user?.Profile?.avatar_url || "",
-        social_links: user?.Profile?.social_links || {
-          twitter: "",
-          linkedin: "",
-          github: "",
-          website: "",
-          facebook: "",
-          instagram: "",
-          youtube: "",
-        },
-      });
+      if (user) {
+        setUserData({
+          first_name: user.first_name || "",
+          last_name: user.last_name || "",
+          email: user.email || "",
+          is_email_verified: user.is_email_verified || false,
+        });
+        
+        setProfileData({
+          bio: user?.Profile?.bio || "",
+          headline: user?.Profile?.headline || "",
+          avatar_url: user?.Profile?.avatar_url || "",
+          username: user?.Profile?.username || user?.email?.split("@")[0] || "",
+          social_links: user?.Profile?.social_links || {
+            twitter: "",
+            linkedin: "",
+            github: "",
+            website: "",
+            facebook: "",
+            instagram: "",
+            youtube: "",
+          },
+        });
+      }
     } catch (error) {
       console.error("Error fetching user data:", error);
       toast.error("Failed to load user data");

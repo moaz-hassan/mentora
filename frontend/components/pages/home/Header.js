@@ -1,199 +1,227 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, UserCircle, LogOut, Menu, X } from "lucide-react";
+import { Search, LogOut, Menu, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuth, useAuthActions } from "@/hooks/useAuthStore";
+import useAuthStore from "@/store/authStore";
+import { useRouter } from "next/navigation";
+import UserDropdownMenu from "./UserDropDownMenu";
+import { useIsMobile } from "@/hooks/use-mobile";
+import Image from "next/image";
+import logo from "@/app/icon.png";
 
 export default function Header() {
-  const { isAuthenticated, user, isLoading } = useAuth();
-  const { clearAuth } = useAuthActions();
+  const { isAuthenticated, user, clearAuth, isLoading } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+  const isMobile = useIsMobile();
+
+
+  useEffect(() => {
+    // Wait for zustand to hydrate from localStorage
+    const timer = setTimeout(() => {
+      setIsInitializing(false);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLogout = async () => {
     clearAuth();
-    // Redirect to home
-    window.location.href = "/";
+    router.push("/");
   };
 
+  const handleSearchSubmit = (e) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      router.push(`/courses?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  // Show loader while initializing or loading
+  const showLoader = isInitializing || isLoading;
+
   return (
-    <header className="bg-white sticky top-0 z-50 border-b border-gray-200 shadow-sm">
+    <header className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 border-b border-border shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
           <div className="flex items-center space-x-12">
-            <Link
-              href="/"
-              className="flex items-center space-x-2"
-            >
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">L</span>
+            <Link href="/" className="flex items-center">
+              <div className="w-10 h-10">
+                <Image
+                  src={logo}
+                  alt="Logo"
+                  width={20}
+                  height={20}
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <span className="text-2xl font-bold text-gray-900">LearnHub</span>
+              <span className="mt-2 text-2xl font-bold text-foreground">
+                Mentora
+              </span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-8">
+            <nav className="mt-2 hidden md:flex space-x-8">
               <Link
                 href="/categories"
-                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Categories
               </Link>
               <Link
                 href="/courses"
-                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Courses
               </Link>
               <Link
-                href="/instructors"
-                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
-              >
-                Instructors
-              </Link>
-              <Link
-                href="/for-business"
-                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
-              >
-                For Business
-              </Link>
-              <Link
                 href="/help"
-                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
               >
                 Help
               </Link>
             </nav>
           </div>
 
-          {/* Right side - Desktop */}
           <div className="hidden lg:flex items-center space-x-6">
-            {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Search for courses, instructors..."
-                className="pl-10 w-80 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                className="pl-10 w-80 bg-muted/50 border-border focus:bg-background transition-colors text-foreground"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearchSubmit}
               />
             </div>
-
-            <Link href="/teach" className="text-gray-700 hover:text-gray-900 font-medium">
-              Teach on LearnHub
-            </Link>
-
-            <Button variant="ghost" className="text-gray-700">
-              <UserCircle className="h-5 w-5 mr-2" />
-              Sign In
-            </Button>
-
-            {/* Auth Section */}
-            {!isLoading && !isAuthenticated ? (
-              <>
-                <Link href="/login">
-                  <Button variant="ghost" className="font-medium text-gray-700">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link href="/sign-up">
-                  <Button className="bg-gray-900 hover:bg-gray-800 text-white font-medium">
-                    Sign Up
-                  </Button>
-                </Link>
-              </>
-            ) : (
-              <>
-                {user && (
-                  <div className="flex items-center space-x-2">
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">
-                        {user.name || user.email}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {user.role || "Student"}
-                      </p>
-                    </div>
-                  </div>
-                )}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-gray-600 hover:text-red-600"
-                  onClick={handleLogout}
-                  title="Logout"
-                >
-                  <LogOut className="h-5 w-5" />
-                </Button>
-                <Link href="/dashboard">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="border-gray-200 hover:border-gray-900"
-                  >
-                    <UserCircle className="h-6 w-6 text-gray-900" />
-                  </Button>
-                </Link>
-              </>
-            )}
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2"
-          >
-            {isMobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+          {!isMobile && (
+            <>
+              {showLoader ? (
+                <div className="flex items-center justify-center w-[180px]">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : !isAuthenticated ? (
+                <div className="flex items-center space-x-4">
+                  <Link href="/login">
+                    <Button
+                      variant="ghost"
+                      className="font-medium text-muted-foreground hover:text-foreground cursor-pointer"
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/sign-up">
+                    <Button
+                      variant="default"
+                      className="text-white font-medium cursor-pointer"
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <UserDropdownMenu
+                  userName={user?.first_name + " " + user?.last_name}
+                  userRole={user?.role}
+                  userAvatarUrl={user?.Profile?.avatar_url}
+                  onLogout={handleLogout}
+                />
+              )}
+            </>
+          )}
+
+          {isMobile && (
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden p-2 text-gray-900 dark:text-white"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          )}
         </div>
 
-        {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden pb-4 border-t border-gray-200">
+          <div className="md:hidden pb-4 border-t border-gray-200 dark:border-neutral-800">
             <nav className="flex flex-col space-y-3 pt-4">
+              {isAuthenticated && user && (
+                <>
+                  {user.role === "admin" || user.role === "instructor" ? (
+                    <Link
+                      href={`/dashboard/${user.role}`}
+                      className="text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white font-medium px-2 py-2"
+                    >
+                      Dashboard
+                    </Link>
+                  ) : user.role === "student" ? (
+                    <>
+                      <Link
+                        href="/profile"
+                        className="text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white font-medium px-2 py-2"
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        href="/enrollments"
+                        className="text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white font-medium px-2 py-2"
+                      >
+                        My courses
+                      </Link>
+                    </>
+                  ) : null}
+                </>
+              )}
               <Link
                 href="/courses"
-                className="text-gray-600 hover:text-gray-900 font-medium px-2 py-2"
+                className="text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white font-medium px-2 py-2"
               >
                 Courses
               </Link>
               <Link
-                href="/for-instructors"
-                className="text-gray-600 hover:text-gray-900 font-medium px-2 py-2"
-              >
-                For Instructors
-              </Link>
-              <Link
                 href="/about"
-                className="text-gray-600 hover:text-gray-900 font-medium px-2 py-2"
+                className="text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white font-medium px-2 py-2"
               >
                 About
               </Link>
               <Link
                 href="/help"
-                className="text-gray-600 hover:text-gray-900 font-medium px-2 py-2"
+                className="text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white font-medium px-2 py-2"
               >
                 Help
               </Link>
-              {!isAuthenticated ? (
-                <>
-                  <Link href="/login" className="w-full">
-                    <Button variant="ghost" className="w-full justify-start">
-                      Log In
+              
+              {showLoader ? (
+                <div className="flex items-center justify-center py-4">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : !isAuthenticated ? (
+                <div className="flex flex-col space-y-2">
+                  <Link href="/login">
+                    <Button
+                      variant="ghost"
+                      className="text-center w-full font-medium text-muted-foreground bg-neutral-50 cursor-pointer"
+                    >
+                      Login
                     </Button>
                   </Link>
-                  <Link href="/sign-up" className="w-full">
-                    <Button className="w-full bg-linear-to-r from-indigo-600 to-purple-600">
+                  <Link href="/sign-up">
+                    <Button
+                      variant="default"
+                      className="text-center w-full font-medium text-white cursor-pointer"
+                    >
                       Sign Up
                     </Button>
                   </Link>
-                </>
+                </div>
               ) : (
                 <Button
                   variant="ghost"

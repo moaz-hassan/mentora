@@ -15,7 +15,7 @@ import { BookOpen, Mail, Lock, User, Loader2 } from "lucide-react";
 import RegisterAnimation from "@/components/animations/SignUpAnimations";
 import Link from "next/link";
 import registerApiCall from "@/lib/apiCalls/auth/register.apiCalls";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const [registerData, setRegisterData] = useState({

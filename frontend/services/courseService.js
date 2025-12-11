@@ -165,20 +165,20 @@ export async function processLesson(lesson, chapterId, token, uploadVideo) {
     }
   }
 
-  // Handle materials - upload pending materials
+  // Handle materials - upload pending materials to Supabase
   let materialsToSave = [];
   if (lesson.materials && lesson.materials.length > 0) {
-    const { uploadFileToCloudinary } = await import("@/lib/apiCalls/cloudinary/uploadFileToCloudinary");
+    const { uploadMaterialToSupabase } = await import("@/lib/apiCalls/supabase/uploadMaterialToSupabase");
     
     for (const material of lesson.materials) {
       if (material.pending && material.file) {
-        // Upload pending material
+        // Upload pending material to Supabase
         try {
-          const cloudinaryResult = await uploadFileToCloudinary(material.file);
+          const supabaseResult = await uploadMaterialToSupabase(material.file);
           materialsToSave.push({
             filename: material.filename,
-            url: cloudinaryResult.secure_url,
-            public_id: cloudinaryResult.public_id,
+            url: supabaseResult.secure_url,
+            public_id: supabaseResult.public_id,
             file_type: material.file_type,
             file_size: material.file_size,
           });
