@@ -98,26 +98,26 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center p-4">
       <div className="flex w-full max-w-6xl gap-8 items-center">
         <div className="hidden lg:block lg:w-1/2">
           <ForgotPasswordAnimation />
         </div>
-        <Card className="w-full lg:w-1/2 shadow-xl">
+        <Card className="w-full lg:w-1/2 shadow-xl bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <CardHeader className="space-y-3">
             <Link
               href="/login"
-              className="flex items-center text-sm text-gray-600 hover:text-gray-800 mb-2"
+              className="flex items-center text-sm text-slate-400 hover:text-white transition-colors mb-2"
             >
               <ArrowLeft className="w-4 h-4 mr-1" /> Back to login
             </Link>
             <div className="mx-auto bg-teal-600 w-16 h-16 rounded-full flex items-center justify-center">
               <Mail className="w-8 h-8 text-white" />
             </div>
-            <CardTitle className="text-2xl font-bold text-center">
+            <CardTitle className="text-2xl font-bold text-center text-white">
               Forgot Password?
             </CardTitle>
-            <CardDescription className="text-center">
+            <CardDescription className="text-center text-slate-400">
               {resetSent
                 ? "Check your email"
                 : "We'll send you reset instructions"}
@@ -127,14 +127,14 @@ export default function ForgotPasswordPage() {
             {!resetSent ? (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="forgot-email">Email Address</Label>
+                  <Label htmlFor="forgot-email" className="text-slate-300">Email Address</Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
                     <Input
                       id="forgot-email"
                       type="email"
                       placeholder="your.email@example.com"
-                      className="pl-10"
+                      className="pl-10 bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-teal-500"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -143,7 +143,7 @@ export default function ForgotPasswordPage() {
                 <Button
                   onClick={handleForgotPassword}
                   disabled={loading || !ableToResend}
-                  className="w-full bg-teal-600 hover:bg-teal-700 cursor-pointer"
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white cursor-pointer"
                 >
                   {loading ? (
                     <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
@@ -154,20 +154,20 @@ export default function ForgotPasswordPage() {
               </div>
             ) : (
               <div className="space-y-4 text-center">
-                <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle2 className="w-8 h-8 text-green-600" />
+                <div className="mx-auto w-16 h-16 bg-green-900/30 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-8 h-8 text-green-400" />
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-400">
                     We&apos;ve sent password reset instructions to
                   </p>
-                  <p className="font-medium text-gray-900">{email}</p>
-                  <p className="text-sm text-gray-600 mt-4">
+                  <p className="font-medium text-white">{email}</p>
+                  <p className="text-sm text-slate-400 mt-4">
                     Didn&apos;t receive the email? Check your spam folder or{" "}
                     <button
                       disabled={loading || !ableToResend}
                       onClick={() => setResetSent(false)}
-                      className="text-teal-600 hover:text-teal-700 font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="text-teal-400 hover:text-teal-300 font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       try again in {ableToResendTimer} seconds
                     </button>

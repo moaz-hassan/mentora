@@ -46,6 +46,7 @@ import instructorAnalyticsRoutes from "./routes/instructor/analytics.routes.js";
 import instructorBatchUploadRoutes from "./routes/instructor/batch-upload.routes.js";
 import { setupChatSocket } from "./sockets/chat.socket.js";
 import { connectRedis } from "./config/redis.js";
+import { initCronJobs } from "./cron/init.cron.js";
 
 const app = express();
 
@@ -186,8 +187,9 @@ const io = new Server(server, {
 setupChatSocket(io);
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () =>
-  console.log(`Server running on http://localhost:${PORT}`)
-);
+server.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+  initCronJobs();
+});
 
 export default app;

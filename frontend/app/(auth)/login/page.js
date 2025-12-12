@@ -161,7 +161,7 @@ export default function LoginPage() {
 
               <Button
                 onClick={handleLogin}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer"
                 disabled={loading}
               >
                 {loading ? (

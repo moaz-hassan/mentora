@@ -223,7 +223,7 @@ export default function RegisterPage() {
               </div>
               <Button
                 onClick={handleRegister}
-                className="w-full bg-purple-600 hover:bg-purple-700 cursor-pointer"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white cursor-pointer"
                 disabled={loading}
               >
                 {loading ? (

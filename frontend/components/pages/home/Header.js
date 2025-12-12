@@ -12,6 +12,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import Image from "next/image";
 import logo from "@/app/icon.png";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import NotificationBell from "@/components/common/NotificationBell";
+
 
 export default function Header() {
   const { isAuthenticated, user, clearAuth, isLoading } = useAuthStore();
@@ -105,6 +107,11 @@ export default function Header() {
             {/* Theme Toggle */}
             <ThemeToggle />
 
+            {/* Notification Bell - only for authenticated users (not admin) */}
+            {!showLoader && isAuthenticated && user?.role !== "admin" && (
+              <NotificationBell />
+            )}
+
             {!isMobile && (
               <>
                 {showLoader ? (
@@ -140,6 +147,7 @@ export default function Header() {
                 )}
               </>
             )}
+
 
 
           {isMobile && (
