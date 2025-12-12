@@ -1,42 +1,4 @@
-
-
 import * as analyticsService from "../../services/instructor/analytics.service.js";
-
-
-export const getInstructorOverview = async (req, res, next) => {
-  try {
-    const instructorId = req.user.id;
-    const overview = await analyticsService.getInstructorOverview(instructorId);
-
-    res.status(200).json({
-      success: true,
-      data: overview,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-
-export const getCourseAnalytics = async (req, res, next) => {
-  try {
-    const { courseId } = req.params;
-    const instructorId = req.user.id;
-
-    const analytics = await analyticsService.getCourseAnalytics(
-      courseId,
-      instructorId
-    );
-
-    res.status(200).json({
-      success: true,
-      data: analytics,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 
 export const getRevenueAnalytics = async (req, res, next) => {
   try {

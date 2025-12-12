@@ -5,8 +5,8 @@ import { Server } from "socket.io";
 import { errorHandler, notFound } from "./middlewares/error.middleware.js";
 import cookieParser from "cookie-parser";
 import { authenticate, authorize } from "./middlewares/auth.middleware.js";
+import { generalLimiter } from "./rate-limiters/general.limiter.js";
 import authRoutes from "./routes/auth/auth.routes.js";
-
 import courseRoutes from "./routes/courses/course.routes.js";
 import instructorRoutes from "./routes/instructor.routes.js";
 import chapterRoutes from "./routes/courses/chapter.routes.js";
@@ -60,6 +60,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Apply general rate limiter to all API routes
+app.use("/api", generalLimiter);
+
 
 app.get("/", (req, res) => {
   res.status(200).json({

@@ -129,3 +129,17 @@ export const deactivateExpiredCoupons = async (req, res, next) => {
     next(error);
   }
 };
+
+// Public endpoint - get active global coupon for homepage promo banner
+export const getActiveGlobalCoupon = async (req, res, next) => {
+  try {
+    const globalCoupon = await couponService.getActiveGlobalCoupon();
+    
+    res.status(200).json({
+      success: true,
+      data: globalCoupon // null if no active global coupon
+    });
+  } catch (error) {
+    next(error);
+  }
+};

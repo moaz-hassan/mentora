@@ -11,6 +11,7 @@ import UserDropdownMenu from "./UserDropDownMenu";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Image from "next/image";
 import logo from "@/app/icon.png";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export default function Header() {
   const { isAuthenticated, user, clearAuth, isLoading } = useAuthStore();
@@ -100,46 +101,51 @@ export default function Header() {
             </div>
           </div>
 
-          {!isMobile && (
-            <>
-              {showLoader ? (
-                <div className="flex items-center justify-center w-[180px]">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                </div>
-              ) : !isAuthenticated ? (
-                <div className="flex items-center space-x-4">
-                  <Link href="/login">
-                    <Button
-                      variant="ghost"
-                      className="font-medium text-muted-foreground hover:text-foreground cursor-pointer"
-                    >
-                      Login
-                    </Button>
-                  </Link>
-                  <Link href="/sign-up">
-                    <Button
-                      variant="default"
-                      className="text-white font-medium cursor-pointer"
-                    >
-                      Sign Up
-                    </Button>
-                  </Link>
-                </div>
-              ) : (
-                <UserDropdownMenu
-                  userName={user?.first_name + " " + user?.last_name}
-                  userRole={user?.role}
-                  userAvatarUrl={user?.Profile?.avatar_url}
-                  onLogout={handleLogout}
-                />
-              )}
-            </>
-          )}
+          <div className="flex items-center space-x-4">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
+            {!isMobile && (
+              <>
+                {showLoader ? (
+                  <div className="flex items-center justify-center w-[180px]">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : !isAuthenticated ? (
+                  <div className="flex items-center space-x-4">
+                    <Link href="/login">
+                      <Button
+                        variant="ghost"
+                        className="font-medium text-muted-foreground hover:text-foreground cursor-pointer"
+                      >
+                        Login
+                      </Button>
+                    </Link>
+                    <Link href="/sign-up">
+                      <Button
+                        variant="default"
+                        className="font-medium cursor-pointer"
+                      >
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <UserDropdownMenu
+                    userName={user?.first_name + " " + user?.last_name}
+                    userRole={user?.role}
+                    userAvatarUrl={user?.Profile?.avatar_url}
+                    onLogout={handleLogout}
+                  />
+                )}
+              </>
+            )}
+
 
           {isMobile && (
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-900 dark:text-white"
+              className="lg:hidden p-2 text-foreground"
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -148,7 +154,9 @@ export default function Header() {
               )}
             </button>
           )}
+          </div>
         </div>
+
 
         {isMobileMenuOpen && (
           <div className="md:hidden pb-4 border-t border-gray-200 dark:border-neutral-800">

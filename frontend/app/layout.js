@@ -5,6 +5,7 @@ import { NotificationToastContainer } from "@/components/notifications/Notificat
 import FloatingChatWidget from "@/components/pages/chats/FloatingChatWidget";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import AuthProvider from "@/components/AuthProvider";
+import GlobalPromoBanner from "@/components/layout/GlobalPromoBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <AuthProvider>
           <ThemeProvider>
+            <GlobalPromoBanner />
             <ToastProvider />
             <NotificationToastContainer />
             {children}

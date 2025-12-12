@@ -91,15 +91,15 @@ export default function ReportsManagementPage() {
         getReportsStats(),
       ]);
 
-      if (reportsResult.success && reportsResult.data) {
-        setReports(reportsResult.data.reports || reportsResult.data || []);
+      if (reportsResult.success) {
+        setReports(reportsResult.reports || reportsResult.data?.reports || []);
       } else {
         toast.error(reportsResult.error || "Failed to load reports");
         setReports([]);
       }
 
-      if (statsResult.success && statsResult.data) {
-        setStats(statsResult.data.stats || statsResult.data);
+      if (statsResult.success) {
+        setStats(statsResult.stats || statsResult.data?.stats || null);
       } else {
         setStats(null);
       }

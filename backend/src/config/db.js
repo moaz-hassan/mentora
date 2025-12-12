@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME || "online_courses_platform",
+  process.env.DB_NAME || "mentora",
   process.env.DB_USER || "root",
   process.env.DB_PASS || "0000",
   {
@@ -19,8 +19,8 @@ async function connectDB() {
   try {
     await sequelize.authenticate();
     console.log("Database connected successfully");
-    
-    
+    // sequelize.sync({ alter: true });
+    // console.log("Database synchronized successfully");
   } catch (error) {
     console.error("Database connection error:", error);
     throw error;

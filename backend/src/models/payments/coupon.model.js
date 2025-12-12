@@ -10,13 +10,18 @@ const Coupon = sequelize.define(
       primaryKey: true,
       defaultValue: () => uuidv4(),
     },
-    course_id: { type: DataTypes.STRING(50), allowNull: false, references: { model: "Courses", key: "id" } },
+    course_id: { 
+      type: DataTypes.STRING(50), 
+      allowNull: true, // Nullable for global coupons
+      references: { model: "courses", key: "id" } 
+    },
     code: { type: DataTypes.STRING(50), allowNull: false, unique: true },
     discount_type: {
       type: DataTypes.ENUM("percentage", "fixed"),
       allowNull: false,
     },
     is_active: { type: DataTypes.BOOLEAN, defaultValue: true },
+    is_global: { type: DataTypes.BOOLEAN, defaultValue: false }, // Global coupon for all courses
     discount_value: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
     discount_start_date: { type: DataTypes.DATE, allowNull: false },
     discount_end_date: { type: DataTypes.DATE, allowNull: false },

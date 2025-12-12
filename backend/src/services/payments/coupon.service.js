@@ -42,8 +42,9 @@ export const createCoupon = async (couponData, userId, userRole) => {
       error.statusCode = 403;
       throw error;
     }
+    couponData.is_global = false;
   } else {
-    
+    // Global coupon - admin only
     if (userRole !== "admin") {
       const error = new Error(
         "Only admins can create coupons applicable to all courses"
@@ -52,7 +53,25 @@ export const createCoupon = async (couponData, userId, userRole) => {
       throw error;
     }
     
+    // Check if there's already an active global coupon
+    const existingGlobalCoupon = await Coupon.findOne({
+      where: {
+        is_global: true,
+        is_active: true,
+        discount_end_date: { [Op.gte]: new Date() }
+      }
+    });
+    
+    if (existingGlobalCoupon) {
+      const error = new Error(
+        "Only one active global coupon is allowed. Please deactivate the existing one first."
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+    
     couponData.course_id = null;
+    couponData.is_global = true;
   }
 
   return await Coupon.create(couponData);
@@ -272,8 +291,6 @@ export const searchCoupons = async (searchTerm, filters = {}) => {
 
 
 export const deactivateExpiredCoupons = async () => {
-  const { Op } = await import("sequelize");
-  
   const now = new Date();
   
   const result = await Coupon.update(
@@ -290,5 +307,34 @@ export const deactivateExpiredCoupons = async () => {
 
   return {
     deactivatedCount: result[0]
+  };
+};
+
+// Get active global coupon for homepage marketing banner
+export const getActiveGlobalCoupon = async () => {
+  const now = new Date();
+  
+  const globalCoupon = await Coupon.findOne({
+    where: {
+      is_global: true,
+      is_active: true,
+      discount_start_date: { [Op.lte]: now },
+      discount_end_date: { [Op.gte]: now }
+    },
+    attributes: [
+      'id', 'code', 'discount_type', 'discount_value', 
+      'discount_start_date', 'discount_end_date'
+    ]
+  });
+
+  if (!globalCoupon) {
+    return null;
+  }
+
+  return {
+    code: globalCoupon.code,
+    discountType: globalCoupon.discount_type,
+    discountValue: parseFloat(globalCoupon.discount_value),
+    expiresAt: globalCoupon.discount_end_date
   };
 };

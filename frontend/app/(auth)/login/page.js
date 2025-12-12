@@ -29,28 +29,28 @@ import InputInstructions from "@/components/common/InputInstructions";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import useAuthStore from "@/store/authStore";
+import logo from "@/app/icon.png";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const {setAuth} = useAuthStore();
+  const { setAuth } = useAuthStore();
 
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await loginApiCall(loginData.email, loginData.password);      
+      const response = await loginApiCall(loginData.email, loginData.password);
       if (response.success) {
         Cookies.set("authToken", response.data.token);
         localStorage.getItem("forgot_password_timer")
           ? localStorage.removeItem("forgot_password_timer")
-          : null;          
+          : null;
         setAuth(response.data.user);
         toast.success(response.message || "Login successful");
         router.push("/");
-      } else {
-        toast.error(response.error || "Failed to login");
       }
     } catch (error) {
       toast.error(error.message || "Failed to login");
@@ -59,33 +59,45 @@ export default function LoginPage() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !loading) {
+      handleLogin();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="flex w-full max-w-6xl gap-8 items-center">
         <div className="hidden lg:block lg:w-1/2">
           <LoginAnimation />
         </div>
-        <Card className="w-full lg:w-1/2 shadow-xl">
+        <Card className="w-full lg:w-1/2 shadow-xl dark:bg-gray-800 dark:border-gray-700">
           <CardHeader className="space-y-3 text-center">
-            <div className="mx-auto bg-indigo-600 w-16 h-16 rounded-full flex items-center justify-center">
-              <BookOpen className="w-8 h-8 text-white" />
-            </div>
-            <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-            <CardDescription>
+            <Link href="/">
+              <Image
+                src={logo}
+                alt="Logo"
+                width={64}
+                height={64}
+                className="mx-auto w-10 h-12"
+              />
+            </Link>
+            <CardTitle className="text-2xl font-bold dark:text-white">Welcome Back</CardTitle>
+            <CardDescription className="dark:text-gray-300">
               Sign in to continue your learning journey
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-4" onKeyDown={handleKeyDown}>
               <div className="space-y-2">
-                <Label htmlFor="login-email">Email</Label>
+                <Label htmlFor="login-email" className="dark:text-gray-200">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input
                     id="login-email"
                     type="email"
                     placeholder="your.email@example.com"
-                    className="pl-10"
+                    className="pl-10 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                     value={loginData.email}
                     onChange={(e) =>
                       setLoginData({ ...loginData, email: e.target.value })
@@ -94,7 +106,7 @@ export default function LoginPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="login-password">
+                <Label htmlFor="login-password" className="dark:text-gray-200">
                   Password{" "}
                   <TooltipComponent
                     content={
@@ -119,7 +131,7 @@ export default function LoginPage() {
                     id="login-password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="pl-10"
+                    className="pl-10 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                     value={loginData.password}
                     onChange={(e) =>
                       setLoginData({ ...loginData, password: e.target.value })
@@ -127,12 +139,12 @@ export default function LoginPage() {
                   />
                   {showPassword ? (
                     <Eye
-                      className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                     />
                   ) : (
                     <EyeOff
-                      className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                     />
                   )}
@@ -141,7 +153,7 @@ export default function LoginPage() {
               <div className="flex justify-end">
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                  className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium"
                 >
                   Forgot password?
                 </Link>
@@ -165,11 +177,11 @@ export default function LoginPage() {
           </CardContent>
 
           <CardFooter className="flex justify-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Don&apos;t have an account?{" "}
               <Link
                 href="/sign-up"
-                className="text-indigo-600 hover:text-indigo-700 font-medium"
+                className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium"
               >
                 Sign up
               </Link>
@@ -180,3 +192,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

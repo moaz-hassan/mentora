@@ -11,13 +11,14 @@ import Pagination from "@/components/courses/Pagination";
 import { useCourseFilters } from "@/hooks/courses/useCourseFilters";
 import MobileFilterDialog from "@/components/courses/MobileFilterDialog";
 import Link from "next/link";
-import { BookOpen, SlidersHorizontal, ChevronDown, ChevronRight, Home, Search } from "lucide-react";
+import { BookOpen, SlidersHorizontal, ChevronDown, ChevronRight, Home, Search, Loader2 } from "lucide-react";
 
 const API_URL = getApiBaseUrl();
 
 export default function CoursesSearchPage() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [error, setError] = useState(null);
   const [allCategories, setAllCategories] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -134,6 +135,7 @@ export default function CoursesSearchPage() {
       setCourses([]);
     } finally {
       setLoading(false);
+      setIsInitialLoad(false);
     }
   };
 
@@ -142,12 +144,13 @@ export default function CoursesSearchPage() {
     return cat?.name || catId;
   };
 
-  if (loading && courses.length === 0) {
+  // Show skeleton only on initial load
+  if (isInitialLoad && loading) {
     return <CoursesSkeleton />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
       <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div
@@ -187,6 +190,7 @@ export default function CoursesSearchPage() {
         </div>
       </div>
 
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           <div className="w-72 flex-shrink-0 hidden lg:block">
@@ -220,8 +224,8 @@ export default function CoursesSearchPage() {
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-4">
-                <p className="text-gray-600">
-                  <span className="font-semibold text-gray-900">
+                <p className="text-gray-600 dark:text-gray-400">
+                  <span className="font-semibold text-gray-900 dark:text-white">
                     {totalCourses}
                   </span>{" "}
                   {totalCourses === 1 ? "course" : "courses"} found
@@ -229,7 +233,7 @@ export default function CoursesSearchPage() {
 
                 <button
                   onClick={() => setShowMobileFilters(true)}
-                  className="lg:hidden flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+                  className="lg:hidden flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                   Filters
@@ -242,7 +246,7 @@ export default function CoursesSearchPage() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">Sort by:</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">Sort by:</span>
                 <div className="relative">
                   <select
                     value={sortBy}
@@ -250,7 +254,7 @@ export default function CoursesSearchPage() {
                       setSortBy(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className="appearance-none pl-3 pr-8 py-2 text-sm font-medium bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                    className="appearance-none pl-3 pr-8 py-2 text-sm font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-gray-900 dark:text-white"
                   >
                     {sortOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -262,6 +266,7 @@ export default function CoursesSearchPage() {
                 </div>
               </div>
             </div>
+
 
             {activeFiltersCount > 0 && (
               <div className="flex flex-wrap gap-2 mb-6">
@@ -322,11 +327,11 @@ export default function CoursesSearchPage() {
             )}
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
-                <h3 className="text-sm font-semibold text-red-800 mb-1">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 mb-6">
+                <h3 className="text-sm font-semibold text-red-800 dark:text-red-300 mb-1">
                   Error Loading Courses
                 </h3>
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
                 <button
                   onClick={fetchCourses}
                   className="mt-3 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700"
@@ -336,15 +341,25 @@ export default function CoursesSearchPage() {
               </div>
             )}
 
-            {!error && courses.length === 0 && !loading ? (
-              <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-                <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Search className="w-8 h-8 text-gray-400" />
+            {/* Loading overlay for filter changes */}
+            {loading && !isInitialLoad && (
+              <div className="flex items-center justify-center py-12">
+                <div className="flex flex-col items-center gap-3">
+                  <Loader2 className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-spin" />
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Loading courses...</span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              </div>
+            )}
+
+            {!loading && !error && courses.length === 0 ? (
+              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                  <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   No courses found
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
                   Try adjusting your search or filters.
                 </p>
                 {activeFiltersCount > 0 && (
@@ -356,7 +371,7 @@ export default function CoursesSearchPage() {
                   </button>
                 )}
               </div>
-            ) : (
+            ) : !loading && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
                   {courses.map((course) => (
@@ -400,7 +415,7 @@ export default function CoursesSearchPage() {
 
 function CoursesSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="h-10 w-72 bg-white/20 rounded-lg animate-pulse mb-3" />
@@ -410,21 +425,21 @@ function CoursesSkeleton() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           <div className="w-72 flex-shrink-0 hidden lg:block">
-            <div className="bg-white rounded-xl border border-gray-200 h-[600px] animate-pulse" />
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 h-[600px] animate-pulse" />
           </div>
           <div className="flex-1">
-            <div className="h-14 bg-gray-100 rounded-xl animate-pulse mb-6" />
+            <div className="h-14 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse mb-6" />
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="bg-white rounded-xl border border-gray-100 overflow-hidden"
+                  className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden"
                 >
-                  <div className="h-44 bg-gray-200 animate-pulse" />
+                  <div className="h-44 bg-gray-200 dark:bg-gray-700 animate-pulse" />
                   <div className="p-5 space-y-3">
-                    <div className="h-3 w-20 bg-gray-200 rounded animate-pulse" />
-                    <div className="h-5 bg-gray-200 rounded animate-pulse" />
-                    <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-3 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                    <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                    <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
                   </div>
                 </div>
               ))}
@@ -435,3 +450,4 @@ function CoursesSkeleton() {
     </div>
   );
 }
+

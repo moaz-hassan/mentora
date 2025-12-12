@@ -88,6 +88,69 @@
   .delay-200 {
     animation-delay: 0.2s;
   }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 4s ease infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ----------------------------------------
+   Dark Mode Blue Color Overrides
+   Making blues slightly darker for better dark mode contrast
+---------------------------------------- */
+.dark .bg-blue-600 {
+  background-color: #1d4ed8 !important; /* Darker blue-700 */
+}
+
+.dark .bg-blue-700 {
+  background-color: #1e40af !important; /* Darker blue-800 */
+}
+
+.dark .from-blue-600 {
+  --tw-gradient-from: #1d4ed8 !important;
+}
+
+.dark .via-blue-700 {
+  --tw-gradient-via: #1e40af !important;
+}
+
+.dark .to-indigo-700 {
+  --tw-gradient-to: #3730a3 !important; /* Darker indigo */
+}
+
+.dark .bg-indigo-600 {
+  background-color: #4338ca !important; /* Darker indigo-700 */
+}
+
+.dark .text-blue-600 {
+  color: #60a5fa !important; /* Brighter blue for text in dark mode */
+}
+
+.dark .text-indigo-600 {
+  color: #818cf8 !important; /* Brighter indigo for text in dark mode */
 }
 
 /* FORCE HIDE CLOUDINARY LOGO BUTTON */

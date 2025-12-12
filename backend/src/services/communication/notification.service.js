@@ -143,10 +143,10 @@ export const getUnreadCount = async (userId) => {
 export const broadcastNotification = async (notificationData, adminId) => {
   const { title, message, targetAudience, scheduledAt, type = "announcement" } = notificationData;
 
-  
-  const validAudiences = ["all", "students", "instructors"];
+  // Validate target audience - now includes 'admins'
+  const validAudiences = ["all", "students", "instructors", "admins"];
   if (!validAudiences.includes(targetAudience)) {
-    const error = new Error("Invalid target audience. Must be 'all', 'students', or 'instructors'");
+    const error = new Error("Invalid target audience. Must be 'all', 'students', 'instructors', or 'admins'");
     error.statusCode = 400;
     throw error;
   }
@@ -225,8 +225,10 @@ async function getRecipientsByAudience(targetAudience, additionalFilters = {}) {
     whereClause.role = "student";
   } else if (targetAudience === "instructors") {
     whereClause.role = "instructor";
+  } else if (targetAudience === "admins") {
+    whereClause.role = "admin";
   }
-  
+  // 'all' means all roles - no role filter
 
   const users = await User.findAll({
     where: whereClause,

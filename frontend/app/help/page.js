@@ -113,7 +113,7 @@ export default function HelpPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -133,7 +133,7 @@ export default function HelpPage() {
                   placeholder="Search for help..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-12 pr-4 py-4 rounded-lg text-gray-900 dark:text-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function HelpPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Browse by Category</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Browse by Category</h2>
           
           {!selectedCategory ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -152,48 +152,48 @@ export default function HelpPage() {
                 <div
                   key={index}
                   onClick={() => setSelectedCategory(category)}
-                  className="bg-white rounded-lg p-6 shadow-sm hover:shadow-lg transition-all cursor-pointer transform hover:-translate-y-1"
+                  className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm hover:shadow-lg transition-all cursor-pointer transform hover:-translate-y-1 border border-transparent dark:border-gray-700"
                 >
                   <div className={`w-12 h-12 rounded-lg ${category.color} flex items-center justify-center mb-4`}>
                     <category.icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     {category.title}
                   </h3>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
                     {category.description}
                   </p>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border dark:border-gray-700">
               {}
-              <div className="flex items-center justify-between mb-6 pb-6 border-b">
+              <div className="flex items-center justify-between mb-6 pb-6 border-b dark:border-gray-700">
                 <div className="flex items-center space-x-4">
                   <button
                     onClick={() => setSelectedCategory(null)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                   >
-                    <ArrowLeft className="w-5 h-5 text-gray-600" />
+                    <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                   </button>
                   <div className={`w-12 h-12 rounded-lg ${selectedCategory.color} flex items-center justify-center`}>
                     <selectedCategory.icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                       {selectedCategory.title}
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-400">
                       {selectedCategory.description}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedCategory(null)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-600" />
+                  <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </button>
               </div>
 
@@ -202,12 +202,12 @@ export default function HelpPage() {
                 {selectedCategory.articles.map((article, index) => (
                   <div
                     key={index}
-                    className="p-6 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer"
+                    className="p-6 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all cursor-pointer"
                   >
-                    <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                       {article.title}
                     </h4>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-400">
                       {article.content}
                     </p>
                   </div>
@@ -219,40 +219,40 @@ export default function HelpPage() {
 
         {}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             Frequently Asked Questions
           </h2>
-          <div className="bg-white rounded-lg shadow-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700">
             {filteredFaqs.length > 0 ? (
               filteredFaqs.map((faq, index) => (
                 <div
                   key={faq.id}
-                  className={`border-b border-gray-200 last:border-b-0 ${
+                  className={`border-b border-gray-200 dark:border-gray-700 last:border-b-0 ${
                     index === 0 ? 'rounded-t-lg' : ''
                   } ${index === filteredFaqs.length - 1 ? 'rounded-b-lg' : ''}`}
                 >
                   <button
                     onClick={() => toggleFaq(faq.id)}
-                    className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                    className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
-                    <span className="text-left font-medium text-gray-900">
+                    <span className="text-left font-medium text-gray-900 dark:text-white">
                       {faq.question}
                     </span>
                     {expandedFaq === faq.id ? (
-                      <ChevronUp className="w-5 h-5 text-gray-500 flex-shrink-0 ml-4" />
+                      <ChevronUp className="w-5 h-5 text-gray-500 dark:text-gray-400 flex-shrink-0 ml-4" />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0 ml-4" />
+                      <ChevronDown className="w-5 h-5 text-gray-500 dark:text-gray-400 flex-shrink-0 ml-4" />
                     )}
                   </button>
                   {expandedFaq === faq.id && (
-                    <div className="px-6 pb-4 text-gray-600">
+                    <div className="px-6 pb-4 text-gray-600 dark:text-gray-400">
                       {faq.answer}
                     </div>
                   )}
                 </div>
               ))
             ) : (
-              <div className="px-6 py-8 text-center text-gray-500">
+              <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                 No results found for "{searchQuery}"
               </div>
             )}
@@ -260,12 +260,12 @@ export default function HelpPage() {
         </div>
 
         {}
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 text-center">
-          <MessageCircle className="w-12 h-12 mx-auto mb-4 text-blue-600" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-8 text-center border dark:border-gray-700">
+          <MessageCircle className="w-12 h-12 mx-auto mb-4 text-blue-600 dark:text-blue-400" />
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Still need help?
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             Can't find what you're looking for? Use our AI assistant (bottom-right corner) or contact our support team.
           </p>
           <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
@@ -276,3 +276,4 @@ export default function HelpPage() {
     </div>
   );
 }
+

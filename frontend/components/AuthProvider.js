@@ -10,10 +10,8 @@ export default function AuthProvider({ children }) {
 
   useEffect(() => {
     if (token && !user && !localStorage.getItem("auth-store")) {
-      console.log("AuthProvider: Token found, but User missing. Fetching...");
       fetchUser();
     }else if(!token){
-      console.log("AuthProvider: No Token found. Clearing Auth...");
       clearAuth()
     }
   }, [token, user, fetchUser]);

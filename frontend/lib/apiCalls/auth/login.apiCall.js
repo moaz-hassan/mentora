@@ -46,6 +46,6 @@ export default async function loginApiCall(email, password) {
     );
     return response.data;
   } catch (error) {
-    return error.response?.data || { success: false, message: error.message };
+    throw error.response?.data;
   }
 }

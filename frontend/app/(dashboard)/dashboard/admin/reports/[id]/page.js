@@ -29,7 +29,7 @@ export default function ReportDetailPage() {
     try {
       const result = await getReportById(reportId);
       if (result.success) {
-        setReport(result.data.report || result.data);
+        setReport(result.report || result.data?.report || result.data);
       } else {
         toast.error(result.error || "Failed to load report");
       }
@@ -46,8 +46,8 @@ export default function ReportDetailPage() {
       const result = await getReportAISummary(reportId);
       if (result.success) {
         setAiSummary({ 
-          summary: result.data.summary, 
-          recommendations: result.data.recommendations 
+          summary: result.summary || result.data?.summary, 
+          recommendations: result.recommendations || result.data?.recommendations 
         });
         toast.success("AI insights generated");
       } else {
@@ -64,7 +64,7 @@ export default function ReportDetailPage() {
     try {
       const result = await updateReportStatus(reportId, newStatus);
       if (result.success) {
-        setReport(result.data.report || { ...report, status: newStatus });
+        setReport(result.report || result.data?.report || { ...report, status: newStatus });
         toast.success(result.message || "Status updated successfully");
       } else {
         toast.error(result.error || "Failed to update status");

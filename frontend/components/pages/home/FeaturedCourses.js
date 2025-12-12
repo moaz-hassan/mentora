@@ -7,7 +7,7 @@ export default async function FeaturedCourses() {
   const { data } = await getFeaturedCourses();
 
   return (
-    <section className="bg-white py-16">
+    <section className="bg-white dark:bg-gray-950 py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold text-foreground">
@@ -24,6 +24,7 @@ export default async function FeaturedCourses() {
         <p className="text-muted-foreground mb-8">
           Explore our most popular courses chosen by students
         </p>
+
         
         {data?.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -41,12 +42,12 @@ export default async function FeaturedCourses() {
 
 function EmptyState() {
   return (
-    <div className="text-center py-12 bg-gray-50 rounded-lg">
-      <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+    <div className="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+      <BookOpen className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
         No featured courses yet
       </h3>
-      <p className="text-gray-600 mb-4">
+      <p className="text-gray-600 dark:text-gray-400 mb-4">
         Check back soon for our handpicked courses
       </p>
       <Link
@@ -59,6 +60,7 @@ function EmptyState() {
     </div>
   );
 }
+
 
 
 

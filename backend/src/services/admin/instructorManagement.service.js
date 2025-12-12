@@ -1,9 +1,8 @@
 
-
 import models from "../../models/index.js";
 import { Op, fn, col, literal } from "sequelize";
 
-const { User, Course, Enrollment, Payment, CourseReview } = models;
+const { User, Course, Enrollment, Payment, Ratings } = models;
 
 
 export const getAllInstructors = async (filters = {}) => {
@@ -75,18 +74,21 @@ export const getInstructorMetrics = async (instructorId) => {
   const commissionRate = 0.20;
   const earnings = (totalRevenue || 0) * (1 - commissionRate);
 
-  
-  const ratingResult = await CourseReview.findOne({
-    where: { course_id: courseIds },
-    attributes: [
-      [fn("AVG", col("rating")), "avgRating"]
-    ],
-    raw: true
-  });
+  // Average rating from Ratings model - only query if courses exist
+  let avgRating = null;
+  if (courseIds.length > 0) {
+    const ratingResult = await Ratings.findOne({
+      where: { course_id: courseIds },
+      attributes: [
+        [fn("AVG", col("rating")), "avgRating"]
+      ],
+      raw: true
+    });
 
-  const avgRating = ratingResult?.avgRating 
-    ? parseFloat(ratingResult.avgRating).toFixed(1)
-    : null;
+    avgRating = ratingResult?.avgRating 
+      ? parseFloat(ratingResult.avgRating).toFixed(1)
+      : null;
+  }
 
   return {
     courseCount,
@@ -178,11 +180,11 @@ export const getInstructorPerformance = async (instructorId) => {
     ? (totalProgress / enrollments.length).toFixed(1)
     : 0;
 
-  
-  const reviews = await CourseReview.findAll({
+  // Reviews from Ratings model
+  const reviews = courseIds.length > 0 ? await Ratings.findAll({
     where: { course_id: courseIds },
     attributes: ["rating"]
-  });
+  }) : [];
 
   const satisfactionScore = reviews.length > 0
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)

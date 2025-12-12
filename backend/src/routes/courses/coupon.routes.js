@@ -62,4 +62,10 @@ router.post(
   couponController.validateCoupon
 );
 
+// Public route - no auth required - for homepage promo banner
+router.get(
+  "/global-promo",
+  couponController.getActiveGlobalCoupon
+);
+
 export default router;

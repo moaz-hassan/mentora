@@ -104,15 +104,16 @@ export default function Categories() {
   }
 
   return (
-    <section className="bg-gray-50 py-16">
+    <section className="bg-gray-50 dark:bg-gray-900 py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Explore Top Categories</h2>
-          <p className="text-lg text-gray-600">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Explore Top Categories</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
             Discover courses across a variety of subjects. Whatever your passion, we have the perfect course for you.
           </p>
         </div>
         
+
         {categories.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {categories.map((category) => {
@@ -124,12 +125,12 @@ export default function Categories() {
                   key={category.id || category.name} 
                   href={`/courses?categories=${category.id}`}
                 >
-                  <div className="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-gray-300 hover:-translate-y-1 transition-all duration-300 cursor-pointer group h-full">
+                  <div className="flex flex-col items-center p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 hover:-translate-y-1 transition-all duration-300 cursor-pointer group h-full">
                     <div className={`${color} p-4 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300`}>
                       <Icon className="h-8 w-8" />
                     </div>
-                    <p className="font-semibold text-gray-900 text-center mb-1">{category.name}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-semibold text-gray-900 dark:text-white text-center mb-1">{category.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {courseCount > 0 
                         ? `${courseCount.toLocaleString()} ${courseCount === 1 ? 'course' : 'courses'}`
                         : 'Coming soon'
@@ -138,6 +139,7 @@ export default function Categories() {
                   </div>
                 </Link>
               );
+
             })}
           </div>
         ) : (
