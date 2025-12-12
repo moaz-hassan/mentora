@@ -10,13 +10,10 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "@elasticemail/elasticemail-client": "^4.0.26",
-    "@getbrevo/brevo": "^3.0.1",
     "@google/genai": "^1.30.0",
-    "@sendinblue/client": "^3.3.1",
     "@supabase/supabase-js": "^2.86.2",
     "bcryptjs": "^3.0.3",
     "bull": "^4.16.5",
