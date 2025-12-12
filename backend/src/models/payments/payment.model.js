@@ -10,7 +10,10 @@ const Payment = sequelize.define("Payment", {
   currency: { type: DataTypes.STRING(10), defaultValue: "USD" },
   payment_method: { type: DataTypes.ENUM("card", "paypal", "stripe"), defaultValue: "card" },
   status: { type: DataTypes.ENUM("pending", "completed", "failed"), defaultValue: "pending" },
+  coupon_code: { type: DataTypes.STRING(50), allowNull: true },
+  discount_amount: { type: DataTypes.DECIMAL(10,2), allowNull: true },
   created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
 }, { tableName: "payments", timestamps: false });
 
 export default Payment;
+

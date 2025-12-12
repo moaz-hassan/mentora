@@ -21,6 +21,7 @@ const Notification = sequelize.define(
         "new_enrollment",
         "course_completed",
         "certificate_issued",
+        "announcement",
         "info",
         "success",
         "warning",

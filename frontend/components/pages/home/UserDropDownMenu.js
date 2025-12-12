@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,6 +14,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { UserIcon } from "lucide-react";
+import { getNotifications } from "@/lib/apiCalls/notifications/notifications.apiCall";
 
 export default function UserDropDownMenu({
   userName,
@@ -18,6 +22,35 @@ export default function UserDropDownMenu({
   userAvatarUrl,
   onLogout,
 }) {
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await getNotifications(1, 1);
+        if (response.success && response.data?.unreadCount !== undefined) {
+          setUnreadCount(response.data.unreadCount);
+        }
+      } catch (error) {
+        console.error("Error fetching unread count:", error);
+      }
+    };
+    fetchUnreadCount();
+  }, []);
+
+  const NotificationsMenuItem = () => (
+    <Link href="/notifications">
+      <DropdownMenuItem className="cursor-pointer flex items-center justify-between">
+        <span>Notifications</span>
+        {unreadCount > 0 && (
+          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-medium text-white">
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
+        )}
+      </DropdownMenuItem>
+    </Link>
+  );
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -51,6 +84,7 @@ export default function UserDropDownMenu({
                 My courses
               </DropdownMenuItem>
             </Link>
+            <NotificationsMenuItem />
             <Link href="/profile?tab=settings">
               <DropdownMenuItem className="cursor-pointer">
                 Settings
@@ -97,6 +131,7 @@ export default function UserDropDownMenu({
                 Chats
               </DropdownMenuItem>
             </Link>
+            <NotificationsMenuItem />
             <Link href="/dashboard/instructor/settings">
               <DropdownMenuItem className="cursor-pointer">
                 Settings
@@ -126,7 +161,7 @@ export default function UserDropDownMenu({
                 Dashboard
               </DropdownMenuItem>
             </Link>
-
+            <NotificationsMenuItem />
             <DropdownMenuItem
               className="text-red-600 hover:bg-red-700! transition-all duration-200 hover:text-white! cursor-pointer"
               onClick={onLogout}
@@ -139,3 +174,4 @@ export default function UserDropDownMenu({
     </DropdownMenu>
   );
 }
+

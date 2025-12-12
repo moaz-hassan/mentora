@@ -31,9 +31,15 @@ export const getUserNotifications = async (userId, options = {}) => {
     offset
   });
 
+  // Get unread count
+  const unreadCount = await Notification.count({
+    where: { user_id: userId, is_read: false }
+  });
+
   return {
     notifications: rows,
     total: count,
+    unreadCount,
     limit,
     offset
   };
@@ -299,12 +305,8 @@ export const getNotificationHistory = async (filters = {}) => {
     include: [
       {
         model: User,
-        as: "Sender",
+        as: "Admin",
         attributes: ["id", "first_name", "last_name", "email"]
-      },
-      {
-        model: Notification,
-        attributes: ["id", "title", "message"]
       }
     ],
     order: [["created_at", "DESC"]],
@@ -313,37 +315,37 @@ export const getNotificationHistory = async (filters = {}) => {
   });
 
   
-  const historyWithMetrics = await Promise.all(
-    notificationLogs.map(async (log) => {
-      const openedCount = log.opened_count || 0;
+  const historyWithMetrics = notificationLogs.map((log) => {
+    const openedCount = log.opened_count || 0;
 
-      const openRate = log.delivered_count > 0 
-        ? ((openedCount / log.delivered_count) * 100).toFixed(1)
-        : 0;
+    const openRate = log.delivered_count > 0 
+      ? ((openedCount / log.delivered_count) * 100).toFixed(1)
+      : 0;
 
-      return {
-        id: log.id,
-        title: log.Notification?.title || "N/A",
-        message: log.Notification?.message || "N/A",
-        targetAudience: log.target_audience,
-        recipientCount: log.recipient_count,
-        deliveredCount: log.delivered_count,
-        failedCount: log.failed_count,
-        openedCount,
-        openRate: parseFloat(openRate),
-        status: log.status,
-        sentAt: log.sent_at,
-        createdAt: log.created_at,
-        admin: log.Sender ? {
-          id: log.Sender.id,
-          name: `${log.Sender.first_name} ${log.Sender.last_name}`,
-          email: log.Sender.email
-        } : null
-      };
-    })
-  );
+    return {
+      id: log.id,
+      title: log.title || "N/A",
+      message: log.message || "N/A",
+      targetAudience: log.target_audience,
+      recipientCount: log.recipient_count,
+      deliveredCount: log.delivered_count,
+      failedCount: log.failed_count,
+      openedCount,
+      openRate: parseFloat(openRate),
+      deliveryStatus: log.status,
+      status: log.status,
+      scheduledFor: log.scheduled_at,
+      sentAt: log.sent_at,
+      createdAt: log.created_at,
+      admin: log.Admin ? {
+        id: log.Admin.id,
+        name: `${log.Admin.first_name} ${log.Admin.last_name}`,
+        email: log.Admin.email
+      } : null
+    };
+  });
 
-  return historyWithMetrics;
+  return { notifications: historyWithMetrics };
 };
 
 
@@ -415,8 +417,6 @@ export const getNotificationMetrics = async (notificationLogId) => {
 
 
 export const getScheduledNotificationsToSend = async () => {
-  const now = new Date();
-
   const scheduledNotifications = await NotificationLog.findAll({
     where: {
       status: "scheduled"
@@ -424,17 +424,27 @@ export const getScheduledNotificationsToSend = async () => {
     include: [
       {
         model: User,
-        as: "Sender",
+        as: "Admin",
         attributes: ["id", "first_name", "last_name"]
-      },
-      {
-        model: Notification,
-        attributes: ["id", "title", "message"]
       }
-    ]
+    ],
+    order: [["scheduled_at", "ASC"]]
   });
 
-  return scheduledNotifications;
+  const notifications = scheduledNotifications.map(log => ({
+    id: log.id,
+    title: log.title || "N/A",
+    message: log.message || "N/A",
+    targetAudience: log.target_audience,
+    scheduledFor: log.scheduled_at,
+    recipientCount: log.recipient_count,
+    admin: log.Admin ? {
+      id: log.Admin.id,
+      name: `${log.Admin.first_name} ${log.Admin.last_name}`
+    } : null
+  }));
+
+  return { notifications };
 };
 
 
@@ -554,12 +564,11 @@ export const getDeliveryStatistics = async (filters = {}) => {
     whereClause.target_audience = filters.targetAudience;
   }
 
-  whereClause.status = "sent";
-
-  const stats = await NotificationLog.findAll({
-    where: whereClause,
+  // Get sent statistics
+  const sentStats = await NotificationLog.findAll({
+    where: { ...whereClause, status: "sent" },
     attributes: [
-      [fn("COUNT", col("id")), "totalBroadcasts"],
+      [fn("COUNT", col("id")), "totalSent"],
       [fn("SUM", col("recipient_count")), "totalRecipients"],
       [fn("SUM", col("delivered_count")), "totalDelivered"],
       [fn("SUM", col("failed_count")), "totalFailed"]
@@ -567,8 +576,13 @@ export const getDeliveryStatistics = async (filters = {}) => {
     raw: true
   });
 
-  const result = stats[0] || {};
-  const totalBroadcasts = parseInt(result.totalBroadcasts || 0);
+  // Get scheduled count
+  const scheduledCount = await NotificationLog.count({
+    where: { status: "scheduled" }
+  });
+
+  const result = sentStats[0] || {};
+  const totalSent = parseInt(result.totalSent || 0);
   const totalRecipients = parseInt(result.totalRecipients || 0);
   const totalDelivered = parseInt(result.totalDelivered || 0);
   const totalFailed = parseInt(result.totalFailed || 0);
@@ -578,14 +592,11 @@ export const getDeliveryStatistics = async (filters = {}) => {
     : 0;
 
   return {
-    totalBroadcasts,
+    totalSent,
+    delivered: totalDelivered,
+    scheduled: scheduledCount,
     totalRecipients,
-    totalDelivered,
-    totalFailed,
     deliveryRate: parseFloat(deliveryRate),
-    period: {
-      startDate: filters.startDate || null,
-      endDate: filters.endDate || null
-    }
+    totalFailed
   };
 };

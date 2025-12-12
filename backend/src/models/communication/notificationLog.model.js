@@ -14,9 +14,18 @@ const NotificationLog = sequelize.define(
       type: DataTypes.STRING(50),
       references: { model: "notifications", key: "id" },
     },
-    sender_id: {
+    admin_id: {
       type: DataTypes.STRING(50),
       references: { model: "users", key: "id" },
+      field: "admin_id",
+    },
+    title: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    message: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
     target_audience: {
       type: DataTypes.STRING(50),
@@ -43,6 +52,10 @@ const NotificationLog = sequelize.define(
     status: {
       type: DataTypes.STRING(20),
     },
+    scheduled_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     sent_at: {
       type: DataTypes.DATE,
     },
@@ -54,7 +67,7 @@ const NotificationLog = sequelize.define(
     updatedAt: "updated_at",
     indexes: [
       { fields: ["notification_id"] },
-      { fields: ["sender_id"] },
+      { fields: ["admin_id"] },
       { fields: ["created_at"] },
     ],
   }

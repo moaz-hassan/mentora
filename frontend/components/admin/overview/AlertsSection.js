@@ -28,14 +28,14 @@ export function AlertsSection({ stats }) {
 
   if (alerts.length === 0) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6">
         <div className="flex items-start">
-          <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 mr-3" />
+          <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 mr-3" />
           <div className="flex-1">
-            <h3 className="text-sm font-semibold text-green-900">
+            <h3 className="text-sm font-semibold text-green-900 dark:text-green-300">
               All Clear!
             </h3>
-            <p className="text-sm text-green-800 mt-1">
+            <p className="text-sm text-green-800 dark:text-green-400 mt-1">
               No pending actions required at this time.
             </p>
           </div>
@@ -49,19 +49,19 @@ export function AlertsSection({ stats }) {
       {alerts.map((alert, index) => (
         <div
           key={index}
-          className="bg-orange-50 border border-orange-200 rounded-lg p-6"
+          className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-6"
         >
           <div className="flex items-start">
-            <AlertCircle className="w-5 h-5 text-orange-600 mt-0.5 mr-3" />
+            <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5 mr-3" />
             <div className="flex-1">
-              <h3 className="text-sm font-semibold text-orange-900">
+              <h3 className="text-sm font-semibold text-orange-900 dark:text-orange-300">
                 Action Required
               </h3>
-              <p className="text-sm text-orange-800 mt-1">{alert.message}</p>
+              <p className="text-sm text-orange-800 dark:text-orange-400 mt-1">{alert.message}</p>
               {alert.actionUrl && (
                 <Link
                   href={alert.actionUrl}
-                  className="inline-block mt-3 text-sm font-medium text-orange-600 hover:text-orange-700"
+                  className="inline-block mt-3 text-sm font-medium text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300"
                 >
                   {alert.actionText} →
                 </Link>
@@ -73,3 +73,4 @@ export function AlertsSection({ stats }) {
     </div>
   );
 }
+

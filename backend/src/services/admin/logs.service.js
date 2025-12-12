@@ -5,6 +5,38 @@ import { Op, fn, col, literal } from "sequelize";
 
 const { AuditLog, PaymentLog, EnrollmentLog, ErrorLog, ModerationLog, NotificationLog, User, Course } = models;
 
+/**
+ * Create an audit log entry
+ */
+export const logAudit = async ({
+  adminId,
+  actionType,
+  resourceType,
+  resourceId,
+  description,
+  ipAddress,
+  userAgent,
+  status,
+  metadata = {}
+}) => {
+  try {
+    await AuditLog.create({
+      admin_id: adminId,
+      action_type: actionType,
+      resource_type: resourceType,
+      resource_id: resourceId,
+      description,
+      ip_address: ipAddress,
+      user_agent: userAgent,
+      status,
+      before_state: metadata.beforeState || null,
+      after_state: metadata.afterState || metadata
+    });
+  } catch (error) {
+    console.error("Failed to create audit log:", error);
+  }
+};
+
 
 export const getAuditLogs = async (filters = {}) => {
   const {

@@ -5,6 +5,15 @@ import { Bell, Check, CheckCheck, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { showNotification } from "./NotificationToast";
+import Cookies from "js-cookie";
+
+const getAuthHeaders = () => {
+  const token = Cookies.get("authToken");
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+};
 
 export function NotificationDropdown({ user }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,10 +24,10 @@ export function NotificationDropdown({ user }) {
 
   useEffect(() => {
     if (user?.id) {
-      
+      fetchUnreadCount();
       
       const interval = setInterval(() => {
-        
+        fetchUnreadCount();
         if (isOpen) {
           fetchNotifications();
         }
@@ -64,7 +73,7 @@ export function NotificationDropdown({ user }) {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/unread-count`,
         {
-          credentials: "include",
+          headers: getAuthHeaders(),
         }
       );
 
@@ -83,13 +92,14 @@ export function NotificationDropdown({ user }) {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/notifications?limit=10`,
         {
-          credentials: "include",
+          headers: getAuthHeaders(),
         }
       );
 
       if (response.ok) {
         const data = await response.json();
-        setNotifications(data.data || []);
+        setNotifications(data.data?.notifications || []);
+        setUnreadCount(data.data?.unreadCount || 0);
       }
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -104,10 +114,7 @@ export function NotificationDropdown({ user }) {
         `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${notificationId}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
+          headers: getAuthHeaders(),
           body: JSON.stringify({ is_read: true }),
         }
       );
@@ -130,8 +137,8 @@ export function NotificationDropdown({ user }) {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/mark-all-read`,
         {
-          method: "PUT",
-          credentials: "include",
+          method: "POST",
+          headers: getAuthHeaders(),
         }
       );
 
@@ -152,7 +159,7 @@ export function NotificationDropdown({ user }) {
         `${process.env.NEXT_PUBLIC_API_URL}/api/notifications/${notificationId}`,
         {
           method: "DELETE",
-          credentials: "include",
+          headers: getAuthHeaders(),
         }
       );
 
@@ -205,7 +212,7 @@ export function NotificationDropdown({ user }) {
       {}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+        className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
@@ -217,17 +224,17 @@ export function NotificationDropdown({ user }) {
 
       {}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+        <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-card rounded-lg shadow-lg border border-gray-200 dark:border-border z-50">
           {}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-border">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-foreground">
               Notifications
             </h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
-                  className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
                 >
                   <CheckCheck className="w-4 h-4" />
                   Mark all read
@@ -235,7 +242,7 @@ export function NotificationDropdown({ user }) {
               )}
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -246,19 +253,19 @@ export function NotificationDropdown({ user }) {
           <div className="max-h-96 overflow-y-auto">
             {loading ? (
               <div className="p-8 text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
-                <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">No notifications</p>
+                <Bell className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-500 dark:text-muted-foreground">No notifications</p>
               </div>
             ) : (
               notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                    !notification.is_read ? "bg-blue-50" : ""
+                  className={`p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors ${
+                    !notification.is_read ? "bg-blue-50 dark:bg-primary/10" : ""
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -266,13 +273,13 @@ export function NotificationDropdown({ user }) {
                       {getNotificationIcon(notification.type)}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900 font-medium">
+                      <p className="text-sm text-gray-900 dark:text-foreground font-medium">
                         {notification.title}
                       </p>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-gray-600 dark:text-muted-foreground mt-1">
                         {notification.message}
                       </p>
-                      <p className="text-xs text-gray-500 mt-2">
+                      <p className="text-xs text-gray-500 dark:text-muted-foreground/70 mt-2">
                         {formatTime(notification.created_at)}
                       </p>
                     </div>
@@ -280,7 +287,7 @@ export function NotificationDropdown({ user }) {
                       {!notification.is_read && (
                         <button
                           onClick={() => markAsRead(notification.id)}
-                          className="p-1 text-blue-600 hover:bg-blue-100 rounded"
+                          className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
                           title="Mark as read"
                         >
                           <Check className="w-4 h-4" />
@@ -288,7 +295,7 @@ export function NotificationDropdown({ user }) {
                       )}
                       <button
                         onClick={() => deleteNotification(notification.id)}
-                        className="p-1 text-red-600 hover:bg-red-100 rounded"
+                        className="p-1 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
                         title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -302,11 +309,11 @@ export function NotificationDropdown({ user }) {
 
           {}
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-gray-200 text-center">
+            <div className="p-3 border-t border-gray-200 dark:border-border text-center">
               <Link
                 href={`/dashboard/${user?.role}/notifications`}
                 onClick={() => setIsOpen(false)}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
               >
                 View all notifications
               </Link>

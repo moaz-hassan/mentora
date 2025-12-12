@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/", authenticate, notificationController.getNotifications);
 
 
-router.put("/mark-all-read", authenticate, notificationController.markAllAsRead);
+router.post("/mark-all-read", authenticate, notificationController.markAllAsRead);
 
 
 router.get("/unread-count", authenticate, notificationController.getUnreadCount);

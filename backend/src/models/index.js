@@ -41,7 +41,7 @@ import ErrorLog from "./admin/errorLog.model.js";
 import Settings from "./admin/settings.model.js";
 import Campaign from "./admin/campaign.model.js";
 import FeaturedCourse from "./admin/featuredCourse.model.js";
-import BatchUploadSession from "./admin/batchUploadSession.model.js";
+
 
 
 const models = {
@@ -82,7 +82,6 @@ const models = {
   Settings,
   Campaign,
   FeaturedCourse,
-  BatchUploadSession,
 };
 
 
@@ -189,14 +188,7 @@ User.hasMany(ChatParticipant, { foreignKey: "user_id" });
 ChatParticipant.belongsTo(User, { foreignKey: "user_id" });
 
 
-Course.hasMany(BatchUploadSession, {
-  foreignKey: "course_id",
-  onDelete: "CASCADE",
-});
-BatchUploadSession.belongsTo(Course, { foreignKey: "course_id" });
 
-User.hasMany(BatchUploadSession, { foreignKey: "instructor_id" });
-BatchUploadSession.belongsTo(User, { foreignKey: "instructor_id" });
 
 
 User.hasMany(Report, { foreignKey: "reported_by", as: "ReportedReports" });
@@ -234,8 +226,8 @@ ModerationLog.belongsTo(User, { foreignKey: "moderator_id", as: "Moderator" });
 Notification.hasMany(NotificationLog, { foreignKey: "notification_id" });
 NotificationLog.belongsTo(Notification, { foreignKey: "notification_id" });
 
-User.hasMany(NotificationLog, { foreignKey: "sender_id" });
-NotificationLog.belongsTo(User, { foreignKey: "sender_id", as: "Sender" });
+User.hasMany(NotificationLog, { foreignKey: "admin_id" });
+NotificationLog.belongsTo(User, { foreignKey: "admin_id", as: "Admin" });
 
 
 User.hasMany(ErrorLog, { foreignKey: "user_id" });

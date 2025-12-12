@@ -26,6 +26,7 @@ export function useAdminOverview() {
 
       if (result.success) {
         setStats(result.data);
+        setRecentActivity(result.recentActivity || []);
       } else {
         throw new Error(result.error || "Failed to load dashboard stats");
       }

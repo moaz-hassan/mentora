@@ -68,12 +68,7 @@ export default function Header() {
             </Link>
 
             <nav className="mt-2 hidden md:flex space-x-8">
-              <Link
-                href="/categories"
-                className="text-muted-foreground hover:text-foreground transition-colors font-medium"
-              >
-                Categories
-              </Link>
+              
               <Link
                 href="/courses"
                 className="text-muted-foreground hover:text-foreground transition-colors font-medium"

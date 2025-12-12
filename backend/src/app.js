@@ -6,6 +6,7 @@ import { errorHandler, notFound } from "./middlewares/error.middleware.js";
 import cookieParser from "cookie-parser";
 import { authenticate, authorize } from "./middlewares/auth.middleware.js";
 import { generalLimiter } from "./rate-limiters/general.limiter.js";
+import auditLogMiddleware from "./middlewares/auditLog.middleware.js";
 import authRoutes from "./routes/auth/auth.routes.js";
 import courseRoutes from "./routes/courses/course.routes.js";
 import instructorRoutes from "./routes/instructor.routes.js";
@@ -35,7 +36,6 @@ import adminCoursesRoutes from "./routes/admin/courses.routes.js";
 import adminFinancialRoutes from "./routes/admin/financial.routes.js";
 import adminInstructorsRoutes from "./routes/admin/instructors.routes.js";
 import adminLogsRoutes from "./routes/admin/logs.routes.js";
-import adminMarketingRoutes from "./routes/admin/marketing.routes.js";
 import adminNotificationsRoutes from "./routes/admin/notifications.routes.js";
 import adminReportsRoutes from "./routes/admin/reports.routes.js";
 import adminSettingsRoutes from "./routes/admin/settings.routes.js";
@@ -43,7 +43,6 @@ import adminUsersRoutes from "./routes/admin/users.routes.js";
 import adminPlatformAnalyticsRoutes from "./routes/admin/platform-analytics.routes.js";
 import instructorCoursesRoutes from "./routes/instructor/courses.routes.js";
 import instructorAnalyticsRoutes from "./routes/instructor/analytics.routes.js";
-import instructorBatchUploadRoutes from "./routes/instructor/batch-upload.routes.js";
 import { setupChatSocket } from "./sockets/chat.socket.js";
 import { connectRedis } from "./config/redis.js";
 import { initCronJobs } from "./cron/init.cron.js";
@@ -64,6 +63,9 @@ app.use(cookieParser());
 
 // Apply general rate limiter to all API routes
 app.use("/api", generalLimiter);
+
+// Apply audit logging middleware to all API routes (logs admin actions after auth)
+app.use("/api", auditLogMiddleware);
 
 
 app.get("/", (req, res) => {
@@ -111,12 +113,7 @@ app.use(
   adminInstructorsRoutes
 );
 app.use("/api/admin/logs", authenticate, authorize("admin"), adminLogsRoutes);
-app.use(
-  "/api/admin/marketing",
-  authenticate,
-  authorize("admin"),
-  adminMarketingRoutes
-);
+
 app.use(
   "/api/admin/notifications",
   authenticate,
@@ -145,7 +142,6 @@ app.use(
 
 app.use("/api/instructor/courses", instructorCoursesRoutes);
 app.use("/api/instructor/analytics", instructorAnalyticsRoutes);
-app.use("/api/instructor/batch-upload", instructorBatchUploadRoutes);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

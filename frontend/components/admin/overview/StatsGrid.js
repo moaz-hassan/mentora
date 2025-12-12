@@ -43,13 +43,13 @@ export function StatsGrid({ stats }) {
 
   const getColorClasses = (color) => {
     const colors = {
-      blue: "bg-blue-100 text-blue-600",
-      green: "bg-green-100 text-green-600",
-      purple: "bg-purple-100 text-purple-600",
-      orange: "bg-orange-100 text-orange-600",
-      indigo: "bg-indigo-100 text-indigo-600",
-      pink: "bg-pink-100 text-pink-600",
-      red: "bg-red-100 text-red-600",
+      blue: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
+      green: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400",
+      purple: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
+      orange: "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
+      indigo: "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400",
+      pink: "bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400",
+      red: "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400",
     };
     return colors[color] || colors.blue;
   };
@@ -61,19 +61,19 @@ export function StatsGrid({ stats }) {
         return (
           <div
             key={stat.name}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+            className="bg-white dark:bg-card rounded-lg shadow-sm border border-gray-200 dark:border-border p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-muted-foreground">{stat.name}</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-foreground">{stat.value}</p>
                 <p
                   className={`mt-2 text-sm ${
                     stat.changeType === "positive"
-                      ? "text-green-600"
+                      ? "text-green-600 dark:text-green-400"
                       : stat.changeType === "warning"
-                      ? "text-orange-600"
-                      : "text-gray-600"
+                      ? "text-orange-600 dark:text-orange-400"
+                      : "text-gray-600 dark:text-muted-foreground"
                   }`}
                 >
                   {stat.change}
@@ -89,3 +89,4 @@ export function StatsGrid({ stats }) {
     </div>
   );
 }
+

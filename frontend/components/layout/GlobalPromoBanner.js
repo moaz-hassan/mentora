@@ -1,17 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { X, Gift, Clock } from 'lucide-react';
 
 export default function GlobalPromoBanner() {
   const [promo, setPromo] = useState(null);
   const [dismissed, setDismissed] = useState(false);
   const [timeLeft, setTimeLeft] = useState('');
+  const pathname = usePathname();
 
+  // Hide banner on dashboard pages
+  const isDashboard = pathname?.startsWith('/dashboard');
+  
   useEffect(() => {
+    // Don't fetch if on dashboard
+    if (isDashboard) return;
+    
     // Check if user dismissed the banner in this session
-    const isDismissed = sessionStorage.getItem('promo-banner-dismissed');
-    if (isDismissed) {
+    const isDismissedSession = sessionStorage.getItem('promo-banner-dismissed');
+    if (isDismissedSession) {
       setDismissed(true);
       return;
     }
@@ -70,7 +78,7 @@ export default function GlobalPromoBanner() {
     sessionStorage.setItem('promo-banner-dismissed', 'true');
   };
 
-  if (dismissed || !promo) return null;
+  if (isDashboard || dismissed || !promo) return null;
 
   const discountText = promo.discountType === 'percentage' 
     ? `${promo.discountValue}% OFF` 

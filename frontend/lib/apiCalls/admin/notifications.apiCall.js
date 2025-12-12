@@ -8,10 +8,7 @@ export const getStatistics = async () => {
   try {
     const headers = getAuthHeaders();
     const response = await axios.get(`${API_URL}/api/admin/notifications/statistics`, { headers });
-    return {
-      success: true,
-      data: response.data,
-    };
+    return response.data;
   } catch (error) {
     console.error("Error fetching notification statistics:", error);
     return {
@@ -29,10 +26,7 @@ export const getHistory = async (params = {}) => {
       headers,
       params 
     });
-    return {
-      success: true,
-      data: response.data,
-    };
+    return response.data;
   } catch (error) {
     console.error("Error fetching notification history:", error);
     return {
@@ -47,10 +41,7 @@ export const getScheduled = async () => {
   try {
     const headers = getAuthHeaders();
     const response = await axios.get(`${API_URL}/api/admin/notifications/scheduled`, { headers });
-    return {
-      success: true,
-      data: response.data,
-    };
+    return response.data;
   } catch (error) {
     console.error("Error fetching scheduled notifications:", error);
     return {
@@ -65,10 +56,7 @@ export const broadcast = async (notificationData) => {
   try {
     const headers = getAuthHeaders();
     const response = await axios.post(`${API_URL}/api/admin/notifications/broadcast`, notificationData, { headers });
-    return {
-      success: true,
-      data: response.data,
-    };
+    return response.data;
   } catch (error) {
     console.error("Error broadcasting notification:", error);
     throw new Error(error.response?.data?.message || "Failed to send notification");
@@ -80,10 +68,7 @@ export const sendScheduled = async (notificationId) => {
   try {
     const headers = getAuthHeaders();
     const response = await axios.post(`${API_URL}/api/admin/notifications/scheduled/${notificationId}/send`, {}, { headers });
-    return {
-      success: true,
-      data: response.data,
-    };
+    return response.data;
   } catch (error) {
     console.error("Error sending scheduled notification:", error);
     throw new Error(error.response?.data?.message || "Failed to send notification");
@@ -95,10 +80,7 @@ export const cancelScheduled = async (notificationId) => {
   try {
     const headers = getAuthHeaders();
     const response = await axios.delete(`${API_URL}/api/admin/notifications/scheduled/${notificationId}`, { headers });
-    return {
-      success: true,
-      data: response.data,
-    };
+    return response.data;
   } catch (error) {
     console.error("Error cancelling scheduled notification:", error);
     throw new Error(error.response?.data?.message || "Failed to cancel notification");
@@ -110,10 +92,7 @@ export const getTemplates = async () => {
   try {
     const headers = getAuthHeaders();
     const response = await axios.get(`${API_URL}/api/admin/notifications/templates`, { headers });
-    return {
-      success: true,
-      data: response.data,
-    };
+    return response.data;
   } catch (error) {
     console.error("Error fetching notification templates:", error);
     return {
@@ -128,12 +107,10 @@ export const createTemplate = async (templateData) => {
   try {
     const headers = getAuthHeaders();
     const response = await axios.post(`${API_URL}/api/admin/notifications/templates`, templateData, { headers });
-    return {
-      success: true,
-      data: response.data,
-    };
+    return response.data;
   } catch (error) {
     console.error("Error creating template:", error);
     throw new Error(error.response?.data?.message || "Failed to create template");
   }
 };
+
