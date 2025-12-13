@@ -46,55 +46,29 @@ export default function InstructorSettingsPage() {
       return;
     }
 
-    let uploadToastId = null;
+    // Show loading toast
+    const loadingToast = toast.loading("Uploading avatar...");
 
     try {
       const result = await uploadImageToCloudinary(file, (progressData) => {
-        if (uploadToastId) {
-          toast.update(uploadToastId, {
-            render: progressData.message,
-            type: progressData.progress === 100 ? "success" : "info",
-            autoClose: progressData.progress === 100 ? 2000 : false,
-          });
-        } else {
-          uploadToastId = toast.info(progressData.message, {
-            autoClose: false,
-            closeButton: false,
-          });
-        }
+        // Sonner doesn't support updating toast content, so we just let the loading toast show
       });
 
       if (result.secure_url) {
         updateAvatar(result.secure_url);
-
-        if (uploadToastId) {
-          toast.update(uploadToastId, {
-            render: "Saving to database...",
-            type: "info",
-          });
-        }
+        
+        toast.dismiss(loadingToast);
+        toast.loading("Saving to database...");
 
         await saveProfile({ avatar_url: result.secure_url });
 
-        if (uploadToastId) {
-          toast.update(uploadToastId, {
-            render: "Avatar updated successfully!",
-            type: "success",
-            autoClose: 3000,
-          });
-        }
+        toast.dismiss();
+        toast.success("Avatar updated successfully!");
       }
     } catch (error) {
       console.error("Avatar upload error:", error);
-      if (uploadToastId) {
-        toast.update(uploadToastId, {
-          render: "Failed to upload avatar: " + error.message,
-          type: "error",
-          autoClose: 5000,
-        });
-      } else {
-        toast.error("Failed to upload avatar: " + error.message);
-      }
+      toast.dismiss();
+      toast.error("Failed to upload avatar: " + error.message);
     }
   };
 

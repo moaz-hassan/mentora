@@ -6,8 +6,8 @@ export function CoursesPageHeader() {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">My Courses</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Courses</h1>
+        <p className="text-gray-600 dark:text-neutral-400 mt-1">
           Manage and track your course content
         </p>
       </div>

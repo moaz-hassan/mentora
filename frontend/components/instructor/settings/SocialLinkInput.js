@@ -10,7 +10,7 @@ export default function SocialLinkInput({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-2">
         <span className="flex items-center gap-2">
           {icon}
           {label}

@@ -119,11 +119,11 @@ export function CourseStructureEditor({
   };
 
   return (
-    <Card className="p-6 bg-white border-neutral-200">
+    <Card className="p-6 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-neutral-900">Course Structure</h2>
-          <p className="text-sm text-neutral-600 mt-1">
+          <h2 className="text-neutral-900 dark:text-white">Course Structure</h2>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
             Build your course curriculum with chapters, lessons, and quizzes
           </p>
         </div>
@@ -138,12 +138,12 @@ export function CourseStructureEditor({
 
       <div className="space-y-4">
         {chapters.length === 0 ? (
-          <div className="text-center py-16 border-2 border-dashed border-neutral-200 rounded-lg">
+          <div className="text-center py-16 border-2 border-dashed border-neutral-200 dark:border-neutral-700 rounded-lg">
             <div className="text-neutral-400 mb-3">
               <Plus className="w-12 h-12 mx-auto" />
             </div>
-            <h3 className="text-neutral-700 mb-2">No chapters yet</h3>
-            <p className="text-sm text-neutral-500 mb-4">
+            <h3 className="text-neutral-700 dark:text-neutral-300 mb-2">No chapters yet</h3>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
               Get started by adding your first chapter
             </p>
             <Button

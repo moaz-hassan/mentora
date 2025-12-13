@@ -49,11 +49,11 @@ export function OverviewStats({ overview }) {
 
   const getColorClasses = (color) => {
     const colors = {
-      blue: { bg: "bg-blue-100", text: "text-blue-600" },
-      green: { bg: "bg-green-100", text: "text-green-600" },
-      purple: { bg: "bg-purple-100", text: "text-purple-600" },
-      yellow: { bg: "bg-yellow-100", text: "text-yellow-600" },
-      indigo: { bg: "bg-indigo-100", text: "text-indigo-600" },
+      blue: { bg: "bg-blue-100 dark:bg-blue-900/30", text: "text-blue-600 dark:text-blue-400" },
+      green: { bg: "bg-green-100 dark:bg-green-900/30", text: "text-green-600 dark:text-green-400" },
+      purple: { bg: "bg-purple-100 dark:bg-purple-900/30", text: "text-purple-600 dark:text-purple-400" },
+      yellow: { bg: "bg-yellow-100 dark:bg-yellow-900/30", text: "text-yellow-600 dark:text-yellow-400" },
+      indigo: { bg: "bg-indigo-100 dark:bg-indigo-900/30", text: "text-indigo-600 dark:text-indigo-400" },
     };
     return colors[color] || colors.blue;
   };
@@ -69,11 +69,11 @@ export function OverviewStats({ overview }) {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">{stat.label}</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">
+                  <p className="text-sm text-gray-600 dark:text-neutral-400">{stat.label}</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
                     {stat.value}
                   </p>
-                  <p className="text-sm text-green-600 mt-1">{stat.change}</p>
+                  <p className="text-sm text-green-600 dark:text-green-400 mt-1">{stat.change}</p>
                 </div>
                 <div className={`p-3 rounded-lg ${colorClasses.bg}`}>
                   <Icon className={`w-6 h-6 ${colorClasses.text}`} />

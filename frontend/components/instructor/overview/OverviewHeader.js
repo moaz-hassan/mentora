@@ -5,8 +5,8 @@ export function OverviewHeader() {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p className="mt-2 text-gray-600 dark:text-neutral-400">
           Welcome back! Here's an overview of your teaching performance.
         </p>
       </div>

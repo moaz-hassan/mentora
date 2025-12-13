@@ -87,8 +87,8 @@ export default function SocialLinksTab({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-800">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <p className="text-sm text-blue-800 dark:text-blue-300">
             Connect your social media profiles to help students learn more about you and stay connected.
             All fields are optional - only add the platforms you use.
           </p>
@@ -108,8 +108,8 @@ export default function SocialLinksTab({
           ))}
         </div>
 
-        {}
-        <div className="flex justify-end pt-4 border-t border-gray-200">
+        
+        <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-neutral-800">
           <Button
             onClick={onSave}
             disabled={saving}

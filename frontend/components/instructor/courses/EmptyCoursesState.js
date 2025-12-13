@@ -7,13 +7,13 @@ export function EmptyCoursesState({ searchQuery, statusFilter }) {
   return (
     <Card>
       <CardContent className="p-12 text-center">
-        <div className="text-gray-400 mb-4">
+        <div className="text-gray-400 dark:text-neutral-500 mb-4">
           <BarChart3 className="w-16 h-16 mx-auto" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
           No courses found
         </h3>
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 dark:text-neutral-400 mb-6">
           {searchQuery || statusFilter !== "all"
             ? "Try adjusting your filters"
             : "Get started by creating your first course"}

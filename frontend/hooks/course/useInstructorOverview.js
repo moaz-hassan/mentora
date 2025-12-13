@@ -32,7 +32,7 @@ export function useInstructorOverview() {
 
       
       const coursesResponse = await getAllInstructorCourses();
-      const coursesData = coursesResponse.data;
+      const coursesData = coursesResponse.data || [];
 
       
       let unreadCount = 0;
@@ -77,24 +77,28 @@ export function useInstructorOverview() {
       }
 
       
-      const pendingReviews = coursesData.filter(
-        (course) => course.status === "pending" || course.status === "under_review"
-      ).length;
+      const pendingReviews = Array.isArray(coursesData) 
+        ? coursesData.filter(
+            (course) => course.status === "pending" || course.status === "under_review"
+          ).length
+        : 0;
 
       
       setStats({
         totalStudents: analyticsData.overview?.totalEnrollments || 0,
         totalEarnings: analyticsData.overview?.totalRevenue || 0,
-        totalCourses: coursesData.length,
+        totalCourses: Array.isArray(coursesData) ? coursesData.length : 0,
         averageRating: analyticsData.overview?.averageRating || 0,
         pendingReviews,
         unreadMessages: unreadCount,
       });
 
       
-      const sortedCourses = coursesData
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, 6);
+      const sortedCourses = Array.isArray(coursesData)
+        ? coursesData
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 6)
+        : [];
 
       const coursesWithStats = sortedCourses.map((course) => {
         const courseAnalytics = analyticsData.courses?.find((c) => c.id === course.id);

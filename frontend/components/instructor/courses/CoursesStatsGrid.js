@@ -7,29 +7,29 @@ export function CoursesStatsGrid({ courses }) {
       label: "Total Courses",
       value: courses.length,
       icon: BarChart3,
-      bgColor: "bg-blue-100",
-      textColor: "text-blue-600",
+      bgColor: "bg-blue-100 dark:bg-blue-900/30",
+      textColor: "text-blue-600 dark:text-blue-400",
     },
     {
       label: "Approved",
       value: courses.filter((c) => c.status === "approved").length,
       icon: CheckCircle,
-      bgColor: "bg-green-100",
-      textColor: "text-green-600",
+      bgColor: "bg-green-100 dark:bg-green-900/30",
+      textColor: "text-green-600 dark:text-green-400",
     },
     {
       label: "Pending",
       value: courses.filter((c) => c.status === "pending").length,
       icon: AlertCircle,
-      bgColor: "bg-yellow-100",
-      textColor: "text-yellow-600",
+      bgColor: "bg-yellow-100 dark:bg-yellow-900/30",
+      textColor: "text-yellow-600 dark:text-yellow-400",
     },
     {
       label: "Drafts",
       value: courses.filter((c) => c.status === "draft").length,
       icon: Clock,
-      bgColor: "bg-gray-100",
-      textColor: "text-gray-600",
+      bgColor: "bg-gray-100 dark:bg-neutral-800",
+      textColor: "text-gray-600 dark:text-neutral-400",
     },
   ];
 
@@ -42,7 +42,7 @@ export function CoursesStatsGrid({ courses }) {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">{stat.label}</p>
+                  <p className="text-sm text-gray-600 dark:text-neutral-400">{stat.label}</p>
                   <p className={`text-2xl font-bold ${stat.textColor} mt-1`}>
                     {stat.value}
                   </p>

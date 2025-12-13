@@ -15,7 +15,7 @@ import {
 export default function EnrollmentChart({ data }) {
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">
+      <div className="flex items-center justify-center h-64 text-gray-500 dark:text-neutral-400">
         <p>No enrollment data available for the selected period</p>
       </div>
     );
@@ -25,11 +25,11 @@ export default function EnrollmentChart({ data }) {
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3">
-          <p className="text-sm font-semibold text-gray-900 mb-1">
+        <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-lg p-3">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
             {payload[0].payload.date}
           </p>
-          <p className="text-sm text-purple-600 font-bold">
+          <p className="text-sm text-purple-600 dark:text-purple-400 font-bold">
             {payload[0].value} enrollment{payload[0].value !== 1 ? 's' : ''}
           </p>
         </div>

@@ -31,7 +31,7 @@ export default function ProfileTab({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-2">
               First Name
             </label>
             <Input
@@ -40,12 +40,12 @@ export default function ProfileTab({
               onChange={(e) => onUserChange("first_name", e.target.value)}
               placeholder="Enter your first name"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-neutral-500 mt-1">
               Displayed on your profile and courses
             </p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-2">
               Last Name
             </label>
             <Input
@@ -54,7 +54,7 @@ export default function ProfileTab({
               onChange={(e) => onUserChange("last_name", e.target.value)}
               placeholder="Enter your last name"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-neutral-500 mt-1">
               Displayed on your profile and courses
             </p>
           </div>
@@ -86,13 +86,13 @@ export default function ProfileTab({
             rows={5}
             maxLength={5000}
             placeholder="Share your background, expertise, teaching philosophy, and what makes you unique as an instructor..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none placeholder:text-gray-400 dark:placeholder:text-neutral-500"
           />
           <div className="flex justify-between items-center mt-1">
             <p className="text-xs text-gray-500">
               Tell students about your experience and expertise
             </p>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-400 dark:text-neutral-500">
               {profileData.bio?.length || 0} / 5000
             </p>
           </div>

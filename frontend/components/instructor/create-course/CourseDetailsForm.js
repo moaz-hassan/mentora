@@ -147,18 +147,18 @@ export function CourseDetailsForm({
 
   return (
     <div className="space-y-4">
-      <Card className="p-6 bg-white border-neutral-200">
-        <h2 className="mb-6 text-neutral-900">Course Details</h2>
+      <Card className="p-6 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
+        <h2 className="mb-6 text-neutral-900 dark:text-white">Course Details</h2>
 
         {}
         {isEditMode && !canEdit && (
-          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-yellow-800">
+              <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
                 Course Under Review
               </p>
-              <p className="text-sm text-yellow-700 mt-1">
+              <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-1">
                 This course is currently under review and cannot be edited. You'll be able to make changes once the review is complete.
               </p>
             </div>
@@ -496,10 +496,10 @@ export function CourseDetailsForm({
             {!courseData?.thumbnail ? (
               <label
                 htmlFor="thumbnail-upload"
-                className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-neutral-300 rounded-lg cursor-pointer hover:border-neutral-400 hover:bg-neutral-50 transition-colors"
+                className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-lg cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
               >
                 <Upload className="w-8 h-8 text-neutral-400 mb-2" />
-                <span className="text-sm text-neutral-600">
+                <span className="text-sm text-neutral-600 dark:text-neutral-400">
                   Click to upload thumbnail
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">
@@ -537,16 +537,16 @@ export function CourseDetailsForm({
             <Label>
               Introduction Video <span className="text-red-500">*</span>
             </Label>
-            <p className="text-sm text-neutral-600 mb-2">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">
               Upload a short video introducing your course to potential students (Required)
             </p>
             {!courseData?.introVideoUrl ? (
               <label
                 htmlFor="intro-video-upload"
-                className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-neutral-300 rounded-lg cursor-pointer hover:border-neutral-400 hover:bg-neutral-50 transition-colors"
+                className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-lg cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
               >
                 <Upload className="w-8 h-8 text-neutral-400 mb-2" />
-                <span className="text-sm text-neutral-600">
+                <span className="text-sm text-neutral-600 dark:text-neutral-400">
                   Click to upload introduction video
                 </span>
                 <span className="text-xs text-neutral-500 mt-1">
@@ -600,7 +600,7 @@ export function CourseDetailsForm({
 
         {/* Save Button (Edit Mode Only) */}
         {isEditMode && (
-          <div className="flex justify-end gap-4 pt-6 mt-6 border-t border-neutral-200">
+          <div className="flex justify-end gap-4 pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-800">
             <Button
               type="button"
               onClick={handleSave}

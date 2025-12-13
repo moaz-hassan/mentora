@@ -97,8 +97,8 @@ export default function InstructorEarningsPage() {
   if (error) {
     return (
       <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-800 font-medium mb-4">{error}</p>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
+          <p className="text-red-800 dark:text-red-400 font-medium mb-4">{error}</p>
           <button
             onClick={refetch}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -125,8 +125,8 @@ export default function InstructorEarningsPage() {
       {}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Earnings</h1>
-          <p className="mt-2 text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Earnings</h1>
+          <p className="mt-2 text-gray-600 dark:text-neutral-400">
             Track your revenue and manage payouts
           </p>
         </div>
@@ -135,7 +135,7 @@ export default function InstructorEarningsPage() {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
           >
             <option value="1month">Last month</option>
             <option value="3months">Last 3 months</option>
@@ -172,53 +172,53 @@ export default function InstructorEarningsPage() {
           <p className="text-sm opacity-75 mt-2">All time earnings</p>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <CreditCard className="w-6 h-6 text-orange-600" />
+            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+              <CreditCard className="w-6 h-6 text-orange-600 dark:text-orange-400" />
             </div>
-            <span className="text-sm text-orange-600 font-medium">Pending</span>
+            <span className="text-sm text-orange-600 dark:text-orange-400 font-medium">Pending</span>
           </div>
-          <p className="text-sm text-gray-600 mb-1">Pending Payout</p>
-          <p className="text-3xl font-bold text-gray-900">{formatCurrency(pendingPayout)}</p>
-          <p className="text-sm text-gray-500 mt-2">Next payout: 1st of next month</p>
+          <p className="text-sm text-gray-600 dark:text-neutral-400 mb-1">Pending Payout</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{formatCurrency(pendingPayout)}</p>
+          <p className="text-sm text-gray-500 dark:text-neutral-500 mt-2">Next payout: 1st of next month</p>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <ArrowUpRight className="w-6 h-6 text-green-600" />
+            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+              <ArrowUpRight className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
-            <span className="text-sm text-green-600 font-medium">Paid</span>
+            <span className="text-sm text-green-600 dark:text-green-400 font-medium">Paid</span>
           </div>
-          <p className="text-sm text-gray-600 mb-1">Last Payout</p>
-          <p className="text-3xl font-bold text-gray-900">{formatCurrency(0)}</p>
-          <p className="text-sm text-gray-500 mt-2">N/A</p>
+          <p className="text-sm text-gray-600 dark:text-neutral-400 mb-1">Last Payout</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{formatCurrency(0)}</p>
+          <p className="text-sm text-gray-500 dark:text-neutral-500 mt-2">N/A</p>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Calendar className="w-6 h-6 text-purple-600" />
+            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+              <Calendar className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
-          <p className="text-sm text-gray-600 mb-1">Payout Schedule</p>
-          <p className="text-lg font-bold text-gray-900">Monthly</p>
-          <p className="text-sm text-gray-500 mt-2">Payouts on the 1st of each month</p>
+          <p className="text-sm text-gray-600 dark:text-neutral-400 mb-1">Payout Schedule</p>
+          <p className="text-lg font-bold text-gray-900 dark:text-white">Monthly</p>
+          <p className="text-sm text-gray-500 dark:text-neutral-500 mt-2">Payouts on the 1st of each month</p>
         </div>
       </div>
 
       {}
       {monthlyTrend.length > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Revenue Trend</h2>
-              <p className="text-sm text-gray-600 mt-1">Monthly revenue performance</p>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Revenue Trend</h2>
+              <p className="text-sm text-gray-600 dark:text-neutral-400 mt-1">Monthly revenue performance</p>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-              <span className="text-gray-600">Revenue</span>
+              <span className="text-gray-600 dark:text-neutral-400">Revenue</span>
             </div>
           </div>
           <RevenueLineChart data={monthlyTrend} formatCurrency={formatCurrency} />
@@ -227,25 +227,25 @@ export default function InstructorEarningsPage() {
 
       {}
       {revenueByCourse.length > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Revenue by Course</h2>
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Revenue by Course</h2>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Course</th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Sales</th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Total Revenue</th>
+                <tr className="border-b border-gray-200 dark:border-neutral-700">
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Course</th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Sales</th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Total Revenue</th>
                 </tr>
               </thead>
               <tbody>
                 {revenueByCourse.map((course, index) => (
-                  <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                  <tr key={index} className="border-b border-gray-100 dark:border-neutral-800 hover:bg-gray-50 dark:hover:bg-neutral-800">
                     <td className="py-4 px-4">
-                      <p className="font-medium text-gray-900">{course.course_title}</p>
+                      <p className="font-medium text-gray-900 dark:text-white">{course.course_title}</p>
                     </td>
-                    <td className="py-4 px-4 text-gray-600">{course.sales}</td>
-                    <td className="py-4 px-4 font-bold text-gray-900">
+                    <td className="py-4 px-4 text-gray-600 dark:text-neutral-400">{course.sales}</td>
+                    <td className="py-4 px-4 font-bold text-gray-900 dark:text-white">
                       {formatCurrency(parseFloat(course.revenue))}
                     </td>
                   </tr>
@@ -264,9 +264,9 @@ export default function InstructorEarningsPage() {
       />
 
       {}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-blue-900 mb-3">Payout Information</h3>
-        <ul className="space-y-2 text-sm text-blue-800">
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3">Payout Information</h3>
+        <ul className="space-y-2 text-sm text-blue-800 dark:text-blue-300">
           <li className="flex items-start">
             <span className="mr-2">•</span>
             <span>Payouts are processed monthly on the 1st of each month</span>

@@ -7,19 +7,19 @@ function getStatusBadge(status) {
   const statusConfig = {
     approved: {
       label: "Approved",
-      color: "bg-green-100 text-green-700",
+      color: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
     },
     pending: {
       label: "Pending Review",
-      color: "bg-yellow-100 text-yellow-700",
+      color: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
     },
     rejected: {
       label: "Rejected",
-      color: "bg-red-100 text-red-700",
+      color: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
     },
     draft: {
       label: "Draft",
-      color: "bg-gray-100 text-gray-700",
+      color: "bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-neutral-400",
     },
   };
 
@@ -52,17 +52,17 @@ export function CourseListItem({ course }) {
           <div className="flex-1">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
                   {course.title}
                 </h3>
-                <p className="text-sm text-gray-600 line-clamp-2">
+                <p className="text-sm text-gray-600 dark:text-neutral-400 line-clamp-2">
                   {course.description || "No description"}
                 </p>
               </div>
               {getStatusBadge(course.review_status)}
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mt-4">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-neutral-400 mt-4">
               <span className="flex items-center gap-1">
                 <span className="font-medium">Category:</span>
                 {course.category || "Uncategorized"}

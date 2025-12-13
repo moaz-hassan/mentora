@@ -72,8 +72,8 @@ export default function NotificationsPage() {
       {}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Notifications</h1>
+          <p className="text-gray-600 dark:text-neutral-400 mt-1">
             {unreadCount > 0
               ? `You have ${unreadCount} unread notification${
                   unreadCount !== 1 ? "s" : ""
@@ -85,7 +85,7 @@ export default function NotificationsPage() {
           <Button
             onClick={markAllAsRead}
             variant="outline"
-            className="border-blue-600 text-blue-600 hover:bg-blue-50"
+            className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
           >
             <CheckCheck className="w-4 h-4 mr-2" />
             Mark All as Read
@@ -115,7 +115,7 @@ export default function NotificationsPage() {
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
               >
                 <option value="all">All</option>
                 <option value="unread">Unread</option>
@@ -134,11 +134,11 @@ export default function NotificationsPage() {
       ) : filteredNotifications.length === 0 ? (
         <Card>
           <CardContent className="p-12 text-center">
-            <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <Bell className="w-16 h-16 text-gray-300 dark:text-neutral-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               No notifications found
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-neutral-400">
               {searchQuery || filter !== "all"
                 ? "Try adjusting your filters"
                 : "You don't have any notifications yet"}
@@ -151,7 +151,7 @@ export default function NotificationsPage() {
             <Card
               key={notification.id}
               className={`hover:shadow-md transition-shadow ${
-                !notification.is_read ? "bg-blue-50 border-blue-200" : ""
+                !notification.is_read ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800" : ""
               }`}
             >
               <CardContent className="p-6">
@@ -161,7 +161,7 @@ export default function NotificationsPage() {
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                         {notification.title}
                       </h3>
                       {!notification.is_read && (
@@ -170,8 +170,8 @@ export default function NotificationsPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-gray-700 mb-3">{notification.message}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-gray-700 dark:text-neutral-300 mb-3">{notification.message}</p>
+                    <p className="text-sm text-gray-500 dark:text-neutral-500">
                       {formatTime(notification.created_at)}
                     </p>
                   </div>

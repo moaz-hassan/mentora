@@ -236,7 +236,7 @@ export default function InstructorSearchPage() {
     <div className="p-6 space-y-6">
       {}
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Search</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Search</h1>
 
         {}
         <form onSubmit={handleSearch} className="relative">
@@ -246,14 +246,14 @@ export default function InstructorSearchPage() {
             placeholder="Search for pages, courses, actions, or help..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-12 py-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-lg"
+            className="w-full pl-12 pr-12 py-4 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-lg placeholder:text-gray-400 dark:placeholder:text-neutral-500"
             autoFocus
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
               <X className="w-5 h-5" />
             </button>
@@ -262,7 +262,7 @@ export default function InstructorSearchPage() {
 
         {}
         {searchQuery && (
-          <p className="mt-4 text-sm text-gray-600">
+          <p className="mt-4 text-sm text-gray-600 dark:text-neutral-400">
             {loading ? "Searching..." : `Found ${totalResults} results for "${searchQuery}"`}
           </p>
         )}
@@ -272,13 +272,13 @@ export default function InstructorSearchPage() {
       {!searchQuery && recentSearches.length > 0 && (
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
               <Clock className="w-5 h-5 mr-2" />
               Recent Searches
             </h2>
             <button
               onClick={clearRecentSearches}
-              className="text-sm text-blue-600 hover:text-blue-700"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
             >
               Clear all
             </button>
@@ -288,7 +288,7 @@ export default function InstructorSearchPage() {
               <button
                 key={index}
                 onClick={() => setSearchQuery(search)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors text-sm"
+                className="px-4 py-2 bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-neutral-300 rounded-full hover:bg-gray-200 dark:hover:bg-neutral-700 transition-colors text-sm"
               >
                 {search}
               </button>
@@ -303,7 +303,7 @@ export default function InstructorSearchPage() {
           {}
           {results.pages.length > 0 && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Pages</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Pages</h2>
               <div className="space-y-3">
                 {results.pages.map((page, index) => {
                   const Icon = page.icon;
@@ -311,18 +311,18 @@ export default function InstructorSearchPage() {
                     <Link
                       key={index}
                       href={page.path}
-                      className="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                      className="block p-4 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-start">
-                        <div className="p-2 bg-blue-100 rounded-lg mr-4">
-                          <Icon className="w-5 h-5 text-blue-600" />
+                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg mr-4">
+                          <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 mb-1">
+                          <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                             {page.title}
                           </h3>
-                          <p className="text-sm text-gray-600">{page.description}</p>
-                          <p className="text-xs text-blue-600 mt-2">{page.path}</p>
+                          <p className="text-sm text-gray-600 dark:text-neutral-400">{page.description}</p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">{page.path}</p>
                         </div>
                       </div>
                     </Link>
@@ -335,7 +335,7 @@ export default function InstructorSearchPage() {
           {}
           {results.actions.length > 0 && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Quick Actions
               </h2>
               <div className="space-y-3">
@@ -345,17 +345,17 @@ export default function InstructorSearchPage() {
                     <button
                       key={index}
                       onClick={action.action}
-                      className="w-full text-left p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                      className="w-full text-left p-4 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-start">
-                        <div className="p-2 bg-green-100 rounded-lg mr-4">
-                          <Icon className="w-5 h-5 text-green-600" />
+                        <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg mr-4">
+                          <Icon className="w-5 h-5 text-green-600 dark:text-green-400" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 mb-1">
+                          <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                             {action.title}
                           </h3>
-                          <p className="text-sm text-gray-600">{action.description}</p>
+                          <p className="text-sm text-gray-600 dark:text-neutral-400">{action.description}</p>
                         </div>
                       </div>
                     </button>
@@ -368,7 +368,7 @@ export default function InstructorSearchPage() {
           {}
           {results.help.length > 0 && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Help & Support
               </h2>
               <div className="space-y-3">
@@ -378,17 +378,17 @@ export default function InstructorSearchPage() {
                     <Link
                       key={index}
                       href={help.path}
-                      className="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                      className="block p-4 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-start">
-                        <div className="p-2 bg-purple-100 rounded-lg mr-4">
-                          <Icon className="w-5 h-5 text-purple-600" />
+                        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg mr-4">
+                          <Icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 mb-1">
+                          <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                             {help.title}
                           </h3>
-                          <p className="text-sm text-gray-600">{help.description}</p>
+                          <p className="text-sm text-gray-600 dark:text-neutral-400">{help.description}</p>
                         </div>
                       </div>
                     </Link>
@@ -401,11 +401,11 @@ export default function InstructorSearchPage() {
           {}
           {totalResults === 0 && (
             <div className="text-center py-12">
-              <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <Search className="w-16 h-16 text-gray-400 dark:text-neutral-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 No results found
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-neutral-400 mb-6">
                 Try searching with different keywords or browse our help center
               </p>
               <Link
@@ -422,7 +422,7 @@ export default function InstructorSearchPage() {
       {}
       {!searchQuery && (
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Popular Searches
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -439,10 +439,10 @@ export default function InstructorSearchPage() {
                 <button
                   key={index}
                   onClick={() => setSearchQuery(item.query)}
-                  className="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow text-left"
+                  className="flex items-center p-4 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-lg hover:shadow-md transition-shadow text-left"
                 >
-                  <Icon className="w-5 h-5 text-gray-600 mr-3" />
-                  <span className="text-gray-900">{item.query}</span>
+                  <Icon className="w-5 h-5 text-gray-600 dark:text-neutral-400 mr-3" />
+                  <span className="text-gray-900 dark:text-white">{item.query}</span>
                 </button>
               );
             })}

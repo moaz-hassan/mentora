@@ -112,8 +112,8 @@ export default function PendingReviewsPage() {
   if (error) {
     return (
       <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-800 font-medium mb-4">{error}</p>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
+          <p className="text-red-800 dark:text-red-400 font-medium mb-4">{error}</p>
           <button
             onClick={fetchPendingCourses}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -130,8 +130,8 @@ export default function PendingReviewsPage() {
       {}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Pending Reviews</h1>
-          <p className="mt-2 text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Pending Reviews</h1>
+          <p className="mt-2 text-gray-600 dark:text-neutral-400">
             Track the status of your courses awaiting admin approval
           </p>
         </div>
@@ -145,12 +145,12 @@ export default function PendingReviewsPage() {
       </div>
 
       {}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <div className="flex items-start">
-          <AlertCircle className="w-5 h-5 text-blue-600 mr-3 mt-0.5" />
+          <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-blue-900">Review Process</p>
-            <p className="text-sm text-blue-800 mt-1">
+            <p className="text-sm font-medium text-blue-900 dark:text-blue-300">Review Process</p>
+            <p className="text-sm text-blue-800 dark:text-blue-300 mt-1">
               Our admin team reviews all courses to ensure quality standards. This typically takes 2-5 business days.
               You'll receive an email notification once your course is reviewed.
             </p>
@@ -160,12 +160,12 @@ export default function PendingReviewsPage() {
 
       {/* Empty State */}
       {pendingCourses.length === 0 ? (
-        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-12 text-center">
+          <CheckCircle className="w-16 h-16 text-green-500 dark:text-green-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             No Courses Pending Review
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-neutral-400 mb-6">
             All your courses have been reviewed. Create a new course to get started!
           </p>
           <a
@@ -179,44 +179,44 @@ export default function PendingReviewsPage() {
         <>
           {/* Stats Summary */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Total Pending</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-neutral-400 mb-1">Total Pending</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
                     {pendingCourses.length}
                   </p>
                 </div>
-                <div className="p-3 bg-yellow-100 rounded-lg">
-                  <Clock className="w-6 h-6 text-yellow-600" />
+                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                  <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Under Review</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-neutral-400 mb-1">Under Review</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
                     {pendingCourses.filter((c) => c.status === "under_review").length}
                   </p>
                 </div>
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <AlertCircle className="w-6 h-6 text-blue-600" />
+                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                  <AlertCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">In Queue</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-neutral-400 mb-1">In Queue</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
                     {pendingCourses.filter((c) => c.status === "pending" || c.status === "pending_review").length}
                   </p>
                 </div>
-                <div className="p-3 bg-gray-100 rounded-lg">
-                  <FileText className="w-6 h-6 text-gray-600" />
+                <div className="p-3 bg-gray-100 dark:bg-neutral-800 rounded-lg">
+                  <FileText className="w-6 h-6 text-gray-600 dark:text-neutral-400" />
                 </div>
               </div>
             </div>
@@ -231,7 +231,7 @@ export default function PendingReviewsPage() {
               return (
                 <div
                   key={course.id}
-                  className={`bg-white rounded-lg border ${statusConfig.borderColor} p-6 hover:shadow-md transition-shadow`}
+                  className={`bg-white dark:bg-neutral-900 rounded-lg border ${statusConfig.borderColor} dark:border-neutral-800 p-6 hover:shadow-md transition-shadow`}
                 >
                   <div className="flex items-start gap-6">
                     {/* Thumbnail */}
@@ -247,11 +247,11 @@ export default function PendingReviewsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
                             {course.title}
                           </h3>
                           {course.subtitle && (
-                            <p className="text-sm text-gray-600 mb-2">
+                            <p className="text-sm text-gray-600 dark:text-neutral-400 mb-2">
                               {course.subtitle}
                             </p>
                           )}
@@ -266,7 +266,7 @@ export default function PendingReviewsPage() {
 
                       {/* Description */}
                       {course.description && (
-                        <p className="text-sm text-gray-700 mb-4 line-clamp-2">
+                        <p className="text-sm text-gray-700 dark:text-neutral-300 mb-4 line-clamp-2">
                           {course.description}
                         </p>
                       )}
@@ -274,26 +274,26 @@ export default function PendingReviewsPage() {
                       {/* Metadata */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                         <div>
-                          <p className="text-xs text-gray-500 mb-1">Category</p>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-xs text-gray-500 dark:text-neutral-500 mb-1">Category</p>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
                             {course.Category.name || "N/A"}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 mb-1">Level</p>
-                          <p className="text-sm font-medium text-gray-900 capitalize">
+                          <p className="text-xs text-gray-500 dark:text-neutral-500 mb-1">Level</p>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white capitalize">
                             {course.level || "N/A"}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 mb-1">Price</p>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-xs text-gray-500 dark:text-neutral-500 mb-1">Price</p>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
                             ${course.price || "0"}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 mb-1">Submitted</p>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-xs text-gray-500 dark:text-neutral-500 mb-1">Submitted</p>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
                             {getTimeSinceSubmission(course.createdAt)}
                           </p>
                         </div>
@@ -306,7 +306,7 @@ export default function PendingReviewsPage() {
                           <p className={`text-sm ${statusConfig.color}`}>
                             {statusConfig.description}
                           </p>
-                          <p className="text-xs text-gray-600 mt-1">
+                          <p className="text-xs text-gray-600 dark:text-neutral-400 mt-1">
                             Submitted on {formatDate(course.createdAt)}
                           </p>
                         </div>
@@ -321,14 +321,14 @@ export default function PendingReviewsPage() {
       )}
 
       {/* Help Section */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">
+      <div className="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
           What happens during review?
         </h3>
-        <div className="space-y-3 text-sm text-gray-700">
+        <div className="space-y-3 text-sm text-gray-700 dark:text-neutral-300">
           <div className="flex items-start">
-            <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
-              <span className="text-xs font-semibold text-blue-600">1</span>
+            <div className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3 mt-0.5">
+              <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">1</span>
             </div>
             <p>
               <strong>Content Review:</strong> Our team checks your course content for quality,
@@ -336,8 +336,8 @@ export default function PendingReviewsPage() {
             </p>
           </div>
           <div className="flex items-start">
-            <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
-              <span className="text-xs font-semibold text-blue-600">2</span>
+            <div className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3 mt-0.5">
+              <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">2</span>
             </div>
             <p>
               <strong>Technical Check:</strong> We verify that all videos, materials, and quizzes
@@ -345,8 +345,8 @@ export default function PendingReviewsPage() {
             </p>
           </div>
           <div className="flex items-start">
-            <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
-              <span className="text-xs font-semibold text-blue-600">3</span>
+            <div className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3 mt-0.5">
+              <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">3</span>
             </div>
             <p>
               <strong>Final Decision:</strong> Your course will be approved, or you'll receive

@@ -53,7 +53,7 @@ export default function EditCoursePage({ params }) {
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-neutral-600">Loading course data...</p>
+            <p className="text-neutral-600 dark:text-neutral-400">Loading course data...</p>
           </div>
         </div>
       </div>
@@ -66,8 +66,8 @@ export default function EditCoursePage({ params }) {
       <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
-            <div className="text-red-600 text-xl mb-4">Error loading course</div>
-            <p className="text-neutral-600">{error}</p>
+            <div className="text-red-600 dark:text-red-400 text-xl mb-4">Error loading course</div>
+            <p className="text-neutral-600 dark:text-neutral-400">{error}</p>
           </div>
         </div>
       </div>

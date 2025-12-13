@@ -2,8 +2,8 @@ export function AnalyticsHeader({ selectedCourse, onCourseChange, timeRange, onT
   return (
     <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Analytics Dashboard</h1>
+        <p className="mt-2 text-gray-600 dark:text-neutral-400">
           Track your teaching performance and student engagement
         </p>
       </div>
@@ -12,7 +12,7 @@ export function AnalyticsHeader({ selectedCourse, onCourseChange, timeRange, onT
         <select
           value={selectedCourse}
           onChange={(e) => onCourseChange(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          className="px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
         >
           <option value="all">All Courses</option>
           {courses.map((course) => (
@@ -25,7 +25,7 @@ export function AnalyticsHeader({ selectedCourse, onCourseChange, timeRange, onT
         <select
           value={timeRange}
           onChange={(e) => onTimeRangeChange(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          className="px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
         >
           <option value="7">Last 7 days</option>
           <option value="30">Last 30 days</option>

@@ -25,7 +25,7 @@ export function CoursesFilterBar({ searchQuery, statusFilter, onSearchChange, on
             <select
               value={statusFilter}
               onChange={(e) => onStatusChange(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
             >
               <option value="all">All Status</option>
               <option value="draft">Draft</option>

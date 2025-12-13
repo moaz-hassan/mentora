@@ -73,8 +73,8 @@ export default function InstructorOverviewPage() {
   if (error) {
     return (
       <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-800 font-medium mb-4">{error}</p>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
+          <p className="text-red-800 dark:text-red-400 font-medium mb-4">{error}</p>
           <button
             onClick={refetch}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -101,15 +101,15 @@ export default function InstructorOverviewPage() {
 
       {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-gray-200 dark:border-neutral-800 p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Enrollment Trend</h2>
-              <p className="text-sm text-gray-600">Last 30 days</p>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Enrollment Trend</h2>
+              <p className="text-sm text-gray-600 dark:text-neutral-400">Last 30 days</p>
             </div>
             <Link
               href="/dashboard/instructor/analytics"
-              className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+              className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium"
             >
               View Details →
             </Link>
@@ -117,15 +117,15 @@ export default function InstructorOverviewPage() {
           <EnrollmentChart data={enrollmentData} />
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-gray-200 dark:border-neutral-800 p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Revenue Trend</h2>
-              <p className="text-sm text-gray-600">Last 6 months</p>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Revenue Trend</h2>
+              <p className="text-sm text-gray-600 dark:text-neutral-400">Last 6 months</p>
             </div>
             <Link
               href="/dashboard/instructor/earnings"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
             >
               View Details →
             </Link>
