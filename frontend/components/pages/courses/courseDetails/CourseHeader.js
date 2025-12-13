@@ -32,10 +32,11 @@ export default function CourseHeader({ course }) {
         </h1>
       </div>
 
-      {}
-      <p className="text-base text-gray-300 mb-6 leading-relaxed max-w-3xl">
-        {course.description}
-      </p>
+      {/* Description */}
+      <div 
+        className="text-base text-gray-300 mb-6 leading-relaxed max-w-3xl prose prose-invert prose-sm"
+        dangerouslySetInnerHTML={{ __html: course.description || "" }}
+      />
 
       {}
       <div className="flex flex-wrap items-center gap-4 text-sm mb-6">

@@ -31,10 +31,8 @@ import { QuizItem } from "./QuizItem";
 
 export function ChapterItem({
   chapter,
-  index,
   updateChapter,
   deleteChapter,
-  moveChapter,
 }) {
 
   
@@ -170,7 +168,6 @@ export function ChapterItem({
       className="relative border rounded-lg overflow-hidden mb-4"
       {...attributes}
     >
-      {}
       <div className="flex items-center gap-3 p-4 border-b border-neutral-100">
         {isNewChapter ? (
           <button
@@ -219,7 +216,7 @@ export function ChapterItem({
             <div>
               <h3
                 onClick={() => isNewChapter && setIsEditingTitle(true)}
-                className={`text-neutral-900 ${isNewChapter ? 'cursor-pointer hover:text-blue-600' : 'cursor-default'}`}
+                className={`text-neutral-900 dark:text-neutral-100 ${isNewChapter ? 'cursor-pointer hover:text-blue-600' : 'cursor-default'}`}
               >
                 {chapter.title}
                 {!isNewChapter && (
@@ -227,7 +224,7 @@ export function ChapterItem({
                 )}
               </h3>
               {chapter.description && (
-                <p className="text-sm text-neutral-600 mt-1">
+                <p className="text-sm text-neutral-600 mt-1 dark:text-neutral-400">
                   {chapter.description}
                 </p>
               )}
@@ -275,11 +272,8 @@ export function ChapterItem({
           )}
         </div>
       </div>
-
-      {}
       {isExpanded && (
         <div className="p-4 space-y-3">
-          {}
           {isNewChapter && (
             <div className="mb-4">
               <Input

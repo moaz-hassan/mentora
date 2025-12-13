@@ -31,7 +31,7 @@ export default function CourseCurriculum({
   };
 
   return (
-    <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-neutral-800 shadow-sm overflow-hidden">
       <div className="p-6 border-b border-border">
         <h2 className="text-xl font-bold text-foreground mb-2">
           Course Curriculum

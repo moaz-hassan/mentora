@@ -46,4 +46,12 @@ router.post(
   courseController.rejectCourse
 );
 
+// Toggle featured status
+router.patch(
+  "/:id/featured",
+  courseIdValidator,
+  validateResult,
+  courseController.toggleFeatured
+);
+
 export default router;

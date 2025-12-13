@@ -2,30 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { Search, BookOpen } from "lucide-react";
 import {
-  CheckCircle,
-  XCircle,
-  Eye,
-  Calendar,
-  User,
-  BookOpen,
-  Search,
-  Filter,
-  MoreVertical,
-  Trash2,
-  AlertTriangle,
-  ArrowLeft,
-} from "lucide-react";
-import { 
-  getAdminCourses, 
-  getPendingCourses, 
-  approveCourse, 
-  rejectCourse, 
+  getAdminCourses,
+  getPendingCourses,
+  approveCourse,
+  rejectCourse,
   deleteCourse,
-  analyzeCourseWithAI,
-  getCourseDetails
+  getCourseDetails,
+  toggleFeatured,
 } from "@/lib/apiCalls/admin/courses.apiCall";
 import { AdminCourseView } from "@/components/admin/courses/AdminCourseView";
+import { AdminCourseCard } from "@/components/admin/courses/AdminCourseCard";
+import { CourseApprovalDialog } from "@/components/admin/courses/CourseApprovalDialog";
 
 export default function CoursesManagementPage() {
   const [activeTab, setActiveTab] = useState("pending");
@@ -46,13 +35,9 @@ export default function CoursesManagementPage() {
   const fetchCourses = async () => {
     setLoading(true);
     try {
-      let result;
-      
-      if (activeTab === "pending") {
-        result = await getPendingCourses();
-      } else {
-        result = await getAdminCourses();
-      }
+      const result = activeTab === "pending"
+        ? await getPendingCourses()
+        : await getAdminCourses();
 
       if (result.success) {
         setCourses(result.data.data || result.data || []);
@@ -112,21 +97,21 @@ export default function CoursesManagementPage() {
   };
 
   const handleDelete = async (courseId) => {
-      if(!confirm("Are you sure you want to delete this course?")) return;
-      
-      try {
-        const result = await deleteCourse(courseId);
-        if(result.success) {
-            toast.success(result.message || "Course deleted successfully");
-            setCourses((prev) => prev.filter((c) => c.id !== courseId));
-        } else {
-            toast.error(result.error || "Failed to delete course");
-        }
-      } catch (error) {
-          console.error("Error deleting course:", error);
-          toast.error("Failed to delete course");
+    if (!confirm("Are you sure you want to delete this course?")) return;
+
+    try {
+      const result = await deleteCourse(courseId);
+      if (result.success) {
+        toast.success(result.message || "Course deleted successfully");
+        setCourses((prev) => prev.filter((c) => c.id !== courseId));
+      } else {
+        toast.error(result.error || "Failed to delete course");
       }
-  }
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      toast.error("Failed to delete course");
+    }
+  };
 
   const handlePreview = async (courseId) => {
     setLoading(true);
@@ -152,93 +137,81 @@ export default function CoursesManagementPage() {
     setShowModal(true);
   };
 
-  const filteredCourses = courses.filter(course => 
-    course.title.toLowerCase().includes(search.toLowerCase()) ||
-    course.instructor?.name?.toLowerCase().includes(search.toLowerCase())
+  const handleModalClose = (open) => {
+    if (!open) {
+      setShowModal(false);
+      setSelectedCourse(null);
+      setRejectionReason("");
+    }
+  };
+
+  const handleAIAnalysisComplete = (courseId, analysisData) => {
+    setCourses((prev) =>
+      prev.map((c) => (c.id === courseId ? { ...c, ai_analysis: analysisData } : c))
+    );
+  };
+
+  const handleToggleFeatured = async (courseId, isFeatured) => {
+    try {
+      const result = await toggleFeatured(courseId);
+      if (result.success) {
+        toast.success(result.message || (isFeatured ? "Course marked as featured" : "Course removed from featured"));
+        setCourses((prev) =>
+          prev.map((c) => (c.id === courseId ? { ...c, is_featured: isFeatured } : c))
+        );
+      } else {
+        toast.error(result.error || "Failed to update featured status");
+      }
+    } catch (error) {
+      console.error("Error toggling featured:", error);
+      toast.error("Failed to update featured status");
+    }
+  };
+
+  const filteredCourses = courses.filter(
+    (course) =>
+      course.title.toLowerCase().includes(search.toLowerCase()) ||
+      course.instructor?.name?.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Preview Mode
   if (viewMode === "preview" && previewCourse) {
     return (
       <>
-        <AdminCourseView 
+        <AdminCourseView
           course={previewCourse}
           onClose={() => setViewMode("list")}
           onApprove={(c) => openModal(c, "approve")}
           onReject={(c) => openModal(c, "reject")}
         />
 
-        {showModal && selectedCourse && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                {action === "approve" ? "Approve Course" : "Reject Course"}
-              </h3>
-
-              <p className="text-gray-600 mb-4">
-                {action === "approve"
-                  ? `Are you sure you want to approve "${selectedCourse.title}"? This will make it available to students.`
-                  : `Are you sure you want to reject "${selectedCourse.title}"? Please provide a reason.`}
-              </p>
-
-              {action === "reject" && (
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Rejection Reason (minimum 10 characters)
-                  </label>
-                  <textarea
-                    value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
-                    placeholder="Explain why this course is being rejected..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
-                    rows={4}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    {rejectionReason.length}/10 characters
-                  </p>
-                </div>
-              )}
-
-              <div className="flex items-center justify-end space-x-3">
-                <button
-                  onClick={() => {
-                    setShowModal(false);
-                    setSelectedCourse(null);
-                    setRejectionReason("");
-                  }}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() =>
-                    action === "approve"
-                      ? handleApprove(selectedCourse.id)
-                      : handleReject(selectedCourse.id)
-                  }
-                  className={`px-4 py-2 rounded-lg text-white ${
-                    action === "approve"
-                      ? "bg-green-600 hover:bg-green-700"
-                      : "bg-red-600 hover:bg-red-700"
-                  }`}
-                >
-                  {action === "approve" ? "Approve" : "Reject"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <CourseApprovalDialog
+          open={showModal}
+          onOpenChange={handleModalClose}
+          course={selectedCourse}
+          action={action}
+          rejectionReason={rejectionReason}
+          onRejectionReasonChange={setRejectionReason}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
       </>
     );
   }
 
   return (
     <div className="space-y-6 p-6">
+      {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Course Management</h1>
-        <p className="mt-2 text-gray-600 dark:text-neutral-400">Review pending courses and manage existing ones.</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+          Course Management
+        </h1>
+        <p className="mt-2 text-gray-600 dark:text-neutral-400">
+          Review pending courses and manage existing ones.
+        </p>
       </div>
 
-      {}
+      {/* Tabs */}
       <div className="border-b border-gray-200 dark:border-neutral-800 overflow-x-auto">
         <nav className="-mb-px flex space-x-8">
           <button
@@ -264,7 +237,7 @@ export default function CoursesManagementPage() {
         </nav>
       </div>
 
-      {}
+      {/* Search */}
       <div className="flex items-center space-x-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-neutral-500" />
@@ -278,7 +251,7 @@ export default function CoursesManagementPage() {
         </div>
       </div>
 
-      {}
+      {/* Content */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -286,287 +259,44 @@ export default function CoursesManagementPage() {
       ) : filteredCourses.length === 0 ? (
         <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-8 sm:p-12 text-center">
           <BookOpen className="w-12 sm:w-16 h-12 sm:h-16 mx-auto text-gray-400 dark:text-neutral-600 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Courses Found</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            No Courses Found
+          </h3>
           <p className="text-gray-600 dark:text-neutral-400">
-            {activeTab === "pending" 
-              ? "There are no courses pending review." 
+            {activeTab === "pending"
+              ? "There are no courses pending review."
               : "No courses match your search criteria."}
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6">
           {filteredCourses.map((course) => (
-            <div
+            <AdminCourseCard
               key={course.id}
-              className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-4 sm:p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-                <img
-                  src={course.thumbnail_url || "https://via.placeholder.com/300x169"}
-                  alt={course.title}
-                  className="w-full md:w-48 h-32 object-cover rounded-lg flex-shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
-                    <div className="min-w-0">
-                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">{course.title}</h3>
-                      <p className="text-sm text-gray-500 dark:text-neutral-400 mt-1">
-                        by {course.instructor?.name || "Unknown Instructor"}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2 flex-shrink-0">
-                       {activeTab === "all" && (
-                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                               course.is_published 
-                                 ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300" 
-                                 : "bg-gray-100 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300"
-                           }`}>
-                               {course.is_published ? "Published" : "Draft"}
-                           </span>
-                       )}
-                       {activeTab === "pending" && (
-                           <span className="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300">
-                               Pending Review
-                           </span>
-                       )}
-                    </div>
-                  </div>
-                  
-                  <p className="text-gray-600 dark:text-neutral-400 line-clamp-2 mb-4 text-sm sm:text-base">{course.description}</p>
-                  
-                  {}
-                  {activeTab === "pending" && (
-                    <div className="mb-4">
-                      {course.ai_analysis ? (
-                        <div className="p-5 bg-gradient-to-br from-purple-50 to-white rounded-xl border border-purple-100 shadow-sm">
-                          {}
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                              <div className="p-1.5 bg-purple-100 rounded-lg">
-                                <svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                </svg>
-                              </div>
-                              <span className="font-semibold text-purple-900">AI Analysis</span>
-                            </div>
-                            <span className={`px-3 py-1 text-xs font-bold tracking-wide uppercase rounded-full ${
-                              course.ai_analysis.suggested_decision === "approve" 
-                                ? "bg-green-100 text-green-700 border border-green-200" 
-                                : "bg-red-100 text-red-700 border border-red-200"
-                            }`}>
-                              Suggestion: {course.ai_analysis.suggested_decision}
-                            </span>
-                          </div>
-
-                          {}
-                          <div className="mb-4">
-                            <h4 className="text-xs font-semibold text-purple-900 uppercase tracking-wider mb-2">Summary</h4>
-                            <p className="text-sm text-gray-700 leading-relaxed bg-white/50 p-3 rounded-lg border border-purple-50">
-                              {course.ai_analysis.summary}
-                            </p>
-                          </div>
-
-                          {}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            {}
-                            {course.ai_analysis.strengths && course.ai_analysis.strengths.length > 0 && (
-                              <div className="bg-green-50/50 rounded-lg p-3 border border-green-100">
-                                <h4 className="flex items-center gap-2 text-xs font-semibold text-green-800 uppercase tracking-wider mb-3">
-                                  <CheckCircle className="w-4 h-4" /> Strengths
-                                </h4>
-                                <ul className="space-y-2">
-                                  {course.ai_analysis.strengths.map((strength, idx) => (
-                                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-                                      <span className="mt-1.5 w-1 h-1 rounded-full bg-green-500 flex-shrink-0" />
-                                      <span>{strength}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-
-                            {}
-                            {course.ai_analysis.weaknesses && course.ai_analysis.weaknesses.length > 0 && (
-                              <div className="bg-red-50/50 rounded-lg p-3 border border-red-100">
-                                <h4 className="flex items-center gap-2 text-xs font-semibold text-red-800 uppercase tracking-wider mb-3">
-                                  <AlertTriangle className="w-4 h-4" /> Weaknesses
-                                </h4>
-                                <ul className="space-y-2">
-                                  {course.ai_analysis.weaknesses.map((weakness, idx) => (
-                                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-                                      <span className="mt-1.5 w-1 h-1 rounded-full bg-red-500 flex-shrink-0" />
-                                      <span>{weakness}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                          </div>
-
-                          {}
-                          <div className="bg-purple-100/50 rounded-lg p-4 border border-purple-100">
-                            <h4 className="text-xs font-semibold text-purple-900 uppercase tracking-wider mb-2">Final Reasoning</h4>
-                            <p className="text-sm text-purple-900 leading-relaxed">
-                              {course.ai_analysis.reasoning}
-                            </p>
-                          </div>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={async (e) => {
-                            e.stopPropagation();
-                            const btn = e.currentTarget;
-                            const originalText = btn.innerText;
-                            btn.innerText = "Analyzing...";
-                            btn.disabled = true;
-                            
-                            try {
-                              const result = await analyzeCourseWithAI(course.id);
-                              if (result.success) {
-                                setCourses(prev => prev.map(c => c.id === course.id ? { ...c, ai_analysis: result.data } : c));
-                                toast.success(result.message || "AI Analysis generated");
-                              } else {
-                                toast.error(result.error || "Failed to generate analysis");
-                              }
-                            } catch (err) {
-                              console.error(err);
-                              toast.error("Error generating analysis");
-                            } finally {
-                              btn.innerText = originalText;
-                              btn.disabled = false;
-                            }
-                          }}
-                          className="flex items-center text-sm text-purple-600 hover:text-purple-800 font-medium"
-                        >
-                          <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                          </svg>
-                          Analyze with AI
-                        </button>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                    <div className="flex items-center">
-                      <BookOpen className="w-4 h-4 mr-1" />
-                      {course.chapters_count || 0} chapters
-                    </div>
-                    <div className="flex items-center">
-                      <User className="w-4 h-4 mr-1" />
-                      {course.level}
-                    </div>
-                    <div className="flex items-center">
-                      <span className="font-semibold text-gray-900">${course.price}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-3">
-                    <button
-                      onClick={() => handlePreview(course.id)}
-                      className="flex items-center px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Preview
-                    </button>
-                    
-                    {activeTab === "pending" && (
-                      <>
-                        <button
-                          onClick={() => openModal(course, "approve")}
-                          className="flex items-center px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
-                        >
-                          <CheckCircle className="w-4 h-4 mr-2" />
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => openModal(course, "reject")}
-                          className="flex items-center px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
-                        >
-                          <XCircle className="w-4 h-4 mr-2" />
-                          Reject
-                        </button>
-                      </>
-                    )}
-                    
-                    {activeTab === "all" && (
-                        <button 
-                            onClick={() => handleDelete(course.id)}
-                            className="flex items-center px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 text-sm ml-auto"
-                        >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Delete
-                        </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+              course={course}
+              activeTab={activeTab}
+              onPreview={handlePreview}
+              onApprove={(c) => openModal(c, "approve")}
+              onReject={(c) => openModal(c, "reject")}
+              onDelete={handleDelete}
+              onToggleFeatured={handleToggleFeatured}
+              onAIAnalysisComplete={handleAIAnalysisComplete}
+            />
           ))}
         </div>
       )}
 
-      {}
-      {showModal && selectedCourse && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              {action === "approve" ? "Approve Course" : "Reject Course"}
-            </h3>
-
-            <p className="text-gray-600 mb-4">
-              {action === "approve"
-                ? `Are you sure you want to approve "${selectedCourse.title}"? This will make it available to students.`
-                : `Are you sure you want to reject "${selectedCourse.title}"? Please provide a reason.`}
-            </p>
-
-            {action === "reject" && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Rejection Reason (minimum 10 characters)
-                </label>
-                <textarea
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                  placeholder="Explain why this course is being rejected..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
-                  rows={4}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  {rejectionReason.length}/10 characters
-                </p>
-              </div>
-            )}
-
-            <div className="flex items-center justify-end space-x-3">
-              <button
-                onClick={() => {
-                  setShowModal(false);
-                  setSelectedCourse(null);
-                  setRejectionReason("");
-                }}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() =>
-                  action === "approve"
-                    ? handleApprove(selectedCourse.id)
-                    : handleReject(selectedCourse.id)
-                }
-                className={`px-4 py-2 rounded-lg text-white ${
-                  action === "approve"
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-red-600 hover:bg-red-700"
-                }`}
-              >
-                {action === "approve" ? "Approve" : "Reject"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Approval Dialog */}
+      <CourseApprovalDialog
+        open={showModal}
+        onOpenChange={handleModalClose}
+        course={selectedCourse}
+        action={action}
+        rejectionReason={rejectionReason}
+        onRejectionReasonChange={setRejectionReason}
+        onApprove={handleApprove}
+        onReject={handleReject}
+      />
     </div>
   );
 }

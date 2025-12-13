@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ChevronRight,
   Layers,
+  Star,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -57,6 +58,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Switch } from "@/components/ui/switch";
 import { categoriesAPI, subcategoriesAPI } from "@/lib/apiCalls/admin/categories.apiCall";
 
 export default function CategoryManagementPage() {
@@ -79,7 +81,7 @@ export default function CategoryManagementPage() {
   const [parentCategoryForSub, setParentCategoryForSub] = useState(null);
   
   
-  const [formData, setFormData] = useState({ name: "" });
+  const [formData, setFormData] = useState({ name: "", is_featured: false });
   const [subFormData, setSubFormData] = useState({ name: "", category_id: "" });
   const [formError, setFormError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -174,12 +176,13 @@ export default function CategoryManagementPage() {
     try {
       const res = await categoriesAPI.update(selectedCategory.id, {
         name: formData.name.trim(),
+        is_featured: formData.is_featured,
       });
       if (res.success) {
         toast.success("Category updated successfully");
         setEditDialogOpen(false);
         setSelectedCategory(null);
-        setFormData({ name: "" });
+        setFormData({ name: "", is_featured: false });
         fetchCategories();
       }
     } catch (error) {
@@ -285,7 +288,7 @@ export default function CategoryManagementPage() {
   
   const openEditDialog = (category) => {
     setSelectedCategory(category);
-    setFormData({ name: category.name });
+    setFormData({ name: category.name, is_featured: category.is_featured || false });
     setFormError("");
     setEditDialogOpen(true);
   };
@@ -434,6 +437,12 @@ export default function CategoryManagementPage() {
                           <Badge variant="outline" className="ml-1">
                             {category.SubCategories?.length || 0} subcategories
                           </Badge>
+                          {category.is_featured && (
+                            <Badge variant="default" className="ml-1 bg-amber-500 hover:bg-amber-600">
+                              <Star className="h-3 w-3 mr-1 fill-current" />
+                              Featured
+                            </Badge>
+                          )}
                         </div>
                       </CollapsibleTrigger>
                       <div className="flex items-center gap-2">
@@ -536,13 +545,29 @@ export default function CategoryManagementPage() {
                 placeholder="Enter category name"
                 value={formData.name}
                 onChange={(e) => {
-                  setFormData({ name: e.target.value });
+                  setFormData(prev => ({ ...prev, name: e.target.value }));
                   setFormError("");
                 }}
               />
               {formError && (
                 <p className="text-sm text-destructive">{formError}</p>
               )}
+            </div>
+            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+              <div className="space-y-0.5">
+                <Label htmlFor="is-featured" className="flex items-center gap-2">
+                  <Star className="h-4 w-4 text-amber-500" />
+                  Featured Category
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Featured categories appear prominently on the homepage
+                </p>
+              </div>
+              <Switch
+                id="is-featured"
+                checked={formData.is_featured}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_featured: checked }))}
+              />
             </div>
           </div>
           <DialogFooter>

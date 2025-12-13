@@ -1,6 +1,7 @@
 
 
-export const formatCourseResponse = (course, enrollmentsCount, reviewStats) => {
+export const formatCourseResponse = (course, enrollmentsCount, reviewStats, options = {}) => {
+  const { includeFullContent = false } = options;
   const filteredCourse = { ...course };
 
   let totalResources = 0;
@@ -12,7 +13,8 @@ export const formatCourseResponse = (course, enrollmentsCount, reviewStats) => {
             totalResources += lesson.materials.length;
           }
 
-          if (lesson.is_preview) {
+          // For admin preview or preview lessons, include full content
+          if (lesson.is_preview || includeFullContent) {
             return {
               id: lesson.id,
               title: lesson.title,
@@ -39,12 +41,24 @@ export const formatCourseResponse = (course, enrollmentsCount, reviewStats) => {
         });
       }
       if (chapter.Quizzes) {
-        chapter.Quizzes = chapter.Quizzes.map((quiz) => ({
-          id: quiz.id,
-          title: quiz.title,
-          order_number: quiz.order_number,
-          questions_length: quiz.questions?.length || 0,
-        }));
+        chapter.Quizzes = chapter.Quizzes.map((quiz) => {
+          // For admin preview, include full questions
+          if (includeFullContent) {
+            return {
+              id: quiz.id,
+              title: quiz.title,
+              order_number: quiz.order_number,
+              questions: quiz.questions,
+              questions_length: quiz.questions?.length || 0,
+            };
+          }
+          return {
+            id: quiz.id,
+            title: quiz.title,
+            order_number: quiz.order_number,
+            questions_length: quiz.questions?.length || 0,
+          };
+        });
       }
       return chapter;
     });
@@ -73,3 +87,4 @@ export const formatCourseResponse = (course, enrollmentsCount, reviewStats) => {
 
   return filteredCourse;
 };
+

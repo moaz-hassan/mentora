@@ -104,3 +104,17 @@ export const getCourseDetails = async (courseId) => {
     return error.response?.data || { success: false, message: error.message };
   }
 };
+
+export const toggleFeatured = async (courseId) => {
+  try {
+    const headers = getAuthHeaders();
+    const response = await axios.patch(
+      `${API_URL}/api/admin/courses/${courseId}/featured`,
+      {},
+      { headers }
+    );
+    return response.data;
+  } catch (error) {
+    return error.response?.data || { success: false, message: error.message };
+  }
+};

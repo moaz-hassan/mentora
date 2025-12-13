@@ -1,7 +1,19 @@
+import { useState } from "react";
 import Link from "next/link";
-import { Edit, BarChart3, Eye } from "lucide-react";
+import { Edit, BarChart3, Eye, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function getStatusBadge(status) {
   const statusConfig = {
@@ -10,6 +22,10 @@ function getStatusBadge(status) {
       color: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
     },
     pending: {
+      label: "Pending Review",
+      color: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
+    },
+    pending_review: {
       label: "Pending Review",
       color: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
     },
@@ -32,7 +48,27 @@ function getStatusBadge(status) {
   );
 }
 
-export function CourseListItem({ course }) {
+export function CourseListItem({ course, onDelete }) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  // Determine if the course status allows deletion (draft or rejected)
+  const status = course.review_status || course.status;
+  const canDelete = status === "draft" || status === "rejected";
+
+  const handleDelete = async () => {
+    if (!onDelete) return;
+    setDeleting(true);
+    try {
+      await onDelete(course.id);
+      setDeleteDialogOpen(false);
+    } catch (error) {
+      console.error("Failed to delete course:", error);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardContent className="p-6">
@@ -59,7 +95,7 @@ export function CourseListItem({ course }) {
                   {course.description || "No description"}
                 </p>
               </div>
-              {getStatusBadge(course.review_status)}
+              {getStatusBadge(status)}
             </div>
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-neutral-400 mt-4">
@@ -101,6 +137,46 @@ export function CourseListItem({ course }) {
                   Preview
                 </Button>
               </Link>
+
+              {canDelete && onDelete && (
+                <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Course</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete "{course.title}"? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        {deleting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Deleting...
+                          </>
+                        ) : (
+                          "Delete"
+                        )}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
             </div>
           </div>
         </div>
@@ -108,3 +184,4 @@ export function CourseListItem({ course }) {
     </Card>
   );
 }
+

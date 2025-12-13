@@ -115,7 +115,7 @@ export default function CoursePreviewPage() {
   const activeDiscount = getActiveDiscount(course);
 
   return (
-    <div className="min-h-screen bg-background relative pb-20 lg:pb-0">
+    <div className="min-h-screen bg-white dark:bg-neutral-950 relative pb-20 lg:pb-0">
       <div className="lg:hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
         <div className="px-4 py-6">
           <CourseHeader course={course} />

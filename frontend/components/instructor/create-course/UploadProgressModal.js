@@ -87,17 +87,17 @@ export function UploadProgressModal({ isOpen, progress }) {
           {}
           {(progress.status === 'complete' || progress.status === 'success') && (
             <div className="text-center space-y-4">
-              <div className="text-green-600 font-medium text-lg">
+              <div className="text-green-600 dark:text-green-400 font-medium text-lg">
                 {progress.message || 'Your course has been created successfully!'}
               </div>
               
               {}
               {progress.details && (
-                <div className="bg-gray-50 rounded-lg p-4 text-left space-y-3">
-                  <p className="font-semibold text-gray-900 text-base">
+                <div className="bg-gray-50 dark:bg-neutral-800 rounded-lg p-4 text-left space-y-3 border dark:border-neutral-700">
+                  <p className="font-semibold text-gray-900 dark:text-white text-base">
                     {progress.details.courseTitle}
                   </p>
-                  <div className="space-y-2 text-sm text-gray-700">
+                  <div className="space-y-2 text-sm text-gray-700 dark:text-neutral-300">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">📚</span>
                       <span>{progress.details.chaptersCount} chapter{progress.details.chaptersCount !== 1 ? 's' : ''}</span>
@@ -110,10 +110,10 @@ export function UploadProgressModal({ isOpen, progress }) {
                       <span className="text-lg">❓</span>
                       <span>{progress.details.quizzesCount} quiz{progress.details.quizzesCount !== 1 ? 'zes' : ''}</span>
                     </div>
-                    <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200">
+                    <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-neutral-600">
                       <span className="font-medium">Status:</span>
                       <span className={`font-semibold ${
-                        progress.details.status === 'Draft' ? 'text-gray-600' : 'text-blue-600'
+                        progress.details.status === 'Draft' ? 'text-gray-600 dark:text-neutral-400' : 'text-blue-600 dark:text-blue-400'
                       }`}>
                         {progress.details.status}
                       </span>
@@ -123,7 +123,7 @@ export function UploadProgressModal({ isOpen, progress }) {
               )}
               
               {!progress.details && (
-                <div className="text-sm text-neutral-600">
+                <div className="text-sm text-neutral-600 dark:text-neutral-400">
                   Redirecting to your courses...
                 </div>
               )}

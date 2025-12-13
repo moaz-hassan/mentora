@@ -16,7 +16,8 @@ export function useEditCourse(courseId) {
       const response = await getCourseForEdit(courseId);
 
       if (!response.success) {
-        throw new Error(response.message || "Failed to load course");
+        setError(response.message || "Failed to load course");
+        return;
       }
 
       

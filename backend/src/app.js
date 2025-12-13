@@ -64,9 +64,8 @@ app.use(cookieParser());
 // Apply general rate limiter to all API routes
 app.use("/api", generalLimiter);
 
-// Apply audit logging middleware to all API routes (logs admin actions after auth)
-app.use("/api", auditLogMiddleware);
-
+// Note: auditLogMiddleware must be applied AFTER authentication on admin routes
+// It's now applied per-route after authenticate middleware
 
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -80,63 +79,73 @@ app.use(
   "/api/admin/analytics",
   authenticate,
   authorize("admin"),
+  auditLogMiddleware,
   adminAnalyticsRoutes
 );
 app.use(
   "/api/admin/categories",
   authenticate,
   authorize("admin"),
+  auditLogMiddleware,
   adminCategoriesRoutes
 );
 app.use(
   "/api/admin/coupons",
   authenticate,
   authorize("admin"),
+  auditLogMiddleware,
   adminCouponsRoutes
 );
 app.use(
   "/api/admin/courses",
   authenticate,
   authorize("admin"),
+  auditLogMiddleware,
   adminCoursesRoutes
 );
 app.use(
   "/api/admin/financial",
   authenticate,
   authorize("admin"),
+  auditLogMiddleware,
   adminFinancialRoutes
 );
 app.use(
   "/api/admin/instructors",
   authenticate,
   authorize("admin"),
+  auditLogMiddleware,
   adminInstructorsRoutes
 );
-app.use("/api/admin/logs", authenticate, authorize("admin"), adminLogsRoutes);
+app.use("/api/admin/logs", authenticate, authorize("admin"), auditLogMiddleware, adminLogsRoutes);
 
 app.use(
   "/api/admin/notifications",
   authenticate,
   authorize("admin"),
+  auditLogMiddleware,
   adminNotificationsRoutes
 );
 app.use(
   "/api/admin/reports",
   authenticate,
   authorize("admin"),
+  auditLogMiddleware,
   adminReportsRoutes
 );
 app.use(
   "/api/admin/settings",
   authenticate,
   authorize("admin"),
+  auditLogMiddleware,
   adminSettingsRoutes
 );
-app.use("/api/admin/users", authenticate, authorize("admin"), adminUsersRoutes);
+app.use("/api/admin/users", authenticate, authorize("admin"), auditLogMiddleware, adminUsersRoutes);
 app.use(
   "/api/admin/platform-analytics",
   authenticate,
   authorize("admin"),
+  auditLogMiddleware,
   adminPlatformAnalyticsRoutes
 );
 

@@ -1,5 +1,5 @@
 import * as categoryService from "../../services/categories/category.service.js";
-import { setToCache } from "../../caching/cache.manager.js";
+import { setToCache, invalidateCache } from "../../caching/cache.manager.js";
 
 export const getAllCategories = async (req, res, next) => {
   try {
@@ -35,6 +35,9 @@ export const createCategory = async (req, res, next) => {
   try {
     const category = await categoryService.createCategory(req.body);
 
+    // Invalidate all category-related caches
+    await invalidateCache("*:/api/categories*");
+
     res.status(201).json({
       success: true,
       message: "Category created successfully",
@@ -53,6 +56,9 @@ export const updateCategory = async (req, res, next) => {
       req.body
     );
 
+    // Invalidate all category-related caches
+    await invalidateCache("*:/api/categories*");
+
     res.status(200).json({
       success: true,
       message: "Category updated successfully",
@@ -67,6 +73,9 @@ export const updateCategory = async (req, res, next) => {
 export const deleteCategory = async (req, res, next) => {
   try {
     const result = await categoryService.deleteCategory(req.params.id);
+
+    // Invalidate all category-related caches
+    await invalidateCache("*:/api/categories*");
 
     res.status(200).json({
       success: true,
@@ -100,3 +109,4 @@ export const searchCategories = async (req, res, next) => {
     next(error);
   }
 };
+

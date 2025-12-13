@@ -113,11 +113,9 @@ export const getCourseById = async (courseId, options = {}) => {
     include: [
       {
         model: Chapter,
-        order: [["order_number", "ASC"]],
         include: [
           {
             model: Lesson,
-            order: [["order_number", "ASC"]],
             include: [
               {
                 model: models.LessonMaterial,
@@ -128,7 +126,6 @@ export const getCourseById = async (courseId, options = {}) => {
           },
           {
             model: Quiz,
-            order: [["order_number", "ASC"]],
             attributes: ["id", "title", "order_number", "questions"],
           },
         ],
@@ -156,6 +153,11 @@ export const getCourseById = async (courseId, options = {}) => {
         required: false,
       },
     ],
+    order: [
+      [Chapter, "order_number", "ASC"],
+      [Chapter, Lesson, "order_number", "ASC"],
+      [Chapter, Quiz, "order_number", "ASC"],
+    ],
   });
 
   if (!course || (!includeNonApproved && course.status !== "approved")) {
@@ -178,7 +180,8 @@ export const getCourseById = async (courseId, options = {}) => {
   });
 
   const { formatCourseResponse } = await import("../../utils/formatters/course.formatter.js");
-  return formatCourseResponse(course.toJSON(), enrollmentsCount, reviewStats);
+  // For admin preview, include full lesson/quiz content
+  return formatCourseResponse(course.toJSON(), enrollmentsCount, reviewStats, { includeFullContent: includeNonApproved });
 };
 
 export const createCourse = async (courseData, thumbnailFile, instructorId) => {
@@ -333,6 +336,16 @@ export const deleteCourse = async (courseId, userId, userRole) => {
     error.statusCode = 403;
     throw error;
   }
+
+  // Delete associated chat room if exists
+  try {
+    const { deleteCourseChat } = await import("../communication/chat.service.js");
+    await deleteCourseChat(courseId);
+  } catch (error) {
+    console.error("Failed to delete course chat room:", error);
+    // Continue with course deletion even if chat deletion fails
+  }
+
   await course.destroy();
   return { message: "Course deleted successfully" };
 };
@@ -395,7 +408,13 @@ export const submitForReview = async (courseId, instructorId) => {
 };
 
 export const approveCourse = async (courseId, adminId) => {
-  const course = await Course.findByPk(courseId);
+  const course = await Course.findByPk(courseId, {
+    include: [{
+      model: User,
+      as: "Instructor",
+      attributes: ["id", "first_name", "last_name", "email"],
+    }],
+  });
   if (!course) {
     const error = new Error("Course not found");
     error.statusCode = 404;
@@ -423,11 +442,30 @@ export const approveCourse = async (courseId, adminId) => {
     related_type: "course",
     is_read: false,
   });
+
+  // Send email notification
+  try {
+    const { sendCourseApprovedEmail } = await import("../auth/email.service.js");
+    await sendCourseApprovedEmail({
+      instructorEmail: course.Instructor.email,
+      instructorName: `${course.Instructor.first_name} ${course.Instructor.last_name}`,
+      courseTitle: course.title,
+    });
+  } catch (emailError) {
+    console.error("Failed to send course approved email:", emailError);
+  }
+
   return course;
 };
 
 export const rejectCourse = async (courseId, adminId, rejectionReason) => {
-  const course = await Course.findByPk(courseId);
+  const course = await Course.findByPk(courseId, {
+    include: [{
+      model: User,
+      as: "Instructor",
+      attributes: ["id", "first_name", "last_name", "email"],
+    }],
+  });
   if (!course) {
     const error = new Error("Course not found");
     error.statusCode = 404;
@@ -462,6 +500,21 @@ export const rejectCourse = async (courseId, adminId, rejectionReason) => {
     related_type: "course",
     is_read: false,
   });
+
+  // Send email notification
+  try {
+    const { sendCourseRejectedEmail } = await import("../auth/email.service.js");
+    await sendCourseRejectedEmail({
+      instructorEmail: course.Instructor.email,
+      instructorName: `${course.Instructor.first_name} ${course.Instructor.last_name}`,
+      courseTitle: course.title,
+      courseId: course.id,
+      rejectionReason: rejectionReason,
+    });
+  } catch (emailError) {
+    console.error("Failed to send course rejected email:", emailError);
+  }
+
   return course;
 };
 
@@ -1082,5 +1135,16 @@ export const saveCourseAnalysis = async (courseId, analysis) => {
     throw error;
   }
   await course.update({ ai_analysis: analysis });
+  return course;
+};
+
+export const toggleFeatured = async (courseId) => {
+  const course = await Course.findByPk(courseId);
+  if (!course) {
+    const error = new Error("Course not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  await course.update({ is_featured: !course.is_featured });
   return course;
 };

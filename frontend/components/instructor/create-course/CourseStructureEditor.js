@@ -22,8 +22,6 @@ export function CourseStructureEditor({
   setCourseData,
   mode = "create",
   onAddChapter = null,
-  onAddLesson = null,
-  onAddQuiz = null
 }) {
   const isEditMode = mode === "edit";
   
@@ -68,16 +66,6 @@ export function CourseStructureEditor({
     setCourseData({
       ...courseData,
       chapters: chapters.filter((ch) => ch.id !== chapterId),
-    });
-  };
-
-  const moveChapter = (dragIndex, hoverIndex) => {
-    const updatedChapters = [...chapters];
-    const [removed] = updatedChapters.splice(dragIndex, 1);
-    updatedChapters.splice(hoverIndex, 0, removed);
-    setCourseData({
-      ...courseData,
-      chapters: updatedChapters,
     });
   };
 

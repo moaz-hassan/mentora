@@ -16,7 +16,17 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import dynamic from "next/dynamic";
+
+// Dynamic import for RichTextEditor to avoid SSR issues
+const RichTextEditor = dynamic(() => import("@/components/ui/RichTextEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[250px] bg-neutral-100 dark:bg-neutral-800 rounded-lg animate-pulse flex items-center justify-center">
+      <span className="text-sm text-neutral-500">Loading editor...</span>
+    </div>
+  ),
+});
 import {
   Select,
   SelectContent,
@@ -141,7 +151,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
     <div 
       ref={setNodeRef}
       style={style}
-      className="border border-neutral-200 rounded-lg bg-neutral-50 overflow-hidden"
+      className="border border-neutral-200 dark:border-neutral-700 rounded-lg bg-neutral-50 dark:bg-neutral-800 overflow-hidden"
       {...attributes}
     >
       {}
@@ -150,7 +160,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
           <button
             {...listeners}
             type="button"
-            className="p-1 -ml-1 text-gray-400 hover:text-gray-600 focus:outline-none cursor-grab active:cursor-grabbing"
+            className="p-1 -ml-1 text-gray-400 dark:text-neutral-500 hover:text-gray-600 dark:hover:text-neutral-300 focus:outline-none cursor-grab active:cursor-grabbing"
           >
             <GripVertical className="w-4 h-4" />
           </button>
@@ -160,7 +170,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
         
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-neutral-600 hover:text-neutral-900"
+          className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
         >
           {isExpanded ? (
             <ChevronDown className="w-4 h-4" />
@@ -169,7 +179,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
           )}
         </button>
 
-        <div className="flex items-center gap-2 text-neutral-600">
+        <div className="flex items-center gap-2 text-neutral-600 dark:text-neutral-400">
           {lesson.type === "video" ? (
             <Video className="w-4 h-4" />
           ) : (
@@ -194,11 +204,11 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
           ) : (
             <p
               onClick={() => isNewLesson && setIsEditingTitle(true)}
-              className={`text-sm text-neutral-900 ${isNewLesson ? 'cursor-pointer hover:text-blue-600' : 'cursor-default'}`}
+              className={`text-sm text-neutral-900 dark:text-white ${isNewLesson ? 'cursor-pointer hover:text-blue-600' : 'cursor-default'}`}
             >
               {lesson.title}
               {!isNewLesson && (
-                <span className="ml-2 text-xs text-neutral-500">(Existing)</span>
+                <span className="ml-2 text-xs text-neutral-500 dark:text-neutral-400">(Existing)</span>
               )}
             </p>
           )}
@@ -223,10 +233,10 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
       {}
       {isExpanded && isNewLesson && (
         <div className="px-3 pb-3 pt-0 space-y-3">
-          <div className="bg-white rounded-lg p-4 space-y-4">
+          <div className="bg-white dark:bg-neutral-900 rounded-lg p-4 space-y-4">
             {}
             <div className="space-y-2">
-              <label className="text-sm text-neutral-700">Lesson Type</label>
+              <label className="text-sm text-neutral-700 dark:text-neutral-300">Lesson Type</label>
               <Select
                 value={lesson.type}
                 onValueChange={(value) =>
@@ -256,7 +266,7 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
               />
               <label
                 htmlFor={`preview-${lesson.id}`}
-                className="text-sm text-neutral-700 cursor-pointer"
+                className="text-sm text-neutral-700 dark:text-neutral-300 cursor-pointer"
               >
                 Allow free preview (students can watch without enrolling)
               </label>
@@ -265,17 +275,17 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
             {}
             {lesson.type === "video" && (
               <div className="space-y-2">
-                <label className="text-sm text-neutral-700">Video Upload</label>
+                <label className="text-sm text-neutral-700 dark:text-neutral-300">Video Upload</label>
                 {!lesson.videoUrl ? (
                   <label
                     htmlFor={`video-upload-${lesson.id}`}
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-neutral-300 rounded-lg cursor-pointer hover:border-neutral-400 hover:bg-neutral-50 transition-colors"
+                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
                   >
-                    <Upload className="w-6 h-6 text-neutral-400 mb-2" />
-                    <span className="text-sm text-neutral-600">
+                    <Upload className="w-6 h-6 text-neutral-400 dark:text-neutral-500 mb-2" />
+                    <span className="text-sm text-neutral-600 dark:text-neutral-400">
                       Click to upload video
                     </span>
-                    <span className="text-xs text-neutral-500 mt-1">
+                    <span className="text-xs text-neutral-500 dark:text-neutral-500 mt-1">
                       MP4, WebM, or Ogg
                     </span>
                     <input
@@ -308,39 +318,37 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
               </div>
             )}
 
-            {}
+            {/* Text Content Editor with WYSIWYG */}
             {lesson.type === "text" && (
-              <div className="space-y-2">
-                <label className="text-sm text-neutral-700">
+              <div className="space-y-3">
+                <label className="text-sm text-neutral-700 dark:text-neutral-300">
                   Lesson Content
                 </label>
-                <Textarea
+                <RichTextEditor
                   value={lesson.textContent || ""}
-                  onChange={(e) =>
+                  onChange={(content) =>
                     updateLesson(lesson.id, {
                       ...lesson,
-                      textContent: e.target.value,
+                      textContent: content,
                     })
                   }
                   placeholder="Write your lesson content here..."
-                  rows={8}
-                  className="resize-none"
                 />
-                <p className="text-xs text-neutral-500">
-                  Rich text editor would be integrated here in production
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  Use the toolbar to format text, add headers, lists, links, and more.
                 </p>
               </div>
             )}
 
             {}
-            <div className="border-t pt-4 mt-4">
+            <div className="border-t dark:border-neutral-700 pt-4 mt-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <label className="text-sm font-medium text-neutral-700 flex items-center gap-2">
+                  <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
                     <Paperclip className="w-4 h-4" />
                     Supplementary Materials
                   </label>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                     Add downloadable resources (PDFs, documents, code files, etc.) - Max 100MB per file
                   </p>
                 </div>
@@ -371,22 +379,22 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
                   {lesson.materials.map((material, index) => (
                     <div
                       key={material.id || index}
-                      className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg border border-neutral-200 hover:border-blue-300 transition-colors"
+                      className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
                     >
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         {}
-                        <div className="w-10 h-10 bg-white rounded flex items-center justify-center flex-shrink-0 border">
+                        <div className="w-10 h-10 bg-white dark:bg-neutral-700 rounded flex items-center justify-center flex-shrink-0 border dark:border-neutral-600">
                           {getFileIcon(material.file_type)}
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-neutral-900 truncate">
+                          <p className="text-sm font-medium text-neutral-900 dark:text-white truncate">
                             {material.filename}
                           </p>
-                          <p className="text-xs text-neutral-500">
+                          <p className="text-xs text-neutral-500 dark:text-neutral-400">
                             {formatFileSize(material.file_size)} • {material.file_type?.toUpperCase()}
                             {material.pending && (
-                              <span className="ml-2 text-orange-600 font-medium">• Pending upload</span>
+                              <span className="ml-2 text-orange-600 dark:text-orange-400 font-medium">• Pending upload</span>
                             )}
                           </p>
                         </div>
@@ -434,10 +442,10 @@ export function LessonItem({ lesson, updateLesson, deleteLesson }) {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-6 border-2 border-dashed border-neutral-200 rounded-lg bg-neutral-50">
-                  <Paperclip className="w-8 h-8 text-neutral-400 mx-auto mb-2" />
-                  <p className="text-sm text-neutral-500">No materials added yet</p>
-                  <p className="text-xs text-neutral-400 mt-1">
+                <div className="text-center py-6 border-2 border-dashed border-neutral-200 dark:border-neutral-700 rounded-lg bg-neutral-50 dark:bg-neutral-800/50">
+                  <Paperclip className="w-8 h-8 text-neutral-400 dark:text-neutral-500 mx-auto mb-2" />
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400">No materials added yet</p>
+                  <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
                     Click "Add Material" to upload files
                   </p>
                 </div>

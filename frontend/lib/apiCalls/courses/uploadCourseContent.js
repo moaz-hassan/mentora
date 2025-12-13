@@ -209,8 +209,8 @@ export default async function uploadCourseContent(courseData, onProgress) {
 
         
         if (lesson.materials && lesson.materials.length > 0) {
-          const { uploadFileToCloudinary } = await import(
-            "@/lib/apiCalls/cloudinary/uploadFileToCloudinary"
+          const { uploadMaterialToSupabase } = await import(
+            "@/lib/apiCalls/supabase/uploadMaterialToSupabase"
           );
 
           for (let i = 0; i < lesson.materials.length; i++) {
@@ -229,7 +229,7 @@ export default async function uploadCourseContent(courseData, onProgress) {
 
             try {
               
-              const uploadResult = await uploadFileToCloudinary(
+              const uploadResult = await uploadMaterialToSupabase(
                 material.file,
                 (progress) => {
                   
@@ -241,7 +241,8 @@ export default async function uploadCourseContent(courseData, onProgress) {
                 lessonId,
                 {
                   filename: material.filename,
-                  file_url: uploadResult.secure_url,
+                  url: uploadResult.url,
+                  public_id: uploadResult.public_id,
                   file_type: material.file_type,
                   file_size: material.file_size,
                 },
@@ -285,11 +286,17 @@ export default async function uploadCourseContent(courseData, onProgress) {
           message: `Chapter ${chapterIndex + 1} / Quiz ${quizIndex + 1}...`,
         });
 
+        // Transform questions to include 'answer' field expected by backend
+        const transformedQuestions = (quiz.questions || []).map(q => ({
+          ...q,
+          answer: q.correctAnswer || q.answer || 'a', // Backend expects 'answer', not 'correctAnswer'
+        }));
+
         await createQuiz(
           {
             chapter_id: chapterId,
             title: quiz.title,
-            questions: quiz.questions || [],
+            questions: transformedQuestions,
           },
           token
         );

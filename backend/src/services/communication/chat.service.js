@@ -88,6 +88,36 @@ export const deleteChatRoom = async (roomId) => {
 };
 
 
+// Delete chat room by course ID (used when deleting a course)
+export const deleteCourseChat = async (courseId) => {
+  const { ChatParticipant } = models;
+
+  const chatRoom = await ChatRoom.findOne({
+    where: { course_id: courseId },
+  });
+
+  if (!chatRoom) {
+    // No chat room exists for this course, nothing to delete
+    return { message: "No chat room found for this course" };
+  }
+
+  // Delete all participants first
+  await ChatParticipant.destroy({
+    where: { room_id: chatRoom.id },
+  });
+
+  // Delete all messages
+  await ChatMessage.destroy({
+    where: { room_id: chatRoom.id },
+  });
+
+  // Delete the chat room
+  await chatRoom.destroy();
+
+  return { message: "Course chat room deleted successfully" };
+};
+
+
 
 
 export const getMessagesByRoomId = async (roomId) => {

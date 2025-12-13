@@ -369,3 +369,20 @@ export const getPopularCourses = async (req, res, next) => {
     next(error);
   }
 };
+
+
+export const toggleFeatured = async (req, res, next) => {
+  try {
+    const course = await courseService.toggleFeatured(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: course.is_featured 
+        ? "Course marked as featured" 
+        : "Course removed from featured",
+      data: course,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

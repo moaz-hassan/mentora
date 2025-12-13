@@ -122,7 +122,13 @@ export const getEnrollmentById = async (enrollmentId) => {
 };
 
 export const createEnrollment = async (course_id, studentId) => {
-  const course = await Course.findByPk(course_id);
+  const course = await Course.findByPk(course_id, {
+    include: [{
+      model: User,
+      as: "Instructor",
+      attributes: ["id", "first_name", "last_name"],
+    }],
+  });
   if (!course) {
     const error = new Error("Course not found");
     error.statusCode = 404;
@@ -139,11 +145,46 @@ export const createEnrollment = async (course_id, studentId) => {
     throw error;
   }
 
-  
+  // Get student info for email
+  const student = await User.findByPk(studentId, {
+    attributes: ["id", "first_name", "last_name", "email"],
+  });
+
   const enrollment = await Enrollment.create({
     student_id: studentId,
     course_id,
   });
+
+  // Create notification for the student
+  const { Notification } = models;
+  await Notification.create({
+    user_id: studentId,
+    type: "new_enrollment",
+    title: "Enrollment Confirmed",
+    message: `You have successfully enrolled in "${course.title}". Start learning now!`,
+    related_id: course.id,
+    related_type: "course",
+    is_read: false,
+  });
+
+  // Send enrollment confirmation email
+  try {
+    const { sendEnrollmentConfirmationEmail } = await import("../auth/email.service.js");
+    const instructorName = course.Instructor 
+      ? `${course.Instructor.first_name} ${course.Instructor.last_name}`
+      : "Instructor";
+    
+    await sendEnrollmentConfirmationEmail({
+      studentEmail: student.email,
+      studentName: `${student.first_name} ${student.last_name}`,
+      courseTitle: course.title,
+      courseId: course.id,
+      instructorName: instructorName,
+    });
+  } catch (emailError) {
+    console.error("Failed to send enrollment confirmation email:", emailError);
+  }
+
   return enrollment;
 };
 

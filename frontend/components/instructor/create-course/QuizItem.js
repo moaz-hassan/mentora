@@ -120,7 +120,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
     <div
       ref={setNodeRef}
       style={style}
-      className="border border-neutral-200 rounded-lg bg-neutral-50 overflow-hidden"
+      className="border border-neutral-200 dark:border-neutral-700 rounded-lg bg-neutral-50 dark:bg-neutral-800 overflow-hidden"
       {...attributes}
     >
       {}
@@ -139,7 +139,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-neutral-600 hover:text-neutral-900"
+          className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
         >
           {isExpanded ? (
             <ChevronDown className="w-4 h-4" />
@@ -148,7 +148,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
           )}
         </button>
 
-        <div className="flex items-center gap-2 text-neutral-600">
+        <div className="flex items-center gap-2 text-neutral-600 dark:text-neutral-400">
           <HelpCircle className="w-4 h-4" />
         </div>
 
@@ -169,7 +169,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
           ) : (
             <p
               onClick={() => isNewQuiz && setIsEditingTitle(true)}
-              className={`text-sm text-neutral-900 ${
+              className={`text-sm text-neutral-900 dark:text-white ${
                 isNewQuiz
                   ? "cursor-pointer hover:text-blue-600"
                   : "cursor-default"
@@ -177,7 +177,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
             >
               {quiz.title}
               {!isNewQuiz && (
-                <span className="ml-2 text-xs text-neutral-500">
+                <span className="ml-2 text-xs text-neutral-500 dark:text-neutral-400">
                   (Existing)
                 </span>
               )}
@@ -208,7 +208,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
           {quiz.questions.map((question, qIndex) => (
             <div
               key={question.id}
-              className="bg-white rounded-lg p-4 space-y-4"
+              className="bg-white dark:bg-neutral-900 rounded-lg p-4 space-y-4"
             >
               {}
               <div className="flex items-start gap-3">
@@ -261,7 +261,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
                           htmlFor={`${question.id}-${optionKey}`}
                           className="flex items-center gap-2 flex-1 cursor-pointer"
                         >
-                          <span className="text-sm text-neutral-600 min-w-[20px]">
+                          <span className="text-sm text-neutral-600 dark:text-neutral-400 min-w-[20px]">
                             {displayKey}.
                           </span>
                           <Input
@@ -281,7 +281,7 @@ export function QuizItem({ quiz, updateQuiz, deleteQuiz }) {
                     );
                   })}
                 </RadioGroup>
-                <p className="text-xs text-neutral-500 pl-7">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 pl-7">
                   Select the radio button to mark the correct answer
                 </p>
               </div>

@@ -99,7 +99,7 @@ export default function CourseSidebar({
     <>
       <div className="hidden lg:block w-full lg:w-[340px] flex-shrink-0 relative z-20">
         <div className="sticky top-6 space-y-6">
-          <div className="rounded-2xl overflow-hidden shadow-2xl border border-border bg-card/90 backdrop-blur-xl">
+          <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 backdrop-blur-xl">
             <div
               onClick={handleIntroClick}
               className="relative aspect-video bg-muted cursor-pointer group border-b border-border"
@@ -208,7 +208,7 @@ export default function CourseSidebar({
           <CourseChatCard courseId={course.id} isEnrolled={isEnrolled} />
         </div>
       </div>
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border shadow-lg">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-neutral-900 border-t border-gray-200 dark:border-neutral-700 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4">
             <div className="flex flex-col">

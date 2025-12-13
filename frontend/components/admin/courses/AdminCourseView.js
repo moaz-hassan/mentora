@@ -56,7 +56,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
                   />
                 </div>
               ) : (
-                <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
+                <div className="aspect-video bg-gray-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center text-gray-400 dark:text-neutral-500">
                   <Video className="w-12 h-12" />
                   <span className="ml-2">No Intro Video</span>
                 </div>
@@ -70,7 +70,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
               <CardTitle>Description</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 whitespace-pre-wrap">{course.description}</p>
+              <p className="text-gray-700 dark:text-neutral-300 whitespace-pre-wrap">{course.description}</p>
             </CardContent>
           </Card>
 
@@ -78,25 +78,25 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium text-gray-500">Requirements</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-500 dark:text-neutral-400">Requirements</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="list-disc list-inside space-y-1 text-sm">
+                <ul className="list-disc list-inside space-y-1 text-sm dark:text-neutral-300">
                   {course.requirements?.split('\n').map((req, i) => (
                     <li key={i}>{req}</li>
-                  )) || <li className="text-gray-400">None specified</li>}
+                  )) || <li className="text-gray-400 dark:text-neutral-500">None specified</li>}
                 </ul>
               </CardContent>
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium text-gray-500">Target Audience</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-500 dark:text-neutral-400">Target Audience</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="list-disc list-inside space-y-1 text-sm">
+                <ul className="list-disc list-inside space-y-1 text-sm dark:text-neutral-300">
                   {course.target_audience?.split('\n').map((aud, i) => (
                     <li key={i}>{aud}</li>
-                  )) || <li className="text-gray-400">None specified</li>}
+                  )) || <li className="text-gray-400 dark:text-neutral-500">None specified</li>}
                 </ul>
               </CardContent>
             </Card>
@@ -134,18 +134,18 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
                   />
                 </div>
               ) : (
-                <div className="p-8 bg-gray-100 rounded-lg text-center text-gray-500">
+                <div className="p-8 bg-gray-100 dark:bg-neutral-800 rounded-lg text-center text-gray-500 dark:text-neutral-400">
                   Video processing or not available
                 </div>
               )}
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 dark:text-neutral-400">
                 Duration: {Math.round(activeLesson.duration / 60)} mins
               </div>
             </div>
           )}
 
           {activeLesson.type === 'lesson' && activeLesson.lesson_type === 'text' && (
-            <div className="prose max-w-none p-4 bg-gray-50 rounded-lg">
+            <div className="prose dark:prose-invert max-w-none p-4 bg-gray-50 dark:bg-neutral-800 rounded-lg">
               <div dangerouslySetInnerHTML={{ __html: activeLesson.content }} />
             </div>
           )}
@@ -153,10 +153,10 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
           {activeLesson.type === 'quiz' && (
             <div className="space-y-6">
               {activeLesson.questions?.map((q, idx) => (
-                <div key={idx} className="border rounded-lg p-4">
-                  <div className="font-medium mb-3 flex gap-2">
-                    <span className="text-gray-500">{idx + 1}.</span>
-                    {q.question}
+                <div key={idx} className="border dark:border-neutral-700 rounded-lg p-4">
+                  <div className="font-medium mb-3 flex gap-2 dark:text-white">
+                    <span className="text-gray-500 dark:text-neutral-400">{idx + 1}.</span>
+                    {typeof q.question === 'object' ? (q.question.text || JSON.stringify(q.question)) : q.question}
                   </div>
                   <div className="space-y-2 pl-6">
                     {q.options?.map((opt, optIdx) => (
@@ -164,8 +164,8 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
                         key={optIdx} 
                         className={`flex items-center gap-2 text-sm p-2 rounded ${
                           optIdx === q.correct_answer 
-                            ? "bg-green-50 text-green-700 border border-green-200" 
-                            : "text-gray-600"
+                            ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-700" 
+                            : "text-gray-600 dark:text-neutral-400"
                         }`}
                       >
                         {optIdx === q.correct_answer ? (
@@ -173,7 +173,7 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
                         ) : (
                           <div className="w-4 h-4" />
                         )}
-                        {opt}
+                        {typeof opt === 'object' ? (opt.text || opt.a || opt.option || JSON.stringify(opt)) : opt}
                       </div>
                     ))}
                   </div>
@@ -182,10 +182,10 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
             </div>
           )}
 
-          {}
+          {/* Attachments */}
           {activeLesson.type === 'lesson' && activeLesson.attachments?.length > 0 && (
             <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-900 mb-3">Attachments</h4>
+              <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Attachments</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {activeLesson.attachments.map((att, idx) => (
                   <a 
@@ -193,10 +193,10 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
                     href={att.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center p-3 border dark:border-neutral-700 rounded-lg hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
                   >
                     <FileText className="w-4 h-4 text-blue-500 mr-2" />
-                    <span className="text-sm text-gray-700 truncate flex-1">{att.name}</span>
+                    <span className="text-sm text-gray-700 dark:text-neutral-300 truncate flex-1">{att.name}</span>
                     <Download className="w-4 h-4 text-gray-400" />
                   </a>
                 ))}
@@ -209,20 +209,20 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-12">
-      {}
-      <div className="bg-white border-b sticky top-0 z-30 px-6 py-4 flex items-center justify-between shadow-sm">
+    <div className="min-h-screen bg-gray-50 dark:bg-neutral-900 pb-12">
+      {/* Header */}
+      <div className="bg-white dark:bg-neutral-800 border-b dark:border-neutral-700 sticky top-0 z-30 px-6 py-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
           <Button variant="ghost" onClick={onClose} className="gap-2">
             <ChevronDown className="w-4 h-4 rotate-90" />
             Back
           </Button>
-          <div className="h-6 w-px bg-gray-200" />
+          <div className="h-6 w-px bg-gray-200 dark:bg-neutral-700" />
           <div>
-            <h1 className="text-lg font-bold text-gray-900 truncate max-w-md">
+            <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate max-w-md">
               {course.title}
             </h1>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
+            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-neutral-400">
               <User className="w-3 h-3" />
               {course.Instructor?.first_name} {course.Instructor?.last_name}
               <span>•</span>
@@ -264,28 +264,28 @@ export function AdminCourseView({ course, onApprove, onReject, onClose }) {
                   <div key={chapter.id} className="border-b last:border-0">
                     <button
                       onClick={() => toggleChapter(chapter.id)}
-                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left"
+                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors text-left"
                     >
-                      <span className="font-medium text-sm text-gray-900">
+                      <span className="font-medium text-sm text-gray-900 dark:text-white">
                         Chapter {idx + 1}: {chapter.title}
                       </span>
                       {expandedChapters.has(chapter.id) ? (
-                        <ChevronDown className="w-4 h-4 text-gray-500" />
+                        <ChevronDown className="w-4 h-4 text-gray-500 dark:text-neutral-400" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 text-gray-500" />
+                        <ChevronRight className="w-4 h-4 text-gray-500 dark:text-neutral-400" />
                       )}
                     </button>
                     
                     {expandedChapters.has(chapter.id) && (
-                      <div className="bg-gray-50/50">
+                      <div className="bg-gray-50/50 dark:bg-neutral-800/50">
                         {getChapterItems(chapter).map((item, itemIdx) => (
                           <button
                             key={item.id}
                             onClick={() => handleLessonSelect(item)}
                             className={`w-full flex items-center gap-3 px-4 py-3 text-sm border-l-2 transition-colors text-left ${
                               activeLesson?.id === item.id
-                                ? "bg-blue-50 border-blue-600 text-blue-700"
-                                : "border-transparent hover:bg-gray-100 text-gray-600"
+                                ? "bg-blue-50 dark:bg-blue-900/30 border-blue-600 text-blue-700 dark:text-blue-400"
+                                : "border-transparent hover:bg-gray-100 dark:hover:bg-neutral-700 text-gray-600 dark:text-neutral-400"
                             }`}
                           >
                             {item.type === 'quiz' ? (

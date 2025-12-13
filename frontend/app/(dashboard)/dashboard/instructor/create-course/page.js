@@ -44,7 +44,6 @@ export default function CreateCoursePage() {
     useCreateCourse(clearDraft);
   const { canSaveOrSubmit, validateChapters, validateFullCourse, getValidationMessage } =
     useCourseValidation(courseData);
-  const courseStats = useCourseStats(courseData);
 
   useEffect(() => {
     if (!courseData) {

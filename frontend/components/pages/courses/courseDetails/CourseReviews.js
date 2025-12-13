@@ -46,7 +46,7 @@ export default function CourseReviews({ course, isEnrolled }) {
   return (
     <div
       id="reviews"
-      className="bg-card rounded-xl border border-border shadow-sm p-6 lg:p-8"
+      className="bg-white dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-neutral-800 shadow-sm p-6 lg:p-8"
     >
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-foreground">Student Feedback</h2>

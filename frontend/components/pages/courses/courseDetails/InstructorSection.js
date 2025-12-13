@@ -30,7 +30,7 @@ export default function InstructorSection({ course }) {
   };
 
   return (
-    <div className="bg-card rounded-xl border border-border shadow-sm p-6 lg:p-8">
+    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-neutral-800 shadow-sm p-6 lg:p-8">
       <h2 className="text-2xl font-bold text-foreground mb-6">Instructor</h2>
       <div className="flex flex-col sm:flex-row gap-6">
         <div className="w-20 h-20 rounded-full overflow-hidden border border-border flex-shrink-0">
