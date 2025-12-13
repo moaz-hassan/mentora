@@ -8,7 +8,8 @@ export const getAllCategories = async () => {
     include: [
       {
         model: SubCategory,
-        attributes: ["id", "name", "createdAt", "updatedAt"],
+        as: "SubCategories",
+        attributes: ["id", "name", "category_id", "createdAt", "updatedAt"],
       },
     ],
     order: [["name", "ASC"]],
@@ -17,13 +18,13 @@ export const getAllCategories = async () => {
   
   const categoriesWithCounts = await Promise.all(
     categories.map(async (category) => {
-      const coursesCount = await Course.count({
+      const courseCount = await Course.count({
         where: { category: category.id },
       });
       
       return {
         ...category.toJSON(),
-        coursesCount
+        courseCount
       };
     })
   );

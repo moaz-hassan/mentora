@@ -93,6 +93,7 @@ Profile.belongsTo(User, { foreignKey: "user_id" });
 
 Category.hasMany(SubCategory, {
   foreignKey: "category_id",
+  as: "SubCategories",
   onDelete: "CASCADE",
 });
 SubCategory.belongsTo(Category, { foreignKey: "category_id" });

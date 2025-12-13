@@ -71,20 +71,20 @@ export default function Categories() {
 
   if (loading) {
     return (
-      <section className="bg-gray-50 py-16">
+      <section className="bg-gray-50 dark:bg-gray-900 py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Explore Top Categories</h2>
-            <p className="text-lg text-gray-600">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Explore Top Categories</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400">
               Discover courses across a variety of subjects.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-xl animate-pulse">
-                <div className="w-16 h-16 bg-gray-200 rounded-full mb-4" />
-                <div className="h-4 w-24 bg-gray-200 rounded mb-2" />
-                <div className="h-3 w-16 bg-gray-200 rounded" />
+              <div key={i} className="flex flex-col items-center p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl animate-pulse">
+                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full mb-4" />
+                <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
+                <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
               </div>
             ))}
           </div>
@@ -95,9 +95,9 @@ export default function Categories() {
 
   if (error) {
     return (
-      <section className="bg-gray-50 py-16">
+      <section className="bg-gray-50 dark:bg-gray-900 py-16">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-600">Unable to load categories</p>
+          <p className="text-gray-600 dark:text-gray-400">Unable to load categories</p>
         </div>
       </section>
     );

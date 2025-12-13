@@ -25,23 +25,11 @@ export function NotificationDropdown({ user }) {
   useEffect(() => {
     if (user?.id) {
       fetchUnreadCount();
-      
-      const interval = setInterval(() => {
-        fetchUnreadCount();
-        if (isOpen) {
-          fetchNotifications();
-        }
-      }, 30000);
-
-      return () => clearInterval(interval);
+     if(isOpen){
+      fetchNotifications();
+     } 
     }
   }, [user?.id, isOpen]);
-
-  useEffect(() => {
-    if (isOpen && user?.id) {
-      fetchNotifications();
-    }
-  }, [isOpen, user?.id]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

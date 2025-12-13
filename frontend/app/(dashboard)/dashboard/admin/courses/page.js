@@ -234,19 +234,19 @@ export default function CoursesManagementPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Course Management</h1>
-        <p className="mt-2 text-gray-600">Review pending courses and manage existing ones.</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Course Management</h1>
+        <p className="mt-2 text-gray-600 dark:text-neutral-400">Review pending courses and manage existing ones.</p>
       </div>
 
       {}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-gray-200 dark:border-neutral-800 overflow-x-auto">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab("pending")}
             className={`${
               activeTab === "pending"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                : "border-transparent text-gray-500 dark:text-neutral-400 hover:text-gray-700 dark:hover:text-neutral-300 hover:border-gray-300"
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Pending Review
@@ -255,8 +255,8 @@ export default function CoursesManagementPage() {
             onClick={() => setActiveTab("all")}
             className={`${
               activeTab === "all"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                : "border-transparent text-gray-500 dark:text-neutral-400 hover:text-gray-700 dark:hover:text-neutral-300 hover:border-gray-300"
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             All Courses
@@ -267,13 +267,13 @@ export default function CoursesManagementPage() {
       {}
       <div className="flex items-center space-x-4">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-neutral-500" />
           <input
             type="text"
             placeholder="Search courses..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-neutral-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-neutral-500"
           />
         </div>
       </div>
@@ -284,10 +284,10 @@ export default function CoursesManagementPage() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
       ) : filteredCourses.length === 0 ? (
-        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-          <BookOpen className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Courses Found</h3>
-          <p className="text-gray-600">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-8 sm:p-12 text-center">
+          <BookOpen className="w-12 sm:w-16 h-12 sm:h-16 mx-auto text-gray-400 dark:text-neutral-600 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Courses Found</h3>
+          <p className="text-gray-600 dark:text-neutral-400">
             {activeTab === "pending" 
               ? "There are no courses pending review." 
               : "No courses match your search criteria."}
@@ -298,39 +298,41 @@ export default function CoursesManagementPage() {
           {filteredCourses.map((course) => (
             <div
               key={course.id}
-              className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+              className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-4 sm:p-6 hover:shadow-md transition-shadow"
             >
-              <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex flex-col md:flex-row gap-4 md:gap-6">
                 <img
                   src={course.thumbnail_url || "https://via.placeholder.com/300x169"}
                   alt={course.title}
                   className="w-full md:w-48 h-32 object-cover rounded-lg flex-shrink-0"
                 />
-                <div className="flex-1">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{course.title}</h3>
-                      <p className="text-sm text-gray-500 mt-1">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
+                    <div className="min-w-0">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">{course.title}</h3>
+                      <p className="text-sm text-gray-500 dark:text-neutral-400 mt-1">
                         by {course.instructor?.name || "Unknown Instructor"}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 flex-shrink-0">
                        {activeTab === "all" && (
                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                               course.is_published ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                               course.is_published 
+                                 ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300" 
+                                 : "bg-gray-100 dark:bg-neutral-700 text-gray-800 dark:text-neutral-300"
                            }`}>
                                {course.is_published ? "Published" : "Draft"}
                            </span>
                        )}
                        {activeTab === "pending" && (
-                           <span className="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800">
+                           <span className="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300">
                                Pending Review
                            </span>
                        )}
                     </div>
                   </div>
                   
-                  <p className="text-gray-600 line-clamp-2 mb-4">{course.description}</p>
+                  <p className="text-gray-600 dark:text-neutral-400 line-clamp-2 mb-4 text-sm sm:text-base">{course.description}</p>
                   
                   {}
                   {activeTab === "pending" && (
