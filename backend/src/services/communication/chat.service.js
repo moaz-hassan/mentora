@@ -1,12 +1,7 @@
-
-
 import models from "../../models/index.js";
 import { Op } from "sequelize";
 
 const { ChatRoom, ChatMessage, Course, User } = models;
-
-
-
 
 export const getAllChatRooms = async () => {
   const chatRooms = await ChatRoom.findAll({
@@ -15,7 +10,6 @@ export const getAllChatRooms = async () => {
 
   return chatRooms;
 };
-
 
 export const getChatRoomById = async (roomId) => {
   const chatRoom = await ChatRoom.findByPk(roomId, {
@@ -88,7 +82,7 @@ export const deleteChatRoom = async (roomId) => {
 };
 
 
-// Delete chat room by course ID (used when deleting a course)
+
 export const deleteCourseChat = async (courseId) => {
   const { ChatParticipant } = models;
 
@@ -97,21 +91,16 @@ export const deleteCourseChat = async (courseId) => {
   });
 
   if (!chatRoom) {
-    // No chat room exists for this course, nothing to delete
     return { message: "No chat room found for this course" };
   }
 
-  // Delete all participants first
   await ChatParticipant.destroy({
     where: { room_id: chatRoom.id },
   });
-
-  // Delete all messages
   await ChatMessage.destroy({
     where: { room_id: chatRoom.id },
   });
 
-  // Delete the chat room
   await chatRoom.destroy();
 
   return { message: "Course chat room deleted successfully" };
@@ -539,12 +528,9 @@ export const getRoomMessagesWithCursor = async (roomId, userId, cursor = null, l
         }
       }
     } catch (error) {
-      
       console.warn('Redis cache miss or unavailable:', error.message);
     }
   }
-
-  
   const where = { room_id: roomId };
   if (cursor) {
     where.created_at = { [Op.lt]: new Date(cursor) };

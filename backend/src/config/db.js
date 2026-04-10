@@ -9,20 +9,35 @@ const sequelize = new Sequelize(
   process.env.DB_PASS || "0000",
   {
     host: process.env.DB_HOST || "localhost",
+    port: process.env.DB_PORT || "3306",
     dialect: "mysql",
-    port: process.env.DB_PORT || 3306,
-    logging: false, 
+    logging: false,
+
+    dialectOptions: {
+      ssl:
+        process.env.DB_SSL === "true"
+          ? { rejectUnauthorized: false }
+          : false,
+    },
+
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
   }
 );
 
 async function connectDB() {
   try {
     await sequelize.authenticate();
-    console.log("Database connected successfully");
-    // sequelize.sync({ force: true });
-    // console.log("Database synchronized successfully");
+    console.log("✅ Database connected successfully");
+
+    // await sequelize.sync({ alter: true });
+    // console.log("✅ Database synchronized");
   } catch (error) {
-    console.error("Database connection error:", error);
+    console.error("❌ Database connection error:", error);
     throw error;
   }
 }

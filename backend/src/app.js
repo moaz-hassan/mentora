@@ -51,7 +51,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3001",
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -63,9 +63,6 @@ app.use(cookieParser());
 
 // Apply general rate limiter to all API routes
 app.use("/api", generalLimiter);
-
-// Note: auditLogMiddleware must be applied AFTER authentication on admin routes
-// It's now applied per-route after authenticate middleware
 
 app.get("/", (req, res) => {
   res.status(200).json({

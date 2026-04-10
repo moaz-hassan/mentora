@@ -1,0 +1,338 @@
+{
+  "info": {
+    "name": "Mentora LMS API - Full Collection",
+    "_postman_id": "mentora-lms-full-collection",
+    "description": "Postman collection for Mentora backend API. Use {{base_url}} and set {{token}} for authenticated requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"password\": \"S3cure@123\",\n  \"role\": \"student\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/register" }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"jane.doe@example.com\",\n  \"password\": \"S3cure@123\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/login" }
+          }
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"jane.doe@example.com\",\n  \"token\": \"<VERIFICATION_TOKEN>\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/verify-email" }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"jane.doe@example.com\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/forgot-password" }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"jane.doe@example.com\",\n  \"token\": \"<RESET_TOKEN>\",\n  \"newPassword\": \"NewP@ssw0rd\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/reset-password" }
+          }
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/auth/me" }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"currentPassword\": \"OldP@ss1\",\n  \"newPassword\": \"NewP@ssw0rd\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/change-password" }
+          }
+        },
+        {
+          "name": "Resend Verification Email",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/auth/resend-verification-email" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users (admin)",
+          "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/users" } }
+        },
+        {
+          "name": "Get User By ID",
+          "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/users/:id", "variable": [ { "key": "id", "value": "1" } ] } }
+        },
+        {
+          "name": "Create User (admin)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"full_name\": \"New User\",\n  \"email\": \"new.user@example.com\",\n  \"password\": \"S3cure@123\",\n  \"role\": \"student\"\n}" },
+            "url": { "raw": "{{base_url}}/users" }
+          }
+        },
+        {
+          "name": "Update User (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"full_name\": \"Updated Name\"\n}" },
+            "url": { "raw": "{{base_url}}/users/:id", "variable": [ { "key": "id", "value": "1" } ] }
+          }
+        },
+        {
+          "name": "Delete User (admin)",
+          "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/users/:id", "variable": [ { "key": "id", "value": "1" } ] } }
+        },
+        {
+          "name": "Become Instructor",
+          "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/users/become-instructor" } }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        { "name": "Get Profile", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/users/profile" } } },
+        { "name": "Update Profile", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"bio\": \"Instructor and developer.\",\n  \"avatar_url\": \"https://example.com/avatar.jpg\",\n  \"headline\": \"Senior Instructor\",\n  \"social_links\": { \"twitter\": \"https://twitter.com/janedoe\" }\n}" }, "url": { "raw": "{{base_url}}/users/profile" } } }
+      ]
+    },
+    {
+      "name": "Certificates",
+      "item": [
+        { "name": "Generate Certificate", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"courseId\": \"<COURSE_ID>\"\n}" }, "url": { "raw": "{{base_url}}/users/certificate/generate" } } },
+        { "name": "My Certificates", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/users/certificate/my" } } },
+        { "name": "Check Certificate Exists", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/users/certificate/check/:courseId", "variable": [ { "key": "courseId", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Verify Certificate (public)", "request": { "method": "GET", "url": { "raw": "{{base_url}}/users/certificate/:id/verify", "variable": [ { "key": "id", "value": "<CERT_ID>" } ] } } },
+        { "name": "Download Certificate", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/users/certificate/:id/download", "variable": [ { "key": "id", "value": "<CERT_ID>" } ] } } },
+        { "name": "Get Certificate By ID", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/users/certificate/:id", "variable": [ { "key": "id", "value": "<CERT_ID>" } ] } } },
+        { "name": "Admin: List All Certificates", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/users/certificate?student_id=&course_id=&verified=" } } }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        { "name": "List Categories", "request": { "method": "GET", "url": { "raw": "{{base_url}}/categories" } } },
+        { "name": "Get Category", "request": { "method": "GET", "url": { "raw": "{{base_url}}/categories/:id", "variable": [ { "key": "id", "value": "<CAT_ID>" } ] } } },
+        { "name": "Get Subcategories by Category", "request": { "method": "GET", "url": { "raw": "{{base_url}}/categories/:id/subcategories", "variable": [ { "key": "id", "value": "<CAT_ID>" } ] } } },
+        { "name": "Create Category (admin)", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Programming\"\n}" }, "url": { "raw": "{{base_url}}/categories" } } },
+        { "name": "Update Category (admin)", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"name\": \"New Name\"\n}" }, "url": { "raw": "{{base_url}}/categories/:id", "variable": [ { "key": "id", "value": "<CAT_ID>" } ] } } },
+        { "name": "Delete Category (admin)", "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/categories/:id", "variable": [ { "key": "id", "value": "<CAT_ID>" } ] } } }
+      ]
+    },
+    {
+      "name": "Subcategories",
+      "item": [
+        { "name": "List Subcategories", "request": { "method": "GET", "url": { "raw": "{{base_url}}/subcategories" } } },
+        { "name": "Get Subcategory", "request": { "method": "GET", "url": { "raw": "{{base_url}}/subcategories/:id", "variable": [ { "key": "id", "value": "<SUBCAT_ID>" } ] } } },
+        { "name": "Create Subcategory (admin)", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Web Dev\",\n  \"category_id\": \"<CATEGORY_UUID>\"\n}" }, "url": { "raw": "{{base_url}}/subcategories" } } },
+        { "name": "Update Subcategory (admin)", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Subcat\"\n}" }, "url": { "raw": "{{base_url}}/subcategories/:id", "variable": [ { "key": "id", "value": "<SUBCAT_ID>" } ] } } },
+        { "name": "Delete Subcategory (admin)", "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/subcategories/:id", "variable": [ { "key": "id", "value": "<SUBCAT_ID>" } ] } } }
+      ]
+    },
+    {
+      "name": "Courses",
+      "item": [
+        { "name": "List Courses", "request": { "method": "GET", "url": { "raw": "{{base_url}}/courses?page=1&limit=20" } } },
+        { "name": "List Featured Courses", "request": { "method": "GET", "url": { "raw": "{{base_url}}/courses/featured" } } },
+        { "name": "Search Courses", "request": { "method": "GET", "url": { "raw": "{{base_url}}/courses/search?q=javascript" } } },
+        { "name": "Create Course (instructor)", "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Intro to Node.js\",\n  \"description\": \"Learn Node.js from scratch\",\n  \"category\": \"Programming\",\n  \"level\": \"beginner\",\n  \"price\": 29.99\n}" }, "url": { "raw": "{{base_url}}/courses" } } },
+        { "name": "Update Course Intro Video (instructor)", "request": { "method": "PUT", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ], "body": { "mode": "raw", "raw": "{\n  \"intro_video_url\": \"https://cdn.example.com/videos/intro.mp4\"\n}" }, "url": { "raw": "{{base_url}}/courses/:id/intro-video", "variable": [ { "key": "id", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Save Draft (instructor)", "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\\n  \\\"draft\\\": true\\n}" }, "url": { "raw": "{{base_url}}/courses/:id/save-draft", "variable": [ { "key": "id", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Submit For Review (instructor)", "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/:id/submit-review", "variable": [ { "key": "id", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Get Related Courses", "request": { "method": "GET", "url": { "raw": "{{base_url}}/courses/:id/related", "variable": [ { "key": "id", "value": "<COURSE_ID>" } ] } } }
+      ]
+    },
+    {
+      "name": "Chapters & Lessons",
+      "item": [
+        { "name": "Create Chapter", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"course_id\": \"<COURSE_ID>\",\n  \"title\": \"Getting Started\",\n  \"description\": \"Intro chapter\"\n}" }, "url": { "raw": "{{base_url}}/courses/chapters" } } },
+        { "name": "Update Chapter", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"title\": \"New Chapter Title\"\n}" }, "url": { "raw": "{{base_url}}/courses/chapters/:id", "variable": [ { "key": "id", "value": "<CHAPTER_ID>" } ] } } },
+        { "name": "Delete Chapter", "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/chapters/:id", "variable": [ { "key": "id", "value": "<CHAPTER_ID>" } ] } } },
+
+        { "name": "Get Lesson by ID", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/lessons/:id", "variable": [ { "key": "id", "value": "<LESSON_ID>" } ] } } },
+        { "name": "Create Lesson", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"chapter_id\": \"<CHAPTER_ID>\",\n  \"title\": \"Intro Lesson\",\n  \"lesson_type\": \"video\",\n  \"content\": \"https://cdn.example.com/video.mp4\",\n  \"duration\": 300\n}" }, "url": { "raw": "{{base_url}}/courses/lessons" } } },
+        { "name": "Update Lesson", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Lesson Title\",\n  \"video_url\": \"https://cdn.example.com/newvideo.mp4\"\n}" }, "url": { "raw": "{{base_url}}/courses/lessons/:id", "variable": [ { "key": "id", "value": "<LESSON_ID>" } ] } } },
+        { "name": "Delete Lesson", "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/lessons/:id", "variable": [ { "key": "id", "value": "<LESSON_ID>" } ] } } }
+      ]
+    },
+    {
+      "name": "Lesson Materials",
+      "item": [
+        { "name": "Add Material to Lesson", "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "formdata", "formdata": [ { "key": "file", "type": "file", "src": "<path-to-file>" }, { "key": "title", "value": "Slides" }, { "key": "description", "value": "Lecture slides" } ] }, "url": { "raw": "{{base_url}}/courses/lessons/:lessonId/materials", "variable": [ { "key": "lessonId", "value": "<LESSON_ID>" } ] } } },
+        { "name": "Get Lesson Materials", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/lessons/:lessonId/materials", "variable": [ { "key": "lessonId", "value": "<LESSON_ID>" } ] } } },
+        { "name": "Delete Material", "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/materials/:materialId", "variable": [ { "key": "materialId", "value": "<MATERIAL_ID>" } ] } } },
+        { "name": "Update Material Order", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"order\": [ \"mat1\", \"mat2\", \"mat3\" ]\n}" }, "url": { "raw": "{{base_url}}/courses/lessons/:lessonId/materials/order", "variable": [ { "key": "lessonId", "value": "<LESSON_ID>" } ] } } }
+      ]
+    },
+    {
+      "name": "Quizzes",
+      "item": [
+        { "name": "Get Quiz", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/quizzes/:id", "variable": [ { "key": "id", "value": "<QUIZ_ID>" } ] } } },
+        { "name": "Create Quiz (instructor)", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"chapter_id\": \"<CHAPTER_ID>\",\n  \"title\": \"Quiz 1\",\n  \"questions\": [\n    { \"question\": \"What is 2+2?\", \"options\": [\"A\",\"B\",\"C\",\"D\"], \"answer\": \"A\" }\n  ]\n}" }, "url": { "raw": "{{base_url}}/courses/quizzes" } } },
+        { "name": "Update Quiz (instructor)", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Quiz Title\"\n}" }, "url": { "raw": "{{base_url}}/courses/quizzes/:id", "variable": [ { "key": "id", "value": "<QUIZ_ID>" } ] } } },
+        { "name": "Delete Quiz", "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/quizzes/:id", "variable": [ { "key": "id", "value": "<QUIZ_ID>" } ] } } },
+        { "name": "Submit Quiz (student)", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"quiz_id\": \"<QUIZ_ID>\",\n  \"score\": 85\n}" }, "url": { "raw": "{{base_url}}/courses/quizzes/submit" } } },
+        { "name": "Get Quiz Results (instructor)", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/quizzes/:quizId/results", "variable": [ { "key": "quizId", "value": "<QUIZ_ID>" } ] } } },
+        { "name": "Get Student Quiz Results", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/quizzes/results/student/:studentId", "variable": [ { "key": "studentId", "value": "<STUDENT_ID>" } ] } } }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        { "name": "List Reviews", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/reviews" } } },
+        { "name": "Get Course Reviews", "request": { "method": "GET", "url": { "raw": "{{base_url}}/courses/reviews/course/:courseId", "variable": [ { "key": "courseId", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Create Review", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"course_id\": \"<COURSE_ID>\",\n  \"rating\": 5,\n  \"review\": \"Excellent course\"\n}" }, "url": { "raw": "{{base_url}}/courses/reviews" } } },
+        { "name": "Update Review", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"review_id\": \"<REVIEW_ID>\",\n  \"rating\": 4,\n  \"review\": \"Updated comment\"\n}" }, "url": { "raw": "{{base_url}}/courses/reviews" } } },
+        { "name": "Delete Review", "request": { "method": "DELETE", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"review_id\": \"<REVIEW_ID>\"\n}" }, "url": { "raw": "{{base_url}}/courses/reviews" } } }
+      ]
+    },
+    {
+      "name": "Enrollments",
+      "item": [
+        { "name": "List Enrollments", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/enrollments" } } },
+        { "name": "Check Enrollment", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/enrollments/check/:courseId", "variable": [ { "key": "courseId", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Get Enrollment By ID", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/enrollments/:id", "variable": [ { "key": "id", "value": "<ENROLL_ID>" } ] } } },
+        { "name": "Create Enrollment (student)", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"course_id\": \"<COURSE_ID>\"\n}" }, "url": { "raw": "{{base_url}}/courses/enrollments" } } },
+        { "name": "Complete Lesson", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"lesson_id\": \"<LESSON_UUID>\"\n}" }, "url": { "raw": "{{base_url}}/courses/enrollments/:id/complete-lesson", "variable": [ { "key": "id", "value": "<ENROLL_ID>" } ] } } },
+        { "name": "Update Current Position", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"lesson_id\": \"<LESSON_UUID>\",\n  \"position\": 120\n}" }, "url": { "raw": "{{base_url}}/courses/enrollments/:id/current-position", "variable": [ { "key": "id", "value": "<ENROLL_ID>" } ] } } },
+        { "name": "Verify Access", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/enrollments/:enrollmentId/course/:courseId/access", "variable": [ { "key": "enrollmentId", "value": "<ENROLL_ID>" }, { "key": "courseId", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Get Course Player Data", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/enrollments/:enrollmentId/course/:courseId/player", "variable": [ { "key": "enrollmentId", "value": "<ENROLL_ID>" }, { "key": "courseId", "value": "<COURSE_ID>" } ] } } }
+      ]
+    },
+    {
+      "name": "Coupons",
+      "item": [
+        { "name": "Admin: List Coupons", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/coupons/admin" } } },
+        { "name": "Instructor: List Coupons", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/courses/coupons/instructor" } } },
+        { "name": "Create Coupon (instructor/admin)", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"course_id\": \"<COURSE_ID>\",\n  \"code\": \"PROMO20\",\n  \"is_active\": true,\n  \"discount_type\": \"percentage\",\n  \"discount_value\": 20,\n  \"discount_start_date\": \"2026-04-01\",\n  \"discount_end_date\": \"2026-05-01\",\n  \"max_count\": 100\n}" }, "url": { "raw": "{{base_url}}/courses/coupons" } } },
+        { "name": "Update Coupon", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"coupon_id\": \"<COUPON_ID>\",\n  \"is_active\": false\n}" }, "url": { "raw": "{{base_url}}/courses/coupons" } } },
+        { "name": "Delete Coupon", "request": { "method": "DELETE", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"coupon_id\": \"<COUPON_ID>\"\n}" }, "url": { "raw": "{{base_url}}/courses/coupons" } } },
+        { "name": "Validate Coupon", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"coupon_code\": \"PROMO20\",\n  \"course_id\": \"<COURSE_ID>\"\n}" }, "url": { "raw": "{{base_url}}/courses/coupons/validate" } } },
+        { "name": "Global Promo (public)", "request": { "method": "GET", "url": { "raw": "{{base_url}}/courses/coupons/global-promo" } } }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        { "name": "List Payments (admin)", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/payments" } } },
+        { "name": "Get Payment", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/payments/:id", "variable": [ { "key": "id", "value": "<PAYMENT_ID>" } ] } } },
+        { "name": "Create Payment", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"course_id\": \"<COURSE_ID>\",\n  \"amount\": 29.99,\n  \"currency\": \"USD\",\n  \"payment_method\": \"stripe\"\n}" }, "url": { "raw": "{{base_url}}/payments" } } },
+        { "name": "Update Payment (admin)", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"status\": \"completed\"\n}" }, "url": { "raw": "{{base_url}}/payments/:id", "variable": [ { "key": "id", "value": "<PAYMENT_ID>" } ] } } },
+        { "name": "Delete Payment (admin)", "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/payments/:id", "variable": [ { "key": "id", "value": "<PAYMENT_ID>" } ] } } }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        { "name": "Create Report", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"type\": \"bug\",\n  \"target_id\": \"<TARGET_ID>\",\n  \"description\": \"User cannot enroll\"\n}" }, "url": { "raw": "{{base_url}}/reports" } } },
+        { "name": "List Reports (admin)", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/reports" } } },
+        { "name": "Report Stats (admin)", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/reports/stats" } } },
+        { "name": "Get Report By ID (admin)", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/reports/:id", "variable": [ { "key": "id", "value": "<REPORT_ID>" } ] } } },
+        { "name": "Update Report Status (admin)", "request": { "method": "PATCH", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"status\": \"resolved\"\n}" }, "url": { "raw": "{{base_url}}/reports/:id/status", "variable": [ { "key": "id", "value": "<REPORT_ID>" } ] } } },
+        { "name": "Get AI Summary (admin)", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/reports/:id/ai-summary", "variable": [ { "key": "id", "value": "<REPORT_ID>" } ] } } },
+        { "name": "Get AI Recommendations (admin)", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/reports/:id/recommendations", "variable": [ { "key": "id", "value": "<REPORT_ID>" } ] } } }
+      ]
+    },
+    {
+      "name": "Communication",
+      "item": [
+        {
+          "name": "Chat: List Rooms",
+          "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/communication/chat/rooms" } }
+        },
+        {
+          "name": "Chat: Get Room",
+          "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/communication/chat/rooms/:id", "variable": [ { "key": "id", "value": "<ROOM_ID>" } ] } }
+        },
+        {
+          "name": "Chat: Create Room",
+          "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"course_id\": \"<COURSE_ID>\"\n}" }, "url": { "raw": "{{base_url}}/communication/chat/rooms" } }
+        },
+        {
+          "name": "Chat: Create Message",
+          "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"room_id\": \"<ROOM_ID>\",\n  \"message\": \"Hello\"\n}" }, "url": { "raw": "{{base_url}}/communication/chat/messages" } }
+        },
+        { "name": "Chat: Get Room Messages", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/communication/chat/rooms/:roomId/messages", "variable": [ { "key": "roomId", "value": "<ROOM_ID>" } ] } } },
+        { "name": "Chat: Unread Count", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/communication/chat/unread-count" } } },
+        { "name": "Notification: List", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/communication/notification" } } },
+        { "name": "Notification: Create (admin)", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"user_id\": \"<USER_ID>\",\n  \"message\": \"Platform maintenance at midnight\",\n  \"type\": \"info\"\n}" }, "url": { "raw": "{{base_url}}/communication/notification" } } }
+      ]
+    },
+    {
+      "name": "AI",
+      "item": [
+        { "name": "Chat", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"prompt\": \"Summarize this course\"\n}" }, "url": { "raw": "{{base_url}}/ai/chat" } } },
+        { "name": "Examples", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/ai/examples" } } },
+        { "name": "Analyze", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"text\": \"Analyze student feedback\"\n}" }, "url": { "raw": "{{base_url}}/ai/analyze" } } },
+        { "name": "Suggest", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"context\": { \"course_id\": \"<COURSE_ID>\" }\n}" }, "url": { "raw": "{{base_url}}/ai/suggest" } } }
+      ]
+    },
+    {
+      "name": "Instructor",
+      "item": [
+        { "name": "Instructor: List Courses", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/instructor/courses/all" } } },
+        { "name": "Instructor: Delete Course", "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/instructor/courses/:id", "variable": [ { "key": "id", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Instructor Analytics: Overview", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/instructor/analytics" } } }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        { "name": "Admin Analytics: Overview", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/admin/analytics/overview" } } },
+        { "name": "Admin: Pending Courses", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/admin/courses/pending" } } },
+        { "name": "Admin: Get Course Details", "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/admin/courses/:id", "variable": [ { "key": "id", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Admin: Approve Course", "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/admin/courses/:id/approve", "variable": [ { "key": "id", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Admin: Reject Course", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ], "body": { "mode": "raw", "raw": "{\n  \"rejection_reason\": \"Does not meet quality standards\"\n}" }, "url": { "raw": "{{base_url}}/admin/courses/:id/reject", "variable": [ { "key": "id", "value": "<COURSE_ID>" } ] } } },
+        { "name": "Admin: Toggle Featured", "request": { "method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{base_url}}/admin/courses/:id/featured", "variable": [ { "key": "id", "value": "<COURSE_ID>" } ] } } }
+      ]
+    }
+  ]
+}
