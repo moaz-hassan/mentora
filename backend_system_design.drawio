@@ -644,4 +644,57 @@
       </root>
     </mxGraphModel>
   </diagram>
+
+  <diagram id="implementation-contracts" name="6. Implemented Contracts &amp; Architecture Gaps">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3000" pageHeight="2100" background="#0B132B" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="p6_banner" value="&lt;b style='font-size:24px; color:#F8FAFC;'&gt;IMPLEMENTED BACKEND CONTRACTS &amp;amp; DESIGN GAPS&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:13px; color:#94A3B8;'&gt;Source-traceable behavior from backend/src — implementation facts are separated from planned capabilities&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=2;arcSize=6;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="2900" height="75" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p6_auth" value="&lt;b style='color:#38BDF8; font-size:16px;'&gt;AUTHENTICATION — ACTUAL REQUEST CONTRACT&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;POST /api/auth/register • POST /api/auth/login • POST /api/auth/verify-email • POST /api/auth/forgot-password • POST /api/auth/reset-password • GET /api/auth/me&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=18;spacingTop=12;" vertex="1" parent="1">
+          <mxGeometry x="50" y="140" width="920" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_auth_flow" value="&lt;b style='color:#10B981; font-size:12px;'&gt;REGISTER / LOGIN FLOW&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;1. Auth limiter&lt;br/&gt;2. express-validator schema&lt;br/&gt;3. validateResult (400 on errors)&lt;br/&gt;4. Controller extracts body&lt;br/&gt;5. Auth service applies bcrypt/JWT/token rules&lt;br/&gt;6. User, Token, and Profile repositories&lt;br/&gt;7. MongoDB persistence&lt;br/&gt;8. Gmail SMTP verification/reset email&lt;br/&gt;9. JSON response: success/message/data&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Login data path:&lt;/b&gt; email + password → userRepository.findByEmail(email, true) → bcrypt.compare → jwt.sign({ id, email, role }) → remove password → return token + user.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="75" y="205" width="870" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_auth_guard" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;PROTECTED REQUEST GUARD&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;Authorization: Bearer &amp;lt;JWT&amp;gt; → jwt.verify → userRepository.findById(decoded.id) → email match → email verified → active account → req.user → authorize(required roles).&lt;br/&gt;&lt;br/&gt;Failure mapping: missing/invalid/expired token = 401; unverified account = 401; inactive account = 403; role mismatch = 403.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="75" y="495" width="870" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_auth_files" value="&lt;b style='color:#38BDF8; font-size:12px;'&gt;SOURCE OF TRUTH&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;routes/auth/auth.routes.js&lt;br/&gt;controllers/auth/auth.controller.js&lt;br/&gt;services/auth/auth.service.js&lt;br/&gt;middlewares/auth.middleware.js&lt;br/&gt;validators/auth/auth.validator.js&lt;br/&gt;repositories/auth/{user,token,profile}.repository.js&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="75" y="670" width="870" height="135" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p6_webhook" value="&lt;b style='color:#8B5CF6; font-size:16px;'&gt;STRIPE WEBHOOK — SEPARATE INGRESS&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;POST /api/payments/webhook is not a normal authenticated client request&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#7C3AED;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=18;spacingTop=12;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="140" width="900" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_webhook_flow" value="&lt;b style='color:#10B981; font-size:12px;'&gt;REQUEST / FULFILLMENT PATH&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;Stripe → express.raw(application/json) → payment controller → constructEvent(rawBody, stripe-signature) → validate event → payment service/repository → update payment and fulfill business result → notification/audit path.&lt;br/&gt;&lt;br/&gt;The raw body must remain unparsed until signature verification. The webhook does not use authenticate middleware.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1035" y="205" width="850" height="215" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_webhook_rules" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;RELIABILITY RULES TO PRESERVE&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Verify signature before trusting payload.&lt;br/&gt;• Make fulfillment idempotent by Stripe event/payment identifier.&lt;br/&gt;• Use an explicit transaction boundary for payment + enrollment + audit changes.&lt;br/&gt;• Never return a success response before required persistence succeeds.&lt;br/&gt;• Record failed webhook processing for retry investigation.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1035" y="440" width="850" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_webhook_files" value="&lt;b style='color:#8B5CF6; font-size:12px;'&gt;SOURCE OF TRUTH&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;routes/payments/payment.routes.js&lt;br/&gt;controllers/payments/payment.controller.js&lt;br/&gt;services/payments/stripe.service.js&lt;br/&gt;services/payments/payment.service.js&lt;br/&gt;repositories/payments/payment.repository.js&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1035" y="650" width="850" height="135" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p6_gaps" value="&lt;b style='color:#EF4444; font-size:16px;'&gt;IMPLEMENTATION GAPS — DO NOT DEPICT AS COMPLETED FEATURES&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#DC2626;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=18;spacingTop=12;" vertex="1" parent="1">
+          <mxGeometry x="50" y="880" width="1860" height="650" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_gap_list" value="&lt;span style='font-size:12px; color:#FECACA;'&gt;&lt;b&gt;1.&lt;/b&gt; authenticate currently reads the Authorization bearer header; cookieParser is configured, but req.cookies.token is not consumed.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;2.&lt;/b&gt; change-password and resend-verification-email are mounted without their dedicated validators.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;3.&lt;/b&gt; analyticsQueue and emailQueue are created, but workers/index.js only imports loggingWorker.js and notificationWorker.js.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;4.&lt;/b&gt; loggingWorker.js calls Sequelize-style bulkCreate methods against the Mongoose model registry; this is a runtime defect.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;5.&lt;/b&gt; admin child route files rely on protection applied in app.js and are not self-protecting when imported elsewhere.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;6.&lt;/b&gt; connectRedis is called during app import but is not awaited by server bootstrap.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;7.&lt;/b&gt; payment/enrollment/audit transaction and webhook idempotency boundaries require explicit implementation before production use.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EF4444;strokeWidth=1;align=left;spacingLeft=15;spacingTop=14;" vertex="1" parent="1">
+          <mxGeometry x="80" y="950" width="1800" height="500" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p6_runtime" value="&lt;b style='color:#EC4899; font-size:16px;'&gt;ASYNC RUNTIME — WHAT IS ACTIVE NOW&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#DB2777;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=18;spacingTop=12;" vertex="1" parent="1">
+          <mxGeometry x="1950" y="880" width="1000" height="650" as="geometry" />
+        </mxCell>
+        <mxCell id="p6_runtime_details" value="&lt;b style='color:#EC4899; font-size:12px;'&gt;QUEUES&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;loggingQueue • notificationQueue • analyticsQueue • emailQueue&lt;br/&gt;Default: 3 attempts, exponential backoff, completed/failed retention.&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#10B981; font-size:12px;'&gt;ACTIVE WORKERS&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;loggingWorker: batches 50 records or flushes after 5 seconds.&lt;br/&gt;notificationWorker: scheduled/broadcast jobs; checks every 60 seconds.&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#F59E0B; font-size:12px;'&gt;CRON&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;Monthly student progress email: 09:00 on day 1.&lt;br/&gt;Monthly instructor performance email: 10:00 on day 1.&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#EF4444; font-size:12px;'&gt;UNIMPLEMENTED PROCESSORS&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#FECACA;'&gt;No active analyticsQueue or emailQueue processor is imported by workers/index.js.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EC4899;strokeWidth=1;align=left;spacingLeft=12;spacingTop=12;" vertex="1" parent="1">
+          <mxGeometry x="1980" y="950" width="940" height="500" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>

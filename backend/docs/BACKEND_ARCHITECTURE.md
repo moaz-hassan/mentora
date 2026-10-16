@@ -1,5 +1,11 @@
 # Backend Architecture Documentation
 
+> The implementation-level design, request flows, module connections, and
+> known gaps are documented in
+> [BACKEND_SYSTEM_DESIGN.md](./BACKEND_SYSTEM_DESIGN.md). The canonical
+> Draw.io source is
+> [../../backend_system_design.drawio](../../backend_system_design.drawio).
+
 ## Overview
 This backend is a modular Node.js/Express application for an LMS (Learning Management System). It is structured for scalability, maintainability, and security, following best practices for modern web APIs.
 
