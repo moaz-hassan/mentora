@@ -1,55 +1,69 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../../config/db.js";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-const ModerationLog = sequelize.define(
-  "ModerationLog",
+const moderationLogSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     moderator_id: {
-      type: DataTypes.STRING(50),
-      references: { model: "users", key: "id" },
+      type: String,
+      ref: "User",
+      index: true,
     },
-    content_type: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+    target_type: {
+      type: String,
+      required: true,
     },
-    content_id: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+    target_id: {
+      type: String,
+      required: true,
     },
     action: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+      type: String,
+      required: true,
     },
     reason: {
-      type: DataTypes.TEXT,
-    },
-    ai_analysis: {
-      type: DataTypes.JSON,
-    },
-    previous_status: {
-      type: DataTypes.STRING(20),
-    },
-    new_status: {
-      type: DataTypes.STRING(20),
+      type: String,
+      default: "",
     },
   },
   {
-    tableName: "moderation_logs",
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-    indexes: [
-      { fields: ["moderator_id"] },
-      { fields: ["content_type", "content_id"] },
-      { fields: ["created_at"] },
-    ],
+    collection: "moderation_logs",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+moderationLogSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+moderationLogSchema.virtual("Moderator", {
+  ref: "User",
+  localField: "moderator_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+const ModerationLog =
+  mongoose.models.ModerationLog ||
+  mongoose.model("ModerationLog", moderationLogSchema);
 
 export default ModerationLog;

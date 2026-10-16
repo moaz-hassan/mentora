@@ -1,58 +1,78 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../../config/db.js";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-const EnrollmentLog = sequelize.define(
-  "EnrollmentLog",
+const enrollmentLogSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     enrollment_id: {
-      type: DataTypes.STRING(50),
-      references: { model: "enrollments", key: "id" },
+      type: String,
+      ref: "Enrollment",
+      index: true,
     },
     student_id: {
-      type: DataTypes.STRING(50),
-      references: { model: "users", key: "id" },
+      type: String,
+      ref: "User",
+      index: true,
     },
     course_id: {
-      type: DataTypes.STRING(50),
-      references: { model: "courses", key: "id" },
+      type: String,
+      ref: "Course",
+      index: true,
     },
     action: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+      type: String,
+      required: true,
     },
-    enrollment_source: {
-      type: DataTypes.STRING(50),
-    },
-    payment_status: {
-      type: DataTypes.STRING(20),
-    },
-    previous_status: {
-      type: DataTypes.STRING(20),
-    },
-    new_status: {
-      type: DataTypes.STRING(20),
-    },
-    metadata: {
-      type: DataTypes.JSON,
+    details: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
   },
   {
-    tableName: "enrollment_logs",
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-    indexes: [
-      { fields: ["student_id"] },
-      { fields: ["course_id"] },
-      { fields: ["created_at"] },
-    ],
+    collection: "enrollment_logs",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+enrollmentLogSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+enrollmentLogSchema.virtual("Student", {
+  ref: "User",
+  localField: "student_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+enrollmentLogSchema.virtual("Course", {
+  ref: "Course",
+  localField: "course_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+const EnrollmentLog =
+  mongoose.models.EnrollmentLog ||
+  mongoose.model("EnrollmentLog", enrollmentLogSchema);
 
 export default EnrollmentLog;

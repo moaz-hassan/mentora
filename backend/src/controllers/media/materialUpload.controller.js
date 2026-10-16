@@ -1,11 +1,19 @@
 import { 
   uploadMaterialToSupabase, 
-  isSupabaseConfigured 
+  isSupabaseConfigured,
+  createMaterialSignedUrl,
 } from "../../utils/supabaseStorage.util.js";
 
 
 export const uploadMaterial = async (req, res) => {
   try {
+    // helpful log for debugging DNS/host issues (hostname only)
+    try {
+      const supabaseHost = new URL(process.env.SUPABASE_URL).hostname;
+      console.log('Uploading material to Supabase host:', supabaseHost);
+    } catch (e) {
+      console.log('Uploading material to Supabase, SUPABASE_URL not parseable');
+    }
     
     if (!isSupabaseConfigured()) {
       return res.status(500).json({
@@ -55,16 +63,24 @@ export const uploadMaterial = async (req, res) => {
       mimeType
     );
 
+    // create a short-lived signed URL for immediate preview/download (not stored in DB)
+    let signedUrl = null;
+    try {
+      signedUrl = await createMaterialSignedUrl(uploadResult.filePath, 300);
+    } catch (err) {
+      console.warn('Failed to create signed URL for uploaded material:', err.message);
+    }
+
     res.status(200).json({
       success: true,
       message: "File uploaded successfully",
       data: {
         filename: originalFilename,
-        url: uploadResult.publicUrl,
+        // do not expose long-lived public URLs
         public_id: uploadResult.filePath,
         file_type: fileExtension,
         file_size: fileSize,
-        download_url: uploadResult.downloadUrl,
+        temp_download_url: signedUrl,
       },
     });
   } catch (error) {

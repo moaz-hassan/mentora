@@ -78,13 +78,7 @@ export const deleteUser = async (req, res, next) => {
 
 export const toggleUserStatus = async (req, res, next) => {
   try {
-    const user = await userService.getUserById(req.params.id);
-    
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    const updatedUser = await user.update({ is_active: !user.is_active });
+    const updatedUser = await userService.toggleUserStatus(req.params.id);
 
     res.status(200).json({
       success: true,

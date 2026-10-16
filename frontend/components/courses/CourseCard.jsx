@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Star, Users, Clock, Award } from "lucide-react";
+import { Star, Users, Clock } from "lucide-react";
 
 export default function CourseCard({ course }) {
   
@@ -37,17 +37,10 @@ export default function CourseCard({ course }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
         {}
-        {course.badge && (
-          <span
-            className={`absolute top-3 left-3 px-2.5 py-1 text-xs font-bold text-white rounded-md shadow-lg ${
-              course.badge === "Bestseller"
-                ? "bg-gradient-to-r from-orange-500 to-amber-500"
-                : course.badge === "New"
-                ? "bg-gradient-to-r from-green-500 to-emerald-500"
-                : "bg-gradient-to-r from-blue-500 to-indigo-500"
-            }`}
-          >
-            {course.badge}
+        {/* category / tag on image */}
+        {((course.category && typeof course.category === 'string') || course.badge) && (
+          <span className="absolute top-3 left-3 px-2.5 py-1 text-xs font-semibold text-white rounded-md shadow-lg bg-gradient-to-r from-indigo-600 to-blue-500 uppercase">
+            {course.category ? String(course.category).split("/").pop() : course.badge}
           </span>
         )}
 
@@ -66,59 +59,65 @@ export default function CourseCard({ course }) {
 
       {}
       <div className="p-5 flex flex-col flex-1">
-        {}
-        <span className="text-xs font-medium text-blue-600 mb-2">
-          {course.category}
-        </span>
+        {/* Title + price row */}
+        <div className="flex items-start justify-between gap-4">
+          <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+            {course.title}
+          </h3>
 
-        {}
-        <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors min-h-[2.5rem]">
-          {course.title}
-        </h3>
-
-        {}
-        <p className="text-sm text-gray-500 mb-3">
-          by {course.instructor}
-        </p>
-
-        {}
-        <div className="flex items-center gap-4 mb-4 text-sm text-gray-500">
-          <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-            <span className="font-medium text-gray-900">{course.rating?.toFixed(1) || "N/A"}</span>
-            <span className="text-gray-400">({course.review_count || 0})</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Users className="w-4 h-4 text-gray-400" />
-            <span>{course.students?.toLocaleString() || 0}</span>
+          <div className="text-right ml-2">
+            {course.price === 0 ? (
+              <div className="text-lg font-bold text-green-600">Free</div>
+            ) : (
+              <div className="text-lg font-bold text-gray-900">${discountedPrice ? discountedPrice.toFixed(2) : course.price?.toFixed(2)}</div>
+            )}
+            {discountedPrice && (
+              <div className="text-xs text-gray-400 line-through">${course.price?.toFixed(2)}</div>
+            )}
           </div>
         </div>
 
-        {}
-        <div className="mt-auto pt-4 border-t border-gray-100">
-          {course.price === 0 ? (
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-bold text-green-600">Free</span>
-              <span className="text-xs font-medium px-2 py-1 bg-green-50 text-green-600 rounded-full">
-                Enroll Now
-              </span>
-            </div>
+        {/* Instructor */}
+        <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
+          {course.instructor_avatar ? (
+            <img src={course.instructor_avatar} alt={course.instructor} className="w-8 h-8 rounded-full object-cover" />
           ) : (
-            <div className="flex items-center justify-between">
-              <div className="flex items-baseline gap-2">
-                <span className="text-xl font-bold text-gray-900">
-                  ${discountedPrice ? discountedPrice.toFixed(2) : course.price?.toFixed(2)}
-                </span>
-                {discountedPrice && (
-                  <span className="text-sm text-gray-400 line-through">
-                    ${course.price?.toFixed(2)}
-                  </span>
-                )}
-              </div>
-            </div>
+            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs text-gray-700">{(course.instructor || "").split(" ").map(s=>s[0]).slice(0,2).join("")}</div>
           )}
+          <div className="leading-tight">
+            <div className="text-sm text-gray-900">{course.instructor}</div>
+            <div className="text-xs text-gray-500">{course.instructor_title || "Instructor"}</div>
+          </div>
+        </div>
+
+        {/* metadata row */}
+        <div className="flex items-center gap-6 mb-2 text-sm text-gray-500">
+          <div className="flex items-center gap-1">
+            <Clock className="w-4 h-4" />
+            <span>{formatDuration(course.duration || course.intro_video_duration)}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+            <span className="font-medium text-gray-900">{course.rating?.toFixed(1) || "N/A"}</span>
+          </div>
+        </div>
+
+        <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+          <span className="text-xs font-medium px-2 py-1 bg-blue-50 text-blue-700 rounded-full">Enroll Now</span>
+          <div className="text-xs text-gray-400">{course.students?.toLocaleString() || 0} students</div>
         </div>
       </div>
     </Link>
   );
+}
+
+function formatDuration(val) {
+  if (!val && val !== 0) return "—";
+  // assume seconds or minutes: if > 1800 treat as seconds
+  const seconds = Number(val);
+  if (isNaN(seconds)) return "—";
+  const mins = Math.round(seconds / 60);
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.floor(mins / 60);
+  return `${hours}h`;
 }

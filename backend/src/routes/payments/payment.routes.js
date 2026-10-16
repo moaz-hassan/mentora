@@ -12,6 +12,12 @@ router.get("/:id", authenticate, paymentIdValidator, validateResult, paymentCont
 
 router.post("/", authenticate, createPaymentValidator, validateResult, paymentController.createPayment);
 
+// Stripe payment intent creation
+router.post("/stripe-intent", authenticate, paymentController.createStripeIntent);
+
+// Stripe webhook (uses raw body for signature verification)
+router.post("/webhook", express.raw({ type: "application/json" }), paymentController.handleStripeWebhook);
+
 router.put("/:id", authenticate, authorize("admin"), updatePaymentValidator, validateResult, paymentController.updatePayment);
 
 router.delete("/:id", authenticate, authorize("admin"), paymentIdValidator, validateResult, paymentController.deletePayment);

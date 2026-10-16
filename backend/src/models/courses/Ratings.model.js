@@ -1,21 +1,69 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const Ratings = sequelize.define("Ratings", {
-  id: { type: DataTypes.STRING(50), primaryKey: true, defaultValue: () => uuidv4() },
-  student_id: { type: DataTypes.STRING(50), allowNull: false },
-  course_id: { type: DataTypes.STRING(50), allowNull: false },
-  rating: { type: DataTypes.FLOAT, validate: { min: 1, max: 5 } },
-  review: { type: DataTypes.TEXT },
-  created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-}, {
-  tableName: "ratings",
-  timestamps: false,
-  indexes: [
-    { unique: true, fields: ["student_id", "course_id"] },
-    { name: "idx_review_course", fields: ["course_id"] }
-  ],
+const ratingsSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: () => uuidv4(),
+    },
+    student_id: {
+      type: String,
+      required: true,
+      ref: "User",
+      index: true,
+    },
+    course_id: {
+      type: String,
+      required: true,
+      ref: "Course",
+      index: true,
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
+    },
+    review: {
+      type: String,
+      default: "",
+    },
+    created_at: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  {
+    timestamps: true,
+    collection: "ratings",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
+);
+
+ratingsSchema.virtual("id").get(function () {
+  return this._id;
 });
+
+// Compound unique index: student can only review a course once
+ratingsSchema.index({ student_id: 1, course_id: 1 }, { unique: true });
+ratingsSchema.index({ course_id: 1 });
+
+const Ratings = mongoose.models.Ratings || mongoose.model("Ratings", ratingsSchema);
 
 export default Ratings;

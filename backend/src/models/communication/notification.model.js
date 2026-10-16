@@ -1,18 +1,21 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const Notification = sequelize.define(
-  "Notification",
+const notificationSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
-    user_id: { type: DataTypes.STRING(50), allowNull: false },
+    user_id: {
+      type: String,
+      required: true,
+      ref: "User",
+      index: true,
+    },
     type: {
-      type: DataTypes.ENUM(
+      type: String,
+      enum: [
         "course_approved",
         "course_rejected",
         "chapter_approved",
@@ -25,26 +28,65 @@ const Notification = sequelize.define(
         "info",
         "success",
         "warning",
-        "error"
-      ),
-      defaultValue: "info",
+        "error",
+      ],
+      default: "info",
     },
-    title: { type: DataTypes.STRING(255), allowNull: true },
-    message: { type: DataTypes.TEXT, allowNull: false },
+    title: {
+      type: String,
+      default: "",
+    },
+    message: {
+      type: String,
+      required: true,
+    },
     related_id: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
-      comment: "ID of related resource (course_id, chapter_id, message_id, etc.)",
+      type: String,
+      default: null,
     },
     related_type: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
-      comment: "Type of related resource (course, chapter, message, etc.)",
+      type: String,
+      default: null,
     },
-    is_read: { type: DataTypes.BOOLEAN, defaultValue: false },
-    created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+    is_read: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    created_at: {
+      type: Date,
+      default: Date.now,
+      index: true,
+    },
   },
-  { tableName: "notifications", timestamps: false }
+  {
+    timestamps: true,
+    collection: "notifications",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
 );
+
+notificationSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+const Notification =
+  mongoose.models.Notification ||
+  mongoose.model("Notification", notificationSchema);
 
 export default Notification;

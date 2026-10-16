@@ -71,6 +71,8 @@ export default function CoursePreviewPage() {
       title: "Course Introduction",
       lesson_type: "video",
       video_public_id: course.intro_video_public_id,
+      hls_url: course.intro_video_hls_url || null,
+      video_url: course.intro_video_url || null,
       is_preview: true,
     };
     openPreviewModal(introLesson);

@@ -1,8 +1,9 @@
-import { Op, fn, col, literal } from "sequelize";
-import models from "../models/index.js";
+import User from "../models/auth/user.model.js";
+import Course from "../models/courses/course.model.js";
+import Enrollment from "../models/courses/enrollment.model.js";
+import Ratings from "../models/courses/Ratings.model.js";
+import Payment from "../models/payments/payment.model.js";
 import { sendMail } from "../config/mailer.js";
-
-const { User, Course, Enrollment, Ratings, Payment } = models;
 
 const getInstructorPerformanceEmailHtml = (instructor, stats) => {
   const courseCards = stats.courses.map(course => {
@@ -90,7 +91,7 @@ const getInstructorPerformanceEmailHtml = (instructor, stats) => {
           
           <!-- CTA -->
           <tr>
-            <td align="center" style="padding: 24px 0;">
+            <td align="center" style="padding 24px 0;">
               <a href="${process.env.CLIENT_URL}/dashboard/instructor" style="display: inline-block; background-color: #3b82f6; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 15px; font-weight: 600;">
                 View Full Dashboard →
               </a>
@@ -129,21 +130,23 @@ export const sendInstructorPerformanceEmails = async () => {
   console.log("Starting instructor performance email job...");
   
   // Get all instructors
-  const instructors = await User.findAll({
-    where: { role: "instructor", is_active: true, is_email_verified: true },
-    attributes: ["id", "first_name", "last_name", "email"],
-  });
+  const instructors = await User.find({
+    role: "instructor",
+    is_active: true,
+    is_email_verified: true,
+  }).select("_id id first_name last_name email");
   
   let sentCount = 0;
   let errorCount = 0;
   
   for (const instructor of instructors) {
     try {
-      // Get instructor's courses with stats
-      const courses = await Course.findAll({
-        where: { instructor_id: instructor.id, status: "approved" },
-        attributes: ["id", "title", "price"],
-      });
+      const instructorId = instructor._id.toString();
+      // Get instructor's approved courses
+      const courses = await Course.find({
+        instructor_id: instructorId,
+        status: "approved",
+      }).select("_id id title price");
       
       // Skip if no courses
       if (courses.length === 0) continue;
@@ -155,28 +158,23 @@ export const sendInstructorPerformanceEmails = async () => {
       let ratingSum = 0;
       
       for (const course of courses) {
+        const courseId = course._id.toString();
         // Get enrollment count
-        const enrollmentCount = await Enrollment.count({
-          where: { course_id: course.id },
-        });
+        const enrollmentCount = await Enrollment.countDocuments({ course_id: courseId });
         
         // Get average rating
-        const ratings = await Ratings.findAll({
-          where: { course_id: course.id },
-          attributes: [[fn("AVG", col("rating")), "avgRating"]],
-          raw: true,
-        });
-        
-        const avgRating = ratings[0]?.avgRating ? parseFloat(ratings[0].avgRating) : 0;
+        const ratingsAggregation = await Ratings.aggregate([
+          { $match: { course_id: courseId } },
+          { $group: { _id: null, avgRating: { $avg: "$rating" } } },
+        ]);
+        const avgRating = ratingsAggregation[0]?.avgRating ? Number(ratingsAggregation[0].avgRating) : 0;
         
         // Get revenue
-        const payments = await Payment.findAll({
-          where: { course_id: course.id, status: "completed" },
-          attributes: [[fn("SUM", col("amount")), "totalAmount"]],
-          raw: true,
-        });
-        
-        const revenue = payments[0]?.totalAmount ? parseFloat(payments[0].totalAmount) : 0;
+        const paymentsAggregation = await Payment.aggregate([
+          { $match: { course_id: courseId, status: "completed" } },
+          { $group: { _id: null, totalAmount: { $sum: "$amount" } } },
+        ]);
+        const revenue = paymentsAggregation[0]?.totalAmount ? Number(paymentsAggregation[0].totalAmount) : 0;
         
         courseStats.push({
           title: course.title,
@@ -211,9 +209,7 @@ export const sendInstructorPerformanceEmails = async () => {
       sentCount++;
       console.log(`✉️ Sent performance email to ${instructor.email}`);
       
-      // Small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 100));
-      
     } catch (error) {
       errorCount++;
       console.error(`Failed to send email to ${instructor.email}:`, error.message);

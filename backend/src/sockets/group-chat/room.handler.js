@@ -1,12 +1,11 @@
-import models from "../../models/index.js";
-
-const { ChatParticipant, ChatRoom } = models;
+import { chatParticipantRepository, chatRoomRepository } from "../../repositories/communication/chat.repository.js";
 
 export const joinRoomHandler = (io, socket) => {
   return async ({ roomId, userId }) => {
     try {
-      const participant = await ChatParticipant.findOne({
-        where: { room_id: roomId, user_id: userId },
+      const participant = await chatParticipantRepository.findOne({
+        room_id: roomId,
+        user_id: userId,
       });
 
       if (!participant) {
@@ -16,12 +15,12 @@ export const joinRoomHandler = (io, socket) => {
 
       socket.join(`room_${roomId}`);
 
-      const room = await ChatRoom.findByPk(roomId);
+      const room = await chatRoomRepository.findById(roomId);
 
       socket.emit("room_joined", {
         roomId,
-        roomName: room.name,
-        roomType: room.type,
+        roomName: room?.name,
+        roomType: room?.type,
       });
 
       socket.to(`room_${roomId}`).emit("user_joined", {

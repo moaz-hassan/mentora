@@ -1,47 +1,64 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../../config/db.js";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-const FeaturedCourse = sequelize.define(
-  "FeaturedCourse",
+const featuredCourseSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     course_id: {
-      type: DataTypes.STRING(50),
-      references: { model: "courses", key: "id" },
-      allowNull: false,
+      type: String,
+      required: true,
+      ref: "Course",
+      index: true,
     },
     campaign_id: {
-      type: DataTypes.STRING(50),
-      references: { model: "campaigns", key: "id" },
+      type: String,
+      ref: "Campaign",
+      default: null,
+      index: true,
     },
-    display_order: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    is_active: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    },
-    featured_until: {
-      type: DataTypes.DATE,
+    priority: {
+      type: Number,
+      default: 0,
     },
   },
   {
-    tableName: "featured_courses",
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-    indexes: [
-      { fields: ["course_id"] },
-      { fields: ["campaign_id"] },
-      { fields: ["is_active"] },
-    ],
+    collection: "featured_courses",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+featuredCourseSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+featuredCourseSchema.virtual("Course", {
+  ref: "Course",
+  localField: "course_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+const FeaturedCourse =
+  mongoose.models.FeaturedCourse ||
+  mongoose.model("FeaturedCourse", featuredCourseSchema);
 
 export default FeaturedCourse;

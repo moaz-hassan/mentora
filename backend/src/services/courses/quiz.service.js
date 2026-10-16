@@ -1,10 +1,14 @@
-import models from "../../models/index.js";
-
-const { Enrollment, Quiz, QuizResult, Course, User, Chapter, Lesson } = models;
-
+import { quizRepository, quizResultRepository } from "../../repositories/courses/quiz.repository.js";
+import chapterRepository from "../../repositories/courses/chapter.repository.js";
+import courseRepository from "../../repositories/courses/course.repository.js";
+import enrollmentRepository from "../../repositories/courses/enrollment.repository.js";
+import Course from "../../models/courses/course.model.js";
+import Chapter from "../../models/courses/chapter.model.js";
+import Lesson from "../../models/courses/lesson.model.js";
+import Quiz from "../../models/courses/quiz.model.js";
 
 export const getQuizById = async (quizId, studentId) => {
-  const quiz = await Quiz.findByPk(quizId);
+  const quiz = await quizRepository.findById(quizId);
 
   if (!quiz) {
     const error = new Error("Quiz not found");
@@ -12,7 +16,7 @@ export const getQuizById = async (quizId, studentId) => {
     throw error;
   }
 
-  const chapter = await Chapter.findByPk(quiz.chapter_id);
+  const chapter = await chapterRepository.findByIdRaw(quiz.chapter_id);
 
   if (!chapter) {
     const error = new Error("Chapter not found");
@@ -20,17 +24,7 @@ export const getQuizById = async (quizId, studentId) => {
     throw error;
   }
 
-  const course = await Course.findByPk(chapter.course_id);
-
-  if (!course) {
-    const error = new Error("Course not found");
-    error.statusCode = 404;
-    throw error;
-  }
-
-  const enrollment = await Enrollment.findOne({
-    where: { student_id: studentId, course_id: course.id },
-  });
+  const enrollment = await enrollmentRepository.findByStudentAndCourse(studentId, chapter.course_id);
 
   if (!enrollment) {
     const error = new Error("You are not enrolled in this course");
@@ -42,16 +36,14 @@ export const getQuizById = async (quizId, studentId) => {
 };
 
 export const createQuiz = async (quizData, instructorId) => {
-  const chapter = await Chapter.findByPk(quizData.chapter_id);
+  const chapter = await chapterRepository.findByIdRaw(quizData.chapter_id);
   if (!chapter) {
     const error = new Error("Chapter not found");
     error.statusCode = 404;
     throw error;
   }
 
-  const course = await Course.findByPk(chapter.course_id, {
-    attributes: ["instructor_id"],
-  });
+  const course = await Course.findById(chapter.course_id).select("instructor_id").exec();
 
   if (!course) {
     const error = new Error("Course not found");
@@ -60,23 +52,20 @@ export const createQuiz = async (quizData, instructorId) => {
   }
 
   if (course.instructor_id !== instructorId) {
-    const error = new Error(
-      "You are not authorized to create a quiz for this course"
-    );
+    const error = new Error("You are not authorized to create a quiz for this course");
     error.statusCode = 403;
     throw error;
   }
 
-  const chapterWithItems = await Chapter.findByPk(quizData.chapter_id, {
-    include: [
-      { model: Lesson, attributes: ["order_number"] },
-      { model: Quiz, attributes: ["id", "order_number"] },
-    ],
-  });
+  // Resolve order_number: avoid conflicts with existing lessons and quizzes
+  const [existingLessons, existingQuizzes] = await Promise.all([
+    Lesson.find({ chapter_id: quizData.chapter_id }).select("order_number").exec(),
+    Quiz.find({ chapter_id: quizData.chapter_id }).select("order_number").exec(),
+  ]);
 
   const usedOrders = new Set([
-    ...chapterWithItems.Lessons.map((l) => Number(l.order_number)).filter((n) => Number.isFinite(n) && n > 0),
-    ...chapterWithItems.Quizzes.map((q) => Number(q.order_number)).filter((n) => Number.isFinite(n) && n > 0),
+    ...existingLessons.map((l) => Number(l.order_number)).filter((n) => Number.isFinite(n) && n > 0),
+    ...existingQuizzes.map((q) => Number(q.order_number)).filter((n) => Number.isFinite(n) && n > 0),
   ]);
 
   let desired = Number(quizData.order_number);
@@ -84,13 +73,11 @@ export const createQuiz = async (quizData, instructorId) => {
   while (usedOrders.has(desired)) desired += 1;
   quizData.order_number = desired;
 
-  const quiz = await Quiz.create(quizData);
-
-  return quiz;
+  return await quizRepository.create(quizData);
 };
 
 export const updateQuiz = async (quizId, updateData, instructorId) => {
-  const quiz = await Quiz.findByPk(quizId);
+  const quiz = await quizRepository.findById(quizId);
 
   if (!quiz) {
     const error = new Error("Quiz not found");
@@ -98,7 +85,7 @@ export const updateQuiz = async (quizId, updateData, instructorId) => {
     throw error;
   }
 
-  const chapter = await Chapter.findByPk(quiz.chapter_id);
+  const chapter = await chapterRepository.findByIdRaw(quiz.chapter_id);
 
   if (!chapter) {
     const error = new Error("Chapter not found");
@@ -106,9 +93,7 @@ export const updateQuiz = async (quizId, updateData, instructorId) => {
     throw error;
   }
 
-  const course = await Course.findByPk(chapter.course_id, {
-    attributes: ["instructor_id"],
-  });
+  const course = await Course.findById(chapter.course_id).select("instructor_id").exec();
 
   if (!course) {
     const error = new Error("Course not found");
@@ -117,24 +102,20 @@ export const updateQuiz = async (quizId, updateData, instructorId) => {
   }
 
   if (course.instructor_id !== instructorId) {
-    const error = new Error(
-      "You are not authorized to update this quiz"
-    );
+    const error = new Error("You are not authorized to update this quiz");
     error.statusCode = 403;
     throw error;
   }
 
   if (Object.prototype.hasOwnProperty.call(updateData, "order_number")) {
-    const chapterWithItems = await Chapter.findByPk(quiz.chapter_id, {
-      include: [
-        { model: Lesson, attributes: ["order_number"] },
-        { model: Quiz, attributes: ["id", "order_number"] },
-      ],
-    });
+    const [existingLessons, existingQuizzes] = await Promise.all([
+      Lesson.find({ chapter_id: quiz.chapter_id }).select("order_number").exec(),
+      Quiz.find({ chapter_id: quiz.chapter_id }).select("order_number").exec(),
+    ]);
 
     const usedOrders = new Set([
-      ...chapterWithItems.Lessons.map((l) => Number(l.order_number)).filter((n) => Number.isFinite(n) && n > 0),
-      ...chapterWithItems.Quizzes.filter((q) => q.id !== quiz.id).map((q) => Number(q.order_number)).filter((n) => Number.isFinite(n) && n > 0),
+      ...existingLessons.map((l) => Number(l.order_number)).filter((n) => Number.isFinite(n) && n > 0),
+      ...existingQuizzes.filter((q) => q._id.toString() !== quizId).map((q) => Number(q.order_number)).filter((n) => Number.isFinite(n) && n > 0),
     ]);
 
     let desired = Number(updateData.order_number);
@@ -143,13 +124,11 @@ export const updateQuiz = async (quizId, updateData, instructorId) => {
     updateData.order_number = desired;
   }
 
-  await quiz.update(updateData);
-
-  return quiz;
+  return await quizRepository.updateById(quizId, updateData);
 };
 
 export const deleteQuiz = async (quizId, instructorId) => {
-  const quiz = await Quiz.findByPk(quizId);
+  const quiz = await quizRepository.findById(quizId);
 
   if (!quiz) {
     const error = new Error("Quiz not found");
@@ -157,7 +136,7 @@ export const deleteQuiz = async (quizId, instructorId) => {
     throw error;
   }
 
-  const chapter = await Chapter.findByPk(quiz.chapter_id);
+  const chapter = await chapterRepository.findByIdRaw(quiz.chapter_id);
 
   if (!chapter) {
     const error = new Error("Chapter not found");
@@ -165,9 +144,7 @@ export const deleteQuiz = async (quizId, instructorId) => {
     throw error;
   }
 
-  const course = await Course.findByPk(chapter.course_id, {
-    attributes: ["instructor_id"],
-  });
+  const course = await Course.findById(chapter.course_id).select("instructor_id").exec();
 
   if (!course) {
     const error = new Error("Course not found");
@@ -176,14 +153,12 @@ export const deleteQuiz = async (quizId, instructorId) => {
   }
 
   if (course.instructor_id !== instructorId) {
-    const error = new Error(
-      "You are not authorized to delete this quiz"
-    );
+    const error = new Error("You are not authorized to delete this quiz");
     error.statusCode = 403;
     throw error;
   }
 
-  await quiz.destroy();
+  await quizRepository.deleteById(quizId);
 
   return { message: "Quiz deleted successfully" };
 };
@@ -191,21 +166,14 @@ export const deleteQuiz = async (quizId, instructorId) => {
 export const submitQuizResult = async (resultData, studentId) => {
   const { quiz_id, score } = resultData;
 
-  
-  const quiz = await Quiz.findByPk(quiz_id);
+  const quiz = await quizRepository.findById(quiz_id);
   if (!quiz) {
     const error = new Error("Quiz not found");
     error.statusCode = 404;
     throw error;
   }
-  
-  const chapter = await Chapter.findByPk(quiz.chapter_id, {
-    attributes: ["id", "course_id"],
-    include: [
-      { model: Lesson, attributes: ["id"] },
-      { model: Quiz, attributes: ["id"] },
-    ],
-  });
+
+  const chapter = await chapterRepository.findByIdRaw(quiz.chapter_id);
 
   if (!chapter) {
     const error = new Error("Chapter not found");
@@ -213,9 +181,7 @@ export const submitQuizResult = async (resultData, studentId) => {
     throw error;
   }
 
-  const enrollment = await Enrollment.findOne({
-    where: { student_id: studentId, course_id: chapter.course_id },
-  });
+  const enrollment = await enrollmentRepository.findByStudentAndCourse(studentId, chapter.course_id);
 
   if (!enrollment) {
     const error = new Error("You are not enrolled in this course");
@@ -223,15 +189,11 @@ export const submitQuizResult = async (resultData, studentId) => {
     throw error;
   }
 
-  const result = await QuizResult.create({
+  const result = await quizResultRepository.create({
     quiz_id,
     student_id: studentId,
     score,
   });
-  
-  if (typeof enrollment.progress === "string") {
-    enrollment.progress = JSON.parse(enrollment.progress);
-  }
 
   const progress = {
     completedLessons: enrollment.progress?.completedLessons || [],
@@ -250,63 +212,63 @@ export const submitQuizResult = async (resultData, studentId) => {
     progress.completedQuizzes.push(quiz_id);
   }
 
-  const allChapterLessonsCompleted = chapter.Lessons.every((l) =>
-    progress.completedLessons.includes(l.id)
+  // Check if chapter is completed
+  const [chapterLessons, chapterQuizzes] = await Promise.all([
+    Lesson.find({ chapter_id: chapter._id }).select("_id").exec(),
+    Quiz.find({ chapter_id: chapter._id }).select("_id").exec(),
+  ]);
+
+  const allChapterLessonsCompleted = chapterLessons.every((l) =>
+    progress.completedLessons.includes(l._id.toString())
   );
-  const allChapterQuizzesCompleted = (chapter.Quizzes || []).every((q) =>
-    progress.completedQuizzes.includes(q.id)
+  const allChapterQuizzesCompleted = chapterQuizzes.every((q) =>
+    progress.completedQuizzes.includes(q._id.toString())
   );
+
   if (
     allChapterLessonsCompleted &&
     allChapterQuizzesCompleted &&
-    !progress.completedChapters.includes(chapter.id)
+    !progress.completedChapters.includes(chapter._id.toString())
   ) {
-    progress.completedChapters.push(chapter.id);
+    progress.completedChapters.push(chapter._id.toString());
   }
-  
-  const course = await Course.findByPk(enrollment.course_id, {
-    include: [{ model: Chapter, include: [Lesson, Quiz] }],
-  });
 
-  const totalLessons = course.Chapters.reduce(
-    (count, ch) => count + ch.Lessons.length,
-    0
-  );
-  const totalQuizzes = course.Chapters.reduce(
-    (count, ch) => count + (ch.Quizzes?.length || 0),
-    0
-  );
+  // Compute overall course completion percentage
+  const allChapters = await Chapter.find({ course_id: enrollment.course_id }).select("_id").exec();
+  let totalLessons = 0;
+  let totalQuizzes = 0;
+  for (const ch of allChapters) {
+    const [lCount, qCount] = await Promise.all([
+      Lesson.countDocuments({ chapter_id: ch._id }),
+      Quiz.countDocuments({ chapter_id: ch._id }),
+    ]);
+    totalLessons += lCount;
+    totalQuizzes += qCount;
+  }
+
   const totalItems = totalLessons + totalQuizzes;
-  const completedItems =
-    progress.completedLessons.length + progress.completedQuizzes.length;
+  const completedItems = progress.completedLessons.length + progress.completedQuizzes.length;
+  progress.completionPercentage = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
-  progress.completionPercentage =
-    totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
-
-  await enrollment.update({ progress });
+  await enrollmentRepository.updateProgressById(enrollment._id.toString(), progress);
 
   return result;
 };
 
 export const getQuizResultsByStudent = async (studentId) => {
-  const results = await QuizResult.findAll({
-    where: { student_id: studentId },
-    include: [
-      {
-        model: Quiz,
-        include: [{ model: Chapter, include: [{ model: Course, attributes: ["id", "title"] }] }],
-      },
-    ],
-  });
-
-  return results;
+  return await quizResultRepository.findByStudentId(studentId);
 };
 
 export const getQuizResultsByQuiz = async (quizId) => {
-  const results = await QuizResult.findAll({
-    where: { quiz_id: quizId },
-    include: [{ model: User, attributes: ["id", "full_name", "email"] }],
-  });
+  return await quizResultRepository.findByQuizId(quizId);
+};
 
-  return results;
+export default {
+  getQuizById,
+  createQuiz,
+  updateQuiz,
+  deleteQuiz,
+  submitQuizResult,
+  getQuizResultsByStudent,
+  getQuizResultsByQuiz,
 };

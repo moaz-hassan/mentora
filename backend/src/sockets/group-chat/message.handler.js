@@ -1,14 +1,15 @@
-import { Op } from "sequelize";
-import models from "../../models/index.js";
+import { chatParticipantRepository, chatRoomRepository, chatMessageRepository } from "../../repositories/communication/chat.repository.js";
+import notificationRepository from "../../repositories/communication/notification.repository.js";
 import { createNotification } from "../../services/communication/notification.service.js";
-
-const { ChatMessage, ChatParticipant, ChatRoom, User } = models;
+import User from "../../models/auth/user.model.js";
 
 export const sendMessageHandler = (io, socket, connectedUsers) => {
   return async ({ roomId, userId, message, messageType = "text", fileUrl = null }) => {
     try {
-      const participant = await ChatParticipant.findOne({
-        where: { room_id: roomId, user_id: userId, is_active: true },
+      const participant = await chatParticipantRepository.findOne({
+        room_id: roomId,
+        user_id: userId,
+        is_active: true,
       });
 
       if (!participant) {
@@ -16,12 +17,11 @@ export const sendMessageHandler = (io, socket, connectedUsers) => {
         return;
       }
 
-      const user = await User.findByPk(userId, {
-        attributes: ["id", "first_name", "last_name", "email", "role"],
-        include: [{ model: models.Profile, attributes: ["avatar_url"] }],
-      });
+      const user = await User.findById(userId)
+        .select("id first_name last_name email role profile")
+        .exec();
 
-      const chatMessage = await ChatMessage.create({
+      const chatMessage = await chatMessageRepository.create({
         room_id: roomId,
         sender_id: userId,
         message: message,
@@ -29,55 +29,53 @@ export const sendMessageHandler = (io, socket, connectedUsers) => {
         file_url: fileUrl,
       });
 
-      
+      // Add to Redis cache if available
       try {
-        const { addMessageToCache, isRedisAvailable } = await import('../../utils/redis.util.js');
+        const { addMessageToCache, isRedisAvailable } = await import("../../utils/redis.util.js");
         if (isRedisAvailable()) {
           await addMessageToCache(roomId, {
-            id: chatMessage.id,
+            id: chatMessage._id.toString(),
             room_id: roomId,
             sender_id: userId,
             message: message,
             message_type: messageType,
             file_url: fileUrl,
-            created_at: chatMessage.created_at?.toISOString() || new Date().toISOString(),
+            created_at: chatMessage.createdAt?.toISOString() || new Date().toISOString(),
             User: {
-              id: user.id,
+              id: user._id.toString(),
               first_name: user.first_name,
               last_name: user.last_name,
               email: user.email,
               role: user.role,
-              Profile: user.Profile ? { avatar_url: user.Profile.avatar_url } : null,
+              Profile: user.profile ? { avatar_url: user.profile.avatar_url } : null,
             },
           });
         }
       } catch (cacheError) {
-        console.warn('Failed to add message to Redis cache:', cacheError.message);
+        console.warn("Failed to add message to Redis cache:", cacheError.message);
       }
 
       const messageData = {
-        id: chatMessage.id,
+        id: chatMessage._id.toString(),
         roomId: roomId,
         senderId: userId,
         senderName: `${user.first_name} ${user.last_name}`,
         senderRole: user.role,
-        senderAvatar: user.Profile?.avatar_url,
+        senderAvatar: user.profile?.avatar_url,
         message: message,
         messageType: messageType,
         fileUrl: fileUrl,
-        createdAt: chatMessage.created_at,
+        createdAt: chatMessage.createdAt,
       };
 
       io.to(`room_${roomId}`).emit("message_received", messageData);
 
-      const room = await ChatRoom.findByPk(roomId);
+      const room = await chatRoomRepository.findById(roomId);
 
-      if (room.type === "private") {
-        const otherParticipant = await ChatParticipant.findOne({
-          where: {
-            room_id: roomId,
-            user_id: { [Op.ne]: userId },
-          },
+      if (room?.type === "private") {
+        const otherParticipant = await chatParticipantRepository.findOne({
+          room_id: roomId,
+          user_id: { $ne: userId },
         });
 
         if (otherParticipant) {
@@ -85,11 +83,7 @@ export const sendMessageHandler = (io, socket, connectedUsers) => {
             user_id: otherParticipant.user_id,
             type: "new_message",
             title: "New Message",
-            message: `${user.first_name} sent you a message`, 
-            
-            
-            
-            
+            message: `${user.first_name} sent you a message`,
             related_id: roomId,
             related_type: "chat_room",
           });
@@ -126,10 +120,7 @@ export const typingHandler = (io, socket) => {
 export const markReadHandler = (io, socket) => {
   return async ({ roomId, userId }) => {
     try {
-      await ChatParticipant.update(
-        { last_read_at: new Date() },
-        { where: { room_id: roomId, user_id: userId } }
-      );
+      await chatParticipantRepository.updateLastRead(roomId, userId);
 
       socket.to(`room_${roomId}`).emit("messages_read", {
         roomId,

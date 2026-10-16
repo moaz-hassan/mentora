@@ -1,24 +1,60 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const ChatRoom = sequelize.define(
-  "ChatRoom",
+const chatRoomSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     type: {
-      type: DataTypes.ENUM("group", "private"),
-      allowNull: false,
+      type: String,
+      enum: ["group", "private"],
+      required: true,
+      default: "group",
     },
-    course_id: { type: DataTypes.STRING(50), allowNull: true },
-    name: { type: DataTypes.STRING(255), allowNull: true },
-    created_by: { type: DataTypes.STRING(50), allowNull: true },
+    course_id: {
+      type: String,
+      ref: "Course",
+      default: null,
+      index: true,
+    },
+    name: {
+      type: String,
+      default: "",
+    },
+    created_by: {
+      type: String,
+      ref: "User",
+      default: null,
+    },
   },
-  { tableName: "chat_rooms", timestamps: true }
+  {
+    timestamps: true,
+    collection: "chat_rooms",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
 );
+
+chatRoomSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+const ChatRoom = mongoose.models.ChatRoom || mongoose.model("ChatRoom", chatRoomSchema);
 
 export default ChatRoom;

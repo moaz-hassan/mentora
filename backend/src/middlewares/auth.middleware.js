@@ -1,9 +1,8 @@
 import jwt from "jsonwebtoken";
-import models from "../models/index.js";
+import userRepository from "../repositories/auth/user.repository.js";
 import { sendVerificationEmail } from "../services/auth/email.service.js";
-import generateVerificationToken from "../utils/generateVerificationCode.js";
+import generateVerificationCode from "../utils/generateVerificationCode.js";
 
-const { User } = models;
 const JWT_SECRET =
   process.env.JWT_SECRET || "your-secret-key-change-in-production";
 
@@ -21,19 +20,8 @@ export const authenticate = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    const user = await User.findOne({
-      where: { id: decoded.id, email: decoded.email, role: decoded.role },
-      attributes: [
-        "id",
-        "first_name",
-        "last_name",
-        "email",
-        "role",
-        "is_email_verified",
-        "is_active",
-      ],
-    });
-    if (!user) {
+    const user = await userRepository.findById(decoded.id);
+    if (!user || user.email !== decoded.email) {
       return res.status(401).json({
         success: false,
         message: "User not found. Authorization denied.",
@@ -41,10 +29,7 @@ export const authenticate = async (req, res, next) => {
     }
 
     if (user.is_email_verified === false) {
-      const verificationToken = await generateVerificationToken(
-        user.email,
-        "verify-email"
-      );
+      const verificationToken = generateVerificationCode();
       await sendVerificationEmail(user.email, verificationToken);
       const error = new Error(
         "User is not verified! Please check your email for verification."
@@ -70,9 +55,9 @@ export const authenticate = async (req, res, next) => {
       });
     }
 
-    return res.status(401).json({
+    return res.status(error.statusCode || 401).json({
       success: false,
-      message: "Invalid token. Authorization denied.",
+      message: error.message || "Invalid token. Authorization denied.",
     });
   }
 };

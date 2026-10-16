@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, X } from "lucide-react";
+import { Star, X, Search as SearchIcon } from "lucide-react";
 
 export default function FiltersSidebar({
   categories = [],
@@ -16,24 +16,50 @@ export default function FiltersSidebar({
   setSelectedRating,
   onClearAll,
   activeFiltersCount,
+  // new props for search integration
+  searchQuery,
+  setSearchQuery,
+  setCurrentPage,
+  // new price/language props
+  minPrice,
+  maxPrice,
+  setMinPrice,
+  setMaxPrice,
+  language,
+  setLanguage,
 }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden sticky top-8">
-      {}
-      <div className="px-5 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Filters</h3>
-        {activeFiltersCount > 0 && (
-          <button
-            onClick={onClearAll}
-            className="text-xs text-white/80 hover:text-white flex items-center gap-1 px-2 py-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-          >
-            <X className="w-3 h-3" />
-            Clear ({activeFiltersCount})
-          </button>
-        )}
-      </div>
+        <div className="px-5 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-white">Advanced Filters</h3>
+          {activeFiltersCount > 0 && (
+            <button
+              onClick={onClearAll}
+              className="text-xs text-white/80 hover:text-white flex items-center gap-1 px-2 py-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+            >
+              <X className="w-3 h-3" />
+              Clear ({activeFiltersCount})
+            </button>
+          )}
+        </div>
 
-      <div className="p-5 space-y-6">
+        <div className="p-5 space-y-6">
+          {/* Search inside sidebar (catalog search) */}
+          <div>
+            <div className="relative">
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search catalog..."
+                value={searchQuery || ""}
+                onChange={(e) => {
+                  if (setSearchQuery) setSearchQuery(e.target.value);
+                  if (setCurrentPage) setCurrentPage(1);
+                }}
+                className="w-full pl-10 pr-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              />
+            </div>
+          </div>
         {}
         <div>
           <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
@@ -86,6 +112,26 @@ export default function FiltersSidebar({
                 {filter.label}
               </button>
             ))}
+          </div>
+
+          {/* Price range inputs */}
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <input
+              type="number"
+              min={0}
+              value={minPrice || ""}
+              onChange={(e) => setMinPrice ? setMinPrice(Number(e.target.value)) : null}
+              placeholder="Min $"
+              className="py-2 px-3 text-sm border border-gray-200 rounded-lg bg-white"
+            />
+            <input
+              type="number"
+              min={0}
+              value={maxPrice || ""}
+              onChange={(e) => setMaxPrice ? setMaxPrice(Number(e.target.value)) : null}
+              placeholder="Max $"
+              className="py-2 px-3 text-sm border border-gray-200 rounded-lg bg-white"
+            />
           </div>
         </div>
 
@@ -161,6 +207,37 @@ export default function FiltersSidebar({
               </button>
             )}
           </div>
+        </div>
+
+        {/* Language selector */}
+        <div>
+          <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Language</h4>
+          <select
+            value={language || ""}
+            onChange={(e) => {
+              if (setLanguage) setLanguage(e.target.value);
+              if (setCurrentPage) setCurrentPage(1);
+            }}
+            className="w-full py-2 px-3 border border-gray-200 rounded-lg bg-white text-sm"
+          >
+            <option value="">All Languages</option>
+            <option value="English">English</option>
+            <option value="Spanish">Spanish</option>
+            <option value="French">French</option>
+          </select>
+        </div>
+
+        {/* Apply button */}
+        <div>
+          <button
+            onClick={() => {
+              if (setCurrentPage) setCurrentPage(1);
+              // parent will react to the filter state changes via hooks
+            }}
+            className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Apply Filters
+          </button>
         </div>
       </div>
     </div>

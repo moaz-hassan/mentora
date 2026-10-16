@@ -1,38 +1,93 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const User = sequelize.define(
-  "User",
+const profileSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
-    },
-    first_name: { type: DataTypes.STRING(255), allowNull: false },
-    last_name: { type: DataTypes.STRING(255), allowNull: false },
-    email: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-      unique: true,
-      validate: { isEmail: true },
-    },
-    password: { type: DataTypes.STRING(255), allowNull: false },
-    role: {
-      type: DataTypes.ENUM("student", "instructor", "admin"),
-      defaultValue: "student",
-    },
-    is_email_verified: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    is_active: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
+    _id: { type: String, default: () => uuidv4() },
+    bio: { type: String, default: "" },
+    avatar_url: { type: String, default: "" },
+    headline: { type: String, default: "" },
+    social_links: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
   },
-  { tableName: "users", timestamps: true }
+  { _id: false }
 );
+
+const userSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: () => uuidv4(),
+    },
+    first_name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    last_name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ["student", "instructor", "admin"],
+      default: "student",
+      index: true,
+    },
+    is_email_verified: {
+      type: Boolean,
+      default: false,
+    },
+    is_active: {
+      type: Boolean,
+      default: true,
+    },
+    profile: {
+      type: profileSchema,
+      default: () => ({}),
+    },
+  },
+  {
+    timestamps: true,
+    collection: "users",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
+);
+
+userSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;

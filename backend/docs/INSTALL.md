@@ -51,6 +51,30 @@ Quick local MySQL using Docker:
 docker run --name mentora-mysql -e MYSQL_ROOT_PASSWORD=0000 -e MYSQL_DATABASE=mentora -p 3306:3306 -d mysql:8.0
 ```
 
+### Docker Compose demo (recommended)
+
+A `docker-compose.yml` is provided to quickly bring up MySQL, Redis, and Adminer for a local demo. From the `backend/` folder run:
+
+```bash
+docker-compose up -d
+```
+
+Wait a few seconds for services to initialize, then run migrations and seed data:
+
+```bash
+# from backend/
+npm install
+npm run migrate
+npm run seed
+```
+
+To stop the demo:
+
+```bash
+docker-compose down
+```
+
+
 ### Migrations / schema
 This repo uses Sequelize. Prefer running Sequelize migrations in production. If migration files are not present, for quick local testing you can use Sequelize `sync()` (not recommended for production). Implement migrations with `sequelize-cli` or `umzug` before publishing.
 

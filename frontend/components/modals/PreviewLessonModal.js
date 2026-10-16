@@ -147,10 +147,12 @@ export default function PreviewLessonModal({ isOpen, onClose, lesson }) {
           {frozenLesson?.lesson_type === "video" && (
             <div className="w-full bg-black">
               <div className="aspect-video w-full">
-                {frozenLesson.video_public_id ? (
+                {frozenLesson.video_public_id || frozenLesson.video_url || frozenLesson.hls_url ? (
                   <VideoPlayer
                     key={`video-${playerKey}`}
                     publicId={frozenLesson.video_public_id}
+                    hlsUrl={frozenLesson.hls_url}
+                    videoUrl={frozenLesson.video_url}
                     autoPlay={false}
                     showNextButton={false}
                   />

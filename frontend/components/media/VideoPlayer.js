@@ -4,6 +4,8 @@ import Script from "next/script";
 
 export default function VideoPlayer({
   publicId,
+  hlsUrl = null,
+  videoUrl = null,
   onNextLesson,
   onProgress,
   autoPlay = false,
@@ -34,17 +36,16 @@ export default function VideoPlayer({
   const initPlayer = () => {
     if (!window.cloudinary || !videoRef.current) return;
 
-    
     if (playerRef.current) {
       cleanupPlayer();
     }
 
     try {
+      console.debug('VideoPlayer init sources:', { publicId, hlsUrl, videoUrl });
       const cld = window.cloudinary.Cloudinary.new({
         cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
       });
 
-      
       playerRef.current = cld.videoPlayer(videoRef.current, {
         logo: false,
         colors: {
@@ -62,21 +63,37 @@ export default function VideoPlayer({
         muted: autoPlay,
       });
 
-      
-      playerRef.current.source(publicId, {
-        sourceTypes: ["hls"],
-        transformation: { streaming_profile: "hd" },
-        info: { title: "" },
-      });
+      // Prefer explicit HLS URL (proxied/signed) when provided
+      if (hlsUrl) {
+        try {
+          playerRef.current.source({ src: hlsUrl, type: "application/x-mpegURL" });
+        } catch (e) {
+          // fallback to setting src directly
+          videoRef.current.src = hlsUrl;
+        }
+      } else if (videoUrl) {
+        try {
+          playerRef.current.source({ src: videoUrl, type: "video/mp4" });
+        } catch (e) {
+          videoRef.current.src = videoUrl;
+        }
+      } else if (publicId) {
+        playerRef.current.source(publicId, {
+          sourceTypes: ["hls"],
+          transformation: { streaming_profile: "hd" },
+          info: { title: "" },
+        });
+      } else {
+        console.warn("VideoPlayer: no source provided (publicId/hlsUrl/videoUrl)");
+        return;
+      }
 
       setIsPlayerReady(true);
 
-      
       if (onNextLesson && showNextButton) {
         playerRef.current.on("ended", onNextLesson);
       }
 
-      
       if (onProgress) {
         playerRef.current.on("timeupdate", () => {
           const player = playerRef.current;
@@ -90,6 +107,9 @@ export default function VideoPlayer({
           }
         });
       }
+
+      // surface player errors to console for easier debugging
+      playerRef.current.on && playerRef.current.on("error", (err) => console.error("Cld player error:", err));
     } catch (error) {
       console.error("Error initializing player:", error);
     }
@@ -102,20 +122,18 @@ export default function VideoPlayer({
     }
   }, []);
 
-  
   useEffect(() => {
-    if (window.cloudinary) {
-      
-      const timer = setTimeout(() => {
-        initPlayer();
-      }, 100);
+    if (!isScriptLoaded) return;
 
-      return () => {
-        clearTimeout(timer);
-        cleanupPlayer();
-      };
-    }
-  }, [isScriptLoaded, publicId]);
+    const timer = setTimeout(() => {
+      initPlayer();
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      cleanupPlayer();
+    };
+  }, [isScriptLoaded, publicId, hlsUrl, videoUrl]);
 
   return (
     <div className="w-full h-full bg-black relative">
@@ -140,7 +158,7 @@ export default function VideoPlayer({
       )}
 
       {}
-      <video ref={videoRef} className="cld-video-player cld-fluid" />
+      <video ref={videoRef} crossOrigin="anonymous" className="cld-video-player cld-fluid" />
     </div>
   );
 }

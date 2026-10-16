@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-10-16T17:15:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  
+  <diagram id="master-topology" name="1. System Topology &amp; Architecture Overview">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2600" pageHeight="1850" background="#0B132B" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- HEADER BANNER -->
+        <mxCell id="p1_banner" value="&lt;b style='font-size:24px; color:#F8FAFC;'&gt;MENTORA LMS — ENTERPRISE BACKEND MASTER ARCHITECTURE&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:13px; color:#94A3B8;'&gt;Strict 4-Tier NoSQL Architecture: Express 5 (ESM) • Socket.io • Mongoose / MongoDB 6.0 • Redis 7 / Bull Queues • Cloudinary / Supabase / Stripe / Gemini AI&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=2;arcSize=6;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="2500" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- 1. CLIENT CONSUMERS -->
+        <mxCell id="p1_box_clients" value="&lt;b style='color:#38BDF8; font-size:15px;'&gt;1. CLIENT &amp;amp; INGRESS CONSUMERS&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="130" width="500" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_c1" value="&lt;b style='color:#FFFFFF; font-size:13px;'&gt;Next.js 15+ Web Application&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#94A3B8;'&gt;React 19 • Tailwind CSS • Radix UI • TanStack Table&lt;br/&gt;Student Learning Portal • Instructor Studio • Admin Center&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="75" y="180" width="450" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_c2" value="&lt;b style='color:#FFFFFF; font-size:13px;'&gt;Vidstack Streaming Video Player&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#94A3B8;'&gt;HLS Adaptive Bitrate Streaming (.m3u8)&lt;br/&gt;Watch-Time Telemetry &amp;amp; Milestone Completion Hooks&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="75" y="260" width="450" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_c3" value="&lt;b style='color:#FFFFFF; font-size:13px;'&gt;Socket.io Real-Time Client&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#94A3B8;'&gt;WSS Persistent WebSocket Connection&lt;br/&gt;Live Course Group Chat • Typing Indicators • Instant Alerts&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="75" y="340" width="450" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_c4" value="&lt;b style='color:#FFFFFF; font-size:13px;'&gt;Stripe &amp;amp; External Webhook Callers&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#94A3B8;'&gt;Stripe Checkout Webhooks (checkout.session.completed)&lt;br/&gt;Raw Body Payload &amp;amp; Cryptographic Signature Verification&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="75" y="420" width="450" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- 2. API GATEWAY & MIDDLEWARE PIPELINE -->
+        <mxCell id="p1_box_gateway" value="&lt;b style='color:#38BDF8; font-size:15px;'&gt;2. API GATEWAY &amp;amp; MIDDLEWARE PIPELINE (Express 5.1)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="590" y="130" width="600" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_gw1" value="&lt;b style='color:#E2E8F0; font-size:12px;'&gt;Single Server Bootstrap &amp;amp; Application Lifecycle&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;server.js binds HTTP &amp;amp; Socket.io ONLY after connectDB() succeeds • app.js configures middleware&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="615" y="175" width="550" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_gw2" value="&lt;b style='color:#E2E8F0; font-size:12px;'&gt;Network Security, CORS &amp;amp; Rate Limiting&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;CORS (Credentials, Whitelist) • Cookie Parser • express-rate-limit (/api/auth &amp;amp; general limiter)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="615" y="230" width="550" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_gw3" value="&lt;b style='color:#E2E8F0; font-size:12px;'&gt;JWT Authentication &amp;amp; Role-Based Authorization (RBAC)&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;authenticate (Bearer JWT / req.cookies.token) • authorize(&apos;student&apos;, &apos;instructor&apos;, &apos;admin&apos;)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="615" y="285" width="550" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_gw4" value="&lt;b style='color:#E2E8F0; font-size:12px;'&gt;Validation, Sanitization &amp;amp; Media Upload Handlers&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;express-validator schemas • validateResult • sanitize-html • Multer Memory Storage Streamer&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="615" y="340" width="550" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_gw5" value="&lt;b style='color:#E2E8F0; font-size:12px;'&gt;Audit Logging &amp;amp; Unified Error Handling Envelope&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;auditLogMiddleware (async Bull push) • notFound &amp;amp; errorHandler (Mongoose cast/validation mapper)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="615" y="395" width="550" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- 3. REALTIME & ASYNC SERVICES -->
+        <mxCell id="p1_box_realtime" value="&lt;b style='color:#F59E0B; font-size:15px;'&gt;3. REAL-TIME ENGINE (Socket.io)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#D97706;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="1230" y="130" width="410" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_rt1" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;Socket.io Handshake Auth&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Decodes JWT on handshake.auth.token • Maps socket.id to user.id&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1255" y="175" width="360" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_rt2" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;Modular Socket Handlers&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• room.handler.js: verify enrollment &amp;amp; join channel&lt;br/&gt;• message.handler.js: sanitize, persist &amp;amp; broadcast&lt;br/&gt;• status.handler.js: online presence indicators&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=15;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1255" y="240" width="360" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_rt3" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;Chat Persistence &amp;amp; Room Registry&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Delegates persistence to chatRoomRepository &amp;amp; chatMessageRepository&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1255" y="345" width="360" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- 4. BACKGROUND QUEUES & CRONS -->
+        <mxCell id="p1_box_workers" value="&lt;b style='color:#EC4899; font-size:15px;'&gt;4. BACKGROUND WORKERS &amp;amp; CRONS&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#DB2777;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="1680" y="130" width="410" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_wk1" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;Bull Queue Pipeline (ioredis)&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• loggingQueue: Batch log buffer (Model.insertMany)&lt;br/&gt;• notificationsQueue: Push &amp;amp; in-app alerts&lt;br/&gt;• emailQueue: Nodemailer / Resend async retry&lt;br/&gt;• analyticsQueue: Hourly metric aggregations&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EC4899;strokeWidth=1;align=left;spacingLeft=15;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1705" y="175" width="360" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_wk2" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;Scheduled Cron Jobs (node-cron)&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• studentProgress.cron.js (1st of month: watch-time &amp;amp; completion digests)&lt;br/&gt;• instructorPerformance.cron.js (1st of month: earnings &amp;amp; rating summaries)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EC4899;strokeWidth=1;align=left;spacingLeft=15;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1705" y="285" width="360" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- 5. EXTERNAL CLOUD SERVICES -->
+        <mxCell id="p1_box_cloud" value="&lt;b style='color:#8B5CF6; font-size:15px;'&gt;5. CLOUD &amp;amp; THIRD-PARTY INTEGRATIONS&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#7C3AED;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="2130" y="130" width="420" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_cl1" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;Cloudinary Video Transcoding&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Adaptive HLS (.m3u8), video duration &amp;amp; poster generation&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2155" y="175" width="370" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_cl2" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;Supabase Storage (Private/Public Buckets)&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;PDF lesson materials, downloadable assets &amp;amp; certificates&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2155" y="230" width="370" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_cl3" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;Stripe Payments API &amp;amp; Webhooks&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;PaymentIntents, Checkout Sessions &amp;amp; automated webhooks&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2155" y="285" width="370" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_cl4" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;Google Gemini AI SDK (@google/genai)&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Automated course review, syllabus suggestions &amp;amp; quiz helpers&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2155" y="340" width="370" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_cl5" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;SMTP / Nodemailer &amp;amp; Resend&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Account verification, password resets &amp;amp; purchase receipts&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2155" y="395" width="370" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- 6. STRICT 4-TIER BACKEND ARCHITECTURE (8 CORE MODULES) -->
+        <mxCell id="p1_box_4tier" value="&lt;b style='color:#10B981; font-size:16px;'&gt;6. STRICT 4-TIER NO-SQL ARCHITECTURE (8 DOMAIN SUBSYSTEMS)&lt;/b&gt;&lt;br/&gt;&lt;span style='color:#94A3B8; font-size:12px;'&gt;Routes ➔ Ultra-Thin Controllers ➔ Rich Domain Services ➔ Isolated Repositories (src/repositories/&amp;lt;domain&amp;gt;/) ➔ Pure Mongoose Models&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#059669;strokeWidth=2.5;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="600" width="2500" height="740" as="geometry" />
+        </mxCell>
+
+        <!-- Module 1: Auth & Identity -->
+        <mxCell id="p1_m1" value="&lt;b style='color:#38BDF8; font-size:13px;'&gt;MODULE 1: AUTH &amp;amp; IDENTITY&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#CBD5E1;'&gt;&lt;b&gt;Routes:&lt;/b&gt; /api/auth, /api/users, /api/profile&lt;br/&gt;&lt;b&gt;Controllers:&lt;/b&gt; auth, user, profile&lt;br/&gt;&lt;b&gt;Services:&lt;/b&gt; auth, token, user, profile&lt;br/&gt;&lt;b&gt;Repositories:&lt;/b&gt; repositories/auth/&lt;br/&gt;&lt;i&gt;• user.repository.js&lt;br/&gt;• profile.repository.js&lt;br/&gt;• token.repository.js&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Models:&lt;/b&gt; User (embedded profile), Token (TTL)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="660" width="280" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Module 2: Course Catalog & Curriculum -->
+        <mxCell id="p1_m2" value="&lt;b style='color:#38BDF8; font-size:13px;'&gt;MODULE 2: COURSE &amp;amp; CURRICULUM&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#CBD5E1;'&gt;&lt;b&gt;Routes:&lt;/b&gt; /api/courses, /chapters, /lessons, /categories&lt;br/&gt;&lt;b&gt;Controllers:&lt;/b&gt; course, chapter, lesson, category&lt;br/&gt;&lt;b&gt;Services:&lt;/b&gt; course, chapter, lesson, category, related&lt;br/&gt;&lt;b&gt;Repositories:&lt;/b&gt; repositories/courses/ &amp;amp; categories/&lt;br/&gt;&lt;i&gt;• course, chapter, lesson, lessonMaterial&lt;br/&gt;• category, subCategory&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Models:&lt;/b&gt; Course (embedded chapters/lessons), Category&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="390" y="660" width="280" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Module 3: Enrollment, Progress & Assessment -->
+        <mxCell id="p1_m3" value="&lt;b style='color:#38BDF8; font-size:13px;'&gt;MODULE 3: ENROLLMENT &amp;amp; PROGRESS&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#CBD5E1;'&gt;&lt;b&gt;Routes:&lt;/b&gt; /api/enrollments, /quizzes, /reviews, /certificates&lt;br/&gt;&lt;b&gt;Controllers:&lt;/b&gt; enrollment, quiz, review, certificate&lt;br/&gt;&lt;b&gt;Services:&lt;/b&gt; enrollment, progress, quiz, review, cert&lt;br/&gt;&lt;b&gt;Repositories:&lt;/b&gt; repositories/courses/&lt;br/&gt;&lt;i&gt;• enrollment.repository.js&lt;br/&gt;• quiz.repository.js &amp;amp; quizResult&lt;br/&gt;• rating.repository.js, certificate.repository.js&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Models:&lt;/b&gt; Enrollment (embedded progress), Quiz, Ratings, Cert&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="660" width="290" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Module 4: Commercial & Payments -->
+        <mxCell id="p1_m4" value="&lt;b style='color:#38BDF8; font-size:13px;'&gt;MODULE 4: PAYMENTS &amp;amp; COMMERCE&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#CBD5E1;'&gt;&lt;b&gt;Routes:&lt;/b&gt; /api/payments, /api/coupons&lt;br/&gt;&lt;b&gt;Controllers:&lt;/b&gt; payment, coupon&lt;br/&gt;&lt;b&gt;Services:&lt;/b&gt; payment, stripe, coupon&lt;br/&gt;&lt;b&gt;Repositories:&lt;/b&gt; repositories/payments/&lt;br/&gt;&lt;i&gt;• payment.repository.js&lt;br/&gt;• coupon.repository.js&lt;br/&gt;• paymentLog.repository.js&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Models:&lt;/b&gt; Payment, Coupon, PaymentLog&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="660" width="280" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Module 5: Real-Time Chat & Communication -->
+        <mxCell id="p1_m5" value="&lt;b style='color:#F59E0B; font-size:13px;'&gt;MODULE 5: REAL-TIME CHAT &amp;amp; NOTIFS&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#CBD5E1;'&gt;&lt;b&gt;Routes:&lt;/b&gt; /api/chat, /api/notifications&lt;br/&gt;&lt;b&gt;Sockets:&lt;/b&gt; chat.socket.js, message/room/status handlers&lt;br/&gt;&lt;b&gt;Controllers:&lt;/b&gt; chat, notification&lt;br/&gt;&lt;b&gt;Services:&lt;/b&gt; chat, notification&lt;br/&gt;&lt;b&gt;Repositories:&lt;/b&gt; repositories/communication/&lt;br/&gt;&lt;i&gt;• chat.repository.js (room, message, participant)&lt;br/&gt;• notification.repository.js&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Models:&lt;/b&gt; ChatRoom, ChatMessage, Notification&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="660" width="280" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Module 6: Administration, Audit & Analytics -->
+        <mxCell id="p1_m6" value="&lt;b style='color:#EF4444; font-size:13px;'&gt;MODULE 6: ADMIN, AUDIT &amp;amp; ANALYTICS&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#CBD5E1;'&gt;&lt;b&gt;Routes:&lt;/b&gt; 12 /api/admin/* modules, /api/reports&lt;br/&gt;&lt;b&gt;Controllers:&lt;/b&gt; adminAnalytics, financial, logs, reports&lt;br/&gt;&lt;b&gt;Services:&lt;/b&gt; adminAnalytics, platformAnalytics, logs, etc.&lt;br/&gt;&lt;b&gt;Repositories:&lt;/b&gt; repositories/admin/ &amp;amp; reports/&lt;br/&gt;&lt;i&gt;• auditLog, enrollmentLog, errorLog, moderationLog&lt;br/&gt;• campaign, featuredCourse, settings, report&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Models:&lt;/b&gt; AuditLog, ErrorLog, ModerationLog, Settings&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EF4444;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="660" width="290" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Module 7: Media Streaming & Cloud Assets -->
+        <mxCell id="p1_m7" value="&lt;b style='color:#8B5CF6; font-size:13px;'&gt;MODULE 7: MEDIA &amp;amp; CLOUD STORAGE&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#CBD5E1;'&gt;&lt;b&gt;Routes:&lt;/b&gt; /api/cloudinary, /api/materials&lt;br/&gt;&lt;b&gt;Controllers:&lt;/b&gt; cloudinary, materialUpload&lt;br/&gt;&lt;b&gt;Services:&lt;/b&gt; Cloudinary API, Supabase Storage Util&lt;br/&gt;&lt;b&gt;Capabilities:&lt;/b&gt;&lt;br/&gt;&lt;i&gt;• Video upload &amp;amp; HLS transcoding (.m3u8)&lt;br/&gt;• PDF / slide streaming &amp;amp; signed download URLs&lt;br/&gt;• Supabase buckets: materials &amp;amp; certificates&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Integration:&lt;/b&gt; Lesson schema (video_url, duration)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1960" y="660" width="270" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Module 8: AI & Recommendation Engine -->
+        <mxCell id="p1_m8" value="&lt;b style='color:#10B981; font-size:13px;'&gt;MODULE 8: AI &amp;amp; REVIEWS (GEMINI)&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#CBD5E1;'&gt;&lt;b&gt;Routes:&lt;/b&gt; /api/ai&lt;br/&gt;&lt;b&gt;Controllers:&lt;/b&gt; ai.controller.js&lt;br/&gt;&lt;b&gt;Services:&lt;/b&gt; Google Gemini AI SDK service&lt;br/&gt;&lt;b&gt;Capabilities:&lt;/b&gt;&lt;br/&gt;&lt;i&gt;• Automated syllabus &amp;amp; course outline evaluation&lt;br/&gt;• Content review &amp;amp; learning objective checking&lt;br/&gt;• Dynamic quiz question generation helpers&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Integration:&lt;/b&gt; Course drafting &amp;amp; instructor review&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="2260" y="660" width="260" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- DATA PERSISTENCE & STORAGE TIER -->
+        <mxCell id="p1_box_db" value="&lt;b style='color:#10B981; font-size:15px;'&gt;DATA PERSISTENCE &amp;amp; CACHE TIER (MONGODB 6.0 &amp;amp; REDIS 7)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#059669;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="80" y="930" width="2440" height="370" as="geometry" />
+        </mxCell>
+
+        <!-- Mongo Collections Grid -->
+        <mxCell id="p1_db_users" value="&lt;b style='color:#38BDF8;'&gt;users Collection&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• _id: UUID / ObjectId&lt;br/&gt;• email: indexed unique&lt;br/&gt;• password (select: false)&lt;br/&gt;• role: enum student/instructor/admin&lt;br/&gt;• profile: embedded subdocument&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="110" y="975" width="270" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1_db_courses" value="&lt;b style='color:#38BDF8;'&gt;courses Collection&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• Compound Text Index: title, subtitle, desc&lt;br/&gt;• instructor_id (ref: User)&lt;br/&gt;• chapters: embedded array&lt;br/&gt;  ➔ lessons: embedded array (hls_url, duration)&lt;br/&gt;• status: draft/published/suspended&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="410" y="975" width="290" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1_db_enrollments" value="&lt;b style='color:#38BDF8;'&gt;enrollments Collection&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• Unique Index: { student_id: 1, course_id: 1 }&lt;br/&gt;• progress: embedded tracking state&lt;br/&gt;  ➔ completedLessons: [String]&lt;br/&gt;  ➔ completionPercentage: Number&lt;br/&gt;  ➔ watchTimeByLesson: Map&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="730" y="975" width="280" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1_db_payments" value="&lt;b style='color:#38BDF8;'&gt;payments &amp;amp; coupons Collection&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• stripe_payment_id / intent_id&lt;br/&gt;• amount, currency, status: completed&lt;br/&gt;• coupon_code, discount_applied&lt;br/&gt;• Atomic Mongoose transactions&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="975" width="270" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1_db_chat" value="&lt;b style='color:#F59E0B;'&gt;chat_rooms &amp;amp; messages&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• chat_rooms: course_id, participants&lt;br/&gt;• chat_messages: indexed { room_id, createdAt }&lt;br/&gt;• Fast cursor-based pagination for history&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="975" width="270" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1_db_logs" value="&lt;b style='color:#EF4444;'&gt;logs &amp;amp; auditing Collections&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• audit_logs: user, action, ip, payload&lt;br/&gt;• error_logs: stack, route, status&lt;br/&gt;• moderation_logs: admin actions&lt;br/&gt;• Buffered via Bull loggingQueue&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EF4444;strokeWidth=1;align=left;spacingLeft=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="975" width="280" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1_db_tokens" value="&lt;b style='color:#10B981;'&gt;tokens &amp;amp; certs Collections&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• tokens: TTL Index { expires_at: 1 }&lt;br/&gt;  ➔ Auto-deleted by MongoDB native TTL&lt;br/&gt;• certificates: unique student+course, QR, URL&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1950" y="975" width="270" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1_db_redis" value="&lt;b style='color:#EC4899;'&gt;Redis 7 In-Memory Store&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;• Redis Cache Manager (TTL keys)&lt;br/&gt;• Bull Queue backend (job streams &amp;amp; retries)&lt;br/&gt;• Socket.io adapter state store&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EC4899;strokeWidth=1;align=left;spacingLeft=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2250" y="975" width="240" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- CONNECTORS / FLOW ARROWS -->
+        <mxCell id="edge_c_gw" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#38BDF8;strokeWidth=2;" edge="1" parent="1" source="p1_box_clients" target="p1_box_gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_c_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;" edge="1" parent="1" source="p1_c3" target="p1_box_realtime">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_gw_4tier" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=2.5;" edge="1" parent="1" source="p1_box_gateway" target="p1_box_4tier">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  
+  <diagram id="module-deep-dives" name="2. Detailed Modules, Requests &amp; Validations">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3200" pageHeight="2600" background="#0B132B" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- HEADER BANNER -->
+        <mxCell id="p2_banner" value="&lt;b style='font-size:24px; color:#F8FAFC;'&gt;MENTORA MODULE SPECIFICATIONS — 4-TIER FLOW, REQUESTS &amp;amp; VALIDATION RULES&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:13px; color:#94A3B8;'&gt;Granular Breakdown of Each Domain Module: Ingress Endpoints • Input Validation Rules • 4-Tier Component Pipeline • Inter-Module Connections&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=2;arcSize=6;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="3100" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================== -->
+        <!-- MODULE 1: AUTH & IDENTITY                      -->
+        <!-- ============================================== -->
+        <mxCell id="p2_card_m1" value="&lt;b style='color:#38BDF8; font-size:16px;'&gt;MODULE 1: AUTHENTICATION &amp;amp; USER IDENTITY&lt;/b&gt;&lt;br/&gt;&lt;span style='color:#94A3B8; font-size:11px;'&gt;Central identity provider, password security, session issuance &amp;amp; profile store&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="130" width="750" height="580" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m1_endpoints" value="&lt;b style='color:#38BDF8; font-size:12px;'&gt;HTTP Ingress Endpoints &amp;amp; Requests:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;POST /api/auth/register&lt;/b&gt;&lt;br/&gt;  Body: &lt;code&gt;{ first_name, last_name, email, password, role }&lt;/code&gt;&lt;br/&gt;  Response: &lt;code&gt;{ success: true, message: &apos;User registered...&apos;, data: { user } }&lt;/code&gt;&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;POST /api/auth/login&lt;/b&gt;&lt;br/&gt;  Body: &lt;code&gt;{ email, password }&lt;/code&gt;&lt;br/&gt;  Response: &lt;code&gt;{ success: true, token, user }&lt;/code&gt; + Set-Cookie HTTP-only token&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;POST /api/auth/forgot-password&lt;/b&gt; &amp;amp; &lt;b&gt;POST /api/auth/reset-password&lt;/b&gt;&lt;br/&gt;  Body: &lt;code&gt;{ token, password }&lt;/code&gt; (verified against Token TTL in Mongo)&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;GET /api/profile/me&lt;/b&gt; (Auth: Bearer JWT ➔ returns user + profile)&lt;br/&gt;• &lt;b&gt;PUT /api/profile/me&lt;/b&gt; Body: &lt;code&gt;{ bio, headline, avatar_url, social_links }&lt;/code&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="75" y="180" width="700" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m1_validations" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;Input Validations (express-validator &amp;amp; sanitizers):&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;code&gt;email&lt;/code&gt;: &lt;code&gt;isEmail().normalizeEmail()&lt;/code&gt;, checked for duplicate conflict (409)&lt;br/&gt;• &lt;code&gt;password&lt;/code&gt;: &lt;code&gt;isLength({ min: 8 })&lt;/code&gt;, hashed with bcryptjs salt factor 10&lt;br/&gt;• &lt;code&gt;role&lt;/code&gt;: &lt;code&gt;isIn([&apos;student&apos;, &apos;instructor&apos;])&lt;/code&gt; (admin assigned via console/seed only)&lt;br/&gt;• &lt;code&gt;bio/headline&lt;/code&gt;: sanitized via &lt;code&gt;sanitize-html&lt;/code&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="75" y="380" width="700" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m1_tierflow" value="&lt;b style='color:#10B981; font-size:12px;'&gt;4-Tier Execution Pipeline &amp;amp; Inter-Module Connections:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;1. &lt;b&gt;Controller:&lt;/b&gt; &lt;code&gt;auth.controller.js&lt;/code&gt; extracts sanitized body, calls Service, sends JSON&lt;br/&gt;2. &lt;b&gt;Service:&lt;/b&gt; &lt;code&gt;auth.service.js&lt;/code&gt; manages bcrypt, signs JWT (&lt;code&gt;jwt.sign&lt;/code&gt;), dispatches email&lt;br/&gt;3. &lt;b&gt;Repositories:&lt;/b&gt; &lt;code&gt;src/repositories/auth/user.repository.js&lt;/code&gt; &amp;amp; &lt;code&gt;token.repository.js&lt;/code&gt;&lt;br/&gt;4. &lt;b&gt;Models:&lt;/b&gt; &lt;code&gt;User.js&lt;/code&gt; (with embedded &lt;code&gt;profile&lt;/code&gt;) &amp;amp; &lt;code&gt;Token.js&lt;/code&gt; (&lt;code&gt;expires_at&lt;/code&gt; TTL index)&lt;br/&gt;&lt;b&gt;Connections:&lt;/b&gt; Issues JWT consumed by all modules; emits user logs to Module 6 (&lt;code&gt;AuditLog&lt;/code&gt;).&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="75" y="485" width="700" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================== -->
+        <!-- MODULE 2: COURSE & CURRICULUM                  -->
+        <!-- ============================================== -->
+        <mxCell id="p2_card_m2" value="&lt;b style='color:#38BDF8; font-size:16px;'&gt;MODULE 2: COURSE CATALOG &amp;amp; CURRICULUM HIERARCHY&lt;/b&gt;&lt;br/&gt;&lt;span style='color:#94A3B8; font-size:11px;'&gt;Course catalog, taxonomy, full-text search &amp;amp; embedded chapters/lessons&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="830" y="130" width="750" height="580" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m2_endpoints" value="&lt;b style='color:#38BDF8; font-size:12px;'&gt;HTTP Ingress Endpoints &amp;amp; Requests:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;GET /api/courses&lt;/b&gt;&lt;br/&gt;  Query: &lt;code&gt;{ search, category, level, minPrice, maxPrice, sort, page, limit }&lt;/code&gt;&lt;br/&gt;  Response: &lt;code&gt;{ success: true, data: { courses, total, page, totalPages } }&lt;/code&gt;&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;POST /api/courses&lt;/b&gt; (Auth: instructor / admin)&lt;br/&gt;  Body: &lt;code&gt;{ title, subtitle, description, category_id, price, level, thumbnail }&lt;/code&gt;&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;POST /api/chapters&lt;/b&gt; Body: &lt;code&gt;{ course_id, title, order }&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;POST /api/lessons&lt;/b&gt; Body: &lt;code&gt;{ chapter_id, title, video_url, duration, is_preview }&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;PATCH /api/courses/:id/publish&lt;/b&gt; ➔ Validates &amp;gt;=1 chapter &amp;amp; lesson ➔ publishes&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="855" y="180" width="700" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m2_validations" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;Input Validations &amp;amp; Search Indexing:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;code&gt;title&lt;/code&gt;: &lt;code&gt;trim().isLength({ min: 5, max: 120 })&lt;/code&gt;&lt;br/&gt;• &lt;code&gt;price&lt;/code&gt;: &lt;code&gt;isFloat({ min: 0 })&lt;/code&gt;&lt;br/&gt;• MongoDB &lt;code&gt;$text&lt;/code&gt; Index: Compound full-text index on &lt;code&gt;{ title: 10, subtitle: 5, description: 1 }&lt;/code&gt;&lt;br/&gt;• Embedded Integrity: Chapters &amp;amp; Lessons stored as embedded subdocuments in Course doc&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="855" y="380" width="700" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m2_tierflow" value="&lt;b style='color:#10B981; font-size:12px;'&gt;4-Tier Execution Pipeline &amp;amp; Inter-Module Connections:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;1. &lt;b&gt;Controller:&lt;/b&gt; &lt;code&gt;course.controller.js&lt;/code&gt;, &lt;code&gt;chapter.controller.js&lt;/code&gt;, &lt;code&gt;lesson.controller.js&lt;/code&gt;&lt;br/&gt;2. &lt;b&gt;Service:&lt;/b&gt; &lt;code&gt;course.service.js&lt;/code&gt; orchestrates curriculum mutations &amp;amp; search filters&lt;br/&gt;3. &lt;b&gt;Repositories:&lt;/b&gt; &lt;code&gt;src/repositories/courses/course.repository.js&lt;/code&gt;, &lt;code&gt;chapter.repository.js&lt;/code&gt;&lt;br/&gt;4. &lt;b&gt;Models:&lt;/b&gt; &lt;code&gt;Course.js&lt;/code&gt; (embedded chapters/lessons), &lt;code&gt;Category.js&lt;/code&gt;&lt;br/&gt;&lt;b&gt;Connections:&lt;/b&gt; Publishing triggers ChatRoom creation in Module 5; lessons receive HLS from Module 7.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="855" y="485" width="700" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================== -->
+        <!-- MODULE 3: ENROLLMENT & LEARNING STATE          -->
+        <!-- ============================================== -->
+        <mxCell id="p2_card_m3" value="&lt;b style='color:#38BDF8; font-size:16px;'&gt;MODULE 3: ENROLLMENT, PROGRESS &amp;amp; ASSESSMENT&lt;/b&gt;&lt;br/&gt;&lt;span style='color:#94A3B8; font-size:11px;'&gt;Student course registration, watch-time telemetry, quizzes, reviews &amp;amp; certificates&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="130" width="750" height="580" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m3_endpoints" value="&lt;b style='color:#38BDF8; font-size:12px;'&gt;HTTP Ingress Endpoints &amp;amp; Requests:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;GET /api/enrollments/my-courses&lt;/b&gt; ➔ returns enrolled courses + completion %&lt;br/&gt;• &lt;b&gt;PUT /api/enrollments/:id/progress&lt;/b&gt;&lt;br/&gt;  Body: &lt;code&gt;{ lesson_id, watch_time_seconds, is_completed }&lt;/code&gt;&lt;br/&gt;  Response: &lt;code&gt;{ success: true, progress: { completionPercentage, completedLessons } }&lt;/code&gt;&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;POST /api/quizzes/:id/submit&lt;/b&gt;&lt;br/&gt;  Body: &lt;code&gt;{ answers: [{ question_id, selected_option }] }&lt;/code&gt; ➔ auto-grades &amp;amp; logs score&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;POST /api/reviews&lt;/b&gt; Body: &lt;code&gt;{ course_id, rating: 1-5, comment }&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;POST /api/certificates/generate&lt;/b&gt; ➔ checks 100% ➔ draws PDF (PDFKit) ➔ Supabase upload&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1635" y="180" width="700" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m3_validations" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;Input Validations &amp;amp; Constraint Rules:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Unique Compound Index: &lt;code&gt;{ student_id: 1, course_id: 1 }&lt;/code&gt; prevents duplicate enrollment&lt;br/&gt;• Unique Rating Index: &lt;code&gt;{ student_id: 1, course_id: 1 }&lt;/code&gt; enforces one review per student&lt;br/&gt;• &lt;code&gt;rating&lt;/code&gt;: &lt;code&gt;isInt({ min: 1, max: 5 })&lt;/code&gt;&lt;br/&gt;• Certificate Gate: &lt;code&gt;completionPercentage === 100&lt;/code&gt; enforced before PDF issuance&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1635" y="380" width="700" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m3_tierflow" value="&lt;b style='color:#10B981; font-size:12px;'&gt;4-Tier Execution Pipeline &amp;amp; Inter-Module Connections:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;1. &lt;b&gt;Controller:&lt;/b&gt; &lt;code&gt;enrollment.controller.js&lt;/code&gt;, &lt;code&gt;quiz.controller.js&lt;/code&gt;, &lt;code&gt;review.controller.js&lt;/code&gt;&lt;br/&gt;2. &lt;b&gt;Service:&lt;/b&gt; &lt;code&gt;enrollment.service.js&lt;/code&gt;, &lt;code&gt;progress.service.js&lt;/code&gt;, &lt;code&gt;certificate.service.js&lt;/code&gt;&lt;br/&gt;3. &lt;b&gt;Repositories:&lt;/b&gt; &lt;code&gt;src/repositories/courses/enrollment.repository.js&lt;/code&gt;, &lt;code&gt;rating.repository.js&lt;/code&gt;&lt;br/&gt;4. &lt;b&gt;Models:&lt;/b&gt; &lt;code&gt;Enrollment.js&lt;/code&gt; (embedded progress), &lt;code&gt;Quiz.js&lt;/code&gt;, &lt;code&gt;Ratings.js&lt;/code&gt;, &lt;code&gt;Certificate.js&lt;/code&gt;&lt;br/&gt;&lt;b&gt;Connections:&lt;/b&gt; Triggered by Module 4 (Payment webhook); feeds student progress crons in Module 8.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1635" y="485" width="700" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================== -->
+        <!-- MODULE 4: COMMERCIAL & PAYMENTS                -->
+        <!-- ============================================== -->
+        <mxCell id="p2_card_m4" value="&lt;b style='color:#38BDF8; font-size:16px;'&gt;MODULE 4: COMMERCIAL, CHECKOUT &amp;amp; PAYMENTS&lt;/b&gt;&lt;br/&gt;&lt;span style='color:#94A3B8; font-size:11px;'&gt;Stripe checkout sessions, coupon discounts, atomic purchases &amp;amp; payment logs&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="2390" y="130" width="750" height="580" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m4_endpoints" value="&lt;b style='color:#38BDF8; font-size:12px;'&gt;HTTP Ingress Endpoints &amp;amp; Requests:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;POST /api/coupons/apply&lt;/b&gt;&lt;br/&gt;  Body: &lt;code&gt;{ code, course_id }&lt;/code&gt; ➔ calculates discount %, checks expiry &amp;amp; max uses&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;POST /api/payments/checkout-session&lt;/b&gt;&lt;br/&gt;  Body: &lt;code&gt;{ course_id, coupon_code }&lt;/code&gt;&lt;br/&gt;  Response: &lt;code&gt;{ success: true, sessionId, url: &apos;https://checkout.stripe.com/...&apos; }&lt;/code&gt;&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;POST /api/payments/webhook&lt;/b&gt; (External Stripe Webhook)&lt;br/&gt;  Headers: &lt;code&gt;stripe-signature&lt;/code&gt; (Cryptographic verification)&lt;br/&gt;  Payload: &lt;code&gt;checkout.session.completed&lt;/code&gt; ➔ triggers atomic Mongoose transaction&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="2415" y="180" width="700" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m4_validations" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;Input Validations &amp;amp; Transaction Atomicity:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Stripe Webhook Signature: Raw body validated with &lt;code&gt;stripe.webhooks.constructEvent()&lt;/code&gt;&lt;br/&gt;• Atomic Multi-Doc Transaction: &lt;code&gt;mongoose.startSession()&lt;/code&gt; with &lt;code&gt;session.withTransaction()&lt;/code&gt;&lt;br/&gt;  ➔ Creates Payment record + Creates Enrollment record + Increments coupon usage count&lt;br/&gt;  ➔ Any failure rolls back all documents cleanly (zero orphan purchases)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="2415" y="380" width="700" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m4_tierflow" value="&lt;b style='color:#10B981; font-size:12px;'&gt;4-Tier Execution Pipeline &amp;amp; Inter-Module Connections:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;1. &lt;b&gt;Controller:&lt;/b&gt; &lt;code&gt;payment.controller.js&lt;/code&gt;, &lt;code&gt;coupon.controller.js&lt;/code&gt;&lt;br/&gt;2. &lt;b&gt;Service:&lt;/b&gt; &lt;code&gt;payment.service.js&lt;/code&gt;, &lt;code&gt;stripe.service.js&lt;/code&gt;, &lt;code&gt;coupon.service.js&lt;/code&gt;&lt;br/&gt;3. &lt;b&gt;Repositories:&lt;/b&gt; &lt;code&gt;src/repositories/payments/payment.repository.js&lt;/code&gt;, &lt;code&gt;coupon.repository.js&lt;/code&gt;&lt;br/&gt;4. &lt;b&gt;Models:&lt;/b&gt; &lt;code&gt;Payment.js&lt;/code&gt;, &lt;code&gt;Coupon.js&lt;/code&gt;, &lt;code&gt;PaymentLog.js&lt;/code&gt;&lt;br/&gt;&lt;b&gt;Connections:&lt;/b&gt; Invokes Module 3 (&lt;code&gt;enrollment.service&lt;/code&gt;); queues purchase receipts to Module 8 (&lt;code&gt;emailQueue&lt;/code&gt;).&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="2415" y="485" width="700" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================== -->
+        <!-- MODULE 5: REAL-TIME CHAT & SOCKETS             -->
+        <!-- ============================================== -->
+        <mxCell id="p2_card_m5" value="&lt;b style='color:#F59E0B; font-size:16px;'&gt;MODULE 5: REAL-TIME CHAT &amp;amp; SOCKET.IO COMMUNICATION&lt;/b&gt;&lt;br/&gt;&lt;span style='color:#94A3B8; font-size:11px;'&gt;Course group chats, direct messaging, typing state &amp;amp; instant user alerts&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#D97706;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="740" width="750" height="580" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m5_endpoints" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;WebSocket Events &amp;amp; HTTP Endpoints:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;WS Handshake&lt;/b&gt;: Decodes JWT in &lt;code&gt;socket.handshake.auth.token&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;WS Event: &apos;join_room&apos;&lt;/b&gt;&lt;br/&gt;  Payload: &lt;code&gt;{ roomId }&lt;/code&gt; ➔ verifies student is enrolled or instructor ➔ joins channel&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;WS Event: &apos;send_message&apos;&lt;/b&gt;&lt;br/&gt;  Payload: &lt;code&gt;{ roomId, content }&lt;/code&gt; ➔ sanitizes HTML ➔ saves message ➔ broadcasts &apos;new_message&apos;&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;GET /api/chat/rooms/:roomId/messages&lt;/b&gt; (Query: &lt;code&gt;{ page, limit }&lt;/code&gt;)&lt;br/&gt;• &lt;b&gt;GET /api/notifications&lt;/b&gt; ➔ fetches unread user alerts&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="75" y="790" width="700" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m5_validations" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;Security, Sanitization &amp;amp; Indexes:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• HTML Sanitization: &lt;code&gt;sanitize-html&lt;/code&gt; strips script tags, XSS attack vectors &amp;amp; invalid iframes&lt;br/&gt;• Room Enrollment Gate: User cannot listen or emit to rooms without active enrollment&lt;br/&gt;• Message Index: &lt;code&gt;{ room_id: 1, createdAt: -1 }&lt;/code&gt; for high-speed chronological streaming&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="75" y="990" width="700" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m5_tierflow" value="&lt;b style='color:#10B981; font-size:12px;'&gt;4-Tier Execution Pipeline &amp;amp; Inter-Module Connections:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;1. &lt;b&gt;Handlers:&lt;/b&gt; &lt;code&gt;room.handler.js&lt;/code&gt;, &lt;code&gt;message.handler.js&lt;/code&gt;, &lt;code&gt;status.handler.js&lt;/code&gt;&lt;br/&gt;2. &lt;b&gt;Service:&lt;/b&gt; &lt;code&gt;chat.service.js&lt;/code&gt;, &lt;code&gt;notification.service.js&lt;/code&gt;&lt;br/&gt;3. &lt;b&gt;Repositories:&lt;/b&gt; &lt;code&gt;src/repositories/communication/chat.repository.js&lt;/code&gt;, &lt;code&gt;notification.repository.js&lt;/code&gt;&lt;br/&gt;4. &lt;b&gt;Models:&lt;/b&gt; &lt;code&gt;ChatRoom.js&lt;/code&gt;, &lt;code&gt;ChatMessage.js&lt;/code&gt;, &lt;code&gt;Notification.js&lt;/code&gt;&lt;br/&gt;&lt;b&gt;Connections:&lt;/b&gt; Rooms bound to Module 2 &lt;code&gt;Course&lt;/code&gt;; participants synced from Module 3 &lt;code&gt;Enrollment&lt;/code&gt;.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="75" y="1095" width="700" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================== -->
+        <!-- MODULE 6: ADMIN, AUDIT & ANALYTICS             -->
+        <!-- ============================================== -->
+        <mxCell id="p2_card_m6" value="&lt;b style='color:#EF4444; font-size:16px;'&gt;MODULE 6: ADMINISTRATION, AUDITING &amp;amp; ANALYTICS&lt;/b&gt;&lt;br/&gt;&lt;span style='color:#94A3B8; font-size:11px;'&gt;System telemetry, financial breakdowns, content moderation &amp;amp; audit logs&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#DC2626;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="830" y="740" width="750" height="580" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m6_endpoints" value="&lt;b style='color:#EF4444; font-size:12px;'&gt;HTTP Ingress Endpoints &amp;amp; Requests:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;All Routes Guarded:&lt;/b&gt; &lt;code&gt;authenticate&lt;/code&gt; + &lt;code&gt;authorize(&apos;admin&apos;)&lt;/code&gt; + &lt;code&gt;auditLogMiddleware&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;GET /api/admin/platform-analytics&lt;/b&gt;&lt;br/&gt;  Aggregates total revenue, monthly active students, published courses, and enrollment curves&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;PATCH /api/admin/courses/:id/status&lt;/b&gt;&lt;br/&gt;  Body: &lt;code&gt;{ status: &apos;approved&apos; | &apos;suspended&apos;, reason }&lt;/code&gt; ➔ logs to ModerationLog&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;GET /api/admin/logs/audit&lt;/b&gt; Query: &lt;code&gt;{ user_id, action, fromDate, toDate, page }&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;POST /api/reports&lt;/b&gt; Body: &lt;code&gt;{ reported_id, report_type, reason }&lt;/code&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EF4444;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="855" y="790" width="700" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m6_validations" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;Aggregation Pipelines &amp;amp; Security:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Mongoose Aggregations: High-performance &lt;code&gt;$facet&lt;/code&gt;, &lt;code&gt;$match&lt;/code&gt;, &lt;code&gt;$group&lt;/code&gt;, &lt;code&gt;$dateToString&lt;/code&gt;&lt;br/&gt;• RBAC Enforcement: Strict HTTP 403 Forbidden on non-admin tokens before controller execution&lt;br/&gt;• Audit Trail: Every administrative write captured in &lt;code&gt;audit_logs&lt;/code&gt; with client IP &amp;amp; user agent&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="855" y="990" width="700" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m6_tierflow" value="&lt;b style='color:#10B981; font-size:12px;'&gt;4-Tier Execution Pipeline &amp;amp; Inter-Module Connections:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;1. &lt;b&gt;Controllers:&lt;/b&gt; &lt;code&gt;adminAnalytics.controller.js&lt;/code&gt;, &lt;code&gt;financial.controller.js&lt;/code&gt;, &lt;code&gt;logs.controller.js&lt;/code&gt;&lt;br/&gt;2. &lt;b&gt;Services:&lt;/b&gt; &lt;code&gt;adminAnalytics.service.js&lt;/code&gt;, &lt;code&gt;platformAnalytics.service.js&lt;/code&gt;, &lt;code&gt;report.service.js&lt;/code&gt;&lt;br/&gt;3. &lt;b&gt;Repositories:&lt;/b&gt; &lt;code&gt;src/repositories/admin/auditLog.repository.js&lt;/code&gt;, &lt;code&gt;moderationLog.repository.js&lt;/code&gt;&lt;br/&gt;4. &lt;b&gt;Models:&lt;/b&gt; &lt;code&gt;AuditLog.js&lt;/code&gt;, &lt;code&gt;ErrorLog.js&lt;/code&gt;, &lt;code&gt;ModerationLog.js&lt;/code&gt;, &lt;code&gt;Report.js&lt;/code&gt;&lt;br/&gt;&lt;b&gt;Connections:&lt;/b&gt; Audits all modules; reads cross-domain analytics from Modules 1, 2, 3, and 4.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="855" y="1095" width="700" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================== -->
+        <!-- MODULE 7: MEDIA & CLOUD STORAGE                -->
+        <!-- ============================================== -->
+        <mxCell id="p2_card_m7" value="&lt;b style='color:#8B5CF6; font-size:16px;'&gt;MODULE 7: MEDIA TRANSCODING &amp;amp; CLOUD ASSETS&lt;/b&gt;&lt;br/&gt;&lt;span style='color:#94A3B8; font-size:11px;'&gt;Cloudinary HLS video delivery, Supabase private materials &amp;amp; signed URLs&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#7C3AED;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="740" width="750" height="580" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m7_endpoints" value="&lt;b style='color:#8B5CF6; font-size:12px;'&gt;HTTP Ingress Endpoints &amp;amp; Requests:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;POST /api/cloudinary/upload-video&lt;/b&gt;&lt;br/&gt;  Payload: Multer Multipart Video ➔ Cloudinary Adaptive HLS Transcoder&lt;br/&gt;  Response: &lt;code&gt;{ success: true, data: { public_id, hls_url, duration, thumbnail_url } }&lt;/code&gt;&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;POST /api/materials/upload&lt;/b&gt;&lt;br/&gt;  Payload: Multer Multipart PDF/Zip ➔ Supabase Storage &apos;materials&apos; bucket&lt;br/&gt;  Response: &lt;code&gt;{ success: true, data: { file_url, storage_path, file_size } }&lt;/code&gt;&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;GET /api/materials/:id/download-url&lt;/b&gt; ➔ checks enrollment ➔ signed 15m URL&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1635" y="790" width="700" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m7_validations" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;Media Constraints &amp;amp; Streaming Profiles:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Video Multer Filter: &lt;code&gt;video/mp4&lt;/code&gt;, &lt;code&gt;video/quicktime&lt;/code&gt;, &lt;code&gt;video/webm&lt;/code&gt; (max 500MB)&lt;br/&gt;• Cloudinary Eager Profile: HD Adaptive Streaming Profile producing multi-bitrate &lt;code&gt;.m3u8&lt;/code&gt;&lt;br/&gt;• Material Multer Filter: &lt;code&gt;application/pdf&lt;/code&gt;, &lt;code&gt;application/zip&lt;/code&gt; (max 50MB)&lt;br/&gt;• Signed URL Expiration: Temporary expirable tokens protect proprietary course materials&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1635" y="990" width="700" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m7_tierflow" value="&lt;b style='color:#10B981; font-size:12px;'&gt;4-Tier Execution Pipeline &amp;amp; Inter-Module Connections:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;1. &lt;b&gt;Controllers:&lt;/b&gt; &lt;code&gt;cloudinary.controller.js&lt;/code&gt;, &lt;code&gt;materialUpload.controller.js&lt;/code&gt;&lt;br/&gt;2. &lt;b&gt;Services/Utils:&lt;/b&gt; &lt;code&gt;streamifier&lt;/code&gt;, Cloudinary SDK, &lt;code&gt;supabaseStorage.util.js&lt;/code&gt;&lt;br/&gt;3. &lt;b&gt;Repositories:&lt;/b&gt; &lt;code&gt;src/repositories/courses/lessonMaterial.repository.js&lt;/code&gt;&lt;br/&gt;4. &lt;b&gt;Models:&lt;/b&gt; Injects HLS URLs into Module 2 &lt;code&gt;Lesson&lt;/code&gt; schema and Module 3 &lt;code&gt;Certificate&lt;/code&gt;&lt;br/&gt;&lt;b&gt;Connections:&lt;/b&gt; Powers Vidstack player in Next.js; stores PDF certificates generated in Module 3.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1635" y="1095" width="700" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================== -->
+        <!-- MODULE 8: WORKERS & CRON PIPELINES             -->
+        <!-- ============================================== -->
+        <mxCell id="p2_card_m8" value="&lt;b style='color:#EC4899; font-size:16px;'&gt;MODULE 8: BACKGROUND WORKERS &amp;amp; CRON PIPELINES&lt;/b&gt;&lt;br/&gt;&lt;span style='color:#94A3B8; font-size:11px;'&gt;Asynchronous Bull queue workers, batch loggers &amp;amp; scheduled monthly reporting&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#DB2777;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="2390" y="740" width="750" height="580" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m8_endpoints" value="&lt;b style='color:#EC4899; font-size:12px;'&gt;Bull Queue Names &amp;amp; Cron Schedules:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;loggingQueue&lt;/b&gt;: Buffers API access &amp;amp; audit events in memory (batch size: 50 or 5s flush)&lt;br/&gt;• &lt;b&gt;emailQueue&lt;/b&gt;: Asynchronously delivers verification, reset &amp;amp; purchase emails with backoff&lt;br/&gt;• &lt;b&gt;notificationsQueue&lt;/b&gt;: Dispatches in-app alerts and web push events&lt;br/&gt;• &lt;b&gt;analyticsQueue&lt;/b&gt;: Computes hourly platform metrics and cached aggregates&lt;br/&gt;&lt;br/&gt;• &lt;b&gt;Cron 1: studentProgress.cron.js&lt;/b&gt; (Schedule: &lt;code&gt;0 0 1 * *&lt;/code&gt; - 1st of month)&lt;br/&gt;• &lt;b&gt;Cron 2: instructorPerformance.cron.js&lt;/b&gt; (Schedule: &lt;code&gt;0 0 1 * *&lt;/code&gt; - 1st of month)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EC4899;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="2415" y="790" width="700" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m8_validations" value="&lt;b style='color:#F59E0B; font-size:12px;'&gt;Worker Reliability &amp;amp; Redis Backoff:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Queue Backoff: Exponential retry strategy (&lt;code&gt;attempts: 3, backoff: 5000ms&lt;/code&gt;)&lt;br/&gt;• Batch Insert Efficiency: Flushed via &lt;code&gt;Model.insertMany(batch, { ordered: false })&lt;/code&gt;&lt;br/&gt;• Cron Lock Safety: Prevents duplicate job execution across multi-instance clusters via Redis&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="2415" y="990" width="700" height="95" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2_m8_tierflow" value="&lt;b style='color:#10B981; font-size:12px;'&gt;Worker Implementations &amp;amp; Inter-Module Connections:&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;1. &lt;b&gt;Workers:&lt;/b&gt; &lt;code&gt;src/workers/loggingWorker.js&lt;/code&gt;, email worker, notification worker&lt;br/&gt;2. &lt;b&gt;Crons:&lt;/b&gt; &lt;code&gt;src/cron/init.cron.js&lt;/code&gt; initialized on successful server listen&lt;br/&gt;3. &lt;b&gt;Repositories Used:&lt;/b&gt; &lt;code&gt;auditLog.repository.js&lt;/code&gt;, &lt;code&gt;enrollment.repository.js&lt;/code&gt;, &lt;code&gt;user.repository.js&lt;/code&gt;&lt;br/&gt;4. &lt;b&gt;Storage:&lt;/b&gt; Reads and writes to Redis 7 streams &amp;amp; MongoDB log collections&lt;br/&gt;&lt;b&gt;Connections:&lt;/b&gt; Offloads CPU/network-heavy I/O from all web request loops.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="2415" y="1095" width="700" height="115" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  
+  <diagram id="request-lifecycles" name="3. E2E Request Lifecycles &amp; Async Workers">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="2000" background="#0B132B" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- HEADER BANNER -->
+        <mxCell id="p3_banner" value="&lt;b style='font-size:24px; color:#F8FAFC;'&gt;MENTORA TRANSACTION LIFECYCLES, DATA FLOWS &amp;amp; WORKER LOOPS&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:13px; color:#94A3B8;'&gt;Step-by-Step Execution Sequence for Critical Business Workflows: Stripe Purchases, Video Streaming, Certificate Issuance &amp;amp; Chat&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=2;arcSize=6;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="2700" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- FLOW 1: STRIPE PURCHASE -->
+        <mxCell id="p3_box_f1" value="&lt;b style='color:#38BDF8; font-size:15px;'&gt;LIFECYCLE 1: STRIPE PURCHASE &amp;amp; ENROLLMENT FULFILLMENT (ATOMIC TRANSACTION)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="130" width="1320" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f1_s1" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;1. Student Initiates Checkout&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Next.js calls POST /api/payments/checkout-session with course_id and optional coupon_code&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="180" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f1_s2" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;2. Stripe PaymentIntent &amp;amp; Checkout Session Issuance&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;payment.service validates price with coupon.service ➔ calls Stripe API ➔ returns Stripe Checkout URL&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="250" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f1_s3" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;3. Student Completes Payment on Stripe Secure Checkout&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Card processed by Stripe ➔ Stripe triggers HTTP POST webhook to /api/payments/webhook&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="320" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f1_s4" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;4. Webhook Cryptographic Verification &amp;amp; Atomic Mongoose Transaction Start&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;stripe.webhooks.constructEvent() verifies header ➔ mongoose.startSession() ➔ session.withTransaction()&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="390" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f1_s5" value="&lt;b style='color:#10B981; font-size:12px;'&gt;5. Atomic Multi-Document Persistence in MongoDB (Mongoose Session):&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;payment.repository.create():&lt;/b&gt; Writes Payment document with status: &apos;completed&apos;, amount, stripe_id&lt;br/&gt;• &lt;b&gt;enrollment.repository.create():&lt;/b&gt; Creates student enrollment doc with initialized progress map&lt;br/&gt;• &lt;b&gt;coupon.repository.incrementUsage():&lt;/b&gt; Atomically increments coupon usage count&lt;br/&gt;• &lt;b&gt;chat.repository.addParticipant():&lt;/b&gt; Registers student into the course ChatRoom participant list&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1.5;align=left;spacingLeft=15;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="460" width="1260" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f1_s6" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;6. Post-Transaction Queue Dispatch &amp;amp; Client Notification&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Transaction commits successfully ➔ Bull emailQueue.add() triggers async receipt email ➔ Socket.io emits &apos;enrollment_success&apos;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EC4899;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="575" width="1260" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- FLOW 2: VIDEO TRANSCODING -->
+        <mxCell id="p3_box_f2" value="&lt;b style='color:#8B5CF6; font-size:15px;'&gt;LIFECYCLE 2: VIDEO UPLOAD, CLOUDINARY HLS TRANSCODING &amp;amp; STREAMING&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#7C3AED;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="130" width="1320" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f2_s1" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;1. Instructor Uploads Video in Studio Portal&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;POST /api/cloudinary/upload-video with multipart form-data (MP4/MOV up to 500MB)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="180" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f2_s2" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;2. Multer In-Memory Buffering &amp;amp; Cloudinary Streamer Pipe&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;streamifier converts buffer to stream ➔ uploads to Cloudinary API with eager HLS transcode profile&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="250" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f2_s3" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;3. Adaptive Bitrate HLS (.m3u8) Generation in Cloudinary&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Cloudinary generates multi-resolution segments (1080p, 720p, 480p) + poster thumbnail + exact duration in seconds&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="320" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f2_s4" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;4. Lesson Creation in Course Curriculum Subdocument&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Instructor submits POST /api/lessons ➔ lesson.repository embeds lesson metadata directly into Course.chapters.$.lessons in Mongo&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="390" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f2_s5" value="&lt;b style='color:#38BDF8; font-size:12px;'&gt;5. Student Playback via Vidstack Player &amp;amp; Watch-Time Beacon Telemetry&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Student requests course video ➔ verifies enrollment status via enrollment.repository&lt;br/&gt;• Vidstack streams adaptive HLS segments dynamically based on client bandwidth&lt;br/&gt;• Player periodically pings PUT /api/enrollments/:id/progress ➔ progress.service updates watch times and marks completed&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1.5;align=left;spacingLeft=15;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="460" width="1260" height="95" as="geometry" />
+        </mxCell>
+
+        <!-- FLOW 3: CERTIFICATE GENERATION -->
+        <mxCell id="p3_box_f3" value="&lt;b style='color:#10B981; font-size:15px;'&gt;LIFECYCLE 3: 100% COURSE COMPLETION &amp;amp; PDF CERTIFICATE ISSUANCE&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#059669;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="960" width="1320" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f3_s1" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;1. Student Reaches 100% Completion on All Curriculum Lessons &amp;amp; Quizzes&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;progress.service computes completionPercentage === 100 ➔ updates Enrollment doc status to completed&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1010" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f3_s2" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;2. Student Calls POST /api/certificates/generate&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;certificate.service verifies completion status ➔ fetches student profile &amp;amp; course title via repositories&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1080" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f3_s3" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;3. High-Resolution Vector PDF Generation via PDFKit &amp;amp; QR Code Embedding&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Generates unique verification UUID ➔ creates QR verification badge ➔ generates print-ready PDF certificate buffer&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1150" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f3_s4" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;4. Upload to Supabase Storage &amp;amp; Certificate Collection Persistence&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;supabaseStorage.util streams buffer to &apos;certificates&apos; bucket ➔ certificate.repository.create() saves URL &amp;amp; verification code in MongoDB&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1220" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f3_s5" value="&lt;b style='color:#38BDF8; font-size:12px;'&gt;5. Public Verification Endpoint &amp;amp; Download Link Returned to Student&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Student can download PDF certificate or share permanent verification link (e.g. /verify-cert/:code)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1290" width="1260" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- FLOW 4: REAL-TIME CHAT & BATCH LOGGING -->
+        <mxCell id="p3_box_f4" value="&lt;b style='color:#F59E0B; font-size:15px;'&gt;LIFECYCLE 4: REAL-TIME CHAT MESSAGE BROADCAST &amp;amp; BATCH LOGGING LOOP&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#D97706;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="960" width="1320" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f4_s1" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;1. WebSocket Handshake &amp;amp; JWT Authentication&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Socket client connects with token ➔ verified against User collection ➔ maps socket to user notification room&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="1010" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f4_s2" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;2. Student Joins Course Room &amp;amp; Emits &apos;send_message&apos;&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;room.handler.js verifies enrollment ➔ message.handler.js receives message payload { roomId, content }&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="1080" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f4_s3" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;3. HTML Sanitization &amp;amp; MongoDB Persistence&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;sanitize-html cleans text ➔ chatMessageRepository.create() saves ChatMessage doc indexed by { room_id, createdAt }&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="1150" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f4_s4" value="&lt;b style='color:#FFFFFF; font-size:12px;'&gt;4. Real-Time WSS Broadcast to Active Room Participants&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;io.to(roomId).emit(&apos;new_message&apos;, messageData) delivers instant message to all connected peers in course room&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="1220" width="1260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_f4_s5" value="&lt;b style='color:#EC4899; font-size:12px;'&gt;5. Asynchronous Offline Alert Queue &amp;amp; Bull Batch Log Worker&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Offline room members pushed to Bull notificationsQueue for push/email notification alerts&lt;br/&gt;• Access logs &amp;amp; chat events pushed to loggingQueue ➔ loggingWorker.js flushes batches of 50 via Model.insertMany()&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EC4899;strokeWidth=1.5;align=left;spacingLeft=15;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="1290" width="1260" height="95" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  
+  <diagram id="data-model-erd" name="4. Data Model &amp; Schema Architecture (NoSQL ERD)">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3000" pageHeight="2200" background="#0B132B" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- HEADER BANNER -->
+        <mxCell id="p4_banner" value="&lt;b style='font-size:24px; color:#F8FAFC;'&gt;MENTORA DATA MODEL &amp;amp; MONGOOSE SCHEMA ARCHITECTURE&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:13px; color:#94A3B8;'&gt;High-Performance NoSQL Modeling: Embedded Subdocuments vs. Normalized References • Compound Indexes • TTL &amp;amp; Text Indexes&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=2;arcSize=6;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="2900" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- SCHEMA 1: USERS & PROFILE -->
+        <mxCell id="p4_sc_user" value="&lt;b style='color:#38BDF8; font-size:14px;'&gt;Collection: users&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Parent Document with Embedded Profile Subdocument&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="50" y="140" width="420" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_sc_user_fields" value="&lt;span style='font-size:11px; color:#CBD5E1;'&gt;&lt;b style='color:#F59E0B;'&gt;FIELDS &amp;amp; TYPES:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;_id:&lt;/b&gt; String / UUID (Primary Key)&lt;br/&gt;• &lt;b&gt;first_name, last_name:&lt;/b&gt; String (required, trim)&lt;br/&gt;• &lt;b&gt;email:&lt;/b&gt; String (unique, index: true, lowercase)&lt;br/&gt;• &lt;b&gt;password:&lt;/b&gt; String (select: false, bcrypt hash)&lt;br/&gt;• &lt;b&gt;role:&lt;/b&gt; Enum [&apos;student&apos;, &apos;instructor&apos;, &apos;admin&apos;]&lt;br/&gt;• &lt;b&gt;is_verified:&lt;/b&gt; Boolean (default: false)&lt;br/&gt;• &lt;b&gt;status:&lt;/b&gt; Enum [&apos;active&apos;, &apos;suspended&apos;, &apos;pending&apos;]&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#10B981;'&gt;EMBEDDED PROFILE SUBDOC (profile):&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;bio, headline:&lt;/b&gt; String (sanitized HTML)&lt;br/&gt;• &lt;b&gt;avatar_url:&lt;/b&gt; String (Cloudinary / Supabase)&lt;br/&gt;• &lt;b&gt;social_links:&lt;/b&gt; { website, github, linkedin, twitter }&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#EC4899;'&gt;INDEXES:&lt;/b&gt;&lt;br/&gt;• { email: 1 } (Unique)&lt;br/&gt;• { role: 1 }, { status: 1 }&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="190" width="380" height="350" as="geometry" />
+        </mxCell>
+
+        <!-- SCHEMA 2: COURSES (EMBEDDED CHAPTERS & LESSONS) -->
+        <mxCell id="p4_sc_course" value="&lt;b style='color:#38BDF8; font-size:14px;'&gt;Collection: courses&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Aggregated Curriculum Root with Embedded Chapters &amp;amp; Lessons&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="510" y="140" width="480" height="580" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_sc_course_fields" value="&lt;span style='font-size:11px; color:#CBD5E1;'&gt;&lt;b style='color:#F59E0B;'&gt;FIELDS &amp;amp; REFERENCES:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;_id:&lt;/b&gt; String / UUID (Primary Key)&lt;br/&gt;• &lt;b&gt;title, subtitle, description:&lt;/b&gt; String (indexed)&lt;br/&gt;• &lt;b&gt;instructor_id:&lt;/b&gt; Ref ➔ users._id (indexed)&lt;br/&gt;• &lt;b&gt;category_id:&lt;/b&gt; Ref ➔ categories._id (indexed)&lt;br/&gt;• &lt;b&gt;price:&lt;/b&gt; Number (min: 0), &lt;b&gt;level:&lt;/b&gt; Enum [beginner, etc.]&lt;br/&gt;• &lt;b&gt;status:&lt;/b&gt; Enum [&apos;draft&apos;, &apos;published&apos;, &apos;suspended&apos;]&lt;br/&gt;• &lt;b&gt;average_rating:&lt;/b&gt; Number (0-5), &lt;b&gt;ratings_count:&lt;/b&gt; Number&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#10B981;'&gt;EMBEDDED CHAPTERS ARRAY (chapters: []):&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;chapter_id:&lt;/b&gt; String / UUID, &lt;b&gt;title:&lt;/b&gt; String, &lt;b&gt;order:&lt;/b&gt; Number&lt;br/&gt;• &lt;b&gt;lessons: [] (EMBEDDED LESSONS SUBDOC):&lt;/b&gt;&lt;br/&gt;  - &lt;b&gt;lesson_id:&lt;/b&gt; String / UUID&lt;br/&gt;  - &lt;b&gt;title, description:&lt;/b&gt; String&lt;br/&gt;  - &lt;b&gt;video_url:&lt;/b&gt; Cloudinary HLS (.m3u8)&lt;br/&gt;  - &lt;b&gt;duration:&lt;/b&gt; Number (seconds), &lt;b&gt;is_preview:&lt;/b&gt; Boolean&lt;br/&gt;  - &lt;b&gt;materials: []&lt;/b&gt; { title, file_url, file_size }&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#EC4899;'&gt;INDEXES:&lt;/b&gt;&lt;br/&gt;• Text: &lt;code&gt;{ title: &apos;text&apos;, subtitle: &apos;text&apos;, description: &apos;text&apos; }&lt;/code&gt;&lt;br/&gt;• Compound: &lt;code&gt;{ instructor_id: 1, status: 1 }&lt;/code&gt;&lt;br/&gt;• Single: &lt;code&gt;{ category_id: 1 }&lt;/code&gt;, &lt;code&gt;{ price: 1 }&lt;/code&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="530" y="190" width="440" height="510" as="geometry" />
+        </mxCell>
+
+        <!-- SCHEMA 3: ENROLLMENTS & PROGRESS -->
+        <mxCell id="p4_sc_enrollment" value="&lt;b style='color:#38BDF8; font-size:14px;'&gt;Collection: enrollments&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Registration Record with Embedded Real-Time Progress Map&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="140" width="460" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_sc_enrollment_fields" value="&lt;span style='font-size:11px; color:#CBD5E1;'&gt;&lt;b style='color:#F59E0B;'&gt;FIELDS &amp;amp; REFERENCES:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;_id:&lt;/b&gt; String / UUID (Primary Key)&lt;br/&gt;• &lt;b&gt;student_id:&lt;/b&gt; Ref ➔ users._id (indexed)&lt;br/&gt;• &lt;b&gt;course_id:&lt;/b&gt; Ref ➔ courses._id (indexed)&lt;br/&gt;• &lt;b&gt;payment_id:&lt;/b&gt; Ref ➔ payments._id&lt;br/&gt;• &lt;b&gt;status:&lt;/b&gt; Enum [&apos;active&apos;, &apos;completed&apos;, &apos;dropped&apos;]&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#10B981;'&gt;EMBEDDED PROGRESS STATE (progress):&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;completedLessons:&lt;/b&gt; Array of Lesson UUIDs &lt;code&gt;[String]&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;completionPercentage:&lt;/b&gt; Number (0-100)&lt;br/&gt;• &lt;b&gt;lastAccessedLesson:&lt;/b&gt; String (Lesson UUID)&lt;br/&gt;• &lt;b&gt;watchTimeByLesson:&lt;/b&gt; Map of &lt;code&gt;{ lessonId: seconds }&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;totalWatchTime:&lt;/b&gt; Number (seconds)&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#EC4899;'&gt;INDEXES &amp;amp; CONSTRAINTS:&lt;/b&gt;&lt;br/&gt;• Compound Unique: &lt;code&gt;{ student_id: 1, course_id: 1 }&lt;/code&gt; (Unique)&lt;br/&gt;• { status: 1 }, { createdAt: -1 }&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="190" width="420" height="350" as="geometry" />
+        </mxCell>
+
+        <!-- SCHEMA 4: PAYMENTS & COUPONS -->
+        <mxCell id="p4_sc_payment" value="&lt;b style='color:#38BDF8; font-size:14px;'&gt;Collections: payments &amp;amp; coupons&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Financial Audit Trail &amp;amp; Promotional Engine&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="140" width="460" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_sc_payment_fields" value="&lt;span style='font-size:11px; color:#CBD5E1;'&gt;&lt;b style='color:#F59E0B;'&gt;PAYMENTS FIELDS:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;_id:&lt;/b&gt; String / UUID (Primary Key)&lt;br/&gt;• &lt;b&gt;user_id:&lt;/b&gt; Ref ➔ users._id, &lt;b&gt;course_id:&lt;/b&gt; Ref ➔ courses._id&lt;br/&gt;• &lt;b&gt;stripe_payment_id:&lt;/b&gt; String (indexed), &lt;b&gt;session_id:&lt;/b&gt; String&lt;br/&gt;• &lt;b&gt;amount:&lt;/b&gt; Number, &lt;b&gt;currency:&lt;/b&gt; String (e.g. &apos;usd&apos;)&lt;br/&gt;• &lt;b&gt;status:&lt;/b&gt; Enum [&apos;pending&apos;, &apos;completed&apos;, &apos;refunded&apos;, &apos;failed&apos;]&lt;br/&gt;• &lt;b&gt;coupon_code:&lt;/b&gt; String, &lt;b&gt;discount_amount:&lt;/b&gt; Number&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#10B981;'&gt;COUPONS FIELDS:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;code:&lt;/b&gt; String (unique uppercase index)&lt;br/&gt;• &lt;b&gt;discount_percent:&lt;/b&gt; Number (1-100)&lt;br/&gt;• &lt;b&gt;max_uses:&lt;/b&gt; Number, &lt;b&gt;used_count:&lt;/b&gt; Number&lt;br/&gt;• &lt;b&gt;expires_at:&lt;/b&gt; Date, &lt;b&gt;is_active:&lt;/b&gt; Boolean&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#EC4899;'&gt;INDEXES:&lt;/b&gt;&lt;br/&gt;• &lt;code&gt;{ user_id: 1, course_id: 1 }&lt;/code&gt;, &lt;code&gt;{ stripe_payment_id: 1 }&lt;/code&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1550" y="190" width="420" height="350" as="geometry" />
+        </mxCell>
+
+        <!-- SCHEMA 5: CHAT ROOMS & MESSAGES -->
+        <mxCell id="p4_sc_chat" value="&lt;b style='color:#F59E0B; font-size:14px;'&gt;Collections: chat_rooms &amp;amp; chat_messages&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Real-Time Communication &amp;amp; Message Stream Store&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#D97706;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="2030" y="140" width="450" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_sc_chat_fields" value="&lt;span style='font-size:11px; color:#CBD5E1;'&gt;&lt;b style='color:#F59E0B;'&gt;CHAT_ROOMS FIELDS:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;_id:&lt;/b&gt; String / UUID (Primary Key)&lt;br/&gt;• &lt;b&gt;course_id:&lt;/b&gt; Ref ➔ courses._id (unique index)&lt;br/&gt;• &lt;b&gt;participants:&lt;/b&gt; Array of Ref ➔ users._id &lt;code&gt;[String]&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;is_active:&lt;/b&gt; Boolean (default: true)&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#10B981;'&gt;CHAT_MESSAGES FIELDS:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;_id:&lt;/b&gt; String / UUID (Primary Key)&lt;br/&gt;• &lt;b&gt;room_id:&lt;/b&gt; Ref ➔ chat_rooms._id (indexed)&lt;br/&gt;• &lt;b&gt;sender_id:&lt;/b&gt; Ref ➔ users._id (indexed)&lt;br/&gt;• &lt;b&gt;content:&lt;/b&gt; String (HTML sanitized, max 2000 chars)&lt;br/&gt;• &lt;b&gt;attachments:&lt;/b&gt; Array of { file_url, file_name, file_size }&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#EC4899;'&gt;INDEXES:&lt;/b&gt;&lt;br/&gt;• Compound: &lt;code&gt;{ room_id: 1, createdAt: -1 }&lt;/code&gt; (fast page reads)&lt;br/&gt;• Single: &lt;code&gt;{ course_id: 1 }&lt;/code&gt; (unique in chat_rooms)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="2050" y="190" width="410" height="350" as="geometry" />
+        </mxCell>
+
+        <!-- SCHEMA 6: CERTIFICATES & REVIEWS -->
+        <mxCell id="p4_sc_cert" value="&lt;b style='color:#10B981; font-size:14px;'&gt;Collections: certificates &amp;amp; ratings&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Credential Verification &amp;amp; Social Proof Engine&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#059669;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="2520" y="140" width="430" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_sc_cert_fields" value="&lt;span style='font-size:11px; color:#CBD5E1;'&gt;&lt;b style='color:#F59E0B;'&gt;CERTIFICATES FIELDS:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;_id:&lt;/b&gt; String / UUID (Primary Key)&lt;br/&gt;• &lt;b&gt;student_id:&lt;/b&gt; Ref ➔ users._id, &lt;b&gt;course_id:&lt;/b&gt; Ref ➔ courses._id&lt;br/&gt;• &lt;b&gt;verification_code:&lt;/b&gt; String (unique index, formatted UUID)&lt;br/&gt;• &lt;b&gt;pdf_url:&lt;/b&gt; Supabase Storage public bucket URL&lt;br/&gt;• &lt;b&gt;issued_at:&lt;/b&gt; Date (default: Date.now)&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#10B981;'&gt;RATINGS &amp;amp; REVIEWS FIELDS:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;student_id:&lt;/b&gt; Ref ➔ users._id, &lt;b&gt;course_id:&lt;/b&gt; Ref ➔ courses._id&lt;br/&gt;• &lt;b&gt;rating:&lt;/b&gt; Number (1-5, integer)&lt;br/&gt;• &lt;b&gt;comment:&lt;/b&gt; String (sanitized HTML)&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#EC4899;'&gt;COMPOUND UNIQUE CONSTRAINTS:&lt;/b&gt;&lt;br/&gt;• Unique Cert: &lt;code&gt;{ student_id: 1, course_id: 1 }&lt;/code&gt; (Unique)&lt;br/&gt;• Unique Rating: &lt;code&gt;{ student_id: 1, course_id: 1 }&lt;/code&gt; (Unique)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="190" width="390" height="350" as="geometry" />
+        </mxCell>
+
+        <!-- SCHEMA 7: TOKENS & SYSTEM LOGS (TTL & AUDITING) -->
+        <mxCell id="p4_sc_logs" value="&lt;b style='color:#EF4444; font-size:14px;'&gt;Collections: tokens, audit_logs &amp;amp; error_logs&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;MongoDB Native TTL Expirations &amp;amp; Regulatory Telemetry&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#DC2626;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="50" y="600" width="420" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_sc_logs_fields" value="&lt;span style='font-size:11px; color:#CBD5E1;'&gt;&lt;b style='color:#F59E0B;'&gt;TOKENS (TTL Native Deletion):&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;user_id:&lt;/b&gt; Ref ➔ users._id, &lt;b&gt;token:&lt;/b&gt; String (hashed)&lt;br/&gt;• &lt;b&gt;type:&lt;/b&gt; Enum [&apos;reset_password&apos;, &apos;email_verification&apos;]&lt;br/&gt;• &lt;b&gt;expires_at:&lt;/b&gt; Date &lt;br/&gt;  ➔ &lt;b style='color:#EC4899;'&gt;INDEX:&lt;/b&gt; &lt;code&gt;{ expires_at: 1 }, { expireAfterSeconds: 0 }&lt;/code&gt;&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#10B981;'&gt;AUDIT_LOGS FIELDS:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;user_id:&lt;/b&gt; Ref ➔ users._id, &lt;b&gt;action:&lt;/b&gt; String&lt;br/&gt;• &lt;b&gt;resource:&lt;/b&gt; String, &lt;b&gt;resource_id:&lt;/b&gt; String&lt;br/&gt;• &lt;b&gt;ip_address:&lt;/b&gt; String, &lt;b&gt;user_agent:&lt;/b&gt; String&lt;br/&gt;• &lt;b&gt;payload:&lt;/b&gt; Object (sanitized, passwords omitted)&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#EF4444;'&gt;ERROR_LOGS FIELDS:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;message:&lt;/b&gt; String, &lt;b&gt;stack:&lt;/b&gt; String, &lt;b&gt;route:&lt;/b&gt; String&lt;br/&gt;• &lt;b&gt;status_code:&lt;/b&gt; Number (4xx, 5xx), &lt;b&gt;createdAt:&lt;/b&gt; Date&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EF4444;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="650" width="380" height="380" as="geometry" />
+        </mxCell>
+
+        <!-- SCHEMA 8: QUIZZES & ASSESSMENTS -->
+        <mxCell id="p4_sc_quiz" value="&lt;b style='color:#10B981; font-size:14px;'&gt;Collection: quizzes &amp;amp; quiz_results&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Curriculum Assessment Engine &amp;amp; Student Submissions&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#059669;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="600" width="460" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_sc_quiz_fields" value="&lt;span style='font-size:11px; color:#CBD5E1;'&gt;&lt;b style='color:#F59E0B;'&gt;QUIZZES FIELDS:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;_id:&lt;/b&gt; String / UUID (Primary Key)&lt;br/&gt;• &lt;b&gt;course_id:&lt;/b&gt; Ref ➔ courses._id, &lt;b&gt;chapter_id:&lt;/b&gt; String UUID&lt;br/&gt;• &lt;b&gt;title:&lt;/b&gt; String, &lt;b&gt;passing_score:&lt;/b&gt; Number (e.g. 80%)&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#10B981;'&gt;EMBEDDED QUESTIONS ARRAY (questions: []):&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;question_id:&lt;/b&gt; String UUID, &lt;b&gt;question_text:&lt;/b&gt; String&lt;br/&gt;• &lt;b&gt;options:&lt;/b&gt; Array of Strings &lt;code&gt;[String]&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;correct_option_index:&lt;/b&gt; Number (hidden from student response)&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#EC4899;'&gt;QUIZ_RESULTS FIELDS:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;student_id:&lt;/b&gt; Ref ➔ users._id, &lt;b&gt;quiz_id:&lt;/b&gt; Ref ➔ quizzes._id&lt;br/&gt;• &lt;b&gt;score:&lt;/b&gt; Number, &lt;b&gt;passed:&lt;/b&gt; Boolean&lt;br/&gt;• &lt;b&gt;answers_submitted:&lt;/b&gt; Array of { question_id, selected_option }&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#38BDF8;'&gt;INDEXES:&lt;/b&gt;&lt;br/&gt;• &lt;code&gt;{ course_id: 1 }&lt;/code&gt;, &lt;code&gt;{ student_id: 1, quiz_id: 1 }&lt;/code&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="650" width="420" height="380" as="geometry" />
+        </mxCell>
+
+        <!-- SCHEMA 9: CATEGORIES & SETTINGS -->
+        <mxCell id="p4_sc_misc" value="&lt;b style='color:#8B5CF6; font-size:14px;'&gt;Collections: categories, settings &amp;amp; campaigns&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:10px; color:#94A3B8;'&gt;Taxonomy, Platform Configurations &amp;amp; Marketing Banners&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#7C3AED;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="600" width="460" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_sc_misc_fields" value="&lt;span style='font-size:11px; color:#CBD5E1;'&gt;&lt;b style='color:#F59E0B;'&gt;CATEGORIES &amp;amp; SUBCATEGORIES:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;name:&lt;/b&gt; String (unique, index: true)&lt;br/&gt;• &lt;b&gt;slug:&lt;/b&gt; String (slugified url path)&lt;br/&gt;• &lt;b&gt;sub_categories:&lt;/b&gt; Embedded array of { name, slug }&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#10B981;'&gt;SETTINGS (Singleton Platform Config):&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;site_name, support_email:&lt;/b&gt; String&lt;br/&gt;• &lt;b&gt;commission_rate:&lt;/b&gt; Number (platform instructor split %)&lt;br/&gt;• &lt;b&gt;maintenance_mode:&lt;/b&gt; Boolean&lt;br/&gt;&lt;br/&gt;&lt;b style='color:#EC4899;'&gt;CAMPAIGNS &amp;amp; FEATURED COURSES:&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;campaigns:&lt;/b&gt; title, banner_url, start_date, end_date, active&lt;br/&gt;• &lt;b&gt;featured_courses:&lt;/b&gt; course_id (Ref), priority, slot_position&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=1;align=left;spacingLeft=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1550" y="650" width="420" height="380" as="geometry" />
+        </mxCell>
+
+        <!-- RELATIONSHIP ARROWS (ERD FOREIGN KEYS) -->
+        <mxCell id="p4_rel_u_c" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#38BDF8;strokeWidth=2;" edge="1" parent="1" source="p4_sc_user" target="p4_sc_course">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_rel_c_e" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#38BDF8;strokeWidth=2;" edge="1" parent="1" source="p4_sc_course" target="p4_sc_enrollment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_rel_e_p" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#38BDF8;strokeWidth=2;" edge="1" parent="1" source="p4_sc_enrollment" target="p4_sc_payment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_rel_c_chat" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;" edge="1" parent="1" source="p4_sc_course" target="p4_sc_chat">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_rel_e_cert" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=2;" edge="1" parent="1" source="p4_sc_enrollment" target="p4_sc_cert">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="gateway-security" name="5. Gateway, Security &amp; Middleware Pipeline">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="1800" background="#0B132B" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- HEADER BANNER -->
+        <mxCell id="p5_banner" value="&lt;b style='font-size:24px; color:#F8FAFC;'&gt;MENTORA API GATEWAY, SECURITY ARCHITECTURE &amp;amp; ERROR ENVELOPE&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:13px; color:#94A3B8;'&gt;Comprehensive Pipeline from Ingress HTTP Request to Unified Response &amp;amp; Global Error Recovery&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=2;arcSize=6;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="2700" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- PIPELINE SEQUENTIAL TIERS -->
+        <mxCell id="p5_step1" value="&lt;b style='color:#38BDF8; font-size:13px;'&gt;STAGE 1: INGRESS &amp;amp; PARSING&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;express.json({ limit: &apos;10mb&apos; })&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;express.urlencoded({ extended: true })&lt;/b&gt;&lt;br/&gt;• &lt;b&gt;cookieParser()&lt;/b&gt; extracts &lt;code&gt;req.cookies.token&lt;/code&gt;&lt;br/&gt;• &lt;b&gt;Raw Body Capture&lt;/b&gt; for Stripe Webhook Signature&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="50" y="140" width="380" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p5_step2" value="&lt;b style='color:#38BDF8; font-size:13px;'&gt;STAGE 2: NETWORK SECURITY &amp;amp; CORS&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;CORS Origin Whitelist&lt;/b&gt; (Production Next.js domain)&lt;br/&gt;• &lt;b&gt;credentials: true&lt;/b&gt; for secure HTTP-only cookies&lt;br/&gt;• &lt;b&gt;Rate Limiter 1 (General):&lt;/b&gt; 100 req / 15m window&lt;br/&gt;• &lt;b&gt;Rate Limiter 2 (Auth):&lt;/b&gt; 5 failed logins / 15m window&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="460" y="140" width="400" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p5_step3" value="&lt;b style='color:#10B981; font-size:13px;'&gt;STAGE 3: JWT AUTHENTICATION&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Middleware: &lt;code&gt;authenticate.middleware.js&lt;/code&gt;&lt;br/&gt;• Reads &lt;code&gt;Authorization: Bearer &amp;lt;token&amp;gt;&lt;/code&gt; or cookie&lt;br/&gt;• Decodes JWT using &lt;code&gt;JWT_SECRET&lt;/code&gt;&lt;br/&gt;• Fetches user from &lt;code&gt;userRepository.findById()&lt;/code&gt;&lt;br/&gt;• Attaches &lt;code&gt;req.user = user&lt;/code&gt; or throws 401 Unauthorized&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="890" y="140" width="410" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p5_step4" value="&lt;b style='color:#10B981; font-size:13px;'&gt;STAGE 4: ROLE-BASED ACCESS CONTROL (RBAC)&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Middleware: &lt;code&gt;authorize(&apos;student&apos;, &apos;instructor&apos;, &apos;admin&apos;)&lt;/code&gt;&lt;br/&gt;• Verifies &lt;code&gt;req.user.role&lt;/code&gt; matches required permissions&lt;br/&gt;• Strict 403 Forbidden rejection if unauthorized&lt;br/&gt;• Enforces resource ownership (e.g. instructor owns course)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="140" width="430" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p5_step5" value="&lt;b style='color:#F59E0B; font-size:13px;'&gt;STAGE 5: VALIDATION &amp;amp; SANITIZATION&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• &lt;b&gt;express-validator schemas&lt;/b&gt; for body, params &amp;amp; query&lt;br/&gt;• &lt;b&gt;validateResult.middleware.js&lt;/b&gt; catches all errors (400)&lt;br/&gt;• &lt;b&gt;sanitize-html&lt;/b&gt; cleans user markup (bios, chats, reviews)&lt;br/&gt;• &lt;b&gt;Multer file filters&lt;/b&gt; check MIME types and byte sizes&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="140" width="440" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p5_step6" value="&lt;b style='color:#EF4444; font-size:13px;'&gt;STAGE 6: AUDIT LOGGING &amp;amp; QUEUE PUSH&lt;/b&gt;&lt;br/&gt;&lt;span style='font-size:11px; color:#CBD5E1;'&gt;• Middleware: &lt;code&gt;auditLogMiddleware.js&lt;/code&gt;&lt;br/&gt;• Asynchronously extracts user, route, action, IP&lt;br/&gt;• Pushes event payload to Bull &lt;code&gt;loggingQueue&lt;/code&gt;&lt;br/&gt;• Never blocks the HTTP request execution loop&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EF4444;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=12;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="2260" y="140" width="490" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- RESPONSE ENVELOPE & ERROR HANDLING BOX -->
+        <mxCell id="p5_box_envelope" value="&lt;b style='color:#38BDF8; font-size:16px;'&gt;UNIFIED API JSON RESPONSE ENVELOPES (STRICT ARCHITECTURAL RULE)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0284C7;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="380" width="1340" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_env_success" value="&lt;b style='color:#10B981; font-size:13px;'&gt;SUCCESS ENVELOPE FORMAT (HTTP 200 / 201):&lt;/b&gt;&lt;br/&gt;&lt;pre style='font-family:monospace; font-size:11px; color:#A7F3D0; margin:0;'&gt;{
+  &quot;success&quot;: true,
+  &quot;message&quot;: &quot;Resource retrieved or updated successfully&quot;,
+  &quot;data&quot;: {
+    &quot;id&quot;: &quot;usr_7f8a9b&quot;,
+    &quot;email&quot;: &quot;student@mentora.com&quot;,
+    &quot;role&quot;: &quot;student&quot;,
+    &quot;profile&quot;: { ... }
+  }
+}&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1;align=left;spacingLeft=15;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="430" width="610" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_env_paginated" value="&lt;b style='color:#38BDF8; font-size:13px;'&gt;PAGINATED CATALOG ENVELOPE FORMAT (HTTP 200):&lt;/b&gt;&lt;br/&gt;&lt;pre style='font-family:monospace; font-size:11px; color:#BAE6FD; margin:0;'&gt;{
+  &quot;success&quot;: true,
+  &quot;message&quot;: &quot;Courses retrieved successfully&quot;,
+  &quot;data&quot;: {
+    &quot;courses&quot;: [ ... ],
+    &quot;total&quot;: 148,
+    &quot;page&quot;: 1,
+    &quot;limit&quot;: 10,
+    &quot;totalPages&quot;: 15
+  }
+}&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1;align=left;spacingLeft=15;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="720" y="430" width="640" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_env_error" value="&lt;b style='color:#EF4444; font-size:13px;'&gt;ERROR ENVELOPE FORMAT (HTTP 400, 401, 403, 404, 409, 500):&lt;/b&gt;&lt;br/&gt;&lt;pre style='font-family:monospace; font-size:11px; color:#FECACA; margin:0;'&gt;{
+  &quot;success&quot;: false,
+  &quot;message&quot;: &quot;Invalid credentials or insufficient permissions&quot;,
+  &quot;errors&quot;: [
+    { &quot;field&quot;: &quot;password&quot;, &quot;message&quot;: &quot;Password must be at least 8 characters&quot; }
+  ],
+  &quot;error&quot;: &quot;Stack trace (in development mode only)&quot;
+}&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EF4444;strokeWidth=1;align=left;spacingLeft=15;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="660" width="1280" height="210" as="geometry" />
+        </mxCell>
+
+        <!-- GLOBAL ERROR HANDLER RECOVERY MATRIX -->
+        <mxCell id="p5_box_matrix" value="&lt;b style='color:#EF4444; font-size:16px;'&gt;GLOBAL ERROR HANDLER MATRIX (src/middlewares/error.middleware.js)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#DC2626;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=20;spacingTop=12;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="1420" y="380" width="1330" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="p5_matrix_details" value="&lt;table style='width:100%; border-collapse:collapse; color:#E2E8F0; font-size:11px;'&gt;&lt;tr style='border-bottom:1px solid #334155; color:#38BDF8;'&gt;&lt;th style='text-align:left; padding:8px;'&gt;Exception / Error Type&lt;/th&gt;&lt;th style='text-align:left; padding:8px;'&gt;Trigger Condition&lt;/th&gt;&lt;th style='text-align:center; padding:8px;'&gt;Status Code&lt;/th&gt;&lt;th style='text-align:left; padding:8px;'&gt;Resolution Action&lt;/th&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #1E293B;'&gt;&lt;td style='padding:8px;'&gt;&lt;b&gt;Mongoose CastError&lt;/b&gt;&lt;/td&gt;&lt;td style='padding:8px;'&gt;Invalid document ID format (e.g. malformed ObjectId/UUID)&lt;/td&gt;&lt;td style='text-align:center; color:#F59E0B;'&gt;404 Not Found&lt;/td&gt;&lt;td style='padding:8px;'&gt;Returns clean &apos;Resource not found with specified ID&apos;&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #1E293B;'&gt;&lt;td style='padding:8px;'&gt;&lt;b&gt;Mongoose ValidationError&lt;/b&gt;&lt;/td&gt;&lt;td style='padding:8px;'&gt;Missing required fields or schema validator rule violated&lt;/td&gt;&lt;td style='text-align:center; color:#F59E0B;'&gt;400 Bad Request&lt;/td&gt;&lt;td style='padding:8px;'&gt;Extracts all validation error messages into unified array&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #1E293B;'&gt;&lt;td style='padding:8px;'&gt;&lt;b&gt;Mongo Duplicate Key (11000)&lt;/b&gt;&lt;/td&gt;&lt;td style='padding:8px;'&gt;Unique index conflict (e.g. email or duplicate enrollment)&lt;/td&gt;&lt;td style='text-align:center; color:#EF4444;'&gt;409 Conflict&lt;/td&gt;&lt;td style='padding:8px;'&gt;Extracts duplicate field name and notifies client&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #1E293B;'&gt;&lt;td style='padding:8px;'&gt;&lt;b&gt;JsonWebTokenError&lt;/b&gt;&lt;/td&gt;&lt;td style='padding:8px;'&gt;Malformed token signature or tampered payload&lt;/td&gt;&lt;td style='text-align:center; color:#EF4444;'&gt;401 Unauthorized&lt;/td&gt;&lt;td style='padding:8px;'&gt;Clears client cookie and prompts for re-login&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #1E293B;'&gt;&lt;td style='padding:8px;'&gt;&lt;b&gt;TokenExpiredError&lt;/b&gt;&lt;/td&gt;&lt;td style='padding:8px;'&gt;JWT duration exceeded expiration threshold&lt;/td&gt;&lt;td style='text-align:center; color:#EF4444;'&gt;401 Unauthorized&lt;/td&gt;&lt;td style='padding:8px;'&gt;Triggers refresh token flow or login redirect&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style='padding:8px;'&gt;&lt;b&gt;Unhandled System Exception&lt;/b&gt;&lt;/td&gt;&lt;td style='padding:8px;'&gt;Unexpected runtime error or database connection dropout&lt;/td&gt;&lt;td style='text-align:center; color:#DC2626;'&gt;500 Server Error&lt;/td&gt;&lt;td style='padding:8px;'&gt;Dispatches to ErrorLog collection &amp;amp; returns generic message&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#DC2626;strokeWidth=1;align=left;spacingLeft=15;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1450" y="430" width="1270" height="440" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

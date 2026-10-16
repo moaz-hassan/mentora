@@ -1,107 +1,135 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../../config/db.js";
+import mongoose from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
-const Report = sequelize.define(
-  "Report",
+const reportSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     title: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
+      type: String,
+      required: true,
+      trim: true,
     },
     description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
+      type: String,
+      required: true,
     },
     reported_by: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      references: {
-        model: "users",
-        key: "id",
-      },
+      type: String,
+      required: true,
+      ref: "User",
+      index: true,
     },
     content_reference: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
+      type: String,
+      default: null,
     },
     content_type: {
-      type: DataTypes.ENUM("Course", "Lesson", "Quiz", "general"),
-      defaultValue: "general",
+      type: String,
+      enum: ["Course", "Lesson", "Quiz", "general"],
+      default: "general",
     },
     status: {
-      type: DataTypes.ENUM("pending", "in-review", "resolved", "dismissed"),
-      defaultValue: "pending",
+      type: String,
+      enum: ["pending", "in-review", "resolved", "dismissed"],
+      default: "pending",
+      index: true,
     },
     ai_category: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: String,
+      default: null,
     },
     ai_severity: {
-      type: DataTypes.ENUM("low", "medium", "high", "critical"),
-      defaultValue: "medium",
+      type: String,
+      enum: ["low", "medium", "high", "critical"],
+      default: "medium",
     },
     reviewed_by: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
-      references: {
-        model: "users",
-        key: "id",
-      },
+      type: String,
+      ref: "User",
+      default: null,
     },
     reviewed_at: {
-      type: DataTypes.DATE,
-      allowNull: true,
+      type: Date,
+      default: null,
     },
     submitted_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      type: Date,
+      default: Date.now,
     },
     reporter_type: {
-      type: DataTypes.ENUM("student", "instructor"),
-      defaultValue: "student",
+      type: String,
+      enum: ["student", "instructor"],
+      default: "student",
     },
     priority: {
-      type: DataTypes.ENUM("low", "medium", "high", "critical"),
-      defaultValue: "medium",
+      type: String,
+      enum: ["low", "medium", "high", "critical"],
+      default: "medium",
     },
     contact_email: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
+      type: String,
+      default: null,
     },
     contact_phone: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
+      type: String,
+      default: null,
     },
     attachments: {
-      type: DataTypes.JSON,
-      allowNull: true,
+      type: mongoose.Schema.Types.Mixed,
+      default: [],
     },
     internal_notes: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+      type: String,
+      default: null,
     },
     resolution_details: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+      type: String,
+      default: null,
     },
   },
   {
-    tableName: "reports",
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
+    collection: "reports",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+reportSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+reportSchema.virtual("Reporter", {
+  ref: "User",
+  localField: "reported_by",
+  foreignField: "_id",
+  justOne: true,
+});
+
+reportSchema.virtual("Reviewer", {
+  ref: "User",
+  localField: "reviewed_by",
+  foreignField: "_id",
+  justOne: true,
+});
+
+const Report = mongoose.models.Report || mongoose.model("Report", reportSchema);
 
 export default Report;

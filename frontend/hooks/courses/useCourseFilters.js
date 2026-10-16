@@ -10,6 +10,9 @@ export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
   const [selectedPriceFilters, setSelectedPriceFilters] = useState([]);
   const [selectedLevels, setSelectedLevels] = useState([]);
   const [selectedRating, setSelectedRating] = useState(0);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
+  const [language, setLanguage] = useState(searchParams.get("language") || "");
   const [sortBy, setSortBy] = useState("popularity");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -23,6 +26,15 @@ export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
 
     const prices = searchParams.get("price");
     if (prices) setSelectedPriceFilters(prices.split(","));
+
+    const minP = searchParams.get("minPrice");
+    if (minP) setMinPrice(Number(minP));
+
+    const maxP = searchParams.get("maxPrice");
+    if (maxP) setMaxPrice(Number(maxP));
+
+    const lang = searchParams.get("language");
+    if (lang) setLanguage(lang);
 
     const levels = searchParams.get("level");
     if (levels) setSelectedLevels(levels.split(","));
@@ -48,7 +60,9 @@ export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
     if (selectedRating > 0) params.set("rating", selectedRating);
     if (sortBy !== "popularity") params.set("sort", sortBy);
     if (currentPage > 1) params.set("page", currentPage);
-
+    if (minPrice && minPrice > 0) params.set("minPrice", minPrice);
+    if (maxPrice && maxPrice > 0) params.set("maxPrice", maxPrice);
+    if (language && language.trim()) params.set("language", language.trim());
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.pushState(null, "", newUrl);
   }, [
@@ -58,7 +72,10 @@ export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
     selectedLevels,
     selectedRating,
     sortBy,
-    currentPage
+    currentPage,
+    minPrice,
+    maxPrice,
+    language
   ]);
 
   
@@ -106,6 +123,7 @@ export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
   const activeFiltersCount =
       selectedCategories.length +
       selectedPriceFilters.length +
+      ((minPrice && minPrice > 0) || (maxPrice && maxPrice > 0) ? 1 : 0) +
       selectedLevels.length +
       (selectedRating > 0 ? 1 : 0);
 
@@ -114,6 +132,9 @@ export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
       searchQuery,
       selectedCategories,
       selectedPriceFilters,
+      minPrice,
+      maxPrice,
+      language,
       selectedLevels,
       selectedRating,
       sortBy,
@@ -123,6 +144,9 @@ export function useCourseFilters(initialCategories = [], coursesPerPage = 12) {
       setSearchQuery,
       setSelectedCategories,
       setSelectedPriceFilters,
+      setMinPrice,
+      setMaxPrice,
+      setLanguage,
       setSelectedLevels,
       setSelectedRating,
       setSortBy,

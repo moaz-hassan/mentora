@@ -1,35 +1,65 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const ChatMessage = sequelize.define(
-  "ChatMessage",
+const chatMessageSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
-    room_id: { type: DataTypes.STRING(50), allowNull: false },
-    sender_id: { type: DataTypes.STRING(50), allowNull: false },
-    message: { type: DataTypes.TEXT, allowNull: false },
-    message_type: {
-      type: DataTypes.ENUM("text", "file", "system"),
-      defaultValue: "text",
+    room_id: {
+      type: String,
+      required: true,
+      ref: "ChatRoom",
+      index: true,
     },
-    file_url: { type: DataTypes.STRING(255), allowNull: true },
-    created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+    sender_id: {
+      type: String,
+      required: true,
+      ref: "User",
+      index: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
   },
   {
-    tableName: "chat_messages",
-    timestamps: false,
-    indexes: [
-      {
-        name: "idx_chat_messages_cursor",
-        fields: ["room_id", { name: "created_at", order: "DESC" }],
-      }
-    ]
+    timestamps: true,
+    collection: "chat_messages",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+chatMessageSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+chatMessageSchema.index({ room_id: 1, createdAt: -1 });
+
+chatMessageSchema.virtual("Sender", {
+  ref: "User",
+  localField: "sender_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+const ChatMessage =
+  mongoose.models.ChatMessage || mongoose.model("ChatMessage", chatMessageSchema);
 
 export default ChatMessage;

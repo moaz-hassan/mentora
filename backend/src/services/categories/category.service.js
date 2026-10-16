@@ -1,46 +1,22 @@
-import models from "../../models/index.js";
-
-const { Category, SubCategory, Course } = models;
-
+import categoryRepository from "../../repositories/categories/category.repository.js";
+import courseRepository from "../../repositories/courses/course.repository.js";
 
 export const getAllCategories = async () => {
-  const categories = await Category.findAll({
-    include: [
-      {
-        model: SubCategory,
-        as: "SubCategories",
-        attributes: ["id", "name", "category_id", "createdAt", "updatedAt"],
-      },
-    ],
-    order: [["name", "ASC"]],
-  });
+  const categories = await categoryRepository.findAll();
 
-  
-  const categoriesWithCounts = await Promise.all(
+  return await Promise.all(
     categories.map(async (category) => {
-      const courseCount = await Course.count({
-        where: { category: category.id },
-      });
-      
+      const courseCount = await courseRepository.countByCategory(category.id);
       return {
         ...category.toJSON(),
-        courseCount
+        courseCount,
       };
     })
   );
-
-  return categoriesWithCounts;
 };
 
 export const getCategoryById = async (categoryId) => {
-  const category = await Category.findByPk(categoryId, {
-    include: [
-      {
-        model: SubCategory,
-        attributes: ["id", "name", "createdAt", "updatedAt"],
-      },
-    ],
-  });
+  const category = await categoryRepository.findById(categoryId);
 
   if (!category) {
     const error = new Error("Category not found");
@@ -48,17 +24,11 @@ export const getCategoryById = async (categoryId) => {
     throw error;
   }
 
-  return category;
+  return category.toJSON();
 };
 
-
 export const createCategory = async (categoryData) => {
-  
-  const existingCategory = await Category.findOne({
-    where: {
-      name: categoryData.name,
-    },
-  });
+  const existingCategory = await categoryRepository.findByName(categoryData.name);
 
   if (existingCategory) {
     const error = new Error("Category with this name already exists");
@@ -66,13 +36,12 @@ export const createCategory = async (categoryData) => {
     throw error;
   }
 
-  const category = await Category.create(categoryData);
-  return category;
+  const category = await categoryRepository.create(categoryData);
+  return category.toJSON();
 };
 
-
 export const updateCategory = async (categoryId, updateData) => {
-  const category = await Category.findByPk(categoryId);
+  const category = await categoryRepository.findById(categoryId);
 
   if (!category) {
     const error = new Error("Category not found");
@@ -80,28 +49,21 @@ export const updateCategory = async (categoryId, updateData) => {
     throw error;
   }
 
-  
-  if (updateData.name && updateData.name !== category.name) {
-    const existingCategory = await Category.findOne({
-      where: {
-        name: updateData.name,
-      },
-    });
-
-    if (existingCategory) {
+  if (updateData.name && updateData.name.toLowerCase() !== category.name.toLowerCase()) {
+    const existingCategory = await categoryRepository.findByName(updateData.name);
+    if (existingCategory && existingCategory.id !== categoryId) {
       const error = new Error("Category with this name already exists");
       error.statusCode = 400;
       throw error;
     }
   }
 
-  await category.update(updateData);
-  return category;
+  const updatedCategory = await categoryRepository.updateById(categoryId, updateData);
+  return updatedCategory.toJSON();
 };
 
-
 export const deleteCategory = async (categoryId) => {
-  const category = await Category.findByPk(categoryId);
+  const category = await categoryRepository.findById(categoryId);
 
   if (!category) {
     const error = new Error("Category not found");
@@ -109,9 +71,7 @@ export const deleteCategory = async (categoryId) => {
     throw error;
   }
 
-  
   const hasCourses = await checkCategoryHasCourses(categoryId);
-
   if (hasCourses) {
     const error = new Error(
       "Cannot delete category with associated courses. Please reassign or delete the courses first."
@@ -120,51 +80,35 @@ export const deleteCategory = async (categoryId) => {
     throw error;
   }
 
-  await category.destroy();
+  await categoryRepository.deleteById(categoryId);
   return { message: "Category deleted successfully" };
 };
 
-
 export const checkCategoryHasCourses = async (categoryId) => {
-  const courseCount = await Course.count({
-    where: { category_id: categoryId },
-  });
-
-  return courseCount > 0;
+  const count = await courseRepository.countByCategory(categoryId);
+  return count > 0;
 };
 
-
 export const searchCategories = async (searchTerm) => {
-  const { Op } = await import("sequelize");
-  
-  const categories = await Category.findAll({
-    where: {
-      name: {
-        [Op.like]: `%${searchTerm}%`
-      }
-    },
-    include: [
-      {
-        model: SubCategory,
-        attributes: ["id", "name"],
-      },
-    ],
-    order: [["name", "ASC"]],
-  });
+  const categories = await categoryRepository.searchByName(searchTerm);
 
-  
-  const categoriesWithCounts = await Promise.all(
+  return await Promise.all(
     categories.map(async (category) => {
-      const courseCount = await Course.count({
-        where: { category_id: category.id },
-      });
-      
+      const courseCount = await courseRepository.countByCategory(category.id);
       return {
         ...category.toJSON(),
-        courseCount
+        courseCount,
       };
     })
   );
+};
 
-  return categoriesWithCounts;
+export default {
+  getAllCategories,
+  getCategoryById,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  checkCategoryHasCourses,
+  searchCategories,
 };

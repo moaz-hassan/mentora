@@ -1,64 +1,96 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const Certificate = sequelize.define(
-  "Certificate",
+const certificateSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     student_id: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+      type: String,
+      required: true,
+      ref: "User",
+      index: true,
     },
     course_id: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+      type: String,
+      required: true,
+      ref: "Course",
+      index: true,
     },
     certificate_url: {
-      type: DataTypes.STRING(500),
-      allowNull: false,
+      type: String,
+      required: true,
     },
     download_url: {
-      type: DataTypes.STRING(500),
-      allowNull: false,
+      type: String,
+      required: true,
     },
     public_id: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
+      type: String,
+      required: true,
     },
     issued_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
+      type: Date,
+      default: Date.now,
     },
     completion_date: {
-      type: DataTypes.DATE,
-      allowNull: false,
+      type: Date,
+      required: true,
     },
     verified: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
+      type: Boolean,
+      default: true,
     },
     metadata: {
-      type: DataTypes.JSON,
-      allowNull: true,
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
   },
   {
-    tableName: "certificates",
     timestamps: true,
-    indexes: [
-      {
-        unique: true,
-        fields: ["student_id", "course_id"],
-        name: "unique_student_course_certificate",
+    collection: "certificates",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
       },
-    ],
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+certificateSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+certificateSchema.index({ student_id: 1, course_id: 1 }, { unique: true });
+
+certificateSchema.virtual("student", {
+  ref: "User",
+  localField: "student_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+certificateSchema.virtual("course", {
+  ref: "Course",
+  localField: "course_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+const Certificate =
+  mongoose.models.Certificate || mongoose.model("Certificate", certificateSchema);
 
 export default Certificate;

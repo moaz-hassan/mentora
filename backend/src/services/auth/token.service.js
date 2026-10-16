@@ -1,15 +1,14 @@
 import generateVerificationCode from "../../utils/generateVerificationCode.js";
-import models from "../../models/index.js";
-const { Token } = models;
+import tokenRepository from "../../repositories/auth/token.repository.js";
 
 async function generateVerificationToken(email, purpose) {
   try {
     const verificationToken = generateVerificationCode();
-    await Token.create({
+    await tokenRepository.create({
       email,
       token: verificationToken,
       purpose,
-      expires_at: new Date(Date.now() + 10 * 60 * 1000),
+      expires_at: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes expiry
     });
     return verificationToken;
   } catch (error) {

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
+import dns from 'dns';
 
 
 
@@ -24,6 +25,14 @@ const getSupabase = () => {
 
   supabaseClient = createClient(supabaseUrl, supabaseKey);
   return supabaseClient;
+};
+
+const getSupabaseHost = () => {
+  try {
+    return new URL(process.env.SUPABASE_URL).hostname;
+  } catch (e) {
+    return process.env.SUPABASE_URL || null;
+  }
 };
 
 
@@ -65,7 +74,19 @@ export const uploadToSupabase = async (
       downloadUrl: directDownloadUrl,
     };
   } catch (error) {
+    const host = getSupabaseHost();
     console.error('Supabase Storage upload error:', error);
+
+    // Detect DNS / network lookup issues and return a clearer message
+    const originalCause = error?.originalError?.cause || error?.cause || null;
+    const dnsFail = originalCause && /ENOTFOUND/.test(String(originalCause.message || originalCause));
+
+    if (dnsFail) {
+      throw new Error(
+        `Failed to upload to Supabase Storage: DNS lookup failed for host "${host}". Check your SUPABASE_URL, network connectivity and DNS settings. Original: ${originalCause.message || originalCause}`
+      );
+    }
+
     throw new Error(`Failed to upload to Supabase Storage: ${error.message}`);
   }
 };
@@ -109,7 +130,18 @@ export const uploadMaterialToSupabase = async (
       downloadUrl: directDownloadUrl,
     };
   } catch (error) {
+    const host = getSupabaseHost();
     console.error('Supabase Storage material upload error:', error);
+
+    const originalCause = error?.originalError?.cause || error?.cause || null;
+    const dnsFail = originalCause && /ENOTFOUND/.test(String(originalCause.message || originalCause));
+
+    if (dnsFail) {
+      throw new Error(
+        `Failed to upload material to Supabase Storage: DNS lookup failed for host "${host}". Check your SUPABASE_URL, network connectivity and DNS settings. Original: ${originalCause.message || originalCause}`
+      );
+    }
+
     throw new Error(`Failed to upload material to Supabase Storage: ${error.message}`);
   }
 };
@@ -134,6 +166,34 @@ export const getMaterialPublicUrl = (filePath) => {
     .getPublicUrl(filePath);
   
   return data.publicUrl;
+};
+
+export const createMaterialSignedUrl = async (filePath, expiresIn = 300) => {
+  const supabase = getSupabase();
+  const { data, error } = await supabase.storage
+    .from(MATERIALS_BUCKET)
+    .createSignedUrl(filePath, expiresIn);
+
+  if (error) {
+    console.error('Supabase createSignedUrl error:', error);
+    throw error;
+  }
+
+  return data.signedUrl;
+};
+
+export const createCertificateSignedUrl = async (filePath, expiresIn = 300) => {
+  const supabase = getSupabase();
+  const { data, error } = await supabase.storage
+    .from(CERTIFICATES_BUCKET)
+    .createSignedUrl(filePath, expiresIn);
+
+  if (error) {
+    console.error('Supabase createSignedUrl (cert) error:', error);
+    throw error;
+  }
+
+  return data.signedUrl;
 };
 
 

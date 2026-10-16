@@ -1,48 +1,55 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../../config/db.js";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-const Settings = sequelize.define(
-  "Settings",
+const settingsSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     key: {
-      type: DataTypes.STRING(100),
+      type: String,
+      required: true,
       unique: true,
-      allowNull: false,
+      trim: true,
+      index: true,
     },
     value: {
-      type: DataTypes.TEXT,
-    },
-    category: {
-      type: DataTypes.STRING(50),
+      type: mongoose.Schema.Types.Mixed,
+      required: true,
     },
     description: {
-      type: DataTypes.TEXT,
-    },
-    data_type: {
-      type: DataTypes.ENUM("string", "number", "boolean", "json"),
-      defaultValue: "string",
-    },
-    is_public: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      type: String,
+      default: "",
     },
   },
   {
-    tableName: "settings",
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-    indexes: [
-      { fields: ["key"] },
-      { fields: ["category"] },
-    ],
+    collection: "settings",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+settingsSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+const Settings =
+  mongoose.models.Settings || mongoose.model("Settings", settingsSchema);
 
 export default Settings;

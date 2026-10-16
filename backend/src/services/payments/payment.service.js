@@ -1,37 +1,18 @@
-
-
-import models from "../../models/index.js";
-
-const { Payment, User, Course } = models;
-
+import paymentRepository from "../../repositories/payments/payment.repository.js";
+import courseRepository from "../../repositories/courses/course.repository.js";
 
 export const getAllPayments = async (filters = {}) => {
-  const where = {};
+  const filter = {};
 
-  if (filters.user_id) where.user_id = filters.user_id;
-  if (filters.course_id) where.course_id = filters.course_id;
-  if (filters.status) where.status = filters.status;
+  if (filters.user_id) filter.user_id = filters.user_id;
+  if (filters.course_id) filter.course_id = filters.course_id;
+  if (filters.status) filter.status = filters.status;
 
-  const payments = await Payment.findAll({
-    where,
-    include: [
-      { model: User, attributes: ["id", "full_name", "email"] },
-      { model: Course, attributes: ["id", "title", "price"] },
-    ],
-    order: [["created_at", "DESC"]],
-  });
-
-  return payments;
+  return await paymentRepository.findAll(filter);
 };
 
-
 export const getPaymentById = async (paymentId) => {
-  const payment = await Payment.findByPk(paymentId, {
-    include: [
-      { model: User, attributes: ["id", "full_name", "email"] },
-      { model: Course, attributes: ["id", "title", "price"] },
-    ],
-  });
+  const payment = await paymentRepository.findById(paymentId);
 
   if (!payment) {
     const error = new Error("Payment not found");
@@ -42,19 +23,17 @@ export const getPaymentById = async (paymentId) => {
   return payment;
 };
 
-
 export const createPayment = async (paymentData, userId) => {
   const { course_id, amount, currency, payment_method } = paymentData;
 
-  
-  const course = await Course.findByPk(course_id);
+  const course = await courseRepository.findById(course_id);
   if (!course) {
     const error = new Error("Course not found");
     error.statusCode = 404;
     throw error;
   }
 
-  const payment = await Payment.create({
+  return await paymentRepository.create({
     user_id: userId,
     course_id,
     amount,
@@ -62,13 +41,10 @@ export const createPayment = async (paymentData, userId) => {
     payment_method: payment_method || "card",
     status: "pending",
   });
-
-  return payment;
 };
-
 
 export const updatePayment = async (paymentId, updateData) => {
-  const payment = await Payment.findByPk(paymentId);
+  const payment = await paymentRepository.findById(paymentId);
 
   if (!payment) {
     const error = new Error("Payment not found");
@@ -76,14 +52,11 @@ export const updatePayment = async (paymentId, updateData) => {
     throw error;
   }
 
-  await payment.update(updateData);
-
-  return payment;
+  return await paymentRepository.updateById(paymentId, updateData);
 };
 
-
 export const deletePayment = async (paymentId) => {
-  const payment = await Payment.findByPk(paymentId);
+  const payment = await paymentRepository.findById(paymentId);
 
   if (!payment) {
     const error = new Error("Payment not found");
@@ -91,7 +64,15 @@ export const deletePayment = async (paymentId) => {
     throw error;
   }
 
-  await payment.destroy();
+  await paymentRepository.deleteById(paymentId);
 
   return { message: "Payment deleted successfully" };
+};
+
+export default {
+  getAllPayments,
+  getPaymentById,
+  createPayment,
+  updatePayment,
+  deletePayment,
 };

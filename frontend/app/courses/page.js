@@ -62,7 +62,10 @@ export default function CoursesSearchPage() {
     setSearchQuery,
     setSelectedRating,
     setSortBy,
-    setCurrentPage
+    setCurrentPage,
+    setMinPrice,
+    setMaxPrice,
+    setLanguage
   } = setters;
 
   const {
@@ -103,6 +106,9 @@ export default function CoursesSearchPage() {
     sortBy,
     currentPage,
     searchQuery,
+    filters.minPrice,
+    filters.maxPrice,
+    filters.language,
   ]);
 
   const fetchCourses = async (customQuery = null) => {
@@ -115,6 +121,9 @@ export default function CoursesSearchPage() {
         categories: selectedCategories,
         levels: selectedLevels,
         priceFilters: selectedPriceFilters,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        language: filters.language,
         rating: selectedRating,
         sortBy: sortBy,
         page: currentPage,
@@ -177,15 +186,13 @@ export default function CoursesSearchPage() {
             <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
               <BookOpen className="w-6 h-6 text-white" />
             </div>
-            <span className="text-blue-100 text-sm font-medium">
-              {totalCourses} Courses Available
-            </span>
+            <span className="text-blue-100 text-sm font-medium">{totalCourses} Courses Available</span>
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
-            Explore Our Courses
-          </h1>
+
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">Curated Courses</h1>
           <p className="text-blue-100 text-lg max-w-2xl">
-            Discover expert-led courses designed to help you master new skills.
+            Explore our selection of premium modules designed for the lifelong scholar and creative
+            professional.
           </p>
         </div>
       </div>
@@ -209,6 +216,15 @@ export default function CoursesSearchPage() {
                 setSelectedRating(r);
                 setCurrentPage(1);
               }}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              setCurrentPage={setCurrentPage}
+              minPrice={filters.minPrice}
+              maxPrice={filters.maxPrice}
+              setMinPrice={setMinPrice}
+              setMaxPrice={setMaxPrice}
+              language={filters.language}
+              setLanguage={setLanguage}
               onClearAll={clearAllFilters}
               activeFiltersCount={activeFiltersCount}
             />

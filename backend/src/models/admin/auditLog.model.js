@@ -1,61 +1,72 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../../config/db.js";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-const AuditLog = sequelize.define(
-  "AuditLog",
+const auditLogSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     admin_id: {
-      type: DataTypes.STRING(50),
-      references: { model: "users", key: "id" },
+      type: String,
+      ref: "User",
+      index: true,
     },
-    action_type: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
+    action: {
+      type: String,
+      required: true,
     },
-    resource_type: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+    target_type: {
+      type: String,
+      default: "",
     },
-    resource_id: {
-      type: DataTypes.STRING(50),
+    target_id: {
+      type: String,
+      default: "",
     },
-    description: {
-      type: DataTypes.TEXT,
+    details: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
     ip_address: {
-      type: DataTypes.STRING(45),
-    },
-    user_agent: {
-      type: DataTypes.TEXT,
-    },
-    before_state: {
-      type: DataTypes.JSON,
-    },
-    after_state: {
-      type: DataTypes.JSON,
-    },
-    status: {
-      type: DataTypes.STRING(20),
+      type: String,
+      default: "",
     },
   },
   {
-    tableName: "audit_logs",
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-    indexes: [
-      { fields: ["admin_id"] },
-      { fields: ["created_at"] },
-      { fields: ["action_type"] },
-      { fields: ["resource_type", "resource_id"] },
-    ],
+    collection: "audit_logs",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+auditLogSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+auditLogSchema.virtual("Admin", {
+  ref: "User",
+  localField: "admin_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+const AuditLog =
+  mongoose.models.AuditLog || mongoose.model("AuditLog", auditLogSchema);
 
 export default AuditLog;

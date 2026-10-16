@@ -1,34 +1,59 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const ChatParticipant = sequelize.define(
-  "ChatParticipant",
+const chatParticipantSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
-    room_id: { type: DataTypes.STRING(50), allowNull: false },
-    user_id: { type: DataTypes.STRING(50), allowNull: false },
-    role: {
-      type: DataTypes.ENUM("member", "admin"),
-      defaultValue: "member",
+    room_id: {
+      type: String,
+      required: true,
+      ref: "ChatRoom",
+      index: true,
     },
-    joined_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-    last_read_at: { type: DataTypes.DATE, allowNull: true },
-    is_active: { type: DataTypes.BOOLEAN, defaultValue: true },
+    user_id: {
+      type: String,
+      required: true,
+      ref: "User",
+      index: true,
+    },
+    joined_at: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
-    tableName: "chat_participants",
-    timestamps: false,
-    indexes: [
-      { unique: true, fields: ["room_id", "user_id"] },
-      { fields: ["user_id"] },
-      { fields: ["room_id"] },
-    ],
+    timestamps: true,
+    collection: "chat_participants",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+chatParticipantSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+chatParticipantSchema.index({ room_id: 1, user_id: 1 }, { unique: true });
+
+const ChatParticipant =
+  mongoose.models.ChatParticipant ||
+  mongoose.model("ChatParticipant", chatParticipantSchema);
 
 export default ChatParticipant;

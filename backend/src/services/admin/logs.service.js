@@ -1,9 +1,11 @@
-
-
-import models from "../../models/index.js";
-import { Op, fn, col, literal } from "sequelize";
-
-const { AuditLog, PaymentLog, EnrollmentLog, ErrorLog, ModerationLog, NotificationLog, User, Course } = models;
+import {
+  AuditLog,
+  PaymentLog,
+  EnrollmentLog,
+  ErrorLog,
+  User,
+  Course
+} from "../../models/index.js";
 
 /**
  * Create an audit log entry
@@ -37,7 +39,6 @@ export const logAudit = async ({
   }
 };
 
-
 export const getAuditLogs = async (filters = {}) => {
   const {
     adminId,
@@ -50,72 +51,81 @@ export const getAuditLogs = async (filters = {}) => {
     limit = 50
   } = filters;
 
-  const whereClause = {};
+  const query = {};
 
-  if (adminId) whereClause.admin_id = adminId;
-  if (actionType) whereClause.action_type = actionType;
-  if (resourceType) whereClause.resource_type = resourceType;
+  if (adminId) query.admin_id = adminId;
+  if (actionType) query.action_type = actionType;
+  if (resourceType) query.resource_type = resourceType;
 
-  
   if (startDate || endDate) {
-    whereClause.created_at = {};
-    if (startDate) whereClause.created_at[Op.gte] = new Date(startDate);
-    if (endDate) whereClause.created_at[Op.lte] = new Date(endDate);
+    query.createdAt = {};
+    if (startDate) query.createdAt.$gte = new Date(startDate);
+    if (endDate) query.createdAt.$lte = new Date(endDate);
   }
 
-  
   if (search) {
-    whereClause[Op.or] = [
-      { action_type: { [Op.like]: `%${search}%` } },
-      { resource_type: { [Op.like]: `%${search}%` } },
-      { resource_id: { [Op.like]: `%${search}%` } },
-      { description: { [Op.like]: `%${search}%` } }
+    const searchRegex = new RegExp(search, "i");
+    query.$or = [
+      { action_type: searchRegex },
+      { resource_type: searchRegex },
+      { resource_id: searchRegex },
+      { description: searchRegex }
     ];
   }
 
-  const offset = (page - 1) * limit;
+  const parsedLimit = parseInt(limit);
+  const parsedPage = parseInt(page);
+  const skip = (parsedPage - 1) * parsedLimit;
 
-  const { count, rows } = await AuditLog.findAndCountAll({
-    where: whereClause,
-    include: [
-      {
-        model: User,
-        as: "Admin",
-        attributes: ["id", "first_name", "last_name", "email"]
+  const [count, rows] = await Promise.all([
+    AuditLog.countDocuments(query),
+    AuditLog.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parsedLimit)
+      .lean()
+  ]);
+
+  const logs = await Promise.all(
+    rows.map(async (log) => {
+      let admin = null;
+      if (log.admin_id) {
+        const u = await User.findById(log.admin_id).select("first_name last_name email").lean();
+        if (u) {
+          admin = {
+            id: u._id.toString(),
+            name: `${u.first_name} ${u.last_name}`,
+            email: u.email
+          };
+        }
       }
-    ],
-    order: [["created_at", "DESC"]],
-    limit: parseInt(limit),
-    offset: parseInt(offset)
-  });
+
+      return {
+        id: log._id.toString(),
+        admin,
+        actionType: log.action_type,
+        resourceType: log.resource_type,
+        resourceId: log.resource_id,
+        description: log.description,
+        ipAddress: log.ip_address,
+        userAgent: log.user_agent,
+        status: log.status,
+        metadata: log.after_state || log.metadata,
+        createdAt: log.createdAt || log.created_at
+      };
+    })
+  );
 
   return {
-    logs: rows.map(log => ({
-      id: log.id,
-      admin: log.Admin ? {
-        id: log.Admin.id,
-        name: `${log.Admin.first_name} ${log.Admin.last_name}`,
-        email: log.Admin.email
-      } : null,
-      actionType: log.action_type,
-      resourceType: log.resource_type,
-      resourceId: log.resource_id,
-      description: log.description,
-      ipAddress: log.ip_address,
-      userAgent: log.user_agent,
-      status: log.status,
-      metadata: log.metadata,
-      createdAt: log.created_at
-    })),
+    logs,
     pagination: {
       total: count,
-      page: parseInt(page),
-      limit: parseInt(limit),
-      totalPages: Math.ceil(count / limit)
+      page: parsedPage,
+      limit: parsedLimit,
+      totalPages: Math.ceil(count / parsedLimit)
     }
   };
 };
-
 
 export const getPaymentLogs = async (filters = {}) => {
   const {
@@ -132,86 +142,99 @@ export const getPaymentLogs = async (filters = {}) => {
     limit = 50
   } = filters;
 
-  const whereClause = {};
+  const query = {};
 
-  if (userId) whereClause.student_id = userId;
-  if (courseId) whereClause.course_id = courseId;
-  if (status) whereClause.payment_status = status;
-  if (paymentMethod) whereClause.payment_method = paymentMethod;
+  if (userId) query.student_id = userId;
+  if (courseId) query.course_id = courseId;
+  if (status) query.payment_status = status;
+  if (paymentMethod) query.payment_method = paymentMethod;
 
-  
   if (startDate || endDate) {
-    whereClause.created_at = {};
-    if (startDate) whereClause.created_at[Op.gte] = new Date(startDate);
-    if (endDate) whereClause.created_at[Op.lte] = new Date(endDate);
+    query.createdAt = {};
+    if (startDate) query.createdAt.$gte = new Date(startDate);
+    if (endDate) query.createdAt.$lte = new Date(endDate);
   }
 
-  
   if (minAmount || maxAmount) {
-    whereClause.amount = {};
-    if (minAmount) whereClause.amount[Op.gte] = parseFloat(minAmount);
-    if (maxAmount) whereClause.amount[Op.lte] = parseFloat(maxAmount);
+    query.amount = {};
+    if (minAmount) query.amount.$gte = parseFloat(minAmount);
+    if (maxAmount) query.amount.$lte = parseFloat(maxAmount);
   }
 
-  
   if (search) {
-    whereClause[Op.or] = [
-      { transaction_id: { [Op.like]: `%${search}%` } },
-      { payment_status: { [Op.like]: `%${search}%` } },
-      { payment_method: { [Op.like]: `%${search}%` } }
+    const searchRegex = new RegExp(search, "i");
+    query.$or = [
+      { transaction_id: searchRegex },
+      { payment_status: searchRegex },
+      { payment_method: searchRegex }
     ];
   }
 
-  const offset = (page - 1) * limit;
+  const parsedLimit = parseInt(limit);
+  const parsedPage = parseInt(page);
+  const skip = (parsedPage - 1) * parsedLimit;
 
-  const { count, rows } = await PaymentLog.findAndCountAll({
-    where: whereClause,
-    include: [
-      {
-        model: User,
-        as: "Student",
-        attributes: ["id", "first_name", "last_name", "email"]
-      },
-      {
-        model: Course,
-        attributes: ["id", "title", "price"]
+  const [count, rows] = await Promise.all([
+    PaymentLog.countDocuments(query),
+    PaymentLog.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parsedLimit)
+      .lean()
+  ]);
+
+  const logs = await Promise.all(
+    rows.map(async (log) => {
+      let student = null;
+      let course = null;
+
+      if (log.student_id) {
+        const u = await User.findById(log.student_id).select("first_name last_name email").lean();
+        if (u) {
+          student = {
+            id: u._id.toString(),
+            name: `${u.first_name} ${u.last_name}`,
+            email: u.email
+          };
+        }
       }
-    ],
-    order: [["created_at", "DESC"]],
-    limit: parseInt(limit),
-    offset: parseInt(offset)
-  });
+
+      if (log.course_id) {
+        const c = await Course.findById(log.course_id).select("title price").lean();
+        if (c) {
+          course = {
+            id: c._id.toString(),
+            title: c.title,
+            price: c.price
+          };
+        }
+      }
+
+      return {
+        id: log._id.toString(),
+        transactionId: log.transaction_id,
+        user: student,
+        course,
+        amount: log.amount,
+        currency: log.currency,
+        paymentMethod: log.payment_method,
+        status: log.payment_status,
+        metadata: log.gateway_response,
+        createdAt: log.createdAt || log.created_at
+      };
+    })
+  );
 
   return {
-    logs: rows.map(log => ({
-      id: log.id,
-      transactionId: log.transaction_id,
-      user: log.Student ? {
-        id: log.Student.id,
-        name: `${log.Student.first_name} ${log.Student.last_name}`,
-        email: log.Student.email
-      } : null,
-      course: log.Course ? {
-        id: log.Course.id,
-        title: log.Course.title,
-        price: log.Course.price
-      } : null,
-      amount: log.amount,
-      currency: log.currency,
-      paymentMethod: log.payment_method,
-      status: log.payment_status,
-      metadata: log.gateway_response,
-      createdAt: log.created_at
-    })),
+    logs,
     pagination: {
       total: count,
-      page: parseInt(page),
-      limit: parseInt(limit),
-      totalPages: Math.ceil(count / limit)
+      page: parsedPage,
+      limit: parsedLimit,
+      totalPages: Math.ceil(count / parsedLimit)
     }
   };
 };
-
 
 export const getEnrollmentLogs = async (filters = {}) => {
   const {
@@ -226,77 +249,91 @@ export const getEnrollmentLogs = async (filters = {}) => {
     limit = 50
   } = filters;
 
-  const whereClause = {};
+  const query = {};
 
-  if (userId) whereClause.student_id = userId;
-  if (courseId) whereClause.course_id = courseId;
-  if (status) whereClause.action = status;
-  if (source) whereClause.enrollment_source = source;
+  if (userId) query.student_id = userId;
+  if (courseId) query.course_id = courseId;
+  if (status) query.action = status;
+  if (source) query.enrollment_source = source;
 
-  
   if (startDate || endDate) {
-    whereClause.created_at = {};
-    if (startDate) whereClause.created_at[Op.gte] = new Date(startDate);
-    if (endDate) whereClause.created_at[Op.lte] = new Date(endDate);
+    query.createdAt = {};
+    if (startDate) query.createdAt.$gte = new Date(startDate);
+    if (endDate) query.createdAt.$lte = new Date(endDate);
   }
 
-  
   if (search) {
-    whereClause[Op.or] = [
-      { enrollment_id: { [Op.like]: `%${search}%` } },
-      { action: { [Op.like]: `%${search}%` } },
-      { enrollment_source: { [Op.like]: `%${search}%` } }
+    const searchRegex = new RegExp(search, "i");
+    query.$or = [
+      { enrollment_id: searchRegex },
+      { action: searchRegex },
+      { enrollment_source: searchRegex }
     ];
   }
 
-  const offset = (page - 1) * limit;
+  const parsedLimit = parseInt(limit);
+  const parsedPage = parseInt(page);
+  const skip = (parsedPage - 1) * parsedLimit;
 
-  const { count, rows } = await EnrollmentLog.findAndCountAll({
-    where: whereClause,
-    include: [
-      {
-        model: User,
-        as: "Student",
-        attributes: ["id", "first_name", "last_name", "email"]
-      },
-      {
-        model: Course,
-        attributes: ["id", "title"]
+  const [count, rows] = await Promise.all([
+    EnrollmentLog.countDocuments(query),
+    EnrollmentLog.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parsedLimit)
+      .lean()
+  ]);
+
+  const logs = await Promise.all(
+    rows.map(async (log) => {
+      let student = null;
+      let course = null;
+
+      if (log.student_id) {
+        const u = await User.findById(log.student_id).select("first_name last_name email").lean();
+        if (u) {
+          student = {
+            id: u._id.toString(),
+            name: `${u.first_name} ${u.last_name}`,
+            email: u.email
+          };
+        }
       }
-    ],
-    order: [["created_at", "DESC"]],
-    limit: parseInt(limit),
-    offset: parseInt(offset)
-  });
+
+      if (log.course_id) {
+        const c = await Course.findById(log.course_id).select("title").lean();
+        if (c) {
+          course = {
+            id: c._id.toString(),
+            title: c.title
+          };
+        }
+      }
+
+      return {
+        id: log._id.toString(),
+        enrollmentId: log.enrollment_id,
+        user: student,
+        course,
+        status: log.action,
+        source: log.enrollment_source,
+        paymentStatus: log.payment_status,
+        metadata: log.metadata,
+        createdAt: log.createdAt || log.created_at
+      };
+    })
+  );
 
   return {
-    logs: rows.map(log => ({
-      id: log.id,
-      enrollmentId: log.enrollment_id,
-      user: log.Student ? {
-        id: log.Student.id,
-        name: `${log.Student.first_name} ${log.Student.last_name}`,
-        email: log.Student.email
-      } : null,
-      course: log.Course ? {
-        id: log.Course.id,
-        title: log.Course.title
-      } : null,
-      status: log.action,
-      source: log.enrollment_source,
-      paymentStatus: log.payment_status,
-      metadata: log.metadata,
-      createdAt: log.created_at
-    })),
+    logs,
     pagination: {
       total: count,
-      page: parseInt(page),
-      limit: parseInt(limit),
-      totalPages: Math.ceil(count / limit)
+      page: parsedPage,
+      limit: parsedLimit,
+      totalPages: Math.ceil(count / parsedLimit)
     }
   };
 };
-
 
 export const getErrorLogs = async (filters = {}) => {
   const {
@@ -310,78 +347,86 @@ export const getErrorLogs = async (filters = {}) => {
     limit = 50
   } = filters;
 
-  const whereClause = {};
+  const query = {};
 
-  if (severity) whereClause.severity = severity;
-  if (errorType) whereClause.error_type = errorType;
-  if (userId) whereClause.user_id = userId;
+  if (severity) query.severity = severity;
+  if (errorType) query.error_type = errorType;
+  if (userId) query.user_id = userId;
 
-  
   if (startDate || endDate) {
-    whereClause.created_at = {};
-    if (startDate) whereClause.created_at[Op.gte] = new Date(startDate);
-    if (endDate) whereClause.created_at[Op.lte] = new Date(endDate);
+    query.createdAt = {};
+    if (startDate) query.createdAt.$gte = new Date(startDate);
+    if (endDate) query.createdAt.$lte = new Date(endDate);
   }
 
-  
   if (search) {
-    whereClause[Op.or] = [
-      { error_type: { [Op.like]: `%${search}%` } },
-      { error_message: { [Op.like]: `%${search}%` } },
-      { endpoint: { [Op.like]: `%${search}%` } }
+    const searchRegex = new RegExp(search, "i");
+    query.$or = [
+      { error_type: searchRegex },
+      { error_message: searchRegex },
+      { endpoint: searchRegex }
     ];
   }
 
-  const offset = (page - 1) * limit;
+  const parsedLimit = parseInt(limit);
+  const parsedPage = parseInt(page);
+  const skip = (parsedPage - 1) * parsedLimit;
 
-  const { count, rows } = await ErrorLog.findAndCountAll({
-    where: whereClause,
-    include: [
-      {
-        model: User,
-        attributes: ["id", "first_name", "last_name", "email"],
-        required: false
+  const [count, rows] = await Promise.all([
+    ErrorLog.countDocuments(query),
+    ErrorLog.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parsedLimit)
+      .lean()
+  ]);
+
+  const logs = await Promise.all(
+    rows.map(async (log) => {
+      let user = null;
+      if (log.user_id) {
+        const u = await User.findById(log.user_id).select("first_name last_name email").lean();
+        if (u) {
+          user = {
+            id: u._id.toString(),
+            name: `${u.first_name} ${u.last_name}`,
+            email: u.email
+          };
+        }
       }
-    ],
-    order: [["created_at", "DESC"]],
-    limit: parseInt(limit),
-    offset: parseInt(offset)
-  });
+
+      return {
+        id: log._id.toString(),
+        errorType: log.error_type,
+        errorMessage: log.error_message,
+        stackTrace: log.stack_trace,
+        severity: log.severity,
+        endpoint: log.endpoint,
+        method: log.method,
+        user,
+        ipAddress: log.ip_address,
+        userAgent: log.user_agent,
+        metadata: log.metadata,
+        createdAt: log.createdAt || log.created_at
+      };
+    })
+  );
 
   return {
-    logs: rows.map(log => ({
-      id: log.id,
-      errorType: log.error_type,
-      errorMessage: log.error_message,
-      stackTrace: log.stack_trace,
-      severity: log.severity,
-      endpoint: log.endpoint,
-      method: log.method,
-      user: log.User ? {
-        id: log.User.id,
-        name: `${log.User.first_name} ${log.User.last_name}`,
-        email: log.User.email
-      } : null,
-      ipAddress: log.ip_address,
-      userAgent: log.user_agent,
-      metadata: log.metadata,
-      createdAt: log.created_at
-    })),
+    logs,
     pagination: {
       total: count,
-      page: parseInt(page),
-      limit: parseInt(limit),
-      totalPages: Math.ceil(count / limit)
+      page: parsedPage,
+      limit: parsedLimit,
+      totalPages: Math.ceil(count / parsedLimit)
     }
   };
 };
-
 
 export const exportLogs = async (logType, filters = {}) => {
   let logs = [];
   let headers = [];
 
-  
   const exportFilters = { ...filters, limit: 10000, page: 1 };
 
   switch (logType) {
@@ -415,7 +460,6 @@ export const exportLogs = async (logType, filters = {}) => {
       throw error;
   }
 
-  
   const csvRows = [headers.join(",")];
 
   logs.forEach(log => {
@@ -428,7 +472,7 @@ export const exportLogs = async (logType, filters = {}) => {
           log.actionType,
           log.resourceType,
           log.resourceId || "N/A",
-          `"${log.description || ""}"`,
+          `"${(log.description || "").replace(/"/g, '""')}"`,
           log.ipAddress || "N/A",
           log.status,
           log.createdAt
@@ -466,7 +510,7 @@ export const exportLogs = async (logType, filters = {}) => {
         row.push(
           log.id,
           log.errorType,
-          `"${log.errorMessage.replace(/"/g, '""')}"`,
+          `"${(log.errorMessage || "").replace(/"/g, '""')}"`,
           log.severity,
           log.endpoint || "N/A",
           log.method || "N/A",
@@ -482,135 +526,99 @@ export const exportLogs = async (logType, filters = {}) => {
   return csvRows.join("\n");
 };
 
-
 export const getLogAnalytics = async (filters = {}) => {
   const { startDate, endDate } = filters;
 
-  const dateFilter = {};
+  const matchFilter = {};
   if (startDate || endDate) {
-    dateFilter.created_at = {};
-    if (startDate) dateFilter.created_at[Op.gte] = new Date(startDate);
-    if (endDate) dateFilter.created_at[Op.lte] = new Date(endDate);
+    matchFilter.createdAt = {};
+    if (startDate) matchFilter.createdAt.$gte = new Date(startDate);
+    if (endDate) matchFilter.createdAt.$lte = new Date(endDate);
   }
 
-  
-  const auditStats = await AuditLog.findAll({
-    where: dateFilter,
-    attributes: [
-      "action_type",
-      [fn("COUNT", col("AuditLog.id")), "count"]
-    ],
-    group: ["action_type"],
-    raw: true
-  });
-
-  
-  const paymentStats = await PaymentLog.findAll({
-    where: dateFilter,
-    attributes: [
-      "payment_status",
-      [fn("COUNT", col("PaymentLog.id")), "count"],
-      [fn("SUM", col("amount")), "totalAmount"]
-    ],
-    group: ["payment_status"],
-    raw: true
-  });
-
-  
-  const enrollmentStats = await EnrollmentLog.findAll({
-    where: dateFilter,
-    attributes: [
-      "action",
-      [fn("COUNT", col("EnrollmentLog.id")), "count"]
-    ],
-    group: ["action"],
-    raw: true
-  });
-
-  
-  const errorStats = await ErrorLog.findAll({
-    where: dateFilter,
-    attributes: [
-      "severity",
-      [fn("COUNT", col("ErrorLog.id")), "count"]
-    ],
-    group: ["severity"],
-    raw: true
-  });
-
-  
-  const activeAdmins = await AuditLog.findAll({
-    where: dateFilter,
-    attributes: [
-      "admin_id",
-      [fn("COUNT", col("AuditLog.id")), "actionCount"]
-    ],
-    include: [
+  const [auditStats, paymentStats, enrollmentStats, errorStats, activeAdminsRaw, errorTrends] = await Promise.all([
+    AuditLog.aggregate([
+      { $match: matchFilter },
+      { $group: { _id: "$action_type", count: { $sum: 1 } } }
+    ]),
+    PaymentLog.aggregate([
+      { $match: matchFilter },
+      { $group: { _id: "$payment_status", count: { $sum: 1 }, totalAmount: { $sum: "$amount" } } }
+    ]),
+    EnrollmentLog.aggregate([
+      { $match: matchFilter },
+      { $group: { _id: "$action", count: { $sum: 1 } } }
+    ]),
+    ErrorLog.aggregate([
+      { $match: matchFilter },
+      { $group: { _id: "$severity", count: { $sum: 1 } } }
+    ]),
+    AuditLog.aggregate([
+      { $match: { ...matchFilter, admin_id: { $ne: null } } },
+      { $group: { _id: "$admin_id", actionCount: { $sum: 1 } } },
+      { $sort: { actionCount: -1 } },
+      { $limit: 10 }
+    ]),
+    ErrorLog.aggregate([
+      { $match: matchFilter },
       {
-        model: User,
-        as: "Admin",
-        attributes: ["first_name", "last_name", "email"]
-      }
-    ],
-    group: ["admin_id", "Admin.id"],
-    order: [[literal("actionCount"), "DESC"]],
-    limit: 10,
-    raw: false
-  });
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ])
+  ]);
 
-  
-  const errorTrends = await ErrorLog.findAll({
-    where: dateFilter,
-    attributes: [
-      [fn("DATE", col("ErrorLog.created_at")), "date"],
-      [fn("COUNT", col("ErrorLog.id")), "count"]
-    ],
-    group: [fn("DATE", col("ErrorLog.created_at"))],
-    order: [[fn("DATE", col("ErrorLog.created_at")), "ASC"]],
-    raw: true
-  });
+  const mostActiveAdmins = await Promise.all(
+    activeAdminsRaw.map(async (item) => {
+      const admin = await User.findById(item._id).select("first_name last_name email").lean();
+      return {
+        adminId: item._id,
+        name: admin ? `${admin.first_name} ${admin.last_name}` : "Unknown",
+        email: admin?.email,
+        actionCount: item.actionCount
+      };
+    })
+  );
 
   return {
     auditLogs: {
       byActionType: auditStats.map(stat => ({
-        actionType: stat.action_type,
-        count: parseInt(stat.count)
+        actionType: stat._id,
+        count: stat.count
       })),
-      total: auditStats.reduce((sum, stat) => sum + parseInt(stat.count), 0)
+      total: auditStats.reduce((sum, stat) => sum + stat.count, 0)
     },
     paymentLogs: {
       byStatus: paymentStats.map(stat => ({
-        status: stat.payment_status,
-        count: parseInt(stat.count),
+        status: stat._id,
+        count: stat.count,
         totalAmount: parseFloat(stat.totalAmount || 0)
       })),
-      total: paymentStats.reduce((sum, stat) => sum + parseInt(stat.count), 0),
+      total: paymentStats.reduce((sum, stat) => sum + stat.count, 0),
       totalRevenue: paymentStats.reduce((sum, stat) => sum + parseFloat(stat.totalAmount || 0), 0)
     },
     enrollmentLogs: {
       byStatus: enrollmentStats.map(stat => ({
-        status: stat.action,
-        count: parseInt(stat.count)
+        status: stat._id,
+        count: stat.count
       })),
-      total: enrollmentStats.reduce((sum, stat) => sum + parseInt(stat.count), 0)
+      total: enrollmentStats.reduce((sum, stat) => sum + stat.count, 0)
     },
     errorLogs: {
       bySeverity: errorStats.map(stat => ({
-        severity: stat.severity,
-        count: parseInt(stat.count)
+        severity: stat._id,
+        count: stat.count
       })),
-      total: errorStats.reduce((sum, stat) => sum + parseInt(stat.count), 0),
+      total: errorStats.reduce((sum, stat) => sum + stat.count, 0),
       trends: errorTrends.map(trend => ({
-        date: trend.date,
-        count: parseInt(trend.count)
+        date: trend._id,
+        count: trend.count
       }))
     },
-    mostActiveAdmins: activeAdmins.map(admin => ({
-      adminId: admin.admin_id,
-      name: admin.Admin ? `${admin.Admin.first_name} ${admin.Admin.last_name}` : "Unknown",
-      email: admin.Admin?.email,
-      actionCount: parseInt(admin.dataValues.actionCount)
-    })),
+    mostActiveAdmins,
     period: {
       startDate: startDate || null,
       endDate: endDate || null
@@ -618,48 +626,15 @@ export const getLogAnalytics = async (filters = {}) => {
   };
 };
 
-
 export const searchAllLogs = async (searchTerm, options = {}) => {
   const { limit = 10, startDate, endDate } = options;
 
-  const dateFilter = {};
-  if (startDate || endDate) {
-    dateFilter.created_at = {};
-    if (startDate) dateFilter.created_at[Op.gte] = new Date(startDate);
-    if (endDate) dateFilter.created_at[Op.lte] = new Date(endDate);
-  }
-
-  
-  const auditResults = await getAuditLogs({
-    search: searchTerm,
-    startDate,
-    endDate,
-    limit
-  });
-
-  
-  const paymentResults = await getPaymentLogs({
-    search: searchTerm,
-    startDate,
-    endDate,
-    limit
-  });
-
-  
-  const enrollmentResults = await getEnrollmentLogs({
-    search: searchTerm,
-    startDate,
-    endDate,
-    limit
-  });
-
-  
-  const errorResults = await getErrorLogs({
-    search: searchTerm,
-    startDate,
-    endDate,
-    limit
-  });
+  const [auditResults, paymentResults, enrollmentResults, errorResults] = await Promise.all([
+    getAuditLogs({ search: searchTerm, startDate, endDate, limit }),
+    getPaymentLogs({ search: searchTerm, startDate, endDate, limit }),
+    getEnrollmentLogs({ search: searchTerm, startDate, endDate, limit }),
+    getErrorLogs({ search: searchTerm, startDate, endDate, limit })
+  ]);
 
   return {
     searchTerm,
@@ -681,7 +656,7 @@ export const searchAllLogs = async (searchTerm, options = {}) => {
         logs: errorResults.logs
       }
     },
-    totalResults: 
+    totalResults:
       auditResults.pagination.total +
       paymentResults.pagination.total +
       enrollmentResults.pagination.total +

@@ -62,7 +62,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Apply general rate limiter to all API routes
-app.use("/api", generalLimiter);
+// app.use("/api", generalLimiter);
 
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -188,10 +188,5 @@ const io = new Server(server, {
 
 setupChatSocket(io);
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  initCronJobs();
-});
-
+export { app, server, io };
 export default app;

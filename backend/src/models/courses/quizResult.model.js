@@ -1,32 +1,64 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const QuizResult = sequelize.define(
-  "QuizResult",
+const quizResultSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
-    quiz_id: { type: DataTypes.STRING(50), allowNull: false },
-    student_id: { type: DataTypes.STRING(50), allowNull: false },
+    quiz_id: {
+      type: String,
+      required: true,
+      ref: "Quiz",
+      index: true,
+    },
+    student_id: {
+      type: String,
+      required: true,
+      ref: "User",
+      index: true,
+    },
     answers: {
-      type: DataTypes.JSON,
-      allowNull: false,
-      defaultValue: [
-        {
-          id: "",
-          answer: "",
-          isCorrect: false,
-        },
-      ],
+      type: mongoose.Schema.Types.Mixed,
+      default: [],
     },
-    score: { type: DataTypes.INTEGER, defaultValue: 0 },
-    taken_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+    score: {
+      type: Number,
+      default: 0,
+    },
+    taken_at: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  { tableName: "quiz_results", timestamps: false }
+  {
+    timestamps: true,
+    collection: "quiz_results",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
 );
+
+quizResultSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+const QuizResult =
+  mongoose.models.QuizResult || mongoose.model("QuizResult", quizResultSchema);
 
 export default QuizResult;

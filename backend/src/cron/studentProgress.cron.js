@@ -1,14 +1,13 @@
-import { Op } from "sequelize";
-import models from "../models/index.js";
+import User from "../models/auth/user.model.js";
+import Enrollment from "../models/courses/enrollment.model.js";
+import Course from "../models/courses/course.model.js";
 import { sendMail } from "../config/mailer.js";
-
-const { User, Enrollment, Course, Lesson, Chapter } = models;
 
 // Generate student progress email template
 const getStudentProgressEmailHtml = (student, enrollments) => {
   const progressCards = enrollments.map(enrollment => {
     const progress = enrollment.progress || {};
-    const percentage = progress.completionPercentage || 0;
+    const percentage = progress.completionPercentage || progress.progress_percentage || 0;
     
     let statusMessage = "";
     let statusColor = "#3b82f6";
@@ -35,7 +34,7 @@ const getStudentProgressEmailHtml = (student, enrollments) => {
     
     return `
       <div style="background-color: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
-        <h3 style="color: #ffffff; font-size: 16px; margin: 0 0 12px 0;">${enrollment.Course?.title || "Course"}</h3>
+        <h3 style="color: #ffffff; font-size: 16px; margin: 0 0 12px 0;">${enrollment.course?.title || "Course"}</h3>
         <div style="background-color: #0f172a; border-radius: 8px; padding: 4px; margin-bottom: 12px;">
           <div style="background: linear-gradient(90deg, ${statusColor}, ${statusColor}AA); width: ${percentage}%; height: 8px; border-radius: 6px;"></div>
         </div>
@@ -47,9 +46,12 @@ const getStudentProgressEmailHtml = (student, enrollments) => {
     `;
   }).join("");
   
-  const completedCount = enrollments.filter(e => (e.progress?.completionPercentage || 0) === 100).length;
+  const completedCount = enrollments.filter(e => {
+    const p = e.progress?.completionPercentage || e.progress?.progress_percentage || 0;
+    return p === 100;
+  }).length;
   const inProgressCount = enrollments.filter(e => {
-    const p = e.progress?.completionPercentage || 0;
+    const p = e.progress?.completionPercentage || e.progress?.progress_percentage || 0;
     return p > 0 && p < 100;
   }).length;
   
@@ -143,30 +145,33 @@ const getStudentProgressEmailHtml = (student, enrollments) => {
 export const sendStudentProgressEmails = async () => {
   console.log("Starting student progress email job...");
   
-  // Get all students with enrollments
-  const students = await User.findAll({
-    where: { role: "student", is_active: true, is_email_verified: true },
-    attributes: ["id", "first_name", "last_name", "email"],
-  });
+  // Get all active students
+  const students = await User.find({
+    role: "student",
+    is_active: true,
+    is_email_verified: true,
+  }).select("_id id first_name last_name email");
   
   let sentCount = 0;
   let errorCount = 0;
   
   for (const student of students) {
     try {
-      // Get student's enrollments with course info
-      const enrollments = await Enrollment.findAll({
-        where: { student_id: student.id },
-        include: [
-          {
-            model: Course,
-            attributes: ["id", "title", "thumbnail_url"],
-          },
-        ],
-      });
+      const studentId = student._id.toString();
+      const rawEnrollments = await Enrollment.find({ student_id: studentId }).lean();
       
-      // Skip if no enrollments
-      if (enrollments.length === 0) continue;
+      if (!rawEnrollments || rawEnrollments.length === 0) continue;
+      
+      // Enrich with course details
+      const enrollments = await Promise.all(
+        rawEnrollments.map(async (enr) => {
+          const course = await Course.findById(enr.course_id).select("title thumbnail_url").lean();
+          return {
+            ...enr,
+            course,
+          };
+        })
+      );
       
       const html = getStudentProgressEmailHtml(student, enrollments);
       
@@ -179,9 +184,7 @@ export const sendStudentProgressEmails = async () => {
       sentCount++;
       console.log(`✉️ Sent progress email to ${student.email}`);
       
-      // Small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 100));
-      
     } catch (error) {
       errorCount++;
       console.error(`Failed to send email to ${student.email}:`, error.message);

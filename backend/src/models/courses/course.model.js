@@ -1,88 +1,195 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const Course = sequelize.define(
-  "Course",
+const courseSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
-    instructor_id: { type: DataTypes.STRING(50), allowNull: false },
-    title: { type: DataTypes.STRING(255), allowNull: false },
-    subtitle: { type: DataTypes.STRING(500), allowNull: true },
-    description: { type: DataTypes.TEXT, allowNull: false },
-    learning_objectives: { type: DataTypes.JSON, allowNull: true }, 
-    requirements: { type: DataTypes.JSON, allowNull: true }, 
-    target_audience: { type: DataTypes.TEXT, allowNull: true },
-    category: { type: DataTypes.STRING(100) },
-    subcategory: { type: DataTypes.STRING(100) },
+    instructor_id: {
+      type: String,
+      required: true,
+      ref: "User",
+      index: true,
+    },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    subtitle: {
+      type: String,
+      default: "",
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    learning_objectives: {
+      type: mongoose.Schema.Types.Mixed,
+      default: [],
+    },
+    requirements: {
+      type: mongoose.Schema.Types.Mixed,
+      default: [],
+    },
+    target_audience: {
+      type: String,
+      default: "",
+    },
+    category: {
+      type: String,
+      index: true,
+    },
+    subcategory: {
+      type: String,
+    },
     level: {
-      type: DataTypes.ENUM("beginner", "intermediate", "advanced"),
-      defaultValue: "beginner",
+      type: String,
+      enum: ["beginner", "intermediate", "advanced"],
+      default: "beginner",
     },
-    price: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0.0 },
-    thumbnail_url: { type: DataTypes.STRING(255) },
-    thumbnail_public_id: { type: DataTypes.STRING(255) },
-    intro_video_url: { type: DataTypes.STRING(500) },
-    intro_video_public_id: { type: DataTypes.STRING(255) },
-    intro_video_hls_url: { type: DataTypes.STRING(500) },
-    intro_video_duration: { type: DataTypes.INTEGER, defaultValue: 0 },
+    price: {
+      type: Number,
+      default: 0.0,
+      index: true,
+    },
+    thumbnail_url: {
+      type: String,
+      default: "",
+    },
+    thumbnail_public_id: {
+      type: String,
+      default: "",
+    },
+    intro_video_url: {
+      type: String,
+      default: "",
+    },
+    intro_video_public_id: {
+      type: String,
+      default: "",
+    },
+    intro_video_hls_url: {
+      type: String,
+      default: "",
+    },
+    intro_video_duration: {
+      type: Number,
+      default: 0,
+    },
     have_discount: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      type: Boolean,
+      default: false,
     },
     discount_type: {
-      type: DataTypes.ENUM("percentage", "fixed"),
+      type: String,
+      enum: ["percentage", "fixed"],
     },
-    discount_value: { type: DataTypes.DECIMAL(10, 2) },
-    discount_start_date: { type: DataTypes.DATE },
-    discount_end_date: { type: DataTypes.DATE },
-
-    is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
-
-    badge: { type: DataTypes.STRING(50) },
-
-    
+    discount_value: {
+      type: Number,
+    },
+    discount_start_date: {
+      type: Date,
+    },
+    discount_end_date: {
+      type: Date,
+    },
+    is_featured: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    badge: {
+      type: String,
+      default: "",
+    },
     status: {
-      type: DataTypes.ENUM("draft", "pending_review", "approved", "rejected"),
-      defaultValue: "draft",
+      type: String,
+      enum: ["draft", "pending_review", "approved", "rejected"],
+      default: "draft",
+      index: true,
     },
-    submitted_for_review_at: { type: DataTypes.DATE, allowNull: true },
-    reviewed_at: { type: DataTypes.DATE, allowNull: true },
-    reviewed_by: { type: DataTypes.STRING(50), allowNull: true },
-    rejection_reason: { type: DataTypes.TEXT, allowNull: true },
-    ai_analysis: { type: DataTypes.JSON, allowNull: true },
+    submitted_for_review_at: {
+      type: Date,
+    },
+    reviewed_at: {
+      type: Date,
+    },
+    reviewed_by: {
+      type: String,
+    },
+    rejection_reason: {
+      type: String,
+      default: "",
+    },
+    ai_analysis: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null,
+    },
   },
-  { 
-    tableName: "courses", 
+  {
     timestamps: true,
-    indexes: [
-      
-      {
-        type: "FULLTEXT",
-        name: "course_search_idx",
-        fields: ["title", "description"],
+    collection: "courses",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
       },
-      
-      {
-        name: "idx_course_filtering",
-        fields: ["category", "price"],
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
       },
-      
-      {
-        name: "idx_course_created_at",
-        fields: [{ name: "createdAt", order: "DESC" }],
-      },
-      
-      {
-        name: "idx_course_instructor",
-        fields: ["instructor_id"],
-      }
-    ]
+    },
   }
 );
+
+courseSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+// Full-text search index
+courseSchema.index(
+  {
+    title: "text",
+    subtitle: "text",
+    description: "text",
+  },
+  {
+    weights: {
+      title: 10,
+      subtitle: 5,
+      description: 1,
+    },
+    name: "course_text_search_idx",
+  }
+);
+
+// Filtering & sorting indexes
+courseSchema.index({ category: 1, price: 1, status: 1 });
+courseSchema.index({ instructor_id: 1, createdAt: -1 });
+
+// Virtual associations for seamless population
+courseSchema.virtual("Instructor", {
+  ref: "User",
+  localField: "instructor_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+courseSchema.virtual("Chapters", {
+  ref: "Chapter",
+  localField: "_id",
+  foreignField: "course_id",
+});
+
+const Course = mongoose.models.Course || mongoose.model("Course", courseSchema);
 
 export default Course;

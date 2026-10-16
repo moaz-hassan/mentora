@@ -17,6 +17,13 @@ export default function MobileFilterDialog({
   setSelectedRating,
   clearAllFilters,
   activeFiltersCount,
+  minPrice,
+  maxPrice,
+  setMinPrice,
+  setMaxPrice,
+  language,
+  setLanguage,
+  setCurrentPage,
 }) {
   if (!isOpen) return null;
 
@@ -51,6 +58,13 @@ export default function MobileFilterDialog({
             setSelectedRating={setSelectedRating}
             onClearAll={clearAllFilters}
             activeFiltersCount={activeFiltersCount}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            setMinPrice={setMinPrice}
+            setMaxPrice={setMaxPrice}
+            language={language}
+            setLanguage={setLanguage}
+            setCurrentPage={setCurrentPage}
           />
         </div>
       </div>

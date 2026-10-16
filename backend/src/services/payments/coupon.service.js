@@ -1,32 +1,38 @@
-import models from "../../models/index.js";
-import { Op, fn, col } from "sequelize";
-
-const { Coupon, Course, Payment } = models;
+import couponRepository from "../../repositories/payments/coupon.repository.js";
+import paymentRepository from "../../repositories/payments/payment.repository.js";
+import courseRepository from "../../repositories/courses/course.repository.js";
 
 export const getAllCouponsByAdmin = async () => {
-  return await Coupon.findAll();
+  return await couponRepository.findAll();
 };
 
 export const getAllCouponsByInstructor = async (instructorId) => {
+  const courses = await courseRepository.find({ instructor_id: instructorId });
 
-  const courses = await Course.findAll({
-    where: { instructor_id: instructorId },
-    attributes: ["title"],
-    include: [
-      {
-        model: Coupon,
-        attributes: ["code", "discount_type", "discount_value", "discount_start_date", "discount_end_date", "max_count", "used_count"],
-      },
-    ],
-  });
+  const result = await Promise.all(
+    courses.map(async (course) => {
+      const coupons = await couponRepository.findByCourseId(course._id.toString());
+      return {
+        title: course.title,
+        Coupons: coupons.map((c) => ({
+          code: c.code,
+          discount_type: c.discount_type,
+          discount_value: c.discount_value,
+          discount_start_date: c.discount_start_date,
+          discount_end_date: c.discount_end_date,
+          max_count: c.max_count,
+          used_count: c.used_count,
+        })),
+      };
+    })
+  );
 
-  return courses;
+  return result;
 };
 
 export const createCoupon = async (couponData, userId, userRole) => {
-  
   if (couponData.course_id) {
-    const course = await Course.findByPk(couponData.course_id);
+    const course = await courseRepository.findById(couponData.course_id);
 
     if (!course) {
       const error = new Error("Course not found");
@@ -34,34 +40,21 @@ export const createCoupon = async (couponData, userId, userRole) => {
       throw error;
     }
 
-    
     if (userRole !== "admin" && course.instructor_id !== userId) {
-      const error = new Error(
-        "You are not authorized to create a coupon for this course"
-      );
+      const error = new Error("You are not authorized to create a coupon for this course");
       error.statusCode = 403;
       throw error;
     }
     couponData.is_global = false;
   } else {
-    // Global coupon - admin only
     if (userRole !== "admin") {
-      const error = new Error(
-        "Only admins can create coupons applicable to all courses"
-      );
+      const error = new Error("Only admins can create coupons applicable to all courses");
       error.statusCode = 403;
       throw error;
     }
-    
-    // Check if there's already an active global coupon
-    const existingGlobalCoupon = await Coupon.findOne({
-      where: {
-        is_global: true,
-        is_active: true,
-        discount_end_date: { [Op.gte]: new Date() }
-      }
-    });
-    
+
+    const existingGlobalCoupon = await couponRepository.findActiveGlobalCoupon();
+
     if (existingGlobalCoupon) {
       const error = new Error(
         "Only one active global coupon is allowed. Please deactivate the existing one first."
@@ -69,36 +62,42 @@ export const createCoupon = async (couponData, userId, userRole) => {
       error.statusCode = 400;
       throw error;
     }
-    
+
     couponData.course_id = null;
     couponData.is_global = true;
   }
 
-  return await Coupon.create(couponData);
+  return await couponRepository.create(couponData);
 };
 
 export const updateCoupon = async (couponData, userId, role) => {
-  const coupon = await Coupon.findByPk(couponData.coupon_id);
+  const coupon = await couponRepository.findById(couponData.coupon_id);
 
   if (!coupon) {
     const error = new Error("Coupon not found");
     error.statusCode = 404;
     throw error;
   }
-  const course = await Course.findByPk(coupon.course_id);
-  
-  if (!course) {
-    const error = new Error("Course not found");
-    error.statusCode = 404;
-    throw error;
-  }
 
-  if (role !== "admin" && userId !== course.instructor_id) {
+  if (!coupon.is_global) {
+    const course = await courseRepository.findById(coupon.course_id);
+
+    if (!course) {
+      const error = new Error("Course not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (role !== "admin" && userId !== course.instructor_id) {
+      const error = new Error("You are not authorized to update this coupon");
+      error.statusCode = 403;
+      throw error;
+    }
+  } else if (role !== "admin") {
     const error = new Error("You are not authorized to update this coupon");
     error.statusCode = 403;
     throw error;
   }
-
 
   if (
     couponData.discount_start_date > couponData.discount_end_date ||
@@ -116,54 +115,48 @@ export const updateCoupon = async (couponData, userId, role) => {
     throw error;
   }
 
-  coupon.is_active = couponData.is_active || coupon.is_active;
-  coupon.discount_end_date = new Date(couponData.discount_end_date);
-  coupon.max_count = couponData.max_count || coupon.max_count;
-  
-  return await coupon.save();
+  return await couponRepository.updateById(couponData.coupon_id, {
+    is_active: couponData.is_active ?? coupon.is_active,
+    discount_end_date: new Date(couponData.discount_end_date),
+    max_count: couponData.max_count || coupon.max_count,
+  });
 };
 
 export const deleteCoupon = async (coupon_id, userId, role) => {
-  const coupon = await Coupon.findByPk(coupon_id);
+  const coupon = await couponRepository.findById(coupon_id);
+
   if (!coupon) {
     const error = new Error("Coupon not found");
     error.statusCode = 404;
     throw error;
   }
 
-  const course = await Course.findByPk(coupon.course_id);
+  if (!coupon.is_global) {
+    const course = await courseRepository.findById(coupon.course_id);
 
-  if (!course) {
-    const error = new Error("Course not found");
-    error.statusCode = 404;
-    throw error;
-  }
+    if (!course) {
+      const error = new Error("Course not found");
+      error.statusCode = 404;
+      throw error;
+    }
 
-  if (role !== "admin" && userId !== course.instructor_id) {
+    if (role !== "admin" && userId !== course.instructor_id) {
+      const error = new Error("You are not authorized to delete this coupon");
+      error.statusCode = 403;
+      throw error;
+    }
+  } else if (role !== "admin") {
     const error = new Error("You are not authorized to delete this coupon");
     error.statusCode = 403;
     throw error;
   }
 
-  return await coupon.destroy();
+  await couponRepository.deleteById(coupon_id);
+  return { message: "Coupon deleted successfully" };
 };
 
 export const validateCoupon = async (code, course_id) => {
-  
-  const coupon = await Coupon.findOne({
-    where: {
-      code,
-      is_active: true,
-      [Op.or]: [
-        { course_id: course_id },  
-        { course_id: null }         
-      ]
-    },
-    order: [
-      
-      [fn('COALESCE', col('course_id'), 999999), 'ASC']
-    ]
-  });
+  const coupon = await couponRepository.findActiveCoupon(code, course_id);
 
   if (!coupon) {
     const error = new Error("Invalid or expired coupon");
@@ -187,59 +180,49 @@ export const validateCoupon = async (code, course_id) => {
   return coupon;
 };
 
-
 export const getCouponAnalytics = async (couponId = null) => {
-  const { Op, Sequelize } = await import("sequelize");
-  const { Payment } = models;
-  
-  const whereClause = couponId ? { id: couponId } : {};
-  
-  const coupons = await Coupon.findAll({
-    where: whereClause,
-    include: [{
-      model: Course,
-      attributes: ["title", "price"]
-    }]
-  });
+  const filter = couponId ? { _id: couponId } : {};
+  const coupons = await couponRepository.findAll(filter);
 
   const analytics = await Promise.all(
     coupons.map(async (coupon) => {
-      
-      const payments = await Payment.findAll({
-        where: {
-          course_id: coupon.course_id,
-          coupon_code: coupon.code,
-          status: "completed"
-        },
-        attributes: [
-          [fn("SUM", col("amount")), "totalRevenue"],
-          [fn("COUNT", col("id")), "totalUsage"]
-        ],
-        raw: true
-      });
+      const paymentFilter = {
+        course_id: coupon.course_id,
+        coupon_code: coupon.code,
+        status: "completed",
+      };
 
-      const totalRevenue = payments[0]?.totalRevenue || 0;
-      const totalUsage = payments[0]?.totalUsage || 0;
-      
-      
-      const course = await Course.findByPk(coupon.course_id);
+      const aggregation = await paymentRepository.aggregate([
+        { $match: paymentFilter },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: "$amount" },
+            totalUsage: { $sum: 1 },
+          },
+        },
+      ]);
+
+      const totalRevenue = aggregation[0]?.totalRevenue || 0;
+      const totalUsage = aggregation[0]?.totalUsage || 0;
+
       let discountGiven = 0;
-      
-      if (coupon.discount_type === "percentage") {
-        discountGiven = (course.price * coupon.discount_value / 100) * totalUsage;
-      } else {
-        discountGiven = coupon.discount_value * totalUsage;
+      if (coupon.course_id) {
+        const course = await courseRepository.findById(coupon.course_id);
+        if (course) {
+          discountGiven =
+            coupon.discount_type === "percentage"
+              ? (course.price * coupon.discount_value) / 100 * totalUsage
+              : coupon.discount_value * totalUsage;
+        }
       }
 
-      
-      const conversionRate = coupon.max_count > 0 
-        ? ((totalUsage / coupon.max_count) * 100).toFixed(1)
-        : 0;
+      const conversionRate =
+        coupon.max_count > 0 ? ((totalUsage / coupon.max_count) * 100).toFixed(1) : 0;
 
       return {
-        couponId: coupon.id,
+        couponId: coupon._id.toString(),
         code: coupon.code,
-        courseTitle: coupon.Course?.title,
         discountType: coupon.discount_type,
         discountValue: coupon.discount_value,
         isActive: coupon.is_active,
@@ -249,7 +232,7 @@ export const getCouponAnalytics = async (couponId = null) => {
         discountGiven: parseFloat(discountGiven).toFixed(2),
         conversionRate: parseFloat(conversionRate),
         startDate: coupon.discount_start_date,
-        endDate: coupon.discount_end_date
+        endDate: coupon.discount_end_date,
       };
     })
   );
@@ -257,75 +240,38 @@ export const getCouponAnalytics = async (couponId = null) => {
   return analytics;
 };
 
-
 export const searchCoupons = async (searchTerm, filters = {}) => {
-  const { Op } = await import("sequelize");
-  
-  const whereClause = {};
-  
+  let coupons = await couponRepository.findAll();
+
   if (searchTerm) {
-    whereClause.code = {
-      [Op.like]: `%${searchTerm}%`
-    };
-  }
-  
-  if (filters.status) {
-    whereClause.is_active = filters.status === "active";
-  }
-  
-  if (filters.courseId) {
-    whereClause.course_id = filters.courseId;
+    const regex = new RegExp(searchTerm, "i");
+    coupons = coupons.filter((c) => regex.test(c.code));
   }
 
-  const coupons = await Coupon.findAll({
-    where: whereClause,
-    include: [{
-      model: Course,
-      attributes: ["title", "instructor_id"]
-    }],
-    order: [["created_at", "DESC"]]
-  });
+  if (filters.status) {
+    coupons = coupons.filter((c) => c.is_active === (filters.status === "active"));
+  }
+
+  if (filters.courseId) {
+    coupons = coupons.filter((c) => c.course_id === filters.courseId);
+  }
 
   return coupons;
 };
 
-
 export const deactivateExpiredCoupons = async () => {
   const now = new Date();
-  
-  const result = await Coupon.update(
-    { is_active: false },
-    {
-      where: {
-        is_active: true,
-        discount_end_date: {
-          [Op.lt]: now
-        }
-      }
-    }
+
+  const result = await couponRepository.updateManyByFilter(
+    { is_active: true, discount_end_date: { $lt: now } },
+    { is_active: false }
   );
 
-  return {
-    deactivatedCount: result[0]
-  };
+  return { deactivatedCount: result.nModified || 0 };
 };
 
-// Get active global coupon for homepage marketing banner
 export const getActiveGlobalCoupon = async () => {
-  const now = new Date();
-  
-  const globalCoupon = await Coupon.findOne({
-    where: {
-      is_global: true,
-      is_active: true,
-      discount_start_date: { [Op.lte]: now },
-      discount_end_date: { [Op.gte]: now }
-    },
-    attributes: [
-      'id', 'code', 'discount_type', 'discount_value', 
-      'discount_start_date', 'discount_end_date'
-    ]
-  });
+  const globalCoupon = await couponRepository.findActiveGlobalCoupon();
 
   if (!globalCoupon) {
     return null;
@@ -335,6 +281,19 @@ export const getActiveGlobalCoupon = async () => {
     code: globalCoupon.code,
     discountType: globalCoupon.discount_type,
     discountValue: parseFloat(globalCoupon.discount_value),
-    expiresAt: globalCoupon.discount_end_date
+    expiresAt: globalCoupon.discount_end_date,
   };
+};
+
+export default {
+  getAllCouponsByAdmin,
+  getAllCouponsByInstructor,
+  createCoupon,
+  updateCoupon,
+  deleteCoupon,
+  validateCoupon,
+  getCouponAnalytics,
+  searchCoupons,
+  deactivateExpiredCoupons,
+  getActiveGlobalCoupon,
 };

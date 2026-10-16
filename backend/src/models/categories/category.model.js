@@ -1,30 +1,56 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../../config/db.js";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-const Category = sequelize.define(
-  "Category",
+const categorySchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     name: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
+      type: String,
+      required: true,
       unique: true,
+      trim: true,
+      index: true,
     },
     is_featured: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
+      type: Boolean,
+      default: false,
     },
   },
   {
-    tableName: "categories",
     timestamps: true,
+    collection: "categories",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+categorySchema.virtual("id").get(function () {
+  return this._id;
+});
+
+categorySchema.virtual("SubCategories", {
+  ref: "SubCategory",
+  localField: "_id",
+  foreignField: "category_id",
+});
+
+const Category = mongoose.models.Category || mongoose.model("Category", categorySchema);
 
 export default Category;

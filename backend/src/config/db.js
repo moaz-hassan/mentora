@@ -1,45 +1,32 @@
-import { Sequelize } from "sequelize";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME || "mentora",
-  process.env.DB_USER || "root",
-  process.env.DB_PASS || "0000",
-  {
-    host: process.env.DB_HOST || "localhost",
-    port: process.env.DB_PORT || "3306",
-    dialect: "mysql",
-    logging: false,
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/mentora";
 
-    dialectOptions: {
-      ssl:
-        process.env.DB_SSL === "true"
-          ? { rejectUnauthorized: false }
-          : false,
-    },
+let isMongoConnected = false;
 
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
-    },
-  }
-);
-
+/**
+ * Connect to MongoDB using Mongoose.
+ */
 async function connectDB() {
-  try {
-    await sequelize.authenticate();
-    console.log("✅ Database connected successfully");
+  if (isMongoConnected) {
+    return mongoose.connection;
+  }
 
-    // await sequelize.sync({ alter: true });
-    // console.log("✅ Database synchronized");
+  try {
+    const conn = await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+    });
+    isMongoConnected = conn.connections[0].readyState === 1;
+    console.log(`✅ MongoDB connected successfully: ${conn.connection.host}/${conn.connection.name}`);
+    return conn;
   } catch (error) {
-    console.error("❌ Database connection error:", error);
+    console.error("❌ MongoDB connection error:", error.message);
     throw error;
   }
 }
 
-export { connectDB, sequelize };
+export { connectDB, mongoose };
+export default connectDB;

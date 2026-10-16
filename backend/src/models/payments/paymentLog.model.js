@@ -1,68 +1,85 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../../config/db.js";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-const PaymentLog = sequelize.define(
-  "PaymentLog",
+const paymentLogSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
-    },
-    transaction_id: {
-      type: DataTypes.STRING(100),
-      unique: true,
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     student_id: {
-      type: DataTypes.STRING(50),
-      references: { model: "users", key: "id" },
+      type: String,
+      ref: "User",
+      index: true,
     },
     course_id: {
-      type: DataTypes.STRING(50),
-      references: { model: "courses", key: "id" },
+      type: String,
+      ref: "Course",
+      index: true,
     },
     amount: {
-      type: DataTypes.DECIMAL(10, 2),
+      type: Number,
+      required: true,
     },
-    currency: {
-      type: DataTypes.STRING(3),
-      defaultValue: "USD",
+    status: {
+      type: String,
+      required: true,
+      index: true,
     },
     payment_method: {
-      type: DataTypes.STRING(50),
+      type: String,
+      default: "card",
     },
-    payment_status: {
-      type: DataTypes.STRING(20),
+    transaction_id: {
+      type: String,
+      default: "",
     },
-    coupon_code: {
-      type: DataTypes.STRING(50),
-    },
-    discount_amount: {
-      type: DataTypes.DECIMAL(10, 2),
-    },
-    final_amount: {
-      type: DataTypes.DECIMAL(10, 2),
-    },
-    payment_gateway: {
-      type: DataTypes.STRING(50),
-    },
-    gateway_response: {
-      type: DataTypes.JSON,
+    metadata: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
   },
   {
-    tableName: "payment_logs",
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-    indexes: [
-      { fields: ["student_id"] },
-      { fields: ["course_id"] },
-      { fields: ["created_at"] },
-      { fields: ["payment_status"] },
-    ],
+    collection: "payment_logs",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+paymentLogSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+paymentLogSchema.virtual("Student", {
+  ref: "User",
+  localField: "student_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+paymentLogSchema.virtual("Course", {
+  ref: "Course",
+  localField: "course_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+const PaymentLog =
+  mongoose.models.PaymentLog || mongoose.model("PaymentLog", paymentLogSchema);
 
 export default PaymentLog;

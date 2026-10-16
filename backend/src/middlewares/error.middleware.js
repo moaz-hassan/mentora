@@ -1,13 +1,13 @@
 export const errorHandler = (err, req, res, next) => {
   console.error("Error:", err);
 
-  
-  if (err.name === "SequelizeValidationError") {
-    const errors = err.errors.map((e) => ({
+  // Mongoose validation error
+  if (err.name === "ValidationError") {
+    const errors = Object.values(err.errors || {}).map((e) => ({
       field: e.path,
       message: e.message,
     }));
-    
+
     return res.status(400).json({
       success: false,
       message: "Validation error",
@@ -16,10 +16,10 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  
-  if (err.name === "SequelizeUniqueConstraintError") {
-    const field = err.errors[0]?.path || "field";
-    return res.status(400).json({
+  // Mongoose duplicate key error (E11000)
+  if (err.code === 11000) {
+    const field = Object.keys(err.keyValue || {})[0] || "field";
+    return res.status(409).json({
       success: false,
       message: `${field} already exists`,
       code: "DUPLICATE_ENTRY",
@@ -27,25 +27,16 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  
-  if (err.name === "SequelizeForeignKeyConstraintError") {
+  // Mongoose CastError (invalid ObjectId)
+  if (err.name === "CastError") {
     return res.status(400).json({
       success: false,
-      message: "Invalid reference. Related record does not exist.",
-      code: "INVALID_REFERENCE",
+      message: `Invalid format for field '${err.path}'`,
+      code: "INVALID_ID",
     });
   }
 
-  
-  if (err.name === "SequelizeConnectionError") {
-    return res.status(503).json({
-      success: false,
-      message: "Database connection error. Please try again later.",
-      code: "DATABASE_ERROR",
-    });
-  }
-
-  
+  // JWT errors
   if (err.name === "JsonWebTokenError") {
     return res.status(401).json({
       success: false,
@@ -62,7 +53,7 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  
+  // Custom status code errors
   if (err.statusCode) {
     return res.status(err.statusCode).json({
       success: false,
@@ -71,12 +62,12 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
 
-  
+  // Fallback 500
   res.status(500).json({
     success: false,
     message: "An unexpected error occurred. Please try again later.",
     code: "INTERNAL_ERROR",
-    ...(process.env.NODE_ENV === "development" && { details: err.message }),
+    ...(process.env.NODE_ENV === "development" && { details: err.message, error: err.stack }),
   });
 };
 

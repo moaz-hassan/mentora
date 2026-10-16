@@ -1,55 +1,71 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const LessonMaterial = sequelize.define(
-  "LessonMaterial",
+const lessonMaterialSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     lesson_id: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      references: {
-        model: "lessons",
-        key: "id",
-      },
-      onDelete: "CASCADE",
+      type: String,
+      required: true,
+      ref: "Lesson",
+      index: true,
     },
     filename: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
+      type: String,
+      required: true,
     },
     url: {
-      type: DataTypes.STRING(500),
-      allowNull: false,
+      type: String,
+      required: true,
     },
     public_id: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
+      type: String,
+      required: true,
     },
     file_type: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+      type: String,
+      required: true,
     },
     file_size: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      type: Number,
+      required: true,
     },
     order_number: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+      type: Number,
+      default: 0,
     },
   },
   {
-    tableName: "lesson_materials",
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
+    collection: "lesson_materials",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+lessonMaterialSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+const LessonMaterial =
+  mongoose.models.LessonMaterial ||
+  mongoose.model("LessonMaterial", lessonMaterialSchema);
 
 export default LessonMaterial;

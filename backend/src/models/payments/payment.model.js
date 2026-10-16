@@ -1,19 +1,97 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { sequelize } from "../../config/db.js";
 
-const Payment = sequelize.define("Payment", {
-  id: { type: DataTypes.STRING(50), primaryKey: true, defaultValue: () => uuidv4() },
-  user_id: { type: DataTypes.STRING(50), allowNull: false },
-  course_id: { type: DataTypes.STRING(50), allowNull: false },
-  amount: { type: DataTypes.DECIMAL(10,2), allowNull: false },
-  currency: { type: DataTypes.STRING(10), defaultValue: "USD" },
-  payment_method: { type: DataTypes.ENUM("card", "paypal", "stripe"), defaultValue: "card" },
-  status: { type: DataTypes.ENUM("pending", "completed", "failed"), defaultValue: "pending" },
-  coupon_code: { type: DataTypes.STRING(50), allowNull: true },
-  discount_amount: { type: DataTypes.DECIMAL(10,2), allowNull: true },
-  created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-}, { tableName: "payments", timestamps: false });
+const paymentSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: () => uuidv4(),
+    },
+    user_id: {
+      type: String,
+      required: true,
+      ref: "User",
+      index: true,
+    },
+    course_id: {
+      type: String,
+      required: true,
+      ref: "Course",
+      index: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    currency: {
+      type: String,
+      default: "USD",
+    },
+    payment_method: {
+      type: String,
+      enum: ["card", "paypal", "stripe"],
+      default: "card",
+    },
+    status: {
+      type: String,
+      enum: ["pending", "completed", "failed"],
+      default: "pending",
+      index: true,
+    },
+    coupon_code: {
+      type: String,
+      default: null,
+    },
+    discount_amount: {
+      type: Number,
+      default: 0,
+    },
+    created_at: {
+      type: Date,
+      default: Date.now,
+      index: true,
+    },
+  },
+  {
+    timestamps: true,
+    collection: "payments",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
+);
+
+paymentSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+paymentSchema.virtual("Student", {
+  ref: "User",
+  localField: "user_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+paymentSchema.virtual("Course", {
+  ref: "Course",
+  localField: "course_id",
+  foreignField: "_id",
+  justOne: true,
+});
+
+const Payment = mongoose.models.Payment || mongoose.model("Payment", paymentSchema);
 
 export default Payment;
-

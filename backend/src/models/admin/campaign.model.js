@@ -1,78 +1,77 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../../config/db.js";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-const Campaign = sequelize.define(
-  "Campaign",
+const campaignSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
-    name: {
-      type: DataTypes.STRING(200),
-      allowNull: false,
+    title: {
+      type: String,
+      required: true,
+      trim: true,
     },
     description: {
-      type: DataTypes.TEXT,
+      type: String,
+      default: "",
     },
-    campaign_type: {
-      type: DataTypes.ENUM("featured_courses", "banner", "email", "notification"),
-      allowNull: false,
-    },
-    status: {
-      type: DataTypes.ENUM("draft", "active", "paused", "completed"),
-      defaultValue: "draft",
+    banner_url: {
+      type: String,
+      default: "",
     },
     start_date: {
-      type: DataTypes.DATE,
+      type: Date,
+      required: true,
     },
     end_date: {
-      type: DataTypes.DATE,
+      type: Date,
+      required: true,
     },
-    target_audience: {
-      type: DataTypes.ENUM("all", "students", "instructors"),
-      defaultValue: "all",
-    },
-    banner_image_url: {
-      type: DataTypes.STRING(500),
-    },
-    banner_link: {
-      type: DataTypes.STRING(500),
-    },
-    impressions: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    clicks: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    conversions: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    revenue_generated: {
-      type: DataTypes.DECIMAL(10, 2),
-      defaultValue: 0,
+    is_active: {
+      type: Boolean,
+      default: true,
     },
     created_by: {
-      type: DataTypes.STRING(50),
-      references: { model: "users", key: "id" },
+      type: String,
+      ref: "User",
+      index: true,
     },
   },
   {
-    tableName: "campaigns",
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-    indexes: [
-      { fields: ["status"] },
-      { fields: ["campaign_type"] },
-      { fields: ["created_by"] },
-    ],
+    collection: "campaigns",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+campaignSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+campaignSchema.virtual("Creator", {
+  ref: "User",
+  localField: "created_by",
+  foreignField: "_id",
+  justOne: true,
+});
+
+const Campaign =
+  mongoose.models.Campaign || mongoose.model("Campaign", campaignSchema);
 
 export default Campaign;

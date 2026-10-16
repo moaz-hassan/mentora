@@ -1,57 +1,66 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../../config/db.js";
+import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-const ErrorLog = sequelize.define(
-  "ErrorLog",
+const errorLogSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.STRING(50),
-      primaryKey: true,
-      defaultValue: () => uuidv4(),
-    },
-    error_type: {
-      type: DataTypes.STRING(100),
-    },
-    error_message: {
-      type: DataTypes.TEXT,
-    },
-    stack_trace: {
-      type: DataTypes.TEXT,
+    _id: {
+      type: String,
+      default: () => uuidv4(),
     },
     user_id: {
-      type: DataTypes.STRING(50),
-      references: { model: "users", key: "id" },
+      type: String,
+      ref: "User",
+      default: null,
+      index: true,
     },
-    request_url: {
-      type: DataTypes.TEXT,
+    message: {
+      type: String,
+      required: true,
     },
-    request_method: {
-      type: DataTypes.STRING(10),
+    stack: {
+      type: String,
+      default: "",
     },
-    request_body: {
-      type: DataTypes.JSON,
+    endpoint: {
+      type: String,
+      default: "",
     },
-    severity: {
-      type: DataTypes.STRING(20),
+    method: {
+      type: String,
+      default: "",
     },
-    resolved: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+    ip_address: {
+      type: String,
+      default: "",
     },
   },
   {
-    tableName: "error_logs",
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-    indexes: [
-      { fields: ["user_id"] },
-      { fields: ["severity"] },
-      { fields: ["resolved"] },
-      { fields: ["created_at"] },
-    ],
+    collection: "error_logs",
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
+
+errorLogSchema.virtual("id").get(function () {
+  return this._id;
+});
+
+const ErrorLog =
+  mongoose.models.ErrorLog || mongoose.model("ErrorLog", errorLogSchema);
 
 export default ErrorLog;

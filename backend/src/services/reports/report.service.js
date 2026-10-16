@@ -1,39 +1,30 @@
-import models from "../../models/index.js";
+import { Report, User, Course, Lesson, Quiz } from "../../models/index.js";
 import geminiService from "../ai/gemini.service.js";
-import { Op } from "sequelize";
-
-const { Report, User, Course, Lesson, Quiz } = models;
 
 class ReportService {
   async createReport(reportData, userId) {
     try {
-      
-      const user = await User.findByPk(userId, {
-        attributes: ["id", "first_name", "last_name", "email", "role"],
-      });
+      const user = await User.findById(userId).select("id first_name last_name email role").lean();
 
       if (!user) {
         throw new Error("User not found");
       }
 
-      
       const reporterType = user.role === "instructor" ? "instructor" : "student";
 
-      
       if (reporterType === "instructor") {
         if (!reportData.contactEmail && !reportData.contactPhone) {
           throw new Error("Instructor reports require contact information");
         }
         if (!reportData.priority) {
-          reportData.priority = "medium"; 
+          reportData.priority = "medium";
         }
       }
 
-      
       let aiAnalysis = {
         category: "other",
-        severity: reporterType === "instructor" && reportData.priority === "critical" 
-          ? "critical" 
+        severity: reporterType === "instructor" && reportData.priority === "critical"
+          ? "critical"
           : "medium",
         reasoning: "AI analysis not available",
       };
@@ -46,7 +37,6 @@ class ReportService {
           );
         } catch (error) {
           console.error("AI categorization failed:", error);
-          
         }
       }
 
@@ -76,26 +66,26 @@ class ReportService {
 
   async getReports(filters = {}) {
     try {
-      const where = {};
+      const query = {};
 
       if (filters.status && filters.status !== "all") {
-        where.status = filters.status;
+        query.status = filters.status;
       }
 
       if (filters.type && filters.type !== "all") {
-        where.content_type = filters.type;
+        query.content_type = filters.type;
       }
 
       if (filters.severity && filters.severity !== "all") {
-        where.ai_severity = filters.severity;
+        query.ai_severity = filters.severity;
       }
 
       if (filters.reporterType && filters.reporterType !== "all") {
-        where.reporter_type = filters.reporterType;
+        query.reporter_type = filters.reporterType;
       }
 
       if (filters.priority && filters.priority !== "all") {
-        where.priority = filters.priority;
+        query.priority = filters.priority;
       }
 
       if (filters.dateRange && filters.dateRange !== "all") {
@@ -117,41 +107,60 @@ class ReportService {
         }
 
         if (startDate) {
-          where.created_at = {
-            [Op.gte]: startDate,
-          };
+          query.createdAt = { $gte: startDate };
         }
       }
 
       if (filters.search) {
-        where[Op.or] = [
-          { title: { [Op.like]: `%${filters.search}%` } },
-          { description: { [Op.like]: `%${filters.search}%` } },
+        const searchRegex = new RegExp(filters.search, "i");
+        query.$or = [
+          { title: searchRegex },
+          { description: searchRegex },
         ];
       }
 
-      const reports = await Report.findAll({
-        where,
-        include: [
-          {
-            model: User,
-            as: "Reporter",
-            attributes: ["id", "first_name", "last_name", "email", "role"],
-          },
-          {
-            model: User,
-            as: "Reviewer",
-            attributes: ["id", "first_name", "last_name", "email"],
-            required: false,
-          },
-        ],
-        order: [
-          ["priority", "DESC"], 
-          ["created_at", "DESC"]
-        ],
-      });
+      const reports = await Report.find(query)
+        .sort({ priority: -1, createdAt: -1 })
+        .lean();
 
-      return reports;
+      return await Promise.all(
+        reports.map(async (report) => {
+          let reporter = null;
+          let reviewer = null;
+
+          if (report.reported_by) {
+            const u = await User.findById(report.reported_by).select("first_name last_name email role").lean();
+            if (u) {
+              reporter = {
+                id: u._id.toString(),
+                first_name: u.first_name,
+                last_name: u.last_name,
+                email: u.email,
+                role: u.role,
+              };
+            }
+          }
+
+          if (report.reviewed_by) {
+            const rev = await User.findById(report.reviewed_by).select("first_name last_name email").lean();
+            if (rev) {
+              reviewer = {
+                id: rev._id.toString(),
+                first_name: rev.first_name,
+                last_name: rev.last_name,
+                email: rev.email,
+              };
+            }
+          }
+
+          return {
+            ...report,
+            id: report._id.toString(),
+            Reporter: reporter,
+            Reviewer: reviewer,
+          };
+        })
+      );
     } catch (error) {
       console.error("Get reports error:", error);
       throw error;
@@ -160,58 +169,71 @@ class ReportService {
 
   async getReportById(reportId) {
     try {
-      const report = await Report.findByPk(reportId, {
-        include: [
-          {
-            model: User,
-            as: "Reporter",
-            attributes: ["id", "first_name", "last_name", "email"],
-          },
-          {
-            model: User,
-            as: "Reviewer",
-            attributes: ["id", "first_name", "last_name", "email"],
-            required: false,
-          },
-        ],
-      });
+      const report = await Report.findById(reportId).lean();
 
       if (!report) {
         return null;
       }
 
-      
-      if (report.content_reference && report.content_type !== "general") {
-        let contentDetails = null;
+      let reporter = null;
+      let reviewer = null;
 
+      if (report.reported_by) {
+        const u = await User.findById(report.reported_by).select("first_name last_name email").lean();
+        if (u) {
+          reporter = {
+            id: u._id.toString(),
+            first_name: u.first_name,
+            last_name: u.last_name,
+            email: u.email,
+          };
+        }
+      }
+
+      if (report.reviewed_by) {
+        const rev = await User.findById(report.reviewed_by).select("first_name last_name email").lean();
+        if (rev) {
+          reviewer = {
+            id: rev._id.toString(),
+            first_name: rev.first_name,
+            last_name: rev.last_name,
+            email: rev.email,
+          };
+        }
+      }
+
+      let contentDetails = null;
+      if (report.content_reference && report.content_type !== "general") {
         try {
           switch (report.content_type) {
             case "course":
-              contentDetails = await Course.findByPk(report.content_reference, {
-                attributes: ["id", "title", "description"],
-              });
+              contentDetails = await Course.findById(report.content_reference)
+                .select("title description")
+                .lean();
               break;
             case "lesson":
-              contentDetails = await Lesson.findByPk(report.content_reference, {
-                attributes: ["id", "title", "content"],
-              });
+              contentDetails = await Lesson.findById(report.content_reference)
+                .select("title content")
+                .lean();
               break;
             case "quiz":
-              contentDetails = await Quiz.findByPk(report.content_reference, {
-                attributes: ["id", "title"],
-              });
+              contentDetails = await Quiz.findById(report.content_reference)
+                .select("title")
+                .lean();
               break;
-          }
-
-          if (contentDetails) {
-            report.dataValues.contentDetails = contentDetails;
           }
         } catch (error) {
           console.error("Error fetching content details:", error);
         }
       }
 
-      return report;
+      return {
+        ...report,
+        id: report._id.toString(),
+        Reporter: reporter,
+        Reviewer: reviewer,
+        contentDetails,
+      };
     } catch (error) {
       console.error("Get report by ID error:", error);
       throw error;
@@ -220,7 +242,7 @@ class ReportService {
 
   async updateReportStatus(reportId, status, adminId) {
     try {
-      const report = await Report.findByPk(reportId);
+      const report = await Report.findById(reportId);
 
       if (!report) {
         throw new Error("Report not found");
@@ -231,7 +253,6 @@ class ReportService {
       report.reviewed_at = new Date();
 
       await report.save();
-
       return report;
     } catch (error) {
       console.error("Update report status error:", error);
@@ -302,32 +323,29 @@ class ReportService {
         };
       }
 
-      
       const analysis = await geminiService.analyzeReportForActions(report);
 
-      
-      const similarReports = await Report.findAll({
-        where: {
-          ai_category: report.ai_category,
-          status: "resolved",
-          id: { [Op.ne]: reportId },
-        },
-        limit: 5,
-        attributes: ["id", "title", "status"],
-      });
+      const similarReports = await Report.find({
+        ai_category: report.ai_category,
+        status: "resolved",
+        _id: { $ne: reportId },
+      })
+        .limit(5)
+        .select("_id id title status")
+        .lean();
 
       return {
         reportId: report.id,
         severity: analysis.severity,
         priority: analysis.priority,
-        recommendedActions: analysis.actions.map((action) => ({
+        recommendedActions: (analysis.actions || []).map((action) => ({
           ...action,
-          requiresConfirmation: true, 
-          canBeAutomated: false, 
+          requiresConfirmation: true,
+          canBeAutomated: false,
         })),
         similarCases: {
           description: analysis.similarCases,
-          examples: similarReports,
+          examples: similarReports.map(r => ({ id: r._id.toString(), title: r.title, status: r.status })),
         },
         timestamp: new Date(),
       };
@@ -339,7 +357,7 @@ class ReportService {
 
   async addInternalNote(reportId, note, adminId) {
     try {
-      const report = await Report.findByPk(reportId);
+      const report = await Report.findById(reportId);
 
       if (!report) {
         throw new Error("Report not found");
@@ -347,14 +365,13 @@ class ReportService {
 
       const currentNotes = report.internal_notes || "";
       const timestamp = new Date().toISOString();
-      const admin = await User.findByPk(adminId, { attributes: ["first_name", "last_name"] });
+      const admin = await User.findById(adminId).select("first_name last_name").lean();
       const adminName = admin ? `${admin.first_name} ${admin.last_name}` : "Admin";
 
       const newNote = `[${timestamp}] ${adminName}: ${note}\n`;
       report.internal_notes = currentNotes + newNote;
 
       await report.save();
-
       return report;
     } catch (error) {
       console.error("Add internal note error:", error);
@@ -364,7 +381,7 @@ class ReportService {
 
   async resolveReport(reportId, resolutionDetails, adminId) {
     try {
-      const report = await Report.findByPk(reportId);
+      const report = await Report.findById(reportId);
 
       if (!report) {
         throw new Error("Report not found");
@@ -376,9 +393,6 @@ class ReportService {
       report.reviewed_at = new Date();
 
       await report.save();
-
-      
-
       return report;
     } catch (error) {
       console.error("Resolve report error:", error);
@@ -388,39 +402,39 @@ class ReportService {
 
   async getReportStats() {
     try {
-      const totalReports = await Report.count();
-      const pendingReports = await Report.count({ where: { status: "pending" } });
-      const inReviewReports = await Report.count({ where: { status: "in-review" } });
-      const resolvedReports = await Report.count({ where: { status: "resolved" } });
+      const totalReports = await Report.countDocuments();
+      const pendingReports = await Report.countDocuments({ status: "pending" });
+      const inReviewReports = await Report.countDocuments({ status: "in-review" });
+      const resolvedReports = await Report.countDocuments({ status: "resolved" });
 
-      const criticalReports = await Report.count({
-        where: { ai_severity: "critical", status: { [Op.ne]: "resolved" } },
+      const criticalReports = await Report.countDocuments({
+        ai_severity: "critical",
+        status: { $ne: "resolved" },
       });
 
-      const highSeverityReports = await Report.count({
-        where: { ai_severity: "high", status: { [Op.ne]: "resolved" } },
+      const highSeverityReports = await Report.countDocuments({
+        ai_severity: "high",
+        status: { $ne: "resolved" },
       });
 
-      
-      const studentReports = await Report.count({ where: { reporter_type: "student" } });
-      const instructorReports = await Report.count({ where: { reporter_type: "instructor" } });
+      const studentReports = await Report.countDocuments({ reporter_type: "student" });
+      const instructorReports = await Report.countDocuments({ reporter_type: "instructor" });
 
-      
-      const resolvedWithTime = await Report.findAll({
-        where: { 
-          status: "resolved",
-          reviewed_at: { [Op.ne]: null }
-        },
-        attributes: ["created_at", "reviewed_at"]
-      });
+      const resolvedWithTime = await Report.find({
+        status: "resolved",
+        reviewed_at: { $ne: null },
+      })
+        .select("createdAt created_at reviewed_at")
+        .lean();
 
       let avgResolutionTime = 0;
       if (resolvedWithTime.length > 0) {
         const totalTime = resolvedWithTime.reduce((sum, report) => {
-          const diff = new Date(report.reviewed_at) - new Date(report.created_at);
+          const created = new Date(report.createdAt || report.created_at);
+          const diff = new Date(report.reviewed_at) - created;
           return sum + diff;
         }, 0);
-        avgResolutionTime = Math.round(totalTime / resolvedWithTime.length / (1000 * 60 * 60)); 
+        avgResolutionTime = Math.round(totalTime / resolvedWithTime.length / (1000 * 60 * 60));
       }
 
       return {
@@ -432,9 +446,9 @@ class ReportService {
         highSeverity: highSeverityReports,
         byReporterType: {
           student: studentReports,
-          instructor: instructorReports
+          instructor: instructorReports,
         },
-        avgResolutionTimeHours: avgResolutionTime
+        avgResolutionTimeHours: avgResolutionTime,
       };
     } catch (error) {
       console.error("Get report stats error:", error);
