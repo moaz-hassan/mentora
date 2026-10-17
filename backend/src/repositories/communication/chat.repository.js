@@ -46,6 +46,12 @@ class ChatParticipantRepository {
     return await ChatParticipant.find({ room_id: roomId }).exec();
   }
 
+  async findByUser(userId) {
+    return await ChatParticipant.find({ user_id: userId })
+      .select("room_id user_id")
+      .exec();
+  }
+
   async create(data) {
     return await ChatParticipant.create(data);
   }

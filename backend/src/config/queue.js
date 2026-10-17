@@ -1,21 +1,21 @@
 
 
 import Queue from "bull";
-import { redisQueueClient } from "./redis.js";
+import { redisClient } from "./redis.js";
 
 
 const queueOptions = {
   createClient: (type) => {
-    switch (type) {
-      case "client":
-        return redisQueueClient.duplicate();
-      case "subscriber":
-        return redisQueueClient.duplicate();
-      case "bclient":
-        return redisQueueClient.duplicate();
-      default:
-        return redisQueueClient.duplicate();
+    if (type === "client") {
+      return redisClient.duplicate();
     }
+
+    // Bull requires blocking/subscriber connections without ready checks and
+    // with unlimited command retries (see OptimalBits/bull#1873).
+    return redisClient.duplicate({
+      enableReadyCheck: false,
+      maxRetriesPerRequest: null,
+    });
   },
   defaultJobOptions: {
     attempts: 3,

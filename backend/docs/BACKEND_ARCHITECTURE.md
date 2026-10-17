@@ -52,7 +52,7 @@ This backend is a modular Node.js/Express application for an LMS (Learning Manag
 
 ### 8. Models
 - Organized by domain (admin, auth, categories, etc.).
-- Each folder contains Mongoose/Sequelize models for DB entities.
+- Each folder contains Mongoose models for DB entities.
 
 ### 9. Controllers
 - Organized by domain (admin, ai, auth, etc.).

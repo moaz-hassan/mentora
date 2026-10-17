@@ -13,7 +13,27 @@ let logBatch = [];
 let batchTimer = null;
 
 
-const flushBatch = async () => {
+const insertLogs = async (Model, documents) => {
+  try {
+    await Model.insertMany(documents, { ordered: false });
+  } catch (error) {
+    const writeErrors = Array.isArray(error?.writeErrors) ? error.writeErrors : [];
+
+    const onlyDuplicateKeyErrors =
+      error?.code === 11000 ||
+      (writeErrors.length > 0 &&
+        writeErrors.every((writeError) => writeError?.err?.code === 11000));
+
+    if (!onlyDuplicateKeyErrors) {
+      throw error;
+    }
+
+    console.warn(`⚠️  Skipped duplicate ${Model.modelName} entries`);
+  }
+};
+
+
+export const flushBatch = async () => {
   if (logBatch.length === 0) return;
 
   const currentBatch = [...logBatch];
@@ -31,22 +51,22 @@ const flushBatch = async () => {
     const promises = [];
 
     if (grouped.audit) {
-      promises.push(AuditLog.bulkCreate(grouped.audit, { ignoreDuplicates: true }));
+      promises.push(insertLogs(AuditLog, grouped.audit));
     }
     if (grouped.payment) {
-      promises.push(PaymentLog.bulkCreate(grouped.payment, { ignoreDuplicates: true }));
+      promises.push(insertLogs(PaymentLog, grouped.payment));
     }
     if (grouped.enrollment) {
-      promises.push(EnrollmentLog.bulkCreate(grouped.enrollment, { ignoreDuplicates: true }));
+      promises.push(insertLogs(EnrollmentLog, grouped.enrollment));
     }
     if (grouped.error) {
-      promises.push(ErrorLog.bulkCreate(grouped.error, { ignoreDuplicates: true }));
+      promises.push(insertLogs(ErrorLog, grouped.error));
     }
     if (grouped.moderation) {
-      promises.push(ModerationLog.bulkCreate(grouped.moderation, { ignoreDuplicates: true }));
+      promises.push(insertLogs(ModerationLog, grouped.moderation));
     }
     if (grouped.notification) {
-      promises.push(NotificationLog.bulkCreate(grouped.notification, { ignoreDuplicates: true }));
+      promises.push(insertLogs(NotificationLog, grouped.notification));
     }
 
     await Promise.all(promises);
@@ -59,7 +79,7 @@ const flushBatch = async () => {
 };
 
 
-const addToBatch = async (log) => {
+export const addToBatch = async (log) => {
   logBatch.push(log);
 
   

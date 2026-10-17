@@ -1,6 +1,4 @@
-import models from "../../models/index.js";
-
-const { ChatParticipant, ChatRoom } = models;
+import { chatParticipantRepository } from "../../repositories/communication/chat.repository.js";
 
 export const authenticateHandler = (io, socket, connectedUsers) => {
   return async ({ userId }) => {
@@ -10,23 +8,19 @@ export const authenticateHandler = (io, socket, connectedUsers) => {
         return;
       }
 
-      
+      const participants = await chatParticipantRepository.findByUser(userId);
+      const roomIds = participants.map((participant) => participant.room_id);
+
       connectedUsers.set(userId, socket.id);
       socket.userId = userId;
 
-      
-      const participants = await ChatParticipant.findAll({
-        where: { user_id: userId, is_active: true },
-        include: [{ model: ChatRoom }],
-      });
-
-      participants.forEach((participant) => {
-        socket.join(`room_${participant.room_id}`);
+      roomIds.forEach((roomId) => {
+        socket.join(`room_${roomId}`);
       });
 
       socket.emit("authenticated", {
         success: true,
-        rooms: participants.map((p) => p.room_id),
+        rooms: roomIds,
       });
     } catch (error) {
       console.error("Authentication error:", error);

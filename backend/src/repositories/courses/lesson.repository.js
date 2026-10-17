@@ -43,7 +43,7 @@ class LessonRepository {
     return await Lesson.countDocuments({ chapter_id: chapterId }).exec();
   }
 
-  async bulkCreateMaterials(materialsData) {
+  async insertMaterials(materialsData) {
     return await LessonMaterial.insertMany(materialsData);
   }
 }

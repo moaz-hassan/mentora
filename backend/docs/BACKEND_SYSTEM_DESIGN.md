@@ -376,9 +376,9 @@ they already exist:
    independently protected when imported elsewhere.
 4. The queue configuration defines email and analytics queues, but the current
    worker entry point only starts logging and notification processors.
-5. The logging worker still calls Sequelize-style `bulkCreate` methods even
-   though the application models are Mongoose models. This is an implementation
-   defect, not an architectural capability.
+5. (Resolved Oct 2026) The logging worker was converted from Sequelize-style
+   `bulkCreate` calls to Mongoose `insertMany` with duplicate-key tolerance;
+   see `NOSQL_MIGRATION_AUDIT.md` (Execution Log).
 6. The current application connects Redis during `app.js` import and does not
    await `connectRedis()` in `server.js`; Redis startup behavior should be made
    explicit before production deployment.

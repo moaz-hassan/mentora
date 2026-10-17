@@ -11,7 +11,9 @@ class UserRepository {
 
   async findById(id, selectPassword = false) {
     const query = User.findById(id);
-    if (!selectPassword) {
+    if (selectPassword) {
+      query.select("+password");
+    } else {
       query.select("-password");
     }
     return await query.exec();

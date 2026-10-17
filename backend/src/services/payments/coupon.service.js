@@ -267,7 +267,7 @@ export const deactivateExpiredCoupons = async () => {
     { is_active: false }
   );
 
-  return { deactivatedCount: result.nModified || 0 };
+  return { deactivatedCount: result.modifiedCount || 0 };
 };
 
 export const getActiveGlobalCoupon = async () => {

@@ -95,11 +95,13 @@
 - **Key files/setup**: src/config/* and relevant util files.
 
 **Environment Variables (required / recommended)**
-- **DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_SSL**: Database connection (Sequelize). Defaults present in src/config/db.js.
+- **MONGODB_URI**: MongoDB connection string (Mongoose). Defaults to `mongodb://localhost:27017/mentora` in src/config/db.js.
 - **REDIS_HOST, REDIS_PORT, REDIS_PASSWORD**: Redis connection used for caching and queues. src/config/redis.js throws if host/port missing.
 - **JWT_SECRET, JWT_EXPIRES_IN**: JWT signing secret and expiration used across auth services.
 - **PORT**: Server port; default 3000.
 - **CLIENT_URL**: Frontend origin used in email links and cron templates.
+- **FRONTEND_URL**: Public web-app URL used for certificate verification links (pdfGenerator.util.js).
+- **QUIZ_PASS_THRESHOLD**: Minimum quiz score (percent) required to pass a quiz.
 - **GMAIL_USER, GMAIL_APP_PASSWORD**: Nodemailer SMTP credentials (Gmail) used by mailer.js.
 - **CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET**: Cloudinary signed upload configuration.
 - **SUPABASE_URL, SUPABASE_SERVICE_KEY, SUPABASE_CERTIFICATES_BUCKET, SUPABASE_MATERIALS_BUCKET**: Supabase storage for certificates & materials. isSupabaseConfigured() used to gate behavior.
@@ -113,7 +115,8 @@
 **Code Structure Summary**
 - **API routing**: src/routes/* — every resource has its own route file.
 - **Controllers**: src/controllers/* — thin controllers invoking services and returning responses.
-- **Services**: src/services/* — business logic, DB access, third-party calls.
+- **Services**: src/services/* — business logic and domain workflows (delegates DB access to repositories).
+- **Repositories**: src/repositories/* — all Mongoose data access.
 - **Validators**: src/validators/* — request schema validation (express-validator).
 - **Middlewares**: src/middlewares/* — auth, audit logging, caching, uploads, error handling.
 - **Workers**: src/workers/* — background job processors.
@@ -123,6 +126,6 @@
 - **Secret management**: Provide strong `JWT_SECRET`, rotate mail and cloud keys; use secrets manager (AWS Secrets Manager / Azure Key Vault / GitHub Secrets).
 - **Secure Redis**: Use a managed Redis with authentication and VPC access; set `REDIS_PASSWORD`.
 - **Use HTTPS**: Terminate TLS at load balancer or proxy (NGINX), enable secure cookies if used.
-- **Database migrations**: Use controlled migrations (Sequelize migrations recommended) — avoid `sync({ alter: true })` in production.
+- **Database migrations**: Use scripted, reviewed MongoDB migrations (tracked under INF-08 in the enhancement plan) — never rely on ad-hoc schema edits in production.
 - **Monitoring & Errors**: Add Sentry or similar for error tracking; configure logging and alerts for queue failures.
 - **Scale queues**: Deploy workers separately from web API; tune Bull concurrency and backoff.

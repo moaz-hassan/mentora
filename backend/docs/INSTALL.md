@@ -5,8 +5,8 @@ This guide shows how to run the backend locally for development and basic testin
 ## Prerequisites
 - Node.js (recommended v18+ LTS)
 - npm (comes with Node)
-- MySQL server (or Docker)
-- Redis server (or Docker)
+- MongoDB 6+ (or Docker)
+- Redis 7+ (or Docker)
 - (Optional) Docker & Docker Compose for local infra
 
 ## 1) Clone and prepare
@@ -25,9 +25,13 @@ cp .env.example .env
 copy .env.example .env
 ```
 
-Edit `.env` and set values for DB, Redis, JWT, mail, Cloudinary, Supabase, and AI keys.
-
-File reference: `backend/.env.example` contains all variables you need.
+File reference: `backend/.env.example` documents every variable. At minimum set:
+- `MONGODB_URI` — MongoDB connection string
+- `REDIS_HOST`, `REDIS_PORT` — caching and Bull queues
+- `JWT_SECRET` — use a strong secret (no insecure fallback in production)
+- `GMAIL_USER`, `GMAIL_APP_PASSWORD` — transactional email
+- `CLIENT_URL`, `FRONTEND_URL` — email links and certificate verification
+- `QUIZ_PASS_THRESHOLD` — quiz pass percentage
 
 ## 2) Install dependencies
 
@@ -35,57 +39,38 @@ File reference: `backend/.env.example` contains all variables you need.
 npm install
 ```
 
-## 3) Database
+## 3) Database & Redis (MongoDB — no SQL)
 
-Create the MySQL database referenced by `DB_NAME` in your `.env`.
+This backend is 100% MongoDB/Mongoose. There is no migration step today: Mongoose creates collections and indexes on first use.
 
-If you have MySQL client access:
+### Option A — Docker Compose (recommended)
 
-```bash
-mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS mentora;"
-```
-
-Quick local MySQL using Docker:
-
-```bash
-docker run --name mentora-mysql -e MYSQL_ROOT_PASSWORD=0000 -e MYSQL_DATABASE=mentora -p 3306:3306 -d mysql:8.0
-```
-
-### Docker Compose demo (recommended)
-
-A `docker-compose.yml` is provided to quickly bring up MySQL, Redis, and Adminer for a local demo. From the `backend/` folder run:
-
-```bash
-docker-compose up -d
-```
-
-Wait a few seconds for services to initialize, then run migrations and seed data:
+`docker-compose.yml` brings up MongoDB 6, Redis 7, and a mongo-express UI:
 
 ```bash
 # from backend/
-npm install
-npm run migrate
-npm run seed
+npm run docker:up      # docker-compose up -d
 ```
 
-To stop the demo:
+| Service | URL / Port |
+| --- | --- |
+| MongoDB | `mongodb://localhost:27017/mentora` |
+| Redis | `localhost:6379` |
+| mongo-express (MongoDB UI) | http://localhost:8081 |
+
+Stop everything with:
 
 ```bash
-docker-compose down
+npm run docker:down
 ```
 
+### Option B — Local services
 
-### Migrations / schema
-This repo uses Sequelize. Prefer running Sequelize migrations in production. If migration files are not present, for quick local testing you can use Sequelize `sync()` (not recommended for production). Implement migrations with `sequelize-cli` or `umzug` before publishing.
+Install and run MongoDB and Redis locally, then point `MONGODB_URI`, `REDIS_HOST`, and `REDIS_PORT` at them.
 
-Example (when migrations are available):
+### Schema / migrations
 
-```bash
-npx sequelize-cli db:migrate
-npx sequelize-cli db:seed:all
-```
-
-If you don't have migrations and want a quick local setup for development, you can temporarily enable `sequelize.sync()` in `src/config/db.js` (development only).
+Schemas live in `src/models/*` (pure Mongoose). Scripted migrations are tracked as INF-08 in `docs/BACKEND_ENHANCEMENT_PLAN.md`; until then, coordinate schema changes through code review.
 
 ## 4) Start the API
 
@@ -99,7 +84,7 @@ node server.js
 npm run start
 ```
 
-The app exposes a root health endpoint; verify with:
+The server connects to MongoDB first, then exposes the root health endpoint:
 
 ```bash
 curl http://localhost:3000/
@@ -109,11 +94,8 @@ You should see a JSON response like: `{ "success": true, "message": "LMS API is 
 
 ## 5) Workers & Cron
 
-Some features run as background workers and cron jobs:
-- Queues/workers: `src/workers/*` (notification, logging, etc.)
-- Cron jobs are initialized when the server starts (`initCronJobs()` in `src/app.js`)
-
-Start the worker process in a separate terminal:
+- Cron jobs are initialized when the server starts (`initCronJobs()` in `src/app.js`).
+- Background workers (logging, notifications) run in a separate process and require Redis:
 
 ```bash
 node src/workers/index.js
@@ -136,5 +118,15 @@ If you want certificates and materials stored in Supabase, set `SUPABASE_URL` an
 
 For Cloudinary direct uploads, provide Cloudinary keys and use the signed endpoints (routes under `src/controllers/media`).
 
-## 8) Payment provider
-The code records payments but does not include a fully wired server-side gateway for all providers. To accept live payments, wire up Stripe/PayPal webhooks and credentials and test end-to-end.
+## 8) Payments
+Paid courses require `STRIPE_SECRET` and `STRIPE_WEBHOOK_SECRET`. Stripe is integrated (PaymentIntents + webhook); production hardening (webhook idempotency, server-side amount validation) is tracked as PAY-02/PAY-03 in `docs/BACKEND_ENHANCEMENT_PLAN.md`. PayPal credentials exist in `.env.example` but there is no PayPal integration yet.
+
+## 9) Verification commands
+
+```bash
+npm run check:nosql        # fails if any SQL/Sequelize artifact reappears in src/
+npm run smoke:imports      # imports every module under src/ (import-time crash detector)
+npm run verify:migration   # settings + socket + logging worker against an in-memory MongoDB
+```
+
+`verify:migration` boots its own in-memory MongoDB and needs no local services. The Jest harness (`npm test`) is planned under FND-02 in `docs/BACKEND_ENHANCEMENT_PLAN.md`.
