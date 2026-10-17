@@ -2,9 +2,10 @@
 
 > The implementation-level design, request flows, module connections, and
 > known gaps are documented in
-> [BACKEND_SYSTEM_DESIGN.md](./BACKEND_SYSTEM_DESIGN.md). The canonical
-> Draw.io source is
-> [../../backend_system_design.drawio](../../backend_system_design.drawio).
+> [BACKEND_SYSTEM_DESIGN.md](./BACKEND_SYSTEM_DESIGN.md). The canonical UML
+> data design (collections, relations, per-module data flows) is
+> [uml_data_design.drawio](./uml_data_design.drawio) — companion to
+> [MONGODB_REDESIGN.md](./MONGODB_REDESIGN.md).
 
 ## Overview
 This backend is a modular Node.js/Express application for an LMS (Learning Management System). It is structured for scalability, maintainability, and security, following best practices for modern web APIs.

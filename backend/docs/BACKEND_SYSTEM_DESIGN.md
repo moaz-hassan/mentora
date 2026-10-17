@@ -1,7 +1,7 @@
 # Mentora Backend System Design
 
-This document is the implementation-oriented companion to
-[`backend_system_design.drawio`](./backend_system_design.drawio). It describes
+This document is the implementation-oriented companion to the UML data
+design in [`uml_data_design.drawio`](./uml_data_design.drawio). It describes
 the backend that currently exists in `backend/src`, including the request
 pipeline, module boundaries, endpoint groups, persistence, asynchronous
 processing, and known design gaps.
